@@ -2,10 +2,12 @@
 class SB_Hook {
 	private $styles = array();
 	private $scripts = array();
+	private $sidebars = array();
 	public function __construct() {
 		$this->style_init();
 		$this->move_jquery_to_footer();
 		$this->script_init();
+		$this->sidebar_init();
 		$this->run();
 	}
 	
@@ -24,6 +26,10 @@ class SB_Hook {
 		array_push($this->scripts, array('bootstrap', SB_LIB_URI . '/bootstrap/js/bootstrap.min.js', array()));
 		array_push($this->scripts, array('superfish', SB_LIB_URI . '/superfish/js/superfish.min.js', array('jquery', 'hoverIntent')));
 		array_push($this->scripts, array('sbtheme', SB_JS_URI . '/sb-script.js', array('jquery')));
+	}
+	
+	private function sidebar_init() {
+		$this->sidebars[] = $this->register_sidebar('primary', 'Primary Sidebar', 'Main sidebar that appears on the left or right.');
 	}
 	
 	private function move_jquery_to_footer() {
@@ -50,8 +56,22 @@ class SB_Hook {
 		}
 	}
 	
+	public function sbtheme_customize_init($wp_customize) {
+		$customize = new SB_Customize();
+		$customize->init($wp_customize);
+	}
+	
 	private function run() {
+		global $pagenow, $sb_enable_shop;
+		
 		add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
+		add_action('after_setup_theme', array($this, 'sbtheme_setup'));
+		add_action( 'customize_preview_init', array($this, 'sbtheme_customize_script') );
+		add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
+		
+		if ( $sb_enable_shop && is_admin() && isset( $_GET['activated'] ) && $pagenow == 'themes.php' ) {
+			add_action( 'init', array($this, 'sb_woocommerce_image_size'), 1 );
+		}
 		
 		add_filter('widget_title', array($this, 'default_widget_title'), 10, 3);
 		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
@@ -86,6 +106,64 @@ class SB_Hook {
 			$title = '<span class="no-title"></span>';
 		}
 		return $title;
+	}
+	
+	public function sbtheme_setup() {
+		global $sb_enable_shop;
+		add_theme_support( 'automatic-feed-links' );
+		add_theme_support( 'post-thumbnails' );
+		set_post_thumbnail_size( 300, 300 );
+		add_image_size('thumbnail', 300, 300, false);
+		add_image_size('thumbnail_crop', 300, 300, true);
+		add_theme_support( 'html5', array(
+			'search-form', 'comment-form', 'comment-list', 'gallery', 'caption'
+		));
+		add_theme_support( 'post-formats', array(
+			'aside', 'image', 'video', 'audio', 'quote', 'link', 'gallery',
+		));
+		register_nav_menus( array(
+			'top'		=> __( 'Top menu', 'sbtheme' ),
+			'footer'	=> __( 'Footer menu', 'sbtheme' ),
+			'primary'	=> __('Primary menu', 'sbtheme')
+		));
+		if($sb_enable_shop) {
+			add_theme_support( 'woocommerce' );
+			add_image_size('product_large', 600, 600, false);
+			add_image_size('product_large_crop', 600, 600, true);
+			add_image_size('product_medium', 400, 400, false);
+			add_image_size('product_medium_crop', 400, 400, true);
+			add_image_size('product_small', 200, 200, false);
+			add_image_size('product_small_crop', 200, 200, true);			
+		}
+	}
+	
+	public function sb_woocommerce_image_size() {
+		global $sb_enable_shop;
+		if($sb_enable_shop) {
+			$catalog = array(
+				'width'		=> '400',
+				'height'	=> '400',
+				'crop'		=> 1
+			);				 
+			$single = array(
+				'width'		=> '600',
+				'height'	=> '600',
+				'crop'		=> 1
+			);				 
+			$thumbnail = array(
+				'width'		=> '200',
+				'height'	=> '200',
+				'crop'		=> 1
+			);				
+			update_option( 'shop_catalog_image_size', $catalog );
+			update_option( 'shop_single_image_size', $single );
+			update_option( 'shop_thumbnail_image_size', $thumbnail );
+		}
+	}
+	
+	public function sbtheme_customize_script() {
+		wp_register_script( 'sb-customize', SB_JS_URI . '/customize.js', array( 'customize-preview' ), false, true );
+		wp_enqueue_script('sb-customize');
 	}
 }
 ?>

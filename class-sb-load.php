@@ -57,31 +57,76 @@ class SB_Load {
 		'class-sb-hook',
 		'class-sb-product',
 		'class-sb-theme',
-		'class-sb-hook'
+		'class-sb-hook',
+		'class-sb-customize',
+		'class-sb-option'
 	);
 	
-	private function generate_handle() {
-		foreach($this->classes as $class) {
-			$this->add_handle($class, SB_CLASS_PATH . "/" . $class . ".php");
+	// Add class to handle
+	private function handle_init() {
+		global $sb_enable_manga, $sb_enable_shop;
+		$this->class_init();
+		foreach($this->handles as $key => $handle) {
+			if(('class-sb-product' == $key && !$sb_enable_shop) || ('class-sb-manga' == $key && !$sb_enable_manga)) {
+				continue;
+			}
+			$this->add($key);
 		}
 	}
 	
+	// Ad item to handle
 	public function add_handle($key, $value) {
 		$this->handles[$key] = $value;
 	}
 	
 	public function __construct() {
-		$this->generate_handle();
-		$this->add('class-sb-php');
-		$this->add('class-sb-theme');
-		$this->add('class-sb-hook');
+		$this->handle_init();
 	}
 	
+	private function class_init() {
+		foreach($this->classes as $class) {
+			$this->add_handle($class, SB_CLASS_PATH . "/" . $class . ".php");
+		}
+	}
+	
+	// Add handle to list load
 	public function add($handle) {
 		
 		array_push($this->items, $handle);
 	}
 	
+	// Theme support post type
+	public function support($name) {
+		$this->enable_or_disable($name, true);
+	}
+	
+	// Turn on of off theme support
+	private function enable_or_disable($name, $switch) {
+		$name = strtolower($name);
+		global $sb_enable_shop;;
+		switch($name) {
+			case "shop":
+				$sb_enable_shop = $switch;
+				break;
+			case "manga":
+				$sb_enable_manga = $switch;
+				break;
+			default:
+				break;
+		}
+	}
+	
+	// Disable theme support
+	public function remove($name) {
+		$this->enable_or_disable($name, false);
+	}
+	
+	// Enable theme support
+	public function enable($name) {
+		$this->support($name);
+	}
+	
+	// Include all handle
 	public function run() {
 		foreach($this->items as $item) {
 			if(array_key_exists($item, $this->handles)) {
