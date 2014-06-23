@@ -26,6 +26,7 @@ class SB_Hook {
 		array_push($this->scripts, array('bootstrap', SB_LIB_URI . '/bootstrap/js/bootstrap.min.js', array()));
 		array_push($this->scripts, array('superfish', SB_LIB_URI . '/superfish/js/superfish.min.js', array('jquery', 'hoverIntent')));
 		array_push($this->scripts, array('sbtheme', SB_JS_URI . '/sb-script.js', array('jquery')));
+        array_push($this->scripts, array('sbtheme-script', SB_THEME_URI . '/js/sbtheme-script.js', array('sbtheme')));
 	}
 	
 	private function sidebar_init() {
@@ -46,13 +47,23 @@ class SB_Hook {
 	}
 	
 	public function script_and_style() {
+		// Enqueue style
 		foreach($this->styles as $key => $url) {
 			wp_register_style($key, $url);
 			wp_enqueue_style($key);
 		}
+		
+		// Enqueue script
 		foreach($this->scripts as $value) {
+            if("sbtheme-script" == $value[0]) {
+                $file = SB_THEME_PATH . "/js/sbtheme-script.js";
+                if(!file_exists($file)) continue;
+            }
 			wp_register_script($value[0], $value[1], $value[2], false, true);
 			wp_enqueue_script($value[0]);
+			if("sbtheme" == $value[0]) {
+				wp_localize_script( $value[0], 'sbAjax', array( 'url' => admin_url( 'admin-ajax.php' ) ) );
+			}
 		}
 	}
 	
@@ -100,6 +111,8 @@ class SB_Hook {
 			'after_title'   => '</h4><div class="widget-content">'
 		));
 	}
+
+
 	
 	public function default_widget_title($title) {
 		if(empty($title)) {

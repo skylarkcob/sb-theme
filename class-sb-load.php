@@ -59,7 +59,8 @@ class SB_Load {
 		'class-sb-theme',
 		'class-sb-hook',
 		'class-sb-customize',
-		'class-sb-option'
+		'class-sb-option',
+        'class-sb-paginate'
 	);
 	
 	// Add class to handle

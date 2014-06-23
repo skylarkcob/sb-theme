@@ -15,7 +15,8 @@
 .woocommerce #shipping_country_field,
 .woocommerce .checkout .woocommerce-error:before,
 .custom-add-to-cart .no-price.call,
-.pp_woocommerce .ppt {
+.pp_woocommerce .ppt,
+.form-allowed-tags {
 	display: none;
 }
 
@@ -365,11 +366,10 @@ img {
 	max-width: 900px;
 }
 
-.ajax-loading-full {
-    background-color: rgba(0, 0, 0, 0.6);
+.spinner-loading-full {
     color: #F6F6F6;
 	display: none;
-    font-size: 50px;
+    font-size: 30px;
     height: 100%;
     left: 0;
     padding-left: 50%;
@@ -380,7 +380,7 @@ img {
     z-index: 10000;
 }
 
-.active .ajax-loading-full {
+.active .spinner-loading-full {
 	display: block;
 }
 
