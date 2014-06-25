@@ -123,6 +123,8 @@ class SB_Hook {
 	
 	public function sbtheme_setup() {
 		global $sb_enable_shop;
+		
+		load_theme_textdomain( 'sbtheme', get_template_directory() . '/languages' );
 		add_theme_support( 'automatic-feed-links' );
 		add_theme_support( 'post-thumbnails' );
 		set_post_thumbnail_size( 300, 300 );

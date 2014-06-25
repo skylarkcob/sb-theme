@@ -8,6 +8,10 @@ class SB_Theme {
 		include SB_TEMPLATE_PATH . "/template-theme-footer.php";
 	}
 	
+	public static function logo() {
+		include SB_TEMPLATE_PATH . "/template-theme-logo.php";
+	}
+	
 	public static function title() {
 		if(is_home()) {
 			echo get_bloginfo('name') . ' - ' . get_bloginfo('description');
