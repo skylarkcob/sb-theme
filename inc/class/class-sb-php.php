@@ -112,5 +112,22 @@ class SB_PHP {
 		}
 		return $weekday.', '.date($format);
 	}
+	
+	public static function remove_http($url) {
+		$disallowed = array('http://', 'https://');
+		foreach($disallowed as $d) {
+			if(strpos($url, $d) !== false) {
+				return str_replace($d, '', $url);
+			}
+		}
+		return $url;
+	}
+	
+	public static function is_valid_url($url) {
+		if(filter_var($url, FILTER_VALIDATE_URL)) {
+			return true;
+		}
+		return false;
+	}
 }
 ?>

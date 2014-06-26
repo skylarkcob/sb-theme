@@ -23,10 +23,15 @@ class SB_Hook {
 	}
 	
 	private function script_init() {
+		global $sb_enable_3dfile;
 		array_push($this->scripts, array('bootstrap', SB_LIB_URI . '/bootstrap/js/bootstrap.min.js', array()));
 		array_push($this->scripts, array('superfish', SB_LIB_URI . '/superfish/js/superfish.min.js', array('jquery', 'hoverIntent')));
 		array_push($this->scripts, array('sbtheme', SB_JS_URI . '/sb-script.js', array('jquery')));
         array_push($this->scripts, array('sbtheme-script', SB_THEME_URI . '/js/sbtheme-script.js', array('sbtheme')));
+	}
+	
+	public function allow_upload_stl_file($mimes) {
+		return array_merge($mimes, array('stl' => '3d/stl'));
 	}
 	
 	private function sidebar_init() {
@@ -64,6 +69,9 @@ class SB_Hook {
 			if("sbtheme" == $value[0]) {
 				wp_localize_script( $value[0], 'sbAjax', array( 'url' => admin_url( 'admin-ajax.php' ) ) );
 			}
+			if("thingiview" == $value[0]) {
+				wp_localize_script($value[0], 'sbStl', array('url' => SB_LIB_URI . "/thingiview/js"));
+			}
 		}
 	}
 	
@@ -73,12 +81,13 @@ class SB_Hook {
 	}
 	
 	private function run() {
-		global $pagenow, $sb_enable_shop;
+		global $pagenow, $sb_enable_shop, $sb_enable_3dfile;
 		
 		add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
 		add_action('after_setup_theme', array($this, 'sbtheme_setup'));
 		add_action( 'customize_preview_init', array($this, 'sbtheme_customize_script') );
 		add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
+		add_action('init', array($this, 'session_init'), 1);
 		
 		if ( $sb_enable_shop && is_admin() && isset( $_GET['activated'] ) && $pagenow == 'themes.php' ) {
 			add_action( 'init', array($this, 'sb_woocommerce_image_size'), 1 );
@@ -87,6 +96,10 @@ class SB_Hook {
 		add_filter('widget_title', array($this, 'default_widget_title'), 10, 3);
 		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
 		add_filter('excerpt_more', array($this, 'change_excerpt_more'));
+
+		if($sb_enable_3dfile) {
+			add_filter('upload_mimes', array($this, 'allow_upload_stl_file'));
+		}
 	}
 	
 	public function change_excerpt_more($more) {
@@ -179,6 +192,12 @@ class SB_Hook {
 	public function sbtheme_customize_script() {
 		wp_register_script( 'sb-customize', SB_JS_URI . '/customize.js', array( 'customize-preview' ), false, true );
 		wp_enqueue_script('sb-customize');
+	}
+	
+	public function session_init() {
+		if(!session_id()) {
+			session_start();
+		}
 	}
 }
 ?>

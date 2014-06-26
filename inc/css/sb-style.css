@@ -390,6 +390,11 @@ img {
 .sf-arrows .sf-with-ul {
     padding-right: 25px;
 }
+
+.sf-menu ul {
+	top: 100%;
+}
+
 .sf-arrows .sf-with-ul:after {
 	margin-right: 5px;
 }

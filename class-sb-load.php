@@ -57,11 +57,15 @@ class SB_Load {
 		'class-sb-hook',
 		'class-sb-product',
 		'class-sb-theme',
-		'class-sb-hook',
 		'class-sb-customize',
 		'class-sb-option',
         'class-sb-paginate',
-		'class-sb-wp'
+		'class-sb-wp',
+		'class-sb-shortcode',
+		'class-sb-user',
+		'class-sb-manga',
+		'class-sb-author',
+		'class-sb-session'
 	);
 	
 	// Add class to handle
@@ -105,13 +109,16 @@ class SB_Load {
 	// Turn on of off theme support
 	private function enable_or_disable($name, $switch) {
 		$name = strtolower($name);
-		global $sb_enable_shop;;
+		global $sb_enable_shop, $sb_enable_manga, $sb_enable_3dfile;
 		switch($name) {
 			case "shop":
 				$sb_enable_shop = $switch;
 				break;
 			case "manga":
 				$sb_enable_manga = $switch;
+				break;
+			case "3dfile":
+				$sb_enable_3dfile = $switch;
 				break;
 			default:
 				break;
@@ -138,6 +145,7 @@ class SB_Load {
 				}
 			}
 		}
+		$shortcode = new SB_Shortcode();
 		$hook = new SB_Hook();
 	}
 }

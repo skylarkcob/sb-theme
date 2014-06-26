@@ -130,5 +130,47 @@ class SB_Theme {
         <?php
         do_action('sbwp_after_feed_form');
     }
+	
+	public static function created_by() {
+		echo 'Giao diện được tạo bởi <a href="http://sauhi.com">SB Team</a>';
+	}
+	
+	public static function author_box() {
+		$author = new SB_Author();
+		$description = $author->get_description();
+		if(!empty($description)) :
+	?>
+		<div class="author-wrap">
+			<div class="author-gravatar">
+				<?php echo $author->get_avatar( 100 ); ?>
+			</div>
+			<div class="author-info">
+				<div class="vcard author author-title">
+					<span class="fn">
+						<a target="_blank" class="ext-link" href="<?php echo $author->get_url(); ?>" title="Ghé thăm website của <?php echo $author->get_username(); ?>" rel="author external nofollow"><?php echo $author->get_display_name(); ?></a>
+					</span>
+				</div>
+				<div class="author-description"><?php echo $description; ?></div>
+				<ul>
+					<li class="first">
+						<a href="<?php echo $author->get_post_url(); ?>">Xem tất cả bài viết của <?php echo $author->get_username(); ?> <span class="meta-nav">→</span></a>
+					</li>
+					<li class="website">
+						<a target="_blank" class="ext-link" rel="external nofollow" href="<?php echo $author->get_url(); ?>" title="Ghé thăm trang chủ của <?php echo $author->get_username(); ?>">Blog</a>
+					</li>
+
+					<li class="facebook">
+						<a target="_blank" class="ext-link" href="<?php echo $author->get_facebook_url(); ?>" title="Theo dõi <?php echo $author->get_username(); ?> trên Facebook" rel="external nofollow">Facebook</a>
+					</li>
+					<li class="googleplus">
+						<a target="_blank" class="ext-link" href="<?php echo $author->get_gplus_url(); ?>" title="Theo dõi <?php echo $author->get_username(); ?> trên Goolge Plus" rel="external nofollow">Google Plus</a>
+					</li>
+					<li class="twitter"><a rel="external" title="Theo dõi <?php echo $author->get_username(); ?> trên Twitter" href="<?php echo $author->get_twitter_url(); ?>">Twitter</a></li>
+				</ul>
+			</div>
+		</div>
+	<?php
+		endif;
+	}
 }
 ?>
