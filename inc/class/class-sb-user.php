@@ -3,7 +3,9 @@ class SB_User extends WP_User {
 	public $user;
 	private $favorite_key = 'favorite_';
 	public function __construct() {
-		$this->user = wp_get_current_user();
+		if(is_user_logged_in()) {
+			$this->user = wp_get_current_user();
+		}
 	}
 	
 	public function init($user) {
@@ -33,7 +35,8 @@ class SB_User extends WP_User {
 		$favorites = $this->get_favorite($type);
 		if(($key = array_search($value, $favorites)) !== false) {
 			unset($favorites[$key]);
-			$this->update_meta($this->favorite_key.type, $favorites);
+			$favorites = array_filter($favorites);
+			$this->update_meta($this->favorite_key.$type, $favorites);
 		}
 	}
 	

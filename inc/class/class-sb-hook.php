@@ -39,15 +39,17 @@ class SB_Hook {
 	}
 	
 	private function move_jquery_to_footer() {
-		$jquery = ABSPATH . WPINC . "/js/jquery/jquery.js";
-		$jquery_migrate = ABSPATH . WPINC . "/js/jquery/jquery-migrate.min.js";
-		if(file_exists($jquery) && file_exists($jquery_migrate)) {
-			wp_dequeue_script('jquery');
-			wp_deregister_script('jquery');
-			wp_dequeue_script('jquery-migrate');
-			wp_deregister_script('jquery-migrate');
-			wp_register_script('jquery-migrate', includes_url("js/jquery/jquery-migrate.min.js"), array(), false, true);
-			wp_register_script('jquery', includes_url("js/jquery/jquery.js"), array('jquery-migrate'), false, true);
+		if(!is_admin()) {
+			$jquery = ABSPATH . WPINC . "/js/jquery/jquery.js";
+			$jquery_migrate = ABSPATH . WPINC . "/js/jquery/jquery-migrate.min.js";
+			if(file_exists($jquery) && file_exists($jquery_migrate)) {
+				wp_dequeue_script('jquery');
+				wp_deregister_script('jquery');
+				wp_dequeue_script('jquery-migrate');
+				wp_deregister_script('jquery-migrate');
+				wp_register_script('jquery-migrate', includes_url("js/jquery/jquery-migrate.min.js"), array(), false, true);
+				wp_register_script('jquery', includes_url("js/jquery/jquery.js"), array('jquery-migrate'), false, true);
+			}
 		}
 	}
 	
