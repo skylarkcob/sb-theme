@@ -35,6 +35,7 @@ class SB_Hook {
 	}
 	
 	private function sidebar_init() {
+		$widget = new SB_Widget();
 		$this->sidebars[] = $this->register_sidebar('primary', 'Primary Sidebar', 'Main sidebar that appears on the left or right.');
 	}
 	
@@ -85,6 +86,8 @@ class SB_Hook {
 	private function run() {
 		global $pagenow, $sb_enable_shop, $sb_enable_3dfile;
 		
+		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
+		
 		add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
 		add_action('after_setup_theme', array($this, 'sbtheme_setup'));
 		add_action( 'customize_preview_init', array($this, 'sbtheme_customize_script') );
@@ -96,7 +99,7 @@ class SB_Hook {
 		}
 		
 		add_filter('widget_title', array($this, 'default_widget_title'), 10, 3);
-		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
+		
 		add_filter('excerpt_more', array($this, 'change_excerpt_more'));
 
 		if($sb_enable_3dfile) {

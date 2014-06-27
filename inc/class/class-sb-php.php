@@ -129,5 +129,9 @@ class SB_PHP {
 		}
 		return false;
 	}
+	
+	public static function is_url_valid($url) {
+		return self::is_valid_url($url);
+	}
 }
 ?>

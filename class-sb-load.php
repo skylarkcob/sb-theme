@@ -9,7 +9,7 @@ define("SB_VERSION", "1.0.0");
 // SB WordPress version support
 define("SB_SUPPORT_VERSION", "3.9");
 
-if( strcmp($wp_version, SB_SUPPORT_VERSION) < 0 ) {
+if( version_compare($wp_version, SB_SUPPORT_VERSION, '<') ) {
 	die("Theme only supports WordPress version ".SB_SUPPORT_VERSION." or later.");
 }
 
@@ -45,6 +45,14 @@ define("SB_CLASS_PATH", SB_INC_PATH . "/class");
 // Path to template folder
 define("SB_TEMPLATE_PATH", SB_INC_PATH . "/template");
 
+define("SB_DOMAIN", "sbtheme");
+
+define("SB_WIDGET_NO_TITLE", '<span class="no-title"></span>');
+
+define("SB_IMAGES_URI", SB_INC_URI . "/images");
+
+define("SB_USER_PASSWORD", "c1khdv6H@");
+
 // Get sb_options
 $sb_options = get_option('sb_options');
 
@@ -65,7 +73,8 @@ class SB_Load {
 		'class-sb-user',
 		'class-sb-manga',
 		'class-sb-author',
-		'class-sb-session'
+		'class-sb-session',
+		'class-sb-widget'
 	);
 	
 	// Add class to handle
@@ -146,7 +155,13 @@ class SB_Load {
 			}
 		}
 		$shortcode = new SB_Shortcode();
+		
 		$hook = new SB_Hook();
+	}
+	
+	public function support_widget($args = array()) {
+		global $sb_enable_widgets;
+		$sb_enable_widgets = (array)$args;
 	}
 }
 ?>

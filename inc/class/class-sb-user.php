@@ -12,6 +12,26 @@ class SB_User extends WP_User {
 		$this->user = $user;
 	}
 	
+	public function set($user) {
+		$this->init($user);
+	}
+	
+	public function add($user) {
+		$this->init($user);
+	}
+	
+	public function remove_role($role) {
+		$this->user->remove_role($role);
+	}
+	
+	public function add_role($role) {
+		$this->user->add_role($role);
+	}
+	
+	public function get_by($key, $value) {
+		$this->init(get_user_by($key, $value));
+	}
+	
 	public function get_meta($key) {
 		return get_user_meta($this->user->ID, $key, true);
 	}
@@ -76,6 +96,11 @@ class SB_User extends WP_User {
 		$this->remove_favorite('product', $value);
 	}
 	
-	
+	public function get_role() {
+		if ( !empty( $this->user->roles ) && is_array( $this->user->roles ) ) {
+			return $this->user->roles;
+		}
+		return array();
+	}
 }
 ?>

@@ -1,8 +1,12 @@
 <?php
 class SB_Post {
 	public $post;
+	private $thumbnail_size = "thumbnail_crop";
+	private $thumbnail_default;
+	
 	public function __construct() {
 		$this->post = get_post();
+		$this->thumbnail_default = SB_IMAGES_URI.'/no-thumbnail.png';
 	}
 	
 	public function init($post) {
@@ -61,6 +65,85 @@ class SB_Post {
 			}
 		}
 		return $kq;
+	}
+	
+	public function get_permalink() {
+		return get_permalink($this->post->ID);
+	}
+	
+	public function permalink() {
+		echo $this->get_permalink();
+	}
+	
+	public function has_thumbnail() {
+		return has_post_thumbnail($this->post->ID);
+	}
+	
+	public function get_thumbnail($size = "") {
+		if(empty($size)) {
+			$size = $this->thumbnail_size;
+		}
+		if($this->has_thumbnail()) {
+			return get_the_post_thumbnail($this->post->ID, $size);
+		}
+		return '<img class="no-thumbnail wp-post-image" src="'.$this->thumbnail_default.'">';
+	}
+	
+	public function comment_link() {
+		if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
+		?>
+		<span class="comments-link"><?php comments_popup_link( __( '0 bình luận', SB_DOMAIN ), __( '1 bình luận', SB_DOMAIN ), __( '% bình luận', SB_DOMAIN ) ); ?></span>
+		<?php
+		endif;
+	}
+	
+	public function title($head = "h2") {
+		switch($head) {
+			case "h1":
+				the_title( '<h1 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h1>' );
+				break;
+			case "h2":
+				the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
+				break;
+			case "h3":
+				the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
+				break;
+			default:
+				the_title( '<h4 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h4>' );
+		}
+	}
+	
+	public function get_date($d = "") {
+		if(empty($d)) {
+			return get_the_date();
+		}
+		return get_the_date($d);
+	}
+	
+	public function get_author_post_url() {
+		return get_author_posts_url( get_the_author_meta( 'ID' ) );
+	}
+	
+	public function get_author_name() {
+		return get_the_author();
+	}
+	
+	public function meta() {
+		printf( '<span class="entry-date"><a href="%1$s" rel="bookmark"><time class="entry-date" datetime="%2$s">%3$s</time></a></span> <span class="byline"><span class="author vcard"><a class="url fn n" href="%4$s" rel="author">%5$s</a></span></span>',
+			esc_url( $this->get_permalink() ),
+			esc_attr( $this->get_date( 'c' ) ),
+			esc_html( $this->get_date() ),
+			esc_url( $this->get_author_post_url() ),
+			$this->get_author_name()
+		);
+	}
+	
+	public function thumbnail($size = "") {
+		?>
+		<div class="post-thumbnail">
+			<a href="<?php $this->permalink(); ?>"><?php echo $this->get_thumbnail($size); ?></a>
+		</div>
+		<?php
 	}
 }
 ?>

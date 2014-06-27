@@ -25,6 +25,11 @@ jQuery(document).ready(function($){
 		});
 	}
 	
-	
+	var embedBox = $("div.file-embed");
+	$("body").find(embedBox).each(function(){
+		$(this).bind("mousewheel", function(){
+			return false;
+		});
+	});
 
 });

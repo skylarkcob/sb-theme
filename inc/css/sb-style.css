@@ -524,3 +524,21 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
 .woocommerce .woocommerce-message:before, .woocommerce .woocommerce-error:before, .woocommerce .woocommerce-info:before, .woocommerce-page .woocommerce-message:before, .woocommerce-page .woocommerce-error:before, .woocommerce-page .woocommerce-info:before {
 	height: 32px;
 }
+
+.widget ol {
+	margin-left: 0;
+}
+
+.widget .post-thumbnail {
+    float: left;
+    width: 128px;
+}
+
+.widget .sb-post-widget .entry-header {
+    float: right;
+    width: calc(100% - 140px);
+}
+
+.widget .sb-post-widget {
+	overflow: hidden;
+}
