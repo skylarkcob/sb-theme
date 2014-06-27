@@ -1,0 +1,7 @@
+#sbPostCats {
+	display: none;
+}
+
+a:focus {
+	outline: 0 none;
+}

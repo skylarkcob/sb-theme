@@ -542,3 +542,23 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
 .widget .sb-post-widget {
 	overflow: hidden;
 }
+
+.widget .sb-post-widget .entry-info {
+	margin-top: 10px;
+}
+
+.widget .sb-post-widget .entry-info, .widget .sb-post-widget .entry-info a {
+    color: #cecece;
+}
+
+.widget .sb-post-widget .entry-info span {
+	margin-right: 10px;
+}
+
+.widget .sb-post-widget .entry-info a:hover {
+	text-decoration: underline;
+}
+
+.widget .sb-post-widget .entry-title {
+    line-height: 22px;
+}

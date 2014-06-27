@@ -88,6 +88,7 @@ class SB_Hook {
 		
 		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
 		
+		add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
 		add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
 		add_action('after_setup_theme', array($this, 'sbtheme_setup'));
 		add_action( 'customize_preview_init', array($this, 'sbtheme_customize_script') );
@@ -192,6 +193,13 @@ class SB_Hook {
 			update_option( 'shop_single_image_size', $single );
 			update_option( 'shop_thumbnail_image_size', $thumbnail );
 		}
+	}
+	
+	public function sbtheme_admin_script_and_style() {
+		wp_register_script('sbtheme-admin', SB_JS_URI . '/sb-admin-script.js', array('jquery'), false, true);
+		wp_enqueue_script('sbtheme-admin');
+		wp_register_style('sbtheme-admin-style', SB_CSS_URI . '/sb-admin-style.css');
+		wp_enqueue_style('sbtheme-admin-style');
 	}
 	
 	public function sbtheme_customize_script() {

@@ -92,5 +92,38 @@ class SB_WP {
 			$user->add_role( $role );
 		}
 	}
+	
+	public static function get_category() {
+		return get_categories();
+	}
+	
+	public static function is_post_view_active() {
+		return class_exists("WP_Widget_PostViews");
+	}
+	
+	public static function query($string) {
+		global $wpdb;
+		return $wpdb->get_results( $string, OBJECT );
+	}
+	
+	public static function is_support_post_views() {
+		global $wpdb;
+		$views = self::query("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'views'");
+		if(self::is_post_view_active() || count($views) > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static function is_support_post_likes() {
+		global $wpdb;
+		$likes = self::query("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'likes'");
+		if(count($likes) > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 }
 ?>
