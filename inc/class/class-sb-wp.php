@@ -31,12 +31,28 @@ class SB_WP {
 		echo self::get_login_uri();
 	}
 	
+	public static function get_login_url() {
+		return self::get_login_uri();
+	}
+	
 	public static function get_post_per_page() {
 		return get_option('posts_per_page');
 	}
 	
 	public static function get_menus() {
 		return get_terms('nav_menu');
+	}
+	
+	public static function get_signup_url() {
+		return wp_registration_url();
+	}
+	
+	public static function get_singup_uri() {
+		return self::get_signup_url();
+	}
+	
+	public static function signup_url() {
+		echo self::get_signup_url();
 	}
 	
 	public static function get_menu_item($slug, $args = array()) {

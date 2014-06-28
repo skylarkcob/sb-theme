@@ -29,7 +29,8 @@ class SB_Post_Widget extends WP_Widget {
 		'comment'	=> 'Bài viết nhiều bình luận',
 		'view'		=> 'Bài viết được xem nhiều',
 		'like'		=> 'Bài viết được yêu thích',
-		'category'	=> 'Bài viết theo chuyên mục'
+		'category'	=> 'Bài viết theo chuyên mục',
+		'favorite'	=> 'Bài viết được đánh dấu'
 	);
 	
 	private $default_number = 5;
@@ -45,7 +46,7 @@ class SB_Post_Widget extends WP_Widget {
 		$arr_tmp = $args;
 		$number = empty( $instance['number'] ) ? $this->default_number : absint( $instance['number'] );
 		$title  = apply_filters( 'widget_title', empty( $instance['title'] ) ? $format_string : $instance['title'], $instance, $this->id_base );
-		$type = $instance['type'];		
+		$type = $instance['type'];
 		switch($type) {
 			case 'random':
 				$args = array(
@@ -73,6 +74,17 @@ class SB_Post_Widget extends WP_Widget {
 					'orderby'			=> 'meta_value_num'
 				);
 				break;
+			case 'favorite':
+				$user = new SB_User();
+				$list_posts = array();
+				if(!empty($user)) {
+					$list_posts = (array)$user->get_favorite_post();
+				}
+				$args = array(
+					'posts_per_page'	=> $number,
+					'post__in'			=> $list_posts
+				);
+				break;
 			case 'category':
 				$args = array();
 				$category = $instance['category'];
@@ -92,8 +104,8 @@ class SB_Post_Widget extends WP_Widget {
 				);
 		}
 		$sb_post = new WP_Query($args);
-		//print_r($sb_post);
 		if($sb_post->have_posts()) {
+			if("favorite" == $type && !is_user_logged_in()) return;
 			$args = $arr_tmp;
 			echo $args['before_widget'];
 			echo $args['before_title'] . $title . $args['after_title'];
