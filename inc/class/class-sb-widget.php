@@ -37,7 +37,7 @@ class SB_Post_Widget extends WP_Widget {
 
 	public function __construct() {
 		parent::__construct( 'sb_post_widget', __( 'SB Post', 'sbtheme' ), array(
-			'classname'   => 'widget_twentyfourteen_ephemera',
+			'classname'   => 'widget_sb_post',
 			'description' => __( 'Hiển thị bài viết trên sidebar.', 'sbtheme' ),
 		));
 	}
@@ -79,6 +79,9 @@ class SB_Post_Widget extends WP_Widget {
 				$list_posts = array();
 				if(!empty($user)) {
 					$list_posts = (array)$user->get_favorite_post();
+				}				
+				if(count($list_posts) < 1) {
+					array_push($list_posts, 0);
 				}
 				$args = array(
 					'posts_per_page'	=> $number,
@@ -104,6 +107,7 @@ class SB_Post_Widget extends WP_Widget {
 				);
 		}
 		$sb_post = new WP_Query($args);
+		//print_r($sb_post);
 		if($sb_post->have_posts()) {
 			if("favorite" == $type && !is_user_logged_in()) return;
 			$args = $arr_tmp;

@@ -84,7 +84,7 @@ class SB_Hook {
 	}
 	
 	private function run() {
-		global $pagenow, $sb_enable_shop, $sb_enable_3dfile;
+		global $pagenow, $sb_enable_shop, $sb_enable_3dfile, $sb_enable_links;
 		
 		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
 		
@@ -105,6 +105,10 @@ class SB_Hook {
 
 		if($sb_enable_3dfile) {
 			add_filter('upload_mimes', array($this, 'allow_upload_stl_file'));
+		}
+		
+		if($sb_enable_links) {
+			add_filter( 'pre_option_link_manager_enabled', '__return_true' );
 		}
 	}
 	

@@ -37,7 +37,7 @@ class SB_User extends WP_User {
 	}
 	
 	public function get_favorite($type) {
-		return (array)$this->get_meta($this->favorite_key.$type);
+		return array_filter((array)$this->get_meta($this->favorite_key.$type));
 	}
 	
 	public function update_meta($key, $value) {

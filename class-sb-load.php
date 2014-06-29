@@ -118,7 +118,7 @@ class SB_Load {
 	// Turn on of off theme support
 	private function enable_or_disable($name, $switch) {
 		$name = strtolower($name);
-		global $sb_enable_shop, $sb_enable_manga, $sb_enable_3dfile;
+		global $sb_enable_shop, $sb_enable_manga, $sb_enable_3dfile, $sb_enable_links;
 		switch($name) {
 			case "shop":
 				$sb_enable_shop = $switch;
@@ -128,6 +128,9 @@ class SB_Load {
 				break;
 			case "3dfile":
 				$sb_enable_3dfile = $switch;
+				break;
+			case "links":
+				$sb_enable_links = $switch;
 				break;
 			default:
 				break;
