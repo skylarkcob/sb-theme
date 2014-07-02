@@ -29,6 +29,7 @@ class SB_Customize {
 		$this->add_setting('sb_options[pinterest]', '', 'option');
 		$this->add_setting('sb_options[rss]', '', 'option');
 		$this->add_setting('sb_options[youtube]', '', 'option');
+		//$this->add_setting('sb_options[test_select]', 'ga', 'option');
 		
 		$this->add_control('sb_logo_option', 'Đường dẫn logo', 'sb_general_section', 'sb_options[logo]', 10);
 		$this->add_control('sb_favicon_option', 'Đường dẫn favicon', 'sb_general_section', 'sb_options[favicon]', 10);
@@ -39,6 +40,7 @@ class SB_Customize {
 		$this->add_control('sb_pinterest_option', 'Đường dẫn Pinterest', 'sb_social_section', 'sb_options[pinterest]', 10);
 		$this->add_control('sb_rss_option', 'Đường dẫn RSS', 'sb_social_section', 'sb_options[rss]', 10);
 		$this->add_control('sb_youtube_option', 'Đường dẫn YouTube', 'sb_social_section', 'sb_options[youtube]', 10);
+		//$this->add_control_select('sb_test_select_option', 'Test Select', 'sb_general_section', 'sb_options[test_select]', 10, array('ga' => 'Ga', 'vit' => 'Vit'));
 		
 		$this->get_setting();
 	}
@@ -58,7 +60,18 @@ class SB_Customize {
 			'settings'	=> $setting_id,
 			'priority'	=> $priority
 		));
-	}	
+	}
+	
+	private function add_control_select($id, $label, $section_id, $setting_id, $priority, $choices) {
+		$this->customize->add_control($id, array(
+			'label'		=> __($label, SB_DOMAIN),
+			'section'	=> $section_id,
+			'settings'	=> $setting_id,
+			'type'		=> 'select',
+			'choices'	=> $choices,
+			'priority'	=> $priority
+		));
+	}
 	
 	private function get_setting() {
 		$this->customize->get_setting( 'blogname' )->transport         = 'postMessage';
