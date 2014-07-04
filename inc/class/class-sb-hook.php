@@ -124,15 +124,7 @@ class SB_Hook {
 	}
 	
 	public static function register_sidebar($id, $name, $description) {
-		register_sidebar(array(
-			'name'          => __( $name, 'sbtheme' ),
-			'id'            => $id,
-			'description'   => __( $description, 'sbtheme' ),
-			'before_widget' => '<section id="%1$s" class="widget %2$s"><div class="widget-wrap">',
-			'after_widget'  => '</div></div></section>',
-			'before_title'  => '<h4 class="widget-title">',
-			'after_title'   => '</h4><div class="widget-content">'
-		));
+		SB_WP::register_sidebar( $id, $name, $description);
 	}
 
 

@@ -73,21 +73,44 @@ class SB_WP {
 		return $result;
 	}
 	
-	public static function change_url($url) {
-		if(SB_PHP::is_url_valid($url)) {
-			$old_url = get_option('siteurl');
-			if(strcmp($old_url, $url) != 0) {
-				update_option('siteurl', $url);
+	public static function register_sidebar( $id, $name, $description) {
+		register_sidebar(array(
+			'name'          => __( $name, 'sbtheme' ),
+			'id'            => $id,
+			'description'   => __( $description, 'sbtheme' ),
+			'before_widget' => '<section id="%1$s" class="widget %2$s"><div class="widget-wrap">',
+			'after_widget'  => '</div></div></section>',
+			'before_title'  => '<h4 class="widget-title">',
+			'after_title'   => '</h4><div class="widget-content">'
+		));	
+	}
+	
+	public static function change_url( $url ) {
+
+		if ( SB_PHP::is_url_valid( $url ) ) {
+			$old_url = get_option( 'siteurl' );
+			
+			if ( strcmp( $old_url, $url ) != 0 ) {
+				global $wp_rewrite;
+				$wp_rewrite->set_permalink_structure( '/%postname%' );
+				update_option( 'siteurl', $url );
 				$items = self::get_home_menu_item();
-				foreach($items as $item) {
-					update_post_meta($item->ID, '_menu_item_url', $url);
+				
+				foreach ( $items as $item ) {
+					update_post_meta( $item->ID, '_menu_item_url', $url );
 				}
+				
+				
 			}
-			$old_url = get_option('home');
-			if(strcmp($old_url, $url) != 0) {
-				update_option('home', $url);
+			
+			$old_url = get_option( 'home' );
+			
+			if( strcmp( $old_url, $url ) != 0 ) {
+				update_option( 'home', $url );
 			}
+			
 		}
+		
 	}
 	
 	public static function add_user($args = array()) {
