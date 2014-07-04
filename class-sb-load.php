@@ -118,7 +118,7 @@ class SB_Load {
 	// Turn on of off theme support
 	private function enable_or_disable($name, $switch) {
 		$name = strtolower($name);
-		global $sb_enable_shop, $sb_enable_manga, $sb_enable_3dfile, $sb_enable_links;
+		global $sb_enable_shop, $sb_enable_manga, $sb_enable_3dfile, $sb_enable_links, $sb_enable_scroll_to_top;
 		switch($name) {
 			case "shop":
 				$sb_enable_shop = $switch;
@@ -131,6 +131,9 @@ class SB_Load {
 				break;
 			case "links":
 				$sb_enable_links = $switch;
+				break;
+			case 'scroll-to-top':
+				$sb_enable_scroll_to_top = $switch;
 				break;
 			default:
 				break;

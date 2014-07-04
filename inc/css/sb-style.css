@@ -562,3 +562,19 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
 .widget .sb-post-widget .entry-title {
     line-height: 22px;
 }
+
+.go-top-button {
+    background-color: #e5e5e5;
+    border: 1px solid #ddd;
+    bottom: 50px;
+    display: none;
+    line-height: 1;
+    opacity: 0.8;
+    padding: 8px 10px;
+    position: fixed;
+    right: 20px;
+}
+
+.go-top-button:hover {
+	opacity: 1;
+}

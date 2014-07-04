@@ -84,7 +84,7 @@ class SB_Hook {
 	}
 	
 	private function run() {
-		global $pagenow, $sb_enable_shop, $sb_enable_3dfile, $sb_enable_links;
+		global $pagenow, $sb_enable_shop, $sb_enable_3dfile, $sb_enable_links, $sb_enable_scroll_to_top;
 		
 		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
 		
@@ -109,6 +109,10 @@ class SB_Hook {
 		
 		if($sb_enable_links) {
 			add_filter( 'pre_option_link_manager_enabled', '__return_true' );
+		}
+		
+		if ( $sb_enable_scroll_to_top ) {
+			add_action('wp_footer', array($this, 'scroll_to_top'));
 		}
 	}
 	
@@ -207,6 +211,10 @@ class SB_Hook {
 		if(!session_id()) {
 			session_start();
 		}
+	}
+	
+	public function scroll_to_top() {
+		echo '<a id="scroll-to-top" href="#" class="go-top-button"><i class="fa fa-chevron-up"></i></a>';
 	}
 }
 ?>

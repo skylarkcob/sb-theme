@@ -31,5 +31,34 @@ jQuery(document).ready(function($){
 			return false;
 		});
 	});
+	
+	// Nút trở về đầu trang
+	var scrollToTop = $( "#scroll-to-top" );
+	
+	if ( scrollToTop.length ) {
+		var scrollPositionShown = 100;
+		
+		function show_scroll_to_top() {
+			scrollToTop.fadeIn();
+		}
+		
+		if ( $( window ).scrollTop() > scrollPositionShown ) {
+			show_scroll_to_top();
+		}
+		
+		$( window ).scroll( function() {
+			if ( $( this ).scrollTop() > scrollPositionShown ) {
+				show_scroll_to_top();
+			} else {
+				scrollToTop.fadeOut();
+			}
+		});
+		
+		scrollToTop.click(function(){
+			$('html, body').animate({scrollTop : 0},800);
+			return false;
+		});
+		
+	}
 
 });
