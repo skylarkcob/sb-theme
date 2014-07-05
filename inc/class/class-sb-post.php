@@ -67,6 +67,10 @@ class SB_Post {
 		return $kq;
 	}
 	
+	public function is_comment_allowed() {
+		return (bool) comments_open($this->post->ID);
+	}
+	
 	public function get_permalink() {
 		return get_permalink($this->post->ID);
 	}
@@ -98,18 +102,10 @@ class SB_Post {
 	}
 	
 	public function title($head = "h2") {
-		switch($head) {
-			case "h1":
-				the_title( '<h1 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h1>' );
-				break;
-			case "h2":
-				the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
-				break;
-			case "h3":
-				the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
-				break;
-			default:
-				the_title( '<h4 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h4>' );
+		if ( is_single() || is_page() ) {
+			the_title( "<$head class='entry-title'>", "</$head>");
+		} else {
+			the_title( '<'.$head.' class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></'.$head.'>' );
 		}
 	}
 	

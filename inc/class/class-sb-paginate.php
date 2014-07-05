@@ -59,8 +59,7 @@ class SB_Paginate {
         for ($i = $intStart; $i <= $totalPage; $i++) {
             if($currentPage === intval($i)) {
                 $linkResult .= '<span class="spaginate-current page-item current">'.$i.'</span>';
-            }
-            else if(($i <= 6 && $currentPage < 10) || $i == $totalPage || $i == 1 || $i < 4 || ($i <= 6 && $totalPage <= 6) || ($i > $currentPage && ($i <= ($currentPage + 2))) || ($i < $currentPage && ($i >= ($currentPage - 2))) || ($i >= ($totalPage - 2) && $i < $totalPage)) {
+            } elseif(($i <= 6 && $currentPage < 10) || $i == $totalPage || $i == 1 || $i < 4 || ($i <= 6 && $totalPage <= 6) || ($i > $currentPage && ($i <= ($currentPage + 2))) || ($i < $currentPage && ($i >= ($currentPage - 2))) || ($i >= ($totalPage - 2) && $i < $totalPage)) {
                 $linkResult .= '<a class="spaginate-link page-item" href="'.get_pagenum_link($i).'">'.$i.'</a>';
                 if($i <= 6 && $currentPage < 10) {
                     $hiddenBefore = true;
@@ -70,8 +69,7 @@ class SB_Paginate {
                 if(!$hiddenBefore) {
                     $linkResult .= $pageHidden;
                     $hiddenBefore = true;
-                }
-                else if(!$hiddenAfter && $i > $currentPage) {
+                } elseif(!$hiddenAfter && $i > $currentPage) {
                     $linkResult .= $pageHidden;
                     $hiddenAfter = true;
                 }

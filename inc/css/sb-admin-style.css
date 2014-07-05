@@ -5,3 +5,18 @@
 a:focus {
 	outline: 0 none;
 }
+
+.sb-widget {
+
+}
+
+.widget label {
+    display: inline-block;
+    margin-bottom: 3px;
+}
+
+.widget em {
+    color: #999;
+    display: block;
+    margin-top: 5px;
+}

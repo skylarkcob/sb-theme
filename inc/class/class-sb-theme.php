@@ -4,6 +4,15 @@ class SB_Theme {
 		include SB_TEMPLATE_PATH . "/template-theme-header.php";
 	}
 	
+	public static function load_template($name) {
+		$name = basename( str_replace( 'template-', '', $name ), '.php' );
+		include SB_TEMPLATE_PATH . '/template-'.$name.'.php';
+	}
+	
+	public static function comment() {
+		self::load_template( 'theme-comment' );
+	}
+	
 	public static function footer() {
 		include SB_TEMPLATE_PATH . "/template-theme-footer.php";
 	}
@@ -29,6 +38,18 @@ class SB_Theme {
             yoast_breadcrumb('<div class="breadcrumb">', '</div>');
         }
     }
+	
+	public static function comment_navigation( $type ) {
+		if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : ?>
+	
+		<nav id="comment-nav-<?php echo $type; ?>" class="navigation comment-navigation" role="navigation">
+			<h4 class="screen-reader-text"><?php _e( 'Phân trang bình luận', SB_DOMAIN ); ?></h4>
+			<div class="nav-previous"><?php previous_comments_link( __( '&larr; Cũ hơn', SB_DOMAIN ) ); ?></div>
+			<div class="nav-next"><?php next_comments_link( __( 'Mới hơn &rarr;', SB_DOMAIN ) ); ?></div>
+		</nav><!-- #comment-nav-above -->
+		
+		<?php endif; // Check for comment navigation.
+	}
 
     public static function open_center() {
         echo '<div class="wrap container-fluid"><div class="row">';
@@ -172,5 +193,80 @@ class SB_Theme {
 	<?php
 		endif;
 	}
+	
+	public static function comments_template() {
+		if ( comments_open() || get_comments_number() ) {
+			comments_template();
+		}
+	}
+	
+	public static function comment_form_args() {
+		$commenter = wp_get_current_commenter();
+		$req = get_option( 'require_name_email' );
+		$aria_req = ( $req ? " aria-required='true'" : '' );
+		$args = array(
+			'fields'				=> apply_filters( 'comment_form_default_fields', array(
+												'author' => '<p class="comment-form-author">' .
+													'<input id="author" placeholder="Tên *" name="author" type="text" value="' .
+													esc_attr( $commenter['comment_author'] ) . '" size="30"' . $aria_req . ' />'.
+													'<label for="author">' . __( '' ) . '</label> ' .
+													( $req ? '<span class="required"></span>' : '' )  .
+													'</p>',
+												'email' => '<p class="comment-form-email">' .
+													'<input id="email" placeholder="Email *" name="email" type="text" value="' .
+													esc_attr(  $commenter['comment_author_email'] ) .
+													'" size="30"' . $aria_req . ' />'  .
+													'<label for="email">' . __( '' ) .
+													'</label> ' .
+													( $req ? '<span class="required"></span>' : '' ) .
+													'</p>',
+												'url' => '<p class="comment-form-url">' .
+													'<input id="url" name="url" placeholder="Website" type="text" value="' .
+													esc_attr( $commenter['comment_author_url'] ) .
+													'" size="30" /> ' .
+													'<label for="url">' .
+													__( '', SB_DOMAIN ) .
+													'</label>' .
+												   '</p>'
+											)
+			),
+			'comment_field'			=> '<p class="comment-form-comment">' .
+											'<label for="comment">' . __( '' ) . '</label>' .
+											'<textarea id="comment" name="comment" placeholder="Nội dung bình luận..." aria-required="true"></textarea>' .
+											'</p>',
+			'comment_notes_before'	=> '<p class="comment-notes before">' .
+											__( 'Địa chỉ email của bạn sẽ được giữ bí mật.' ) .
+											( $req ? ' Những mục đánh dấu (*) là bắt buộc.' : '' ) .
+											'</p>',
+			'comment_notes_after'	=> '<p class="form-allowed-tags comment-notes after">' .
+											sprintf( 
+												__( 'Bạn có thể sử dụng các thẻ <abbr title="Các thẻ HTML được phép sử dụng">HTML</abbr> như: %s' ),
+												' <code>' .
+												allowed_tags() .
+												'</code>' ) .
+												'</p>',
+			'must_log_in'			=> '<p class="must-log-in">' .
+											sprintf(
+												__( 'Bạn phải <a href="%s">đăng nhập</a> trước khi gửi bình luận.' ),
+												wp_login_url( apply_filters( 'the_permalink', get_permalink() ) )
+											) .
+											'</p>',
+
+			'logged_in_as'			=> '<p class="logged-in-as">' .
+											sprintf(
+												__( 'Bạn đang đăng nhập với tên tài khoản <a href="%1$s">%2$s</a>. <a href="%3$s" title="Thoát khỏi tài khoản">Đăng xuất?</a>' ),
+												admin_url( 'profile.php' ),
+												wp_get_current_user()->user_login,
+												wp_logout_url( apply_filters( 'the_permalink', get_permalink( ) ) )
+											) .
+											'</p>',
+			'title_reply'			=> '<div class="comment-title">Bình luận</div>',
+			'label_submit'			=> 'Gửi bình luận',
+			'title_reply_to'		=>  __( 'Trả lời bình luận của %s' ),
+			'cancel_reply_link'		=> 'Hủy trả lời'
+		);
+		return $args;
+	}
+	
 }
 ?>

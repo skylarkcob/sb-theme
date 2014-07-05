@@ -16,7 +16,7 @@
 .woocommerce .checkout .woocommerce-error:before,
 .custom-add-to-cart .no-price.call,
 .pp_woocommerce .ppt,
-.form-allowed-tags {
+.comment-list li .comment-title {
 	display: none;
 }
 
@@ -217,7 +217,8 @@ img {
 	box-shadow: none;
 }
 
-#review_form #commentform {
+#review_form #commentform,
+#respond {
 	position: relative;
 }
 
@@ -539,8 +540,16 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
     width: calc(100% - 140px);
 }
 
-.widget .sb-post-widget {
+.widget .sb-post-widget,
+.comment-list li,
+#respond {
 	overflow: hidden;
+}
+
+.comment-list li .comment-reply-title {
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 .widget .sb-post-widget .entry-info {
@@ -577,4 +586,17 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
 
 .go-top-button:hover {
 	opacity: 1;
+}
+
+.comment-notes code {
+    display: block;
+    margin-bottom: 15px;
+    margin-top: 10px;
+    overflow: hidden;
+    white-space: normal;
+    width: 100%;
+}
+
+#comments #comment {
+	margin: 0;
 }

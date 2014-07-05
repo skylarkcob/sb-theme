@@ -133,5 +133,12 @@ class SB_PHP {
 	public static function is_url_valid($url) {
 		return self::is_valid_url($url);
 	}
+	
+	public static function is_string_contain($string, $key) {
+		if (strpos($string, $key) !== false) {
+			return true;
+		}
+		return false;
+	}
 }
 ?>

@@ -72,10 +72,12 @@ class SB_Hook {
 			if("sbtheme" == $value[0]) {
 				wp_localize_script( $value[0], 'sbAjax', array( 'url' => admin_url( 'admin-ajax.php' ) ) );
 			}
-			if("thingiview" == $value[0]) {
-				wp_localize_script($value[0], 'sbStl', array('url' => SB_LIB_URI . "/thingiview/js"));
-			}
 		}
+		
+		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
+			wp_enqueue_script( 'comment-reply' );
+		}
+		
 	}
 	
 	public function sbtheme_customize_init($wp_customize) {
@@ -87,6 +89,8 @@ class SB_Hook {
 		global $pagenow, $sb_enable_shop, $sb_enable_3dfile, $sb_enable_links, $sb_enable_scroll_to_top;
 		
 		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
+		
+		//add_filter('dynamic_sidebar_params', array($this, 'sbtheme_widget_param'));
 		
 		add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
 		add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
@@ -131,7 +135,15 @@ class SB_Hook {
 		SB_WP::register_sidebar( $id, $name, $description);
 	}
 
-
+	public function sbtheme_widget_param($params) {
+		$widget_id = $params[0]['widget_id'];
+		$widget_class = SB_WP::build_widget_class($widget_id);
+        $params[0]['before_widget'] = '<section id="'.$widget_id.'" class="widget '.$widget_class.'"><div class="widget-wrap">';
+        $params[0]['after_widget'] = '</div></section>';
+        $params[0]['before_title'] = '<h4 class="widget-title">';
+        $params[0]['after_title'] = '</h4>';
+        return $params;
+    }
 	
 	public function default_widget_title($title) {
 		if(empty($title)) {
@@ -143,18 +155,14 @@ class SB_Hook {
 	public function sbtheme_setup() {
 		global $sb_enable_shop;
 		
-		load_theme_textdomain( 'sbtheme', get_template_directory() . '/languages' );
+		load_theme_textdomain( SB_DOMAIN, get_template_directory() . '/languages' );
 		add_theme_support( 'automatic-feed-links' );
 		add_theme_support( 'post-thumbnails' );
 		set_post_thumbnail_size( 300, 300 );
 		add_image_size('thumbnail', 300, 300, false);
 		add_image_size('thumbnail_crop', 300, 300, true);
-		add_theme_support( 'html5', array(
-			'search-form', 'comment-form', 'comment-list', 'gallery', 'caption'
-		));
-		add_theme_support( 'post-formats', array(
-			'aside', 'image', 'video', 'audio', 'quote', 'link', 'gallery',
-		));
+		add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption' ));
+		add_theme_support( 'post-formats', array( 'aside', 'image', 'video', 'audio', 'quote', 'link', 'gallery' ));
 		register_nav_menus( array(
 			'top'		=> __( 'Top menu', 'sbtheme' ),
 			'footer'	=> __( 'Footer menu', 'sbtheme' ),
