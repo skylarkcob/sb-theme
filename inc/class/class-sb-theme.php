@@ -201,6 +201,7 @@ class SB_Theme {
 	}
 	
 	public static function comment_form_args() {
+		global $user_identity;
 		$commenter = wp_get_current_commenter();
 		$req = get_option( 'require_name_email' );
 		$aria_req = ( $req ? " aria-required='true'" : '' );
@@ -256,7 +257,7 @@ class SB_Theme {
 											sprintf(
 												__( 'Bạn đang đăng nhập với tên tài khoản <a href="%1$s">%2$s</a>. <a href="%3$s" title="Thoát khỏi tài khoản">Đăng xuất?</a>' ),
 												admin_url( 'profile.php' ),
-												wp_get_current_user()->user_login,
+												esc_attr( $user_identity ),
 												wp_logout_url( apply_filters( 'the_permalink', get_permalink( ) ) )
 											) .
 											'</p>',
