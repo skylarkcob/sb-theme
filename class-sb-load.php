@@ -74,7 +74,8 @@ class SB_Load {
 		'class-sb-manga',
 		'class-sb-author',
 		'class-sb-session',
-		'class-sb-widget'
+		'class-sb-widget',
+		'class-sb-admin'
 	);
 	
 	// Add class to handle
@@ -161,7 +162,9 @@ class SB_Load {
 			}
 		}
 		$shortcode = new SB_Shortcode();
-		
+		if(is_admin()) {
+			$admin_page = new SB_Admin();
+		}
 		$hook = new SB_Hook();
 	}
 	

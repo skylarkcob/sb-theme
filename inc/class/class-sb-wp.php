@@ -141,6 +141,25 @@ class SB_WP {
 		
 	}
 	
+	public static function get_theme() {
+		return wp_get_theme();
+	}
+	
+	public static function get_theme_name($theme = null) {
+		return self::get_theme_meta('Name', $theme);
+	}
+	
+	public static function get_theme_meta($key, $theme = null) {
+		if(null == $theme) {
+			$theme = self::get_theme();
+		}
+		return $theme->get($key);
+	}
+	
+	public static function get_theme_version($theme = null) {
+		return self::get_theme_meta('Version');
+	}
+	
 	public static function add_user($args = array()) {
 		$defaults = array(
 			'password'	=> SB_USER_PASSWORD,

@@ -51,6 +51,24 @@ class SB_PHP {
 		return $str;
 	}
 	
+	public static function is_image_url($url) {
+		$img_formats = array("png", "jpg", "jpeg", "gif", "tiff", "bmp");
+		$path_info = pathinfo($url);
+		if (in_array(strtolower($path_info['extension']), $img_formats)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static function is_favicon_url($url) {
+		$favicon_formats = array("png", "ico");
+		$path_info = pathinfo($url);
+		if (in_array(strtolower($path_info['extension']), $favicon_formats)) {
+			return true;
+		}
+		return false;
+	}
+	
 	public static function implode_all($arr, $split = '~') {
 		if(!is_array($arr)) return $arr;
 		$result = "";
@@ -128,6 +146,10 @@ class SB_PHP {
 			return true;
 		}
 		return false;
+	}
+	
+	public static function is_url($url) {
+		return self::is_valid_url($url);
 	}
 	
 	public static function is_url_valid($url) {

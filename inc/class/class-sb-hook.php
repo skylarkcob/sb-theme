@@ -92,8 +92,11 @@ class SB_Hook {
 		
 		//add_filter('dynamic_sidebar_params', array($this, 'sbtheme_widget_param'));
 		
-		add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
+		
 		add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
+		
+		add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
+		
 		add_action('after_setup_theme', array($this, 'sbtheme_setup'));
 		add_action( 'customize_preview_init', array($this, 'sbtheme_customize_script') );
 		add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
@@ -118,6 +121,12 @@ class SB_Hook {
 		if ( $sb_enable_scroll_to_top ) {
 			add_action('wp_footer', array($this, 'scroll_to_top'));
 		}
+		
+		if(is_admin()) {
+			if(isset($_GET['page']) && 'sbtheme-option' == $_GET['page']) {
+				$this->media_upload_init();
+			}
+		}
 	}
 	
 	public function change_excerpt_more($more) {
@@ -133,6 +142,12 @@ class SB_Hook {
 	
 	public static function register_sidebar($id, $name, $description) {
 		SB_WP::register_sidebar( $id, $name, $description);
+	}
+	
+	public function media_upload_init() {
+		wp_enqueue_style( 'thickbox' );
+		wp_enqueue_script( 'thickbox' );
+		wp_enqueue_script( 'media-upload' );
 	}
 
 	public function sbtheme_widget_param($params) {
@@ -206,8 +221,10 @@ class SB_Hook {
 	public function sbtheme_admin_script_and_style() {
 		wp_register_script('sbtheme-admin', SB_JS_URI . '/sb-admin-script.js', array('jquery'), false, true);
 		wp_enqueue_script('sbtheme-admin');
+		
 		wp_register_style('sbtheme-admin-style', SB_CSS_URI . '/sb-admin-style.css');
 		wp_enqueue_style('sbtheme-admin-style');
+		
 	}
 	
 	public function sbtheme_customize_script() {

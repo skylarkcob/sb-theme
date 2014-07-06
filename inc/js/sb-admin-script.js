@@ -29,4 +29,84 @@ jQuery(document).ready(function($){
 			sidebarOption.remove();
 		});
 	}
+	
+	// Trang cài đặt, tùy chỉnh giao diện
+	var sbOption = $("div.sb-option");
+	if(sbOption.length) {
+		var uploadCaller = null;
+		sbOption.find("a.insert-media").each(function(){
+			var insertMediaButton = $(this);
+			insertMediaButton.click(function(){
+				uploadCaller = $(this).closest("div.sbtheme-upload").find("input");
+				var formField = uploadCaller.attr("name");
+				tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
+				return false;
+			});
+		});
+		
+		window.send_to_editor = function(html) {
+			var imageUrl = $('img',html).attr('src');
+			uploadCaller.val(imageUrl);
+			tb_remove();
+			var mediaThumbnailBox = uploadCaller.closest("div.sbtheme-media-image").find("div.sbtheme.media.image");
+			mediaThumbnailBox.addClass("uploaded");
+			mediaThumbnailBox.html('<img src="' + imageUrl + '">');
+		}
+		
+		sbOption.find("div.sbtheme-media-image").each(function(){
+			var mediaGroup = $(this);
+			var mediaUrl = mediaGroup.find("div.sbtheme-upload input").attr("value");
+			var imageHTML = mediaGroup.find("div.sbtheme.media.image");
+
+			if("" == mediaUrl && imageHTML.html().length > 1) {
+				imageHTML.removeClass("uploaded");
+				imageHTML.empty();
+			}
+			
+		});
+
+		sbOption.find("a.sbtheme-group-tab").each(function(){
+			var aSectionTab = $(this);
+			
+			aSectionTab.click(function(){
+				var currentSection = $(this).closest("li"), dataSection = $(this).attr("data-section");
+				if('sbtheme_aboutsb_section' == dataSection) {
+					sbOption.find("p.submit").css("display", "none");
+				} else {
+					sbOption.find("p.submit").css("display", "block");
+				}
+				if(currentSection.hasClass("active")) {
+					return false;
+				}
+				$(this).closest("ul.sbtheme-list-section").find("li").removeClass("active");
+				currentSection.addClass("active");
+				
+				sbOption.find("div.sbtheme-option-section").each(function(){
+					$(this).removeClass("active");
+				});
+				
+				var currentSectionContent = sbOption.find("#" + dataSection);
+
+				if(currentSectionContent.length) {
+					currentSectionContent.addClass("active");
+				}
+			});
+		});
+		
+		sbOption.find("label.switch-button").each(function(){
+			var aSwitchButton = $(this);
+			aSwitchButton.click(function(){
+				var dataSwitch = "on", switchValue = 0, currentDataSwitch = $(this).attr('data-switch');
+				if(dataSwitch == currentDataSwitch) {
+					dataSwitch = 'off';
+					switchValue = 1;
+				}
+				var otherButton = $(this).closest('div.switch-options').find("[data-switch='" + dataSwitch + "']");
+				otherButton.removeClass("active");
+				$(this).addClass("active");
+				$(this).closest('div.switch-options').find("input").val(switchValue);
+			});
+		});
+		
+	}
 });

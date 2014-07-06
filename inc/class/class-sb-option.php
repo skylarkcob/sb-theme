@@ -3,7 +3,18 @@ class SB_Option {
 	private $option;
 	public function __construct() {
 		global $sb_options;
+		if(!is_array($sb_options)) {
+			$sb_options = $this->get_option();
+		}
 		$this->option = $sb_options;
+	}
+	
+	public function get_all_option() {
+		return $this->option;
+	}
+	
+	public function get_option() {
+		return (array) get_option('sb_options');
 	}
 	
 	public function get_gplus_uri() {
