@@ -8,6 +8,8 @@ class SB_Admin {
 	// Biến lưu trữ tùy chọn
 	private $options;
 	
+	private $data_section;
+	
 	// Tên tùy chọn lưu trong cơ sở dữ liệu
 	private $option_name = "sb_options";
 	
@@ -30,6 +32,7 @@ class SB_Admin {
 	private function action_init() {
 		add_action("admin_menu", array($this, "sbtheme_add_options_menu"));
 		add_action("admin_init", array($this, "sbtheme_page_init"));
+		add_action( 'wp_ajax_my_action', array($this, 'sbtheme_admin_ajax_callback' ));
 	}
 	
 	/*
@@ -43,6 +46,7 @@ class SB_Admin {
 	
 	// Thêm giá trị vào danh sách các tab
 	private function tab_init() {
+		$this->data_section = SB_PHP::get_session('data_section');
 		$this->add_tab('general', 'Cài đặt chung', 'sbtheme_general_section');
 		$this->add_tab('home', 'Cài đặt trang chủ', 'sbtheme_home_section');
 		$this->add_tab('social', 'Cài đặt mạng xã hội', 'sbtheme_social_section');
@@ -168,7 +172,15 @@ class SB_Admin {
 	 */
 	private function add_sbmodule_setting() {
 		$this->add_section('sbtheme_sbmodule_section', 'Bật hoặc tắt các gói tiện ích kèm theo SB Framework');
-		$this->add_sbmodule_field('enable_shop', 'Hỗ trợ trang shop', 'enable_shop_callback');
+		$this->add_sbmodule_field('enable_shop', 'Hỗ trợ trang Shop', 'enable_shop_callback');
+		$this->add_sbmodule_field('enable_manga', 'Hỗ trợ trang Manga', 'enable_manga_callback');
+		$this->add_sbmodule_field('enable_tivi', 'Hỗ trợ trang Tivi', 'enable_tivi_callback');
+		$this->add_sbmodule_field('enable_sb_post_widget', 'SB Post Widget', 'enable_sb_post_widget_callback');
+		$this->add_sbmodule_field('enable_sb_tab_widget', 'SB Tab Widget', 'enable_sb_tab_widget_callback');
+		$this->add_sbmodule_field('enable_sb_banner_widget', 'SB Banner Widget', 'enable_sb_banner_widget_callback');
+		$this->add_sbmodule_field('enable_3dfile', 'Đăng tập tin 3D', 'enable_3dstl_callback');
+		$this->add_sbmodule_field('enable_scroll_top', 'Nút quay về đầu trang', 'enable_scroll_top_callback');
+		$this->add_sbmodule_field('enable_links_manager', 'Quản lý Links', 'enable_links_manager_callback');
 	}
 	
 	// Thêm mục cho trang quản lý các tiện ích
@@ -179,6 +191,46 @@ class SB_Admin {
 	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng Shop
 	public function enable_shop_callback() {
 		$this->set_switch_field('enable_shop', 'Bật hoặc tắt chức năng làm trang Shop cho WordPress.');
+	}
+	
+	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng manga
+	public function enable_manga_callback() {
+		$this->set_switch_field('enable_manga', 'Bật hoặc tắt chức năng làm trang Manga cho WordPress.');
+	}
+	
+	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng tivi
+	public function enable_tivi_callback() {
+		$this->set_switch_field('enable_tivi', 'Bật hoặc tắt chức năng làm trang xem Tivi cho WordPress.');
+	}
+	
+	// Hàm hiển thị mục cài đặt bật hoặc tắt widget hiển thị bài viết
+	public function enable_sb_post_widget_callback() {
+		$this->set_switch_field('enable_sb_post_widget', 'Bật hoặc tắt chức năng widget hiển thị bài viết SB Post Widget.');
+	}
+	
+	// Hàm hiển thị mục cài đặt bật hoặc tắt widget hiển thị tab
+	public function enable_sb_tab_widget_callback() {
+		$this->set_switch_field('enable_sb_tab_widget', 'Bật hoặc tắt chức năng widget hiển thị tab SB Tab Widget.');
+	}
+	
+	// Hàm hiển thị mục cài đặt bật hoặc tắt widget hiển thị banner
+	public function enable_sb_banner_widget_callback() {
+		$this->set_switch_field('enable_sb_banner_widget', 'Bật hoặc tắt chức năng widget hiển thị bài viết SB Banner Widget.');
+	}
+	
+	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng upload tập tin .stl
+	public function enable_3dstl_callback() {
+		$this->set_switch_field('enable_3dfile', 'Bật hoặc tắt chức năng cho phép đăng tải tập tin 3D .stl.');
+	}
+	
+	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng hiển thị nút quay về đầu trang
+	public function enable_scroll_top_callback() {
+		$this->set_switch_field('enable_scroll_top', 'Bật hoặc tắt chức năng cho phép hiển thị nút quay về đầu trang.');
+	}
+	
+	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng quản lý links
+	public function enable_links_manager_callback() {
+		$this->set_switch_field('enable_links_manager', 'Bật hoặc tắt chức năng cho phép hiển thị trình quản lý links trên WordPress.');
 	}
 	
 	private function set_switch_field($name, $description) {
@@ -340,9 +392,14 @@ class SB_Admin {
 		}
 	}
 	
+	private function set_data_section() {
+		$this->data_section = SB_PHP::get_session('data_section');
+	}
+	
 	// Hiển thị và xử lý các tùy chọn
 	function do_settings_sections( $page ) {
 		global $wp_settings_sections, $wp_settings_fields;
+		$this->set_data_section();
 		 
 		if ( ! isset( $wp_settings_sections[$page] ) ) {
 			return;
@@ -351,10 +408,7 @@ class SB_Admin {
 		foreach ( (array) $wp_settings_sections[$page] as $section ) {
 
 			$section_id = $section['id'];
-			$class = 'sbtheme-option-section';
-			if(0 == $count) {
-				$class .= ' active';
-			}
+			$class = 'sbtheme-option-section'.$this->set_active_class($count, $section_id);
 			echo '<div id="'.$section_id.'" class="'.$class.'">';
 			
 			if ( $section['title'] ) {
@@ -370,13 +424,28 @@ class SB_Admin {
 			}
 			
 			echo '<table class="form-table">';
-				if($has_field) {
+				if($has_field && 'sbtheme_aboutsb_section' != $section_id) {
 					do_settings_fields( $page, $section_id );
+				} elseif('sbtheme_aboutsb_section' == $section_id) {
+					$this->sbtheme_about_page();
 				}
 			echo '</table>';
 			echo '</div>';
 			$count++;
 		}
+	}
+	
+	private function sbtheme_about_page() {
+		?>
+		<div class="sbtheme-about">
+			<div class="sb-logo"><img src="<?php echo SB_Theme::get_image('sb-framework-logo-300.png'); ?>"></div>
+			<p class="sb-version">Phiên bản: <?php echo SB_VERSION; ?></p>
+			<p>SB Framework là bộ mã nguồn được thực hiện bởi SB Team, mục đích của gói phần mềm này là giúp việc lập trình WordPress trở nên dễ dàng hơn. Bạn có thể tải bản cập nhật mới nhất từ trên <a target="_blank" href="https://github.com/skylarkcob/sb">repository</a> của GitHub.</p>
+			<p>SB Framework được thực hiện bởi <a target="_blank" href="https://github.com/skylarkcob">skylarkcob</a> và <a target="_blank" href="https://github.com/flyenuol">flyenuol</a>, mọi thắc mắc cũng như đóng góp xin vui lòng liên hệ qua địa chỉ email bên dưới hoặc gửi bài lên diễn đàn Học WordPress.</p>
+			<p>Nếu bạn cảm thấy SB Framework có ích với bạn và muốn đóng góp một ít công sức để các lập trình viên phát triển tiếp mã nguồn này, xin vui lòng sử dụng nút ủng hộ qua PayPal bên dưới.</p>
+			<p class="sb-donate"><?php SB_Theme::paypal_donate(); ?></p>
+		</div>
+		<?php
 	}
 	
 	// Khởi tạo các trang cài đặt tùy chọn
@@ -409,6 +478,18 @@ class SB_Admin {
 		add_submenu_page('themes.php', 'Cài đặt giao diện', 'SBTheme Options', $this->capability, $this->menu_slug, array($this, 'sbtheme_settings_page'));
 	}
 	
+	private function set_active_class($count, $section_id) {
+		$class = '';
+		$do_set = false;
+		if((0 == $count && empty($this->data_section)) || (!empty($this->data_section) && $this->data_section == $section_id)) {
+			$do_set = true;
+		}
+		if($do_set) {
+			$class .= " active";
+		}
+		return $class;
+	}
+	
 	// Nội dung trang options
 	public function sbtheme_settings_page() {
 		if (!current_user_can($this->capability)) {
@@ -431,17 +512,15 @@ class SB_Admin {
 					<h2><?php echo SB_WP::get_theme_name($theme); ?></h2>
 					<span>phiên bản <?php echo SB_WP::get_theme_version($theme); ?></span>
 				</div>
+				<?php
+				$this->data_section = SB_PHP::get_session('data_section');
+				?>
 				<div class="sbtheme-content">
 					<div class="sidebar">
 						<ul class="sbtheme-list-section">
 							<?php $count = 0; ?>
 							<?php foreach($this->list_tabs as $key => $value) : ?>
-							<?php
-								$class = "section-item tab-".$key;
-								if(0 == $count) {
-									$class .= " active";
-								}
-							?>
+							<?php $class = "section-item tab-".$key.$this->set_active_class($count, $value['section_id']); ?>
 							<li class="<?php echo $class; ?>">
 								<a class="sbtheme-group-tab" href="javascript:void(0);" data-section="<?php echo $value['section_id']; ?>"><i class="tab-icon <?php echo $key; ?>"></i> <span class="group-title"><?php echo $value['title']; ?></span></a>
 							</li>
@@ -458,7 +537,14 @@ class SB_Admin {
 					</div>
 				</div>
 				<div class="sbtheme-footer">
-					<p>Giao diện được thực hiện bởi SB Team. Mọi thắc mắc và đóng góp xin vui lòng liên hệ qua địa chỉ email: <em>laidinhcuongvn@gmail.com</em></p>
+					<div class="left"><p>Giao diện được thực hiện bởi SB Team. Mọi thắc mắc và đóng góp xin vui lòng liên hệ qua địa chỉ email: <em>laidinhcuongvn@gmail.com</em></p></div>
+					<div class="right">
+						<ul class="sb-social-list">
+							<li class="github"><a target="_blank" href="https://github.com/skylarkcob/sb"></a></li>
+							<li class="facebook"><a target="_blank" href="https://www.facebook.com/Sauhicom"></a></li>
+							<li class="twitter"><a target="_blank" href="https://twitter.com/skylarkcob"></a></li>
+						</ul>
+					</div>					
 				</div>
 				
 			</div>
@@ -469,6 +555,12 @@ class SB_Admin {
 			
 		</div>
 	<?php
+	}
+	
+	public function sbtheme_admin_ajax_callback() {
+		$data_section = isset($_POST['data_section']) ? $_POST['data_section'] : '';
+		SB_PHP::set_session('data_section', $data_section);
+		die();
 	}
 	
 	// Hiển thị dòng chú thích bên dưới tiêu đề trang

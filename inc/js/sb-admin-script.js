@@ -90,6 +90,8 @@ jQuery(document).ready(function($){
 				if(currentSectionContent.length) {
 					currentSectionContent.addClass("active");
 				}
+				$.post(sbAdminAjax.url, {action: 'my_action', data_section: dataSection}, function(response){
+				});
 			});
 		});
 		
@@ -107,6 +109,11 @@ jQuery(document).ready(function($){
 				$(this).closest('div.switch-options').find("input").val(switchValue);
 			});
 		});
+		
+		var currentTab = sbOption.find("div.sbtheme-option-section.active");
+		if(currentTab.length && "sbtheme_aboutsb_section" == currentTab.attr("id")) {
+			sbOption.find("p.submit").css("display", "none");
+		}
 		
 	}
 });

@@ -141,6 +141,14 @@ class SB_PHP {
 		return $url;
 	}
 	
+	public static function get_session($key) {
+		return isset($_SESSION[$key]) ? $_SESSION[$key] : '';
+	}
+	
+	public static function set_session($key, $value) {
+		$_SESSION[$key] = $value;
+	}
+	
 	public static function is_valid_url($url) {
 		if(filter_var($url, FILTER_VALIDATE_URL)) {
 			return true;

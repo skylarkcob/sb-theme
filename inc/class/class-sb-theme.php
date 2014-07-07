@@ -269,5 +269,17 @@ class SB_Theme {
 		return $args;
 	}
 	
+	public static function get_image($name) {
+		return SB_IMAGES_URI . "/" . $name;
+	}
+	
+	public static function paypal_donate($value = 5) {
+		switch($value) {
+			case 5:
+				echo '<a target="_blank" href="'.SB_PAYPAL_DONATE_5_URL.'"><img src="'.SB_PAYPAL_DONATE_BUTTON_CARD_URL.'" ></a>';
+				break;
+		}
+	}
+	
 }
 ?>

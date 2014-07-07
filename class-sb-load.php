@@ -4,7 +4,8 @@ if(!defined("ABSPATH")) {
 	die("Please do not access this file directly.");
 }
 
-define("SB_VERSION", "1.0.0");
+// Khai báo phiên bản cho SB Framework
+define("SB_VERSION", "1.0.1");
 
 // SB WordPress version support
 define("SB_SUPPORT_VERSION", "3.9");
@@ -52,6 +53,9 @@ define("SB_WIDGET_NO_TITLE", '<span class="no-title"></span>');
 define("SB_IMAGES_URI", SB_INC_URI . "/images");
 
 define("SB_USER_PASSWORD", "c1khdv6H@");
+
+define("SB_PAYPAL_DONATE_5_URL", "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WQSLEH5EPHJ7E");
+define("SB_PAYPAL_DONATE_BUTTON_CARD_URL", "https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif");
 
 // Get sb_options
 $sb_options = get_option('sb_options');

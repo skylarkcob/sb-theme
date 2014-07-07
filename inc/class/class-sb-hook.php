@@ -99,7 +99,7 @@ class SB_Hook {
 		
 		add_action('after_setup_theme', array($this, 'sbtheme_setup'));
 		add_action( 'customize_preview_init', array($this, 'sbtheme_customize_script') );
-		add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
+		
 		add_action('init', array($this, 'session_init'), 1);
 		
 		if ( $sb_enable_shop && is_admin() && isset( $_GET['activated'] ) && $pagenow == 'themes.php' ) {
@@ -126,6 +126,8 @@ class SB_Hook {
 			if(isset($_GET['page']) && 'sbtheme-option' == $_GET['page']) {
 				$this->media_upload_init();
 			}
+			
+			add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
 		}
 	}
 	
@@ -220,7 +222,9 @@ class SB_Hook {
 	
 	public function sbtheme_admin_script_and_style() {
 		wp_register_script('sbtheme-admin', SB_JS_URI . '/sb-admin-script.js', array('jquery'), false, true);
+		wp_localize_script( 'sbtheme-admin', 'sbAdminAjax', array( 'url' => admin_url( 'admin-ajax.php' ) ) );
 		wp_enqueue_script('sbtheme-admin');
+		
 		
 		wp_register_style('sbtheme-admin-style', SB_CSS_URI . '/sb-admin-style.css');
 		wp_enqueue_style('sbtheme-admin-style');
