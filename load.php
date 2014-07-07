@@ -1,0 +1,1 @@
+<?php include get_template_directory() . "/sb/class-sb-load.php"; ?>

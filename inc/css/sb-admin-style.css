@@ -272,6 +272,7 @@ a:focus {
 
 .sbtheme-content .switch-button.active {
 	color: #fff;
+	cursor: default;
 }
 
 .sbtheme-footer .left {

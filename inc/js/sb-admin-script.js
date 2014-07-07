@@ -34,23 +34,30 @@ jQuery(document).ready(function($){
 	var sbOption = $("div.sb-option");
 	if(sbOption.length) {
 		var uploadCaller = null;
+		var formField;
 		sbOption.find("a.insert-media").each(function(){
 			var insertMediaButton = $(this);
 			insertMediaButton.click(function(){
 				uploadCaller = $(this).closest("div.sbtheme-upload").find("input");
-				var formField = uploadCaller.attr("name");
+				formField = uploadCaller.attr("name");
 				tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
 				return false;
 			});
 		});
 		
+		window.original_send_to_editor = window.send_to_editor;
 		window.send_to_editor = function(html) {
-			var imageUrl = $('img',html).attr('src');
-			uploadCaller.val(imageUrl);
-			tb_remove();
-			var mediaThumbnailBox = uploadCaller.closest("div.sbtheme-media-image").find("div.sbtheme.media.image");
-			mediaThumbnailBox.addClass("uploaded");
-			mediaThumbnailBox.html('<img src="' + imageUrl + '">');
+			if(formField) {
+				var imageUrl = $('img',html).attr('src');
+				uploadCaller.val(imageUrl);
+				tb_remove();
+				var mediaThumbnailBox = uploadCaller.closest("div.sbtheme-media-image").find("div.sbtheme.media.image");
+				mediaThumbnailBox.addClass("uploaded");
+				mediaThumbnailBox.html('<img src="' + imageUrl + '">');
+				formField = '';
+			} else {
+				window.original_send_to_editor(html);
+			}
 		}
 		
 		sbOption.find("div.sbtheme-media-image").each(function(){

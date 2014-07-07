@@ -490,6 +490,25 @@ class SB_Admin {
 		return $class;
 	}
 	
+	private function option_page_header() {
+		?>
+		<div class="sbtheme-header">
+			<?php $theme = SB_WP::get_theme(); ?>
+			<?php $name = SB_WP::get_theme_name($theme); ?>
+			<?php
+				if(empty($name)) {
+					$name = 'Giao diện chưa đặt tên';
+				}
+			?>
+			<h2><?php echo $name; ?></h2>
+			<?php $version = SB_WP::get_theme_version($theme); ?>
+			<?php if(!empty($version)) : ?>
+			<span>phiên bản <?php echo $version; ?></span>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+	
 	// Nội dung trang options
 	public function sbtheme_settings_page() {
 		if (!current_user_can($this->capability)) {
@@ -506,13 +525,9 @@ class SB_Admin {
 					<p><strong><?php _e('Thiết lập của bạn đã được lưu.') ?></strong></p>
 				</div>
 			<?php endif; ?>
-			<div class="sbtheme-container">
-				<div class="sbtheme-header">
-					<?php $theme = SB_WP::get_theme(); ?>
-					<h2><?php echo SB_WP::get_theme_name($theme); ?></h2>
-					<span>phiên bản <?php echo SB_WP::get_theme_version($theme); ?></span>
-				</div>
+			<div class="sbtheme-container">				
 				<?php
+				$this->option_page_header();
 				$this->data_section = SB_PHP::get_session('data_section');
 				?>
 				<div class="sbtheme-content">
