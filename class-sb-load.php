@@ -79,7 +79,8 @@ class SB_Load {
 		'class-sb-author',
 		'class-sb-session',
 		'class-sb-widget',
-		'class-sb-admin'
+		'class-sb-admin',
+		'class-sb-language'
 	);
 	
 	// Add class to handle
@@ -157,6 +158,7 @@ class SB_Load {
 	
 	// Include all handle
 	public function run() {
+		global $sb_language;
 		foreach($this->items as $item) {
 			if(array_key_exists($item, $this->handles)) {
 				$path = $this->handles[$item];
@@ -165,11 +167,18 @@ class SB_Load {
 				}
 			}
 		}
-		$shortcode = new SB_Shortcode();
+		if(class_exists("SB_Shortcode")) {
+			$shortcode = new SB_Shortcode();
+		}
 		if(is_admin()) {
 			$admin_page = new SB_Admin();
 		}
-		$hook = new SB_Hook();
+		if(class_exists("SB_Hook")) {
+			$hook = new SB_Hook();
+		}
+		if(class_exists("SB_Language")) {
+			$sb_language = new SB_Language();
+		}
 	}
 	
 	public function support_widget($args = array()) {

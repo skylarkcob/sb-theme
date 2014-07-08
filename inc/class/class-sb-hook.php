@@ -170,7 +170,7 @@ class SB_Hook {
 	}
 	
 	public function sbtheme_setup() {
-		global $sb_enable_shop;
+		global $sb_enable_shop, $sb_language;
 		
 		load_theme_textdomain( SB_DOMAIN, get_template_directory() . '/languages' );
 		add_theme_support( 'automatic-feed-links' );
@@ -193,6 +193,11 @@ class SB_Hook {
 			add_image_size('product_medium_crop', 400, 400, true);
 			add_image_size('product_small', 200, 200, false);
 			add_image_size('product_small_crop', 200, 200, true);			
+		}
+		if("vi" == $sb_language->get()) {
+			update_option("timezone_string", "Asia/Ho_Chi_Minh");
+			update_option("date_format", "d/m/Y");
+			SB_WP::update_permalink("/%postname%");
 		}
 	}
 	

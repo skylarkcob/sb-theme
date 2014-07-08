@@ -114,14 +114,18 @@ class SB_WP {
 		return array();
 	}
 	
+	public static function update_permalink($struct) {
+		global $wp_rewrite;
+		$wp_rewrite->set_permalink_structure( $struct );
+	}
+	
 	public static function change_url( $url ) {
 
 		if ( SB_PHP::is_url_valid( $url ) ) {
 			$old_url = get_option( 'siteurl' );
 			
 			if ( strcmp( $old_url, $url ) != 0 ) {
-				global $wp_rewrite;
-				$wp_rewrite->set_permalink_structure( '/%postname%' );
+				self::update_permalink( '/%postname%' );
 				update_option( 'siteurl', $url );
 				$items = self::get_home_menu_item();
 				
