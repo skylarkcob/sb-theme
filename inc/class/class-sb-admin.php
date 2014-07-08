@@ -46,12 +46,14 @@ class SB_Admin {
 	
 	// Thêm giá trị vào danh sách các tab
 	private function tab_init() {
+		global $sb_language;
+		$sb_language = new SB_Language();
 		$this->data_section = SB_PHP::get_session('data_section');
-		$this->add_tab('general', 'Cài đặt chung', 'sbtheme_general_section');
-		$this->add_tab('home', 'Cài đặt trang chủ', 'sbtheme_home_section');
-		$this->add_tab('social', 'Cài đặt mạng xã hội', 'sbtheme_social_section');
-		$this->add_tab('sbmodule', 'Quản lý tiện ích', 'sbtheme_sbmodule_section');
-		$this->add_tab('aboutsb', 'Giới thiệu SB Framework', 'sbtheme_aboutsb_section');
+		$this->add_tab('general', $sb_language->phrase("general_settings"), 'sbtheme_general_section');
+		$this->add_tab('home', $sb_language->phrase("home_page_settings"), 'sbtheme_home_section');
+		$this->add_tab('social', $sb_language->phrase("social_network_settings"), 'sbtheme_social_section');
+		$this->add_tab('sbmodule', $sb_language->phrase("utility_management"), 'sbtheme_sbmodule_section');
+		$this->add_tab('aboutsb', $sb_language->phrase("about_sb"), 'sbtheme_aboutsb_section');
 	}
 	
 	/*
@@ -60,7 +62,9 @@ class SB_Admin {
 	
 	// Thêm trang cài đặt thông tin chung
 	private function add_general_setting() {
+		global $sb_language;
 		$this->add_section('sbtheme_general_section', 'Cài đặt chung cho giao diện');
+		$this->add_general_field('language', $sb_language->phrase("choose_language"), "language_callback");
 		$this->add_general_field('logo', 'Logo', 'logo_callback');
 		$this->add_general_field('favicon', 'Favicon', 'favicon_callback');
 		$this->add_general_field('banner', 'Banner', 'banner_callback');
@@ -84,6 +88,29 @@ class SB_Admin {
 	// Hàm hiển thị mục cài đặt banner
 	public function banner_callback() {
 		$this->set_media_image_field('banner', 'Bạn có thể điền vào đường dẫn hoặc upload banner mới.');
+	}
+	
+	public function language_callback() {
+		global $sb_language;
+		$this->set_select_field('language', $sb_language->phrase("choose_language_description"));
+	}
+	
+	private function set_select_field($name, $description) {
+		$this->set_field($name, $description, 'select');
+	}
+	
+	private function select_field($name, $description) {
+		global $sb_language;
+		$langs = $sb_language->get_list();
+		$value = $this->get_option_value($name);
+		?>
+		<select id="<?php echo $name; ?>" name="<?php echo esc_attr($this->get_field_name($name)); ?>">
+			<?php foreach($langs as $key => $title) : ?>
+			<option value="<?php echo $key; ?>"<?php selected( $value, $key ); ?>><?php echo $title; ?></option>
+			<?php endforeach; ?>
+		</select>
+		<p class="description"><?php echo $description; ?></p>
+		<?php
 	}
 	
 	/*
@@ -250,8 +277,8 @@ class SB_Admin {
 		?>
 		<fieldset class="sbtheme-switch">
 			<div class="switch-options">
-				<label data-switch="on" class="<?php echo $class_on; ?> left"><span>Bật</span></label>
-				<label data-switch="off" class="<?php echo $class_off; ?> right"><span>Tắt</span></label>
+				<label data-switch="on" class="<?php echo $class_on; ?> left"><span><?php echo SB_Theme::phrase("on"); ?></span></label>
+				<label data-switch="off" class="<?php echo $class_off; ?> right"><span><?php echo SB_Theme::phrase("off"); ?></span></label>
 				<input type="hidden" value="<?php echo $value; ?>" name="<?php echo esc_attr($this->get_field_name($name)); ?>" id="<?php echo $name; ?>" class="checkbox checkbox-input">
 				<p class="description"><?php echo $description; ?></p>
 			</div>
@@ -284,6 +311,7 @@ class SB_Admin {
 	public function sanitize( $input ) {
         $new_input = array();
 		
+		$new_input['language'] = $this->set_input_data($input, 'language');
         $new_input['logo'] = $this->set_input_data($input, 'logo', 'image');		
         $new_input['favicon'] = $this->set_input_data($input, 'favicon', 'icon');		
 		$new_input['banner'] = $this->set_input_data($input, 'banner', 'image');
@@ -303,7 +331,7 @@ class SB_Admin {
     }
 	
 	// Kiểm tra dữ liệu đầu vào
-	private function set_input_data($input, $key, $type) {
+	private function set_input_data($input, $key, $type = "default") {
 		$kq = '';
 		if(isset($input[$key])) {
 			switch($type) {
@@ -328,6 +356,8 @@ class SB_Admin {
 				case 'bool-nummber':
 					$kq = absint($input[$key]);
 					break;
+				default:
+					$kq = $input[$key];
 			}
 		}
 		return $kq;
@@ -388,6 +418,9 @@ class SB_Admin {
 				break;
 			case 'switch':
 				$this->switch_field($name, $this->get_option_value($name), $description);
+				break;
+			case 'select':
+				$this->select_field($name, $description);
 				break;
 		}
 	}
@@ -475,7 +508,8 @@ class SB_Admin {
 	
 	// Tạo menu con bên trong menu Appearance
 	public function sbtheme_add_options_menu() {
-		add_submenu_page('themes.php', 'Cài đặt giao diện', 'SBTheme Options', $this->capability, $this->menu_slug, array($this, 'sbtheme_settings_page'));
+		global $sb_language;
+		add_submenu_page('themes.php', $sb_language->phrase("theme_settings"), 'SBTheme Options', $this->capability, $this->menu_slug, array($this, 'sbtheme_settings_page'));
 	}
 	
 	private function set_active_class($count, $section_id) {
@@ -491,6 +525,7 @@ class SB_Admin {
 	}
 	
 	private function option_page_header() {
+		global $sb_language;
 		?>
 		<div class="sbtheme-header">
 			<?php $theme = SB_WP::get_theme(); ?>
@@ -503,7 +538,7 @@ class SB_Admin {
 			<h2><?php echo $name; ?></h2>
 			<?php $version = SB_WP::get_theme_version($theme); ?>
 			<?php if(!empty($version)) : ?>
-			<span>phiên bản <?php echo $version; ?></span>
+			<span><?php echo $sb_language->phrase('version'); ?> <?php echo $version; ?></span>
 			<?php endif; ?>
 		</div>
 		<?php
@@ -522,7 +557,7 @@ class SB_Admin {
 			<h2></h2>
 			<?php if (isset($_GET["settings-updated"])) : ?>
 				<div id="message" class="updated">
-					<p><strong><?php _e('Thiết lập của bạn đã được lưu.') ?></strong></p>
+					<p><strong><?php _e(SB_Theme::phrase("your_settings_saved")) ?></strong></p>
 				</div>
 			<?php endif; ?>
 			<div class="sbtheme-container">				
@@ -547,7 +582,7 @@ class SB_Admin {
 						<form method="post" action="options.php">
 							<?php settings_fields( 'sbtheme_option' ); ?>
 							<?php $this->do_settings_sections( $this->menu_slug ); ?>
-							<?php submit_button('Lưu thiết lập'); ?>
+							<?php submit_button(SB_Theme::phrase("save_changes")); ?>
 						</form>
 					</div>
 				</div>
@@ -583,7 +618,7 @@ class SB_Admin {
 		if('sbtheme_aboutsb_section' == $args['id']) {
 			echo 'Giới thiệu sơ lượt về SB Framework dành cho WordPress.';
 		} else {
-			print 'Thiết lập thông tin cài đặt của bạn bên dưới:';
+			echo SB_Theme::phrase("fill_your_settings_below");
 		}
     }
 }

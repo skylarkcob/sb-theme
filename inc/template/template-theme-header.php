@@ -1,5 +1,6 @@
+<?php global $sb_language; ?>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="<?php echo $sb_language->get(); ?>">
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <title><?php SB_Theme::title(); ?></title>
@@ -7,7 +8,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 <?php global $sb_options; ?>
-<?php $favicon = isset($sb_options['favicon']) ? $sbwp_options['favicon'] : ''; ?>
+<?php $favicon = isset($sb_options['favicon']) ? $sb_options['favicon'] : ''; ?>
 <?php if(!empty($favicon)) : ?>
 <link type="images/x-icon" href="<?php echo $favicon; ?>" rel="icon">
 <?php endif; ?>

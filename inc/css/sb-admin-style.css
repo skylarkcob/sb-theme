@@ -348,3 +348,11 @@ a:focus {
 .sbtheme-about p.sb-donate {
     margin: 20px 0;
 }
+
+.sb-option {
+
+}
+
+.sb-option #submit {
+    line-height: 1;
+}

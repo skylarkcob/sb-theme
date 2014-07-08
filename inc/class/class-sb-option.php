@@ -13,6 +13,12 @@ class SB_Option {
 		return $this->option;
 	}
 	
+	public static function update($key, $value) {
+		$options = (array) get_option('sb_options');
+		$options[$key] = $value;
+		update_option("sb_options", $options);
+	}
+	
 	public function get_option() {
 		return (array) get_option('sb_options');
 	}

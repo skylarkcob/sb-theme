@@ -58,6 +58,11 @@ class SB_Theme {
     public static function close_center() {
         echo '</div></div>';
     }
+	
+	public static function phrase($phrase) {
+		global $sb_language;
+		return $sb_language->phrase($phrase);
+	}
 
     public static function menu($args = null) {
         $defaults = array(
