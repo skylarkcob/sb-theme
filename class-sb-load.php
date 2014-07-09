@@ -80,7 +80,9 @@ class SB_Load {
 		'class-sb-session',
 		'class-sb-widget',
 		'class-sb-admin',
-		'class-sb-language'
+		'class-sb-language',
+		'class-sb-icon',
+		'class-sb-tivi'
 	);
 	
 	// Add class to handle

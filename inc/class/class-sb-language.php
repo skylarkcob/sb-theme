@@ -72,13 +72,23 @@ class SB_Language {
 		$this->overwrite_translator("vi", "save_changes", "Lưu thiết lập");
 		$this->overwrite_translator("en", "save_changes", "Save Changes");
 		
-		$this->overwrite_translator("vi", "off", "Off");
+		$this->overwrite_translator("vi", "right_sidebar_description", "Sidebar hiển thị phía bên phải màn hình.");
+		$this->overwrite_translator("en", "right_sidebar_description", "Sidebar that appears on the right screen.");
 		
-		$this->overwrite_translator("vi", "off", "Off");
+		$this->overwrite_translator("vi", "left_sidebar_description", "Sidebar hiển thị phía bên trái màn hình.");
+		$this->overwrite_translator("en", "left_sidebar_description", "Sidebar that appears on the left screen.");
 		
-		$this->overwrite_translator("vi", "off", "Off");
+		$this->overwrite_translator("vi", "main_sidebar_description", "Sidebar chính trên trang của bạn.");
+		$this->overwrite_translator("en", "main_sidebar_description", "Main sidebar on your website.");
 		
-		$this->overwrite_translator("vi", "off", "Off");
+		$this->overwrite_translator("vi", "default_tivi_description", "Chọn kênh Tivi mặc định để hiển thị ngoài trang chủ.");
+		$this->overwrite_translator("en", "default_tivi_description", "Choose default television channel to display on home page.");
+		
+		$this->overwrite_translator("vi", "default_tivi", "Kênh Tivi mặc định");
+		$this->overwrite_translator("en", "default_tivi", "Default television channel");
+		
+		$this->overwrite_translator("vi", "choose_tivi_channel", "Lựa chọn kênh Tivi");
+		$this->overwrite_translator("en", "choose_tivi_channel", "Choose television channel");
 		
 		$this->overwrite_translator("vi", "off", "Off");
 	}

@@ -214,6 +214,59 @@ class SB_WP {
 		return false;
 	}
 	
+	public static function tivi_source_edit($old_url, $width, $height) {
+		$url = $old_url;
+		$url = self::add_param_to_url(array("width" => $width, "height" => $height), $url);
+		return $url;
+	}
 	
+	public static function add_param_to_url($args, $url) {
+		return add_query_arg($args, $url);
+	}
+	
+	public static function option() {
+		return SB_Theme::option();
+	}
+	
+	public static function enable_tivi() {
+		$options = SB_Theme::option();
+		if(isset($options['enable_tivi']) && (bool)$options['enable_tivi']) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static function phrase($phrase) {
+		return SB_Theme::phrase($phrase);
+	}
+	
+	public static function query_publish($query) {
+		$query["post_status"] = "publish";
+		return new WP_Query($query);
+	}
+	
+	public static function query_tivi($query) {
+		$query["post_type"] = "television";
+		return self::query_publish($query);
+	}
+	
+	public static function get_all_tivi() {
+		return self::query_tivi(array("posts_per_page" => -1));
+	}
+	
+	public static function get_first_tivi() {
+		return self::query_tivi(array('posts_per_page' => 1));
+	}
+	
+	public static function get_default_tivi() {
+		$options = self::option();
+		$tivi_id = isset($options["default_tivi"]) ? $options["default_tivi"] : 0;
+		if($tivi_id > 0) {
+			$tivi = new SB_Tivi($tivi_id);
+		} else {
+			$tivi = self::get_first_tivi();
+		}
+		return $tivi;
+	}
 }
 ?>

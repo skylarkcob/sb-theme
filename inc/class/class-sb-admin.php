@@ -120,6 +120,41 @@ class SB_Admin {
 	// Thêm trang cài đặt hiển thị trang chủ
 	private function add_home_setting() {
 		$this->add_section('sbtheme_home_section', 'Cài đặt hiển thị trang chủ');
+		$this->add_home_field_setting();
+	}
+	
+	private function add_home_field_setting() {
+		if(SB_WP::enable_tivi()) {
+			$this->add_home_field("default_tivi", SB_WP::phrase("default_tivi"), "default_tivi_callback");
+		}
+	}
+	
+	private function add_home_field($id, $title, $callback) {
+		$this->add_field($id, $title, 'sbtheme_home_section', $callback);
+	}
+	
+	public function default_tivi_callback() {
+		$televisions = SB_WP::get_all_tivi();
+		$name = "default_tivi";
+		$value = $this->get_option_value($name);
+		?>
+		<select id="<?php echo $name; ?>" name="<?php echo esc_attr($this->get_field_name($name)); ?>">
+		<option value="0"><?php echo SB_WP::phrase("choose_tivi_channel"); ?></option>
+		<?php if($televisions->have_posts()) : ?>
+			<?php while($televisions->have_posts()) : ?>
+				<?php $televisions->the_post(); ?>
+				<?php
+					$tivi_title = get_the_title();
+					if(empty($tivi_title)) {
+						continue;
+					}
+				?>
+				<option value="<?php the_ID(); ?>"<?php selected( $value, get_the_ID() ); ?>><?php echo $tivi_title; ?></option>
+			<?php endwhile; wp_reset_postdata(); ?>
+		<?php endif; ?>
+		</select>
+		<p class="description"><?php echo SB_WP::phrase("default_tivi_description"); ?></p>
+		<?php
 	}
 	
 	/*
@@ -326,6 +361,9 @@ class SB_Admin {
 		$new_input['pinterest'] = $this->set_input_data($input, 'pinterest', 'text');
 		
 		$new_input['enable_shop'] = $this->set_input_data($input, 'enable_shop', 'bool-nummber');
+		$new_input['enable_tivi'] = $this->set_input_data($input, 'enable_tivi', 'bool-nummber');
+		
+		$new_input['default_tivi'] = $this->set_input_data($input, 'default_tivi', 'int-nummber');
 		
         return $new_input;
     }
@@ -354,6 +392,9 @@ class SB_Admin {
 					}
 					break;
 				case 'bool-nummber':
+					$kq = absint($input[$key]);
+					break;
+				case 'int-number':
 					$kq = absint($input[$key]);
 					break;
 				default:

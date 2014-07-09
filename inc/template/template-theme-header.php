@@ -16,4 +16,4 @@
 </head>
 <body <?php body_class('sbtheme'); ?>>
 <!-- // Theme is created by SB Team - laidinhcuongvn@gmail.com - ladiuvn@gmail.com - http://sauhi.com - http://hocwp.net -->
-<div class="site-container">
+<div class="site-container sb-site">

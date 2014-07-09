@@ -7,7 +7,6 @@ class SB_Hook {
 		$this->style_init();
 		$this->move_jquery_to_footer();
 		$this->script_init();
-		$this->sidebar_init();
 		$this->run();
 	}
 	
@@ -27,7 +26,10 @@ class SB_Hook {
 		array_push($this->scripts, array('bootstrap', SB_LIB_URI . '/bootstrap/js/bootstrap.min.js', array()));
 		array_push($this->scripts, array('superfish', SB_LIB_URI . '/superfish/js/superfish.min.js', array('jquery', 'hoverIntent')));
 		array_push($this->scripts, array('sbtheme', SB_JS_URI . '/sb-script.js', array('jquery')));
-        array_push($this->scripts, array('sbtheme-script', SB_THEME_URI . '/js/sbtheme-script.js', array('sbtheme')));
+		$main_script = SB_THEME_PATH . "/js/sbtheme-script.js";
+		if(file_exists($main_script)) {
+			array_push($this->scripts, array('sbtheme-script', SB_THEME_URI . '/js/sbtheme-script.js', array('sbtheme')));
+		}
 	}
 	
 	public function allow_upload_stl_file($mimes) {
@@ -36,7 +38,18 @@ class SB_Hook {
 	
 	private function sidebar_init() {
 		$widget = new SB_Widget();
-		$this->sidebars[] = $this->register_sidebar('primary', 'Primary Sidebar', 'Main sidebar that appears on the left or right.');
+		$this->sidebars[] = $this->register_sidebar('primary', 'Main Sidebar', SB_Theme::phrase("main_sidebar_description"));
+		do_action("sbtheme_widget_area");
+	}
+	
+	public function sbtheme_widget_init() {
+		$this->sidebar_init();
+	}
+	
+	public function sbtheme_sidebar_widget_hook() {
+		add_action("widgets_init", array($this, 'sbtheme_widget_init'));
+		//add_filter('dynamic_sidebar_params', array($this, 'sbtheme_widget_param'));
+		//add_filter('widget_title', array($this, 'default_widget_title'), 10, 3);
 	}
 	
 	private function move_jquery_to_footer() {
@@ -86,30 +99,14 @@ class SB_Hook {
 	}
 	
 	private function run() {
-		global $pagenow, $sb_enable_shop, $sb_enable_3dfile, $sb_enable_links, $sb_enable_scroll_to_top;
-		
+		global $sb_enable_3dfile, $sb_enable_links, $sb_enable_scroll_to_top;
 		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
-		
-		//add_filter('dynamic_sidebar_params', array($this, 'sbtheme_widget_param'));
-		
-		
+		$this->sbtheme_sidebar_widget_hook();
 		add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
-		
-		add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
-		
 		add_action('after_setup_theme', array($this, 'sbtheme_setup'));
 		add_action( 'customize_preview_init', array($this, 'sbtheme_customize_script') );
-		
-		add_action('init', array($this, 'session_init'), 1);
-		
-		if ( $sb_enable_shop && is_admin() && isset( $_GET['activated'] ) && $pagenow == 'themes.php' ) {
-			add_action( 'init', array($this, 'sb_woocommerce_image_size'), 1 );
-		}
-		
-		add_filter('widget_title', array($this, 'default_widget_title'), 10, 3);
-		
 		add_filter('excerpt_more', array($this, 'change_excerpt_more'));
-
+		
 		if($sb_enable_3dfile) {
 			add_filter('upload_mimes', array($this, 'allow_upload_stl_file'));
 		}
@@ -122,13 +119,25 @@ class SB_Hook {
 			add_action('wp_footer', array($this, 'scroll_to_top'));
 		}
 		
+		$this->sbtheme_admin_hook();
+		add_action('init', array($this, 'sbtheme_init'));
+	}
+	
+	public function sbtheme_admin_hook() {
 		if(is_admin()) {
+			add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
 			if(isset($_GET['page']) && 'sbtheme-option' == $_GET['page']) {
 				$this->media_upload_init();
 			}
-			
-			add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
+			add_action('admin_menu', array($this, 'sbtheme_custom_menu_page'), 102);
+			//add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
+			add_action('admin_init', array($this, 'sbtheme_admin_init'), 99);
 		}
+	}
+	
+	public function sbtheme_custom_menu_page() {
+		remove_submenu_page( 'themes.php', 'customize.php' );
+		remove_submenu_page( 'themes.php', 'theme-editor.php' );
 	}
 	
 	public function change_excerpt_more($more) {
@@ -249,6 +258,28 @@ class SB_Hook {
 	
 	public function scroll_to_top() {
 		echo '<a id="scroll-to-top" href="#" class="go-top-button"><i class="fa fa-chevron-up"></i></a>';
+	}
+	
+	public function sbtheme_admin_init() {
+		
+	}
+	
+	public function sbtheme_init() {
+		$options = SB_Theme::option();
+		if(is_admin() && isset($options['enable_tivi']) && (bool) $options['enable_tivi']) {
+			global $wp_post_types;
+			if(post_type_exists("television")) {
+				$television = $wp_post_types['television'];
+				if($television) {
+					$wp_post_types['television']->menu_icon = SB_Icon::post_type_icon("tivi");
+				}
+			}
+		}
+		$this->session_init();
+		global $sb_enable_shop, $pagenow;
+		if ( $sb_enable_shop && is_admin() && isset( $_GET['activated'] ) && $pagenow == 'themes.php' ) {
+			$this->sb_woocommerce_image_size();
+		}
 	}
 }
 ?>

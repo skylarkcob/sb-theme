@@ -32,6 +32,14 @@ class SB_Theme {
 			wp_title('');
 		}
 	}
+	
+	public static function option() {
+		global $sb_options;
+		if(!is_array($sb_options) || (is_array($sb_options) && count($sb_options) < 1)) {
+			$sb_options = new SB_Option();
+		}
+		return $sb_options;
+	}
 
     public static function breadcrumb() {
         if ( function_exists('yoast_breadcrumb') ) {
@@ -59,8 +67,17 @@ class SB_Theme {
         echo '</div></div>';
     }
 	
+	public static function tivi_box($src) {
+		?>
+		<div class="sb-tivi-outer text-center"><iframe id="sbTV" align="middle" frameborder="0" scrolling="no" src="<?php echo $src; ?>" class="sb-tivi" data-number="1"></iframe></div>
+		<?php
+	}
+	
 	public static function phrase($phrase) {
 		global $sb_language;
+		if(empty($sb_language)) {
+			$sb_language = new SB_Language();
+		}
 		return $sb_language->phrase($phrase);
 	}
 
@@ -85,7 +102,19 @@ class SB_Theme {
         </div>
     <?php
     }
+	
+	public static function tivi_server_list($list_server) {
+		if(count($list_server) > 1) : $count = 1; ?>
 
+			<ul class="server-list list-inline text-center">
+			<?php foreach($list_server as $server) : ?>
+				<li><a class="btn btn-info" href="#" data-server="<?php echo $server; ?>" data-number="<?php echo $count; ?>">Server <?php echo $count; ?></a></li>
+			<?php $count++; endforeach; ?>
+			</ul>
+
+		<?php endif;
+	}
+	
     public static function spinner_loading_full() {
         ?>
         <div class="spinner-loading-full spinner">
