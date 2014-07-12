@@ -33,6 +33,15 @@ class SB_Theme {
 		}
 	}
 	
+	public static function widget_field_checkbox($id, $name, $value, $description) {
+		?>
+		<p>
+			<input id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" type="checkbox" value="<?php echo esc_attr( $value ); ?>" <?php checked( $value, 1, true ); ?>>
+			<label for="<?php echo esc_attr( $id ); ?>"><?php _e( $description, SB_DOMAIN ); ?></label>
+		</p>
+		<?php
+	}
+	
 	public static function option() {
 		global $sb_options;
 		if(!is_array($sb_options) || (is_array($sb_options) && count($sb_options) < 1)) {
@@ -68,9 +77,13 @@ class SB_Theme {
     }
 	
 	public static function tivi_box($src) {
+		if(empty($src)) :
 		?>
-		<div class="sb-tivi-outer text-center"><iframe id="sbTV" align="middle" frameborder="0" scrolling="no" src="<?php echo $src; ?>" class="sb-tivi" data-number="1"></iframe></div>
+			<div class="sb-tivi no-source"><p>Kênh bạn đang xem hiện chưa cập nhật.</p></div>
+		<?php else : ?>
+		<div class="sb-tivi-outer text-center"><iframe id="sbTV" src="<?php echo $src; ?>" class="sb-tivi" data-number="1" scrolling="no"></iframe></div>
 		<?php
+		endif;
 	}
 	
 	public static function phrase($phrase) {
@@ -80,7 +93,11 @@ class SB_Theme {
 		}
 		return $sb_language->phrase($phrase);
 	}
-
+	
+	public static function copyright() {
+		include SB_TEMPLATE_PATH . "/template-theme-copyright.php";
+	}
+	
     public static function menu($args = null) {
         $defaults = array(
             'theme_location'	=> '',
@@ -103,13 +120,22 @@ class SB_Theme {
     <?php
     }
 	
+	public static function float_ads() {
+		$options = SB_WP::option();
+		if(isset($options['enable_float_ads']) && (bool)$options['enable_float_ads']) {
+			get_sidebar('float-ads-left');
+			get_sidebar('float-ads-right');
+		}
+	}
+	
 	public static function tivi_server_list($list_server) {
-		if(count($list_server) > 1) : $count = 1; ?>
+		if(count($list_server) > 0) : $count = 1; ?>
 
 			<ul class="server-list list-inline text-center">
 			<?php foreach($list_server as $server) : ?>
 				<li><a class="btn btn-info" href="#" data-server="<?php echo $server; ?>" data-number="<?php echo $count; ?>">Server <?php echo $count; ?></a></li>
 			<?php $count++; endforeach; ?>
+			<li><a id="reportLink" class="btn btn-warning" href="#"><i class="fa fa-chain-broken"></i> Báo link hỏng</a></li>
 			</ul>
 
 		<?php endif;

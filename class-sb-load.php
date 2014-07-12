@@ -161,6 +161,7 @@ class SB_Load {
 	// Include all handle
 	public function run() {
 		global $sb_language;
+		
 		foreach($this->items as $item) {
 			if(array_key_exists($item, $this->handles)) {
 				$path = $this->handles[$item];
@@ -169,6 +170,7 @@ class SB_Load {
 				}
 			}
 		}
+		$options = SB_WP::option();
 		if(class_exists("SB_Shortcode")) {
 			$shortcode = new SB_Shortcode();
 		}
@@ -181,6 +183,27 @@ class SB_Load {
 		if(class_exists("SB_Language")) {
 			$sb_language = new SB_Language();
 		}
+		$this->enable_sb_widget();
+	}
+	
+	public function enable_sb_widget() {
+		
+		$options = SB_WP::option();
+		if(isset($options['enable_sb_post_widget']) && (bool)$options['enable_sb_post_widget']) {
+			$this->add_widget("SB_Post_Widget");
+		}
+		if(isset($options['enable_sb_tab_widget']) && (bool)$options['enable_sb_tab_widget']) {
+			$this->add_widget("SB_Tab_Widget");
+		}
+		if(isset($options['enable_sb_banner_widget']) && (bool)$options['enable_sb_banner_widget']) {
+			$this->add_widget("SB_Banner_Widget");
+		}
+	}
+	
+	public function add_widget($name) {
+		global $sb_enable_widgets;
+		$sb_enable_widgets = (array)$sb_enable_widgets;
+		array_push($sb_enable_widgets, $name);
 	}
 	
 	public function support_widget($args = array()) {

@@ -51,6 +51,10 @@ class SB_Admin {
 		$this->data_section = SB_PHP::get_session('data_section');
 		$this->add_tab('general', $sb_language->phrase("general_settings"), 'sbtheme_general_section');
 		$this->add_tab('home', $sb_language->phrase("home_page_settings"), 'sbtheme_home_section');
+		if(SB_WP::enable_tivi()) {
+			$this->add_tab('tivi', $sb_language->phrase("tivi_settings"), 'sbtheme_tivi_section');
+		}
+		$this->add_tab('ads', $sb_language->phrase("ads_settings"), 'sbtheme_ads_section');
 		$this->add_tab('social', $sb_language->phrase("social_network_settings"), 'sbtheme_social_section');
 		$this->add_tab('sbmodule', $sb_language->phrase("utility_management"), 'sbtheme_sbmodule_section');
 		$this->add_tab('aboutsb', $sb_language->phrase("about_sb"), 'sbtheme_aboutsb_section');
@@ -68,6 +72,7 @@ class SB_Admin {
 		$this->add_general_field('logo', 'Logo', 'logo_callback');
 		$this->add_general_field('favicon', 'Favicon', 'favicon_callback');
 		$this->add_general_field('banner', 'Banner', 'banner_callback');
+		$this->add_general_field('footer_text', SB_WP::phrase('footer_text'), 'footer_text_callback');
 	}
 	
 	// Thêm mục cho trang cài đặt thông tin chung
@@ -93,6 +98,20 @@ class SB_Admin {
 	public function language_callback() {
 		global $sb_language;
 		$this->set_select_field('language', $sb_language->phrase("choose_language_description"));
+	}
+	
+	public function footer_text_callback() {
+		$this->rich_editor_field('footer_text', SB_PHP::add_dotted(SB_WP::phrase('footer_text_description')));
+	}
+	
+	private function rich_editor_field($name, $description) {
+		$value = $this->get_option_value($name);
+		?>
+		<div id="sbRichEditor" class="sb-rich-editor">
+			<?php wp_editor( $value, $name, array("textarea_name" => esc_attr($this->get_field_name($name)), 'textarea_rows' => 5) ); ?>
+			<p class="description"><?php echo $description; ?></p>
+		</div>
+		<?php
 	}
 	
 	private function set_select_field($name, $description) {
@@ -230,6 +249,21 @@ class SB_Admin {
 	}
 	
 	/*
+	 * Tạo cài đặt quản lý quảng cáo
+	 */
+	private function add_ads_setting() {
+		$this->add_section('sbtheme_ads_section', SB_WP::phrase("ads_settings_description"));
+	}
+	
+	
+	
+	/*
+	 * Tạo cài đặt quản lý tivi
+	 */
+	private function add_tivi_setting() {
+		$this->add_section('sbtheme_tivi_section', SB_WP::phrase("tivi_settings_description"));
+	}
+	/*
 	 * Tạo cài đặt quản lý các gói tiện ích
 	 */
 	private function add_sbmodule_setting() {
@@ -243,6 +277,8 @@ class SB_Admin {
 		$this->add_sbmodule_field('enable_3dfile', 'Đăng tập tin 3D', 'enable_3dstl_callback');
 		$this->add_sbmodule_field('enable_scroll_top', 'Nút quay về đầu trang', 'enable_scroll_top_callback');
 		$this->add_sbmodule_field('enable_links_manager', 'Quản lý Links', 'enable_links_manager_callback');
+		$this->add_sbmodule_field('enable_float_ads', SB_WP::phrase('float_ads'), 'enable_float_ads_callback');
+		$this->add_sbmodule_field('enable_leaderboard_ads', SB_WP::phrase('leaderboard_ads'), 'enable_leaderboard_ads_callback');
 	}
 	
 	// Thêm mục cho trang quản lý các tiện ích
@@ -293,6 +329,14 @@ class SB_Admin {
 	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng quản lý links
 	public function enable_links_manager_callback() {
 		$this->set_switch_field('enable_links_manager', 'Bật hoặc tắt chức năng cho phép hiển thị trình quản lý links trên WordPress.');
+	}
+	
+	public function enable_float_ads_callback() {
+		$this->set_switch_field('enable_float_ads', SB_WP::phrase('enable_float_ads_description'));
+	}
+	
+	public function enable_leaderboard_ads_callback() {
+		$this->set_switch_field('enable_leaderboard_ads', SB_WP::phrase('enable_leaderboard_ads_description'));
 	}
 	
 	private function set_switch_field($name, $description) {
@@ -350,6 +394,7 @@ class SB_Admin {
         $new_input['logo'] = $this->set_input_data($input, 'logo', 'image');		
         $new_input['favicon'] = $this->set_input_data($input, 'favicon', 'icon');		
 		$new_input['banner'] = $this->set_input_data($input, 'banner', 'image');
+		$new_input['footer_text'] = $this->set_input_data($input, 'footer_text', 'default');
 		
 		$new_input['facebook'] = $this->set_input_data($input, 'facebook', 'text');
 		$new_input['twitter'] = $this->set_input_data($input, 'twitter', 'text');
@@ -362,6 +407,11 @@ class SB_Admin {
 		
 		$new_input['enable_shop'] = $this->set_input_data($input, 'enable_shop', 'bool-nummber');
 		$new_input['enable_tivi'] = $this->set_input_data($input, 'enable_tivi', 'bool-nummber');
+		$new_input['enable_sb_post_widget'] = $this->set_input_data($input, 'enable_sb_post_widget', 'bool-nummber');
+		$new_input['enable_sb_tab_widget'] = $this->set_input_data($input, 'enable_sb_tab_widget', 'bool-nummber');
+		$new_input['enable_sb_banner_widget'] = $this->set_input_data($input, 'enable_sb_banner_widget', 'bool-nummber');
+		$new_input['enable_float_ads'] = $this->set_input_data($input, 'enable_float_ads', 'bool-nummber');
+		$new_input['enable_leaderboard_ads'] = $this->set_input_data($input, 'enable_leaderboard_ads', 'bool-nummber');
 		
 		$new_input['default_tivi'] = $this->set_input_data($input, 'default_tivi', 'int-nummber');
 		
@@ -408,7 +458,7 @@ class SB_Admin {
 	 * Tạo mục upload hình ảnh
 	 */
 	private function media_upload_field($name, $value, $description) {
-		printf('<div class="sbtheme-upload media"><input type="text" id="%1s" name="%2s" value="%3s" /><a title="Thêm hình ảnh" data-editor="content" class="button insert-media add_media" id="insert-media-button" href="#">Upload</a></div><p class="description">%4s</p>', $name, esc_attr($this->get_field_name($name)), $value, $description);
+		printf('<div class="sbtheme-upload media"><input type="text" id="%1s" name="%2s" value="%3s" /><a title="'.SB_WP::phrase("insert_image").'" data-editor="content" class="button insert-media add_media" id="insert-media-button" href="#">Upload</a></div><p class="description">%4s</p>', $name, esc_attr($this->get_field_name($name)), $value, $description);
 	}
 	
 	// Khung đăng hình ảnh đã cài đặt
@@ -527,9 +577,9 @@ class SB_Admin {
 		register_setting( 'sbtheme_option', $this->option_name, array( $this, 'sanitize' ) );
 		
 		$this->add_general_setting();
-		
+		$this->add_ads_setting();
 		$this->add_home_setting();
-		
+		$this->add_tivi_setting();
 		$this->add_social_setting();
 		
 		$this->add_sbmodule_setting();

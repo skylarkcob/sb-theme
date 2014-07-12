@@ -101,6 +101,22 @@ class SB_PHP {
 		return $output_file; 
 	}
 	
+	public static function add_dotted($text) {
+		$char = substr($text, -1);
+		if('.' != $char) {
+			$text .= '.';
+		}
+		return $text;
+	}
+	
+	public static function add_colon($text) {
+		$char = substr($text, -1);
+		if(':' != $char) {
+			$text .= ':';
+		}
+		return $text;
+	}
+	
 	function current_weekday($format = 'd/m/Y H:i:s') {
 		self::timezone_hcm();
 		$weekday = date("l");
@@ -149,6 +165,14 @@ class SB_PHP {
 		$_SESSION[$key] = $value;
 	}
 	
+	public static function set_session_array($key, $value) {
+		$old = (array)self::get_session($key);
+		if(!in_array($value, $old)) {
+			array_push($old, $value);
+		}
+		self::set_session($key, $old);
+	}
+	
 	public static function is_valid_url($url) {
 		if(filter_var($url, FILTER_VALIDATE_URL)) {
 			return true;
@@ -162,6 +186,17 @@ class SB_PHP {
 	
 	public static function is_url_valid($url) {
 		return self::is_valid_url($url);
+	}
+	
+	public static function get_checkbox_value($value) {
+		if(isset($value) && (bool)$value) {
+			return 1;
+		}
+		return 0;
+	}
+	
+	public static function get_single_line_value($value) {
+		return strip_tags(stripslashes($value));
 	}
 	
 	public static function is_string_contain($string, $key) {

@@ -542,7 +542,8 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
 
 .widget .sb-post-widget,
 .comment-list li,
-#respond {
+#respond,
+.sb-post-widget ol {
 	overflow: hidden;
 }
 
@@ -597,6 +598,51 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
     width: 100%;
 }
 
-#comments #comment {
+#comments #comment,
+.sb-post-widget ol {
 	margin: 0;
+}
+
+.sb-float-ads {
+    height: 800px;
+    overflow: hidden;
+    position: fixed;
+    top: 5px;
+    visibility: hidden;
+    width: 100%;
+}
+
+.admin-bar .sb-float-ads {
+    top: 38px;
+}
+
+.sb-post-widget ol {
+
+}
+
+.sb-float-ads-left {
+	left: 0;
+}
+
+.sb-float-ads-right {
+	right: 0;
+}
+
+.sb-float-ads .float-ads-inner {
+    position: absolute;
+    visibility: visible;
+}
+
+.sb-float-ads-left .float-ads-inner {
+    left: 50%;
+    margin-left: -625px;
+}
+
+.sb-float-ads-right .float-ads-inner {
+    margin-right: -625px;
+    right: 50%;
+}
+
+body {
+	min-width: 480px;
 }

@@ -21,12 +21,15 @@ class SB_Tivi {
 	public function get_server_list() {
 		$srv = get_post_meta($this->id, 'wpcf-tivi_server', true);
 		$srv = explode("[sb_tivi_server]", $srv);
+		if(!is_array($srv)) {
+			$srv = explode(' ', $srv);
+		}
 		$kq = array();
 		foreach($srv as $value) {
 			if(!empty($value)) {
 				$value = str_replace("[sb_tivi_server]", "", $value);
 				$value = str_replace("[/sb_tivi_server]", "", $value);
-				$value = SB_WP::tivi_source_edit(trim($value), $this->size[0], $this->size[1]);
+				$value = str_replace("&", "&amp;", SB_WP::tivi_source_edit(trim($value), $this->size[0], $this->size[1]));
 				array_push($kq, $value);
 			}
 		}

@@ -24,6 +24,9 @@ class SB_Paginate {
         }
         else {
             $ppp = intval($query->query['posts_per_page']);
+			if(empty($ppp)) {
+				$ppp = get_option('posts_per_page');
+			}
         }
         if($ppp < 1) {
             return;

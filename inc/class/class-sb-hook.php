@@ -37,9 +37,18 @@ class SB_Hook {
 	}
 	
 	private function sidebar_init() {
+		$options = SB_WP::option();
 		$widget = new SB_Widget();
 		$this->sidebars[] = $this->register_sidebar('primary', 'Main Sidebar', SB_Theme::phrase("main_sidebar_description"));
 		do_action("sbtheme_widget_area");
+		if(isset($options['enable_leaderboard_ads']) && (bool)$options['enable_leaderboard_ads']) {
+			SB_WP::register_sidebar( 'leaderboard-ads', "Leaderboard Banner", SB_PHP::add_dotted(SB_Theme::phrase("leaderboard_banner_description")));
+		}
+		if(isset($options['enable_float_ads']) && (bool)$options['enable_float_ads']) {
+			SB_WP::register_sidebar( 'float-ads-left', "Float Ads Left", SB_PHP::add_dotted(SB_Theme::phrase("float_ads_left_description")));
+			SB_WP::register_sidebar( 'float-ads-right', "Float Ads Right", SB_PHP::add_dotted(SB_Theme::phrase("float_ads_right_description")));
+		}
+		
 	}
 	
 	public function sbtheme_widget_init() {
@@ -93,6 +102,10 @@ class SB_Hook {
 		
 	}
 	
+	public static function sbtheme_set_html_mail(){
+		return "text/html";
+	}
+	
 	public function sbtheme_customize_init($wp_customize) {
 		$customize = new SB_Customize();
 		$customize->init($wp_customize);
@@ -106,7 +119,7 @@ class SB_Hook {
 		add_action('after_setup_theme', array($this, 'sbtheme_setup'));
 		add_action( 'customize_preview_init', array($this, 'sbtheme_customize_script') );
 		add_filter('excerpt_more', array($this, 'change_excerpt_more'));
-		
+		add_filter( 'wp_mail_content_type', array($this, 'sbtheme_set_html_mail' ));
 		if($sb_enable_3dfile) {
 			add_filter('upload_mimes', array($this, 'allow_upload_stl_file'));
 		}
@@ -115,18 +128,27 @@ class SB_Hook {
 			add_filter( 'pre_option_link_manager_enabled', '__return_true' );
 		}
 		
-		if ( $sb_enable_scroll_to_top ) {
-			add_action('wp_footer', array($this, 'scroll_to_top'));
-		}
+		add_action('wp_footer', array($this, 'sbtheme_footer_element'));
 		
 		$this->sbtheme_admin_hook();
 		add_action('init', array($this, 'sbtheme_init'));
 	}
 	
+	public function sbtheme_footer_element() {
+		$options = SB_WP::option();
+		if(isset($options['enable_scroll_top']) && (bool)$options['enable_scroll_top']) {
+			$this->scroll_to_top();
+		}
+		$this->float_ads_init();
+	}
+	
 	public function sbtheme_admin_hook() {
 		if(is_admin()) {
+			global $sb_media_upload;
+			$sb_media_upload = true;
 			add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
-			if(isset($_GET['page']) && 'sbtheme-option' == $_GET['page']) {
+			if((isset($_GET['page']) && 'sbtheme-option' == $_GET['page']) || $sb_media_upload) {
+				$this->rich_editor_init();
 				$this->media_upload_init();
 			}
 			add_action('admin_menu', array($this, 'sbtheme_custom_menu_page'), 102);
@@ -156,9 +178,20 @@ class SB_Hook {
 	}
 	
 	public function media_upload_init() {
-		wp_enqueue_style( 'thickbox' );
-		wp_enqueue_script( 'thickbox' );
+		add_thickbox();
 		wp_enqueue_script( 'media-upload' );
+	}
+	
+	public function rich_editor_init() {
+		wp_enqueue_script( 'word-count' );
+		wp_enqueue_script('post');
+		if ( user_can_richedit() ) {
+			wp_enqueue_script('editor');
+		}
+	}
+	
+	public function float_ads_init() {
+		SB_Theme::float_ads();
 	}
 
 	public function sbtheme_widget_param($params) {
