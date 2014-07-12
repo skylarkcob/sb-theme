@@ -47,7 +47,7 @@ class SB_Theme {
 		if(!is_array($sb_options) || (is_array($sb_options) && count($sb_options) < 1)) {
 			$sb_options = new SB_Option();
 		}
-		return $sb_options;
+		return (array)$sb_options;
 	}
 
     public static function breadcrumb() {
