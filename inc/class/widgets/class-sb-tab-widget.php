@@ -20,7 +20,13 @@ class SB_Tab_Widget extends WP_Widget {
 				<div class="tab-content">
 					<?php if(is_active_sidebar($sidebar)) : ?>
 						<?php dynamic_sidebar($sidebar); ?>
-					<?php else : $sidebar_name = SB_WP::get_sidebar_by('id', $sidebar)['name']; ?>
+					<?php else : ?>
+						<?php
+						$sidebar_tmp = SB_WP::get_sidebar_by('id', $sidebar);
+						if($sidebar_tmp) {
+							$sidebar_name = $sidebar_tmp['name'];
+						}
+						?>
 						<p>Xin vui lòng đặt widget vào sidebar <?php echo $sidebar_name; ?>.</p>
 					<?php endif; ?>
 				</div>

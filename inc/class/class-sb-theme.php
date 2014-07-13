@@ -129,13 +129,12 @@ class SB_Theme {
 	}
 	
 	public static function tivi_server_list($list_server) {
-		if(count($list_server) > 0) : $count = 1; ?>
+		if(count($list_server) > 1) : $count = 1; ?>
 
 			<ul class="server-list list-inline text-center">
 			<?php foreach($list_server as $server) : ?>
 				<li><a class="btn btn-info" href="#" data-server="<?php echo $server; ?>" data-number="<?php echo $count; ?>">Server <?php echo $count; ?></a></li>
 			<?php $count++; endforeach; ?>
-			
 			</ul>
 
 		<?php endif;

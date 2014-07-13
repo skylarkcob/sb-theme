@@ -20,7 +20,13 @@ class SB_Tivi {
 	
 	public function get_server_list() {
 		$srv = get_post_meta($this->id, 'wpcf-tivi_server', true);
-		$srv = explode("[sb_tivi_server]", $srv);
+		if(SB_PHP::is_string_contain($srv, "[sb_tivi_server]")) {
+			$srv = explode("[sb_tivi_server]", $srv);
+		} elseif(SB_PHP::is_string_contain($srv, '[') && SB_PHP::is_string_contain($srv, ']')) {
+			if(!is_array($srv)) {
+				$srv = explode('[', $srv);
+			}
+		}
 		if(!is_array($srv)) {
 			$srv = explode(' ', $srv);
 		}
@@ -29,6 +35,7 @@ class SB_Tivi {
 			if(!empty($value)) {
 				$value = str_replace("[sb_tivi_server]", "", $value);
 				$value = str_replace("[/sb_tivi_server]", "", $value);
+				$value = trim(trim($value, ']'), '[');
 				$value = str_replace("&", "&amp;", SB_WP::tivi_source_edit(trim($value), $this->size[0], $this->size[1]));
 				array_push($kq, $value);
 			}
