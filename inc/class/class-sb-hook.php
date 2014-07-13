@@ -72,6 +72,7 @@ class SB_Hook {
 				wp_deregister_script('jquery-migrate');
 				wp_register_script('jquery-migrate', includes_url("js/jquery/jquery-migrate.min.js"), array(), false, true);
 				wp_register_script('jquery', includes_url("js/jquery/jquery.js"), array('jquery-migrate'), false, true);
+				wp_enqueue_script('jquery');
 			}
 		}
 	}
