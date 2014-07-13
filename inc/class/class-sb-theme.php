@@ -135,7 +135,7 @@ class SB_Theme {
 			<?php foreach($list_server as $server) : ?>
 				<li><a class="btn btn-info" href="#" data-server="<?php echo $server; ?>" data-number="<?php echo $count; ?>">Server <?php echo $count; ?></a></li>
 			<?php $count++; endforeach; ?>
-			<li><a id="reportLink" class="btn btn-warning" href="#"><i class="fa fa-chain-broken"></i> Báo link hỏng</a></li>
+			
 			</ul>
 
 		<?php endif;

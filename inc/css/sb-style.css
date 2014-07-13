@@ -80,6 +80,14 @@ a:focus {
 	font-weight: 400;
 }
 
+.list-tab > li > a {
+	background-color: #eee;
+}
+
+.sb-tab-widget .list-tab {
+	margin-bottom: 10px;
+}
+
 .woocommerce .checkout #customer_details input,
 .woocommerce .checkout_coupon #coupon_code {
     border: 1px solid #E5E5E5;

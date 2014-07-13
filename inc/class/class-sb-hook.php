@@ -197,8 +197,8 @@ class SB_Hook {
 	public function sbtheme_widget_param($params) {
 		$widget_id = $params[0]['widget_id'];
 		$widget_class = SB_WP::build_widget_class($widget_id);
-        $params[0]['before_widget'] = '<section id="'.$widget_id.'" class="widget '.$widget_class.'"><div class="widget-wrap">';
-        $params[0]['after_widget'] = '</div></section>';
+        $params[0]['before_widget'] = '<div id="'.$widget_id.'" class="widget '.$widget_class.'"><div class="widget-wrap">';
+        $params[0]['after_widget'] = '</div></div>';
         $params[0]['before_title'] = '<h4 class="widget-title">';
         $params[0]['after_title'] = '</h4>';
         return $params;

@@ -64,8 +64,8 @@ class SB_Tab_Widget extends WP_Widget {
 	public function sb_tab_widget_param($params) {
 		$widget_id = $params[0]['widget_id'];
 		$widget_class = SB_WP::build_widget_class($widget_id);
-        $params[0]['before_widget'] = '<section id="'.$widget_id.'" class="tab-item tab-pane '.$widget_class.'">';
-        $params[0]['after_widget'] = '</section>';
+        $params[0]['before_widget'] = '<div id="'.$widget_id.'" class="tab-item tab-pane '.$widget_class.'">';
+        $params[0]['after_widget'] = '</div>';
         $params[0]['before_title'] = '<a href="#" class="tab-title" data-toggle="tab">';
         $params[0]['after_title'] = '</a>';
         return $params;
