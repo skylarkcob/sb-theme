@@ -33,6 +33,59 @@ class SB_Theme {
 		}
 	}
 	
+	private function float_ads_left() {
+		?>
+		<div id="sbFloatAdsRight" class="sb-float-ads sb-float-ads-right sb-ads">
+			<div class="float-ads-inner">
+				<?php
+				if(is_active_sidebar('float-ads-right')) {
+					dynamic_sidebar('float-ads-right');
+				}
+				?>
+			</div>
+		</div>
+		<?php
+	}
+	
+	private function float_ads_right() {
+		?>
+		<div id="sbFloatAdsLeft" class="sb-float-ads sb-float-ads-left sb-ads">
+			<div class="float-ads-inner">
+				<?php
+				if(is_active_sidebar('float-ads-left')) {
+					dynamic_sidebar('float-ads-left');
+				}
+				?>
+			</div>
+		</div>
+		<?php
+	}
+	
+	private function leaderboard_ads() {
+		?>
+		<div id="sbLeaderboardAds" class="sb-ads leaderboard">
+			<div class="sb-ads-inner">
+				<?php
+				if(is_active_sidebar('leaderboard-ads')) {
+					dynamic_sidebar('leaderboard-ads');
+				}
+				?>
+			</div>
+		</div>
+		<?php
+	}
+	
+	public static function float_ads($location) {
+		switch($location) {
+			case 'left':
+				self::float_ads_left();
+				break;
+			case 'right':
+				self::float_ads_right();
+				break;
+		}
+	}
+	
 	public static function widget_field_checkbox($id, $name, $value, $description) {
 		?>
 		<p>
@@ -120,7 +173,7 @@ class SB_Theme {
     <?php
     }
 	
-	public static function float_ads() {
+	public static function float_ads_sidebar() {
 		$options = SB_WP::option();
 		if(isset($options['enable_float_ads']) && (bool)$options['enable_float_ads']) {
 			get_sidebar('float-ads-left');

@@ -67,7 +67,7 @@ class SB_Admin {
 	// Thêm trang cài đặt thông tin chung
 	private function add_general_setting() {
 		global $sb_language;
-		$this->add_section('sbtheme_general_section', 'Cài đặt chung cho giao diện');
+		$this->add_section('sbtheme_general_section', SB_WP::phrase("general_setting_description"));
 		$this->add_general_field('language', $sb_language->phrase("choose_language"), "language_callback");
 		$this->add_general_field('logo', 'Logo', 'logo_callback');
 		$this->add_general_field('favicon', 'Favicon', 'favicon_callback');
@@ -82,22 +82,22 @@ class SB_Admin {
 	
 	// Hàm hiển thị mục cài đặt logo
 	public function logo_callback() {
-		$this->set_media_image_field('logo', 'Bạn có thể điền vào đường dẫn hoặc upload logo mới.');
+		$this->set_media_image_field('logo', SB_PHP::add_dotted(SB_WP::phrase("input_url_or_upload_new_logo")));
     }
 	
 	// Hàm hiển thị mục cài đặt favicon
 	public function favicon_callback() {
-		$this->set_media_image_field('favicon', 'Bạn có thể điền vào đường dẫn hoặc upload favicon mới. Chỉ áp dụng với hình ảnh PNG hoặc tập tin ICON');
+		$this->set_media_image_field('favicon', SB_PHP::add_dotted(SB_WP::phrase("input_url_or_upload_new_favicon")));
     }
 	
 	// Hàm hiển thị mục cài đặt banner
 	public function banner_callback() {
-		$this->set_media_image_field('banner', 'Bạn có thể điền vào đường dẫn hoặc upload banner mới.');
+		$this->set_media_image_field('banner', SB_PHP::add_dotted(SB_WP::phrase("input_url_or_upload_new_banner")));
 	}
 	
 	public function language_callback() {
 		global $sb_language;
-		$this->set_select_field('language', $sb_language->phrase("choose_language_description"));
+		$this->set_select_field('language', SB_PHP::add_dotted(SB_WP::phrase("choose_language_description")));
 	}
 	
 	public function footer_text_callback() {
@@ -172,7 +172,7 @@ class SB_Admin {
 			<?php endwhile; wp_reset_postdata(); ?>
 		<?php endif; ?>
 		</select>
-		<p class="description"><?php echo SB_WP::phrase("default_tivi_description"); ?></p>
+		<p class="description"><?php echo SB_PHP::add_dotted(SB_WP::phrase("default_tivi_description")); ?></p>
 		<?php
 	}
 	
@@ -328,7 +328,7 @@ class SB_Admin {
 	
 	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng quản lý links
 	public function enable_links_manager_callback() {
-		$this->set_switch_field('enable_links_manager', 'Bật hoặc tắt chức năng cho phép hiển thị trình quản lý links trên WordPress.');
+		$this->set_switch_field('enable_links_manager', SB_PHP::add_dotted(SB_WP::phrase('switch_link_manager')));
 	}
 	
 	public function enable_float_ads_callback() {
@@ -371,7 +371,7 @@ class SB_Admin {
 	
 	// Thêm trang hiển thị giới thiệu SB Framework
 	private function add_aboutsb_setting() {
-		$this->add_section('sbtheme_aboutsb_section', 'Giới thiệu SB Framework');
+		$this->add_section('sbtheme_aboutsb_section', SB_WP::phrase('about_sb_framework'));
 	}
 	
 	// Lấy name của mục
@@ -563,10 +563,10 @@ class SB_Admin {
 		?>
 		<div class="sbtheme-about">
 			<div class="sb-logo"><img src="<?php echo SB_Theme::get_image('sb-framework-logo-300.png'); ?>"></div>
-			<p class="sb-version">Phiên bản: <?php echo SB_VERSION; ?></p>
-			<p>SB Framework là bộ mã nguồn được thực hiện bởi SB Team, mục đích của gói phần mềm này là giúp việc lập trình WordPress trở nên dễ dàng hơn. Bạn có thể tải bản cập nhật mới nhất từ trên <a target="_blank" href="https://github.com/skylarkcob/sb">repository</a> của GitHub.</p>
-			<p>SB Framework được thực hiện bởi <a target="_blank" href="https://github.com/skylarkcob">skylarkcob</a> và <a target="_blank" href="https://github.com/flyenuol">flyenuol</a>, mọi thắc mắc cũng như đóng góp xin vui lòng liên hệ qua địa chỉ email bên dưới hoặc gửi bài lên diễn đàn Học WordPress.</p>
-			<p>Nếu bạn cảm thấy SB Framework có ích với bạn và muốn đóng góp một ít công sức để các lập trình viên phát triển tiếp mã nguồn này, xin vui lòng sử dụng nút ủng hộ qua PayPal bên dưới.</p>
+			<p class="sb-version"><?php echo SB_PHP::add_colon(SB_WP::phrase('version')); ?> <?php echo SB_VERSION; ?></p>
+			<p><?php echo SB_WP::phrase("about_sb_framework_1"); ?></p>
+			<p><?php echo SB_WP::phrase("about_sb_framework_2"); ?></p>
+			<p><?php echo SB_WP::phrase("about_sb_framework_3"); ?></p>
 			<p class="sb-donate"><?php SB_Theme::paypal_donate(); ?></p>
 		</div>
 		<?php
@@ -600,7 +600,7 @@ class SB_Admin {
 	// Tạo menu con bên trong menu Appearance
 	public function sbtheme_add_options_menu() {
 		global $sb_language;
-		add_submenu_page('themes.php', $sb_language->phrase("theme_settings"), 'SBTheme Options', $this->capability, $this->menu_slug, array($this, 'sbtheme_settings_page'));
+		add_submenu_page('themes.php', $sb_language->phrase("theme_settings"), 'SB Options', $this->capability, $this->menu_slug, array($this, 'sbtheme_settings_page'));
 	}
 	
 	private function set_active_class($count, $section_id) {
@@ -623,7 +623,7 @@ class SB_Admin {
 			<?php $name = SB_WP::get_theme_name($theme); ?>
 			<?php
 				if(empty($name)) {
-					$name = 'Giao diện chưa đặt tên';
+					$name = SB_WP::phrase('no_name_theme');
 				}
 			?>
 			<h2><?php echo $name; ?></h2>
@@ -638,17 +638,17 @@ class SB_Admin {
 	// Nội dung trang options
 	public function sbtheme_settings_page() {
 		if (!current_user_can($this->capability)) {
-			wp_die('Bạn không có quyền tùy chỉnh giao diện.');
+			wp_die(SB_PHP::add_dotted(SB_WP::phrase('not_have_permission_to_edit_theme')));
 		}
 		$option = new SB_Option();
 		$this->options = $option->get_all_option();
 	?>
 		<div class="wrap sb-option">
-			<noscript><div class="no-js">Chức này tùy chỉnh giao diện sẽ không hoạt động nếu bạn không bật hỗ trợ Javascript!</div></noscript>
+			<noscript><div class="no-js"><?php echo SB_PHP::add_punctuation_mark(SB_WP::phrase('no_javascript_text')); ?></div></noscript>
 			<h2></h2>
 			<?php if (isset($_GET["settings-updated"])) : ?>
 				<div id="message" class="updated">
-					<p><strong><?php _e(SB_Theme::phrase("your_settings_saved")) ?></strong></p>
+					<p><strong><?php _e(SB_PHP::add_dotted(SB_Theme::phrase("your_settings_saved"))); ?></strong></p>
 				</div>
 			<?php endif; ?>
 			<div class="sbtheme-container">				
@@ -678,7 +678,7 @@ class SB_Admin {
 					</div>
 				</div>
 				<div class="sbtheme-footer">
-					<div class="left"><p>Giao diện được thực hiện bởi SB Team. Mọi thắc mắc và đóng góp xin vui lòng liên hệ qua địa chỉ email: <em>laidinhcuongvn@gmail.com</em></p></div>
+					<div class="left"><p><?php echo SB_PHP::add_dotted(SB_WP::phrase("theme_created_by_sbteam")); ?> <?php echo SB_PHP::add_colon(SB_WP::phrase('send_mail_if_have_question')); ?> <em><?php echo SB_SUPPORT_EMAIL; ?></em></p></div>
 					<div class="right">
 						<ul class="sb-social-list">
 							<li class="github"><a target="_blank" href="https://github.com/skylarkcob/sb"></a></li>
@@ -707,9 +707,9 @@ class SB_Admin {
 	// Hiển thị dòng chú thích bên dưới tiêu đề trang
 	public function print_section_info($args) {
 		if('sbtheme_aboutsb_section' == $args['id']) {
-			echo 'Giới thiệu sơ lượt về SB Framework dành cho WordPress.';
+			echo SB_PHP::add_dotted(SB_WP::phrase("sb_framework_shortdescription"));
 		} else {
-			echo SB_Theme::phrase("fill_your_settings_below");
+			echo SB_PHP::add_colon(SB_Theme::phrase("fill_your_settings_below"));
 		}
     }
 }

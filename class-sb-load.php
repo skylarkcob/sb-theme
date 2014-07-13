@@ -57,6 +57,8 @@ define("SB_USER_PASSWORD", "c1khdv6H@");
 define("SB_PAYPAL_DONATE_5_URL", "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WQSLEH5EPHJ7E");
 define("SB_PAYPAL_DONATE_BUTTON_CARD_URL", "https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif");
 
+define("SB_SUPPORT_EMAIL", "laidinhcuongvn@gmail.com");
+
 // Get sb_options
 $sb_options = get_option('sb_options');
 

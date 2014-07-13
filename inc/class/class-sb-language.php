@@ -10,9 +10,9 @@ class SB_Language {
 		if("vi" != $lang) {
 			$this->language = $lang;
 		} else {
-			global $sb_options;
-			if(isset($sb_options['language'])) {
-				$this->language = $sb_options['language'];
+			$options = SB_WP::option();
+			if(isset($options['language'])) {
+				$this->language = $options['language'];
 			} else {
 				SB_Option::update("language", "vi");
 			}
@@ -54,35 +54,35 @@ class SB_Language {
 		$this->overwrite_translator("vi", "version", "Phiên bản");
 		$this->overwrite_translator("en", "version", "Version");
 		
-		$this->overwrite_translator("vi", "choose_language_description", "Lựa chọn ngôn ngữ để sử dụng trên giao diện được tạo bởi SB Team.");
-		$this->overwrite_translator("en", "choose_language_description", "Choose language to use on SB Framework.");
+		$this->overwrite_translator("vi", "choose_language_description", "Lựa chọn ngôn ngữ để sử dụng trên giao diện được tạo bởi SB Team");
+		$this->overwrite_translator("en", "choose_language_description", "Choose language to use on SB Framework");
 		
 		$this->overwrite_translator("vi", "choose_language", "Lựa chọn ngôn ngữ");
 		$this->overwrite_translator("en", "choose_language", "Choose language");
 		
-		$this->overwrite_translator("vi", "settings_saved", "Thiếp lập của bạn đã được lưu thành công.");
-		$this->overwrite_translator("en", "settings_saved", "Your settings have been saved successfully.");
+		$this->overwrite_translator("vi", "settings_saved", "Thiếp lập của bạn đã được lưu thành công");
+		$this->overwrite_translator("en", "settings_saved", "Your settings have been saved successfully");
 		
-		$this->overwrite_translator("vi", "your_settings_saved", "Thiếp lập của bạn đã được lưu thành công.");
-		$this->overwrite_translator("en", "your_settings_saved", "Your settings have been saved successfully.");
+		$this->overwrite_translator("vi", "your_settings_saved", "Thiếp lập của bạn đã được lưu thành công");
+		$this->overwrite_translator("en", "your_settings_saved", "Your settings have been saved successfully");
 		
-		$this->overwrite_translator("vi", "fill_your_settings_below", "Thiết lập thông tin cài đặt của bạn ở bên dưới:");
-		$this->overwrite_translator("en", "fill_your_settings_below", "Fill your settings below:");
+		$this->overwrite_translator("vi", "fill_your_settings_below", "Thiết lập thông tin cài đặt của bạn ở bên dưới");
+		$this->overwrite_translator("en", "fill_your_settings_below", "Fill your settings below");
 		
 		$this->overwrite_translator("vi", "save_changes", "Lưu thiết lập");
 		$this->overwrite_translator("en", "save_changes", "Save Changes");
 		
-		$this->overwrite_translator("vi", "right_sidebar_description", "Sidebar hiển thị phía bên phải màn hình.");
-		$this->overwrite_translator("en", "right_sidebar_description", "Sidebar that appears on the right screen.");
+		$this->overwrite_translator("vi", "right_sidebar_description", "Sidebar hiển thị phía bên phải màn hình");
+		$this->overwrite_translator("en", "right_sidebar_description", "Sidebar that appears on the right screen");
 		
-		$this->overwrite_translator("vi", "left_sidebar_description", "Sidebar hiển thị phía bên trái màn hình.");
-		$this->overwrite_translator("en", "left_sidebar_description", "Sidebar that appears on the left screen.");
+		$this->overwrite_translator("vi", "left_sidebar_description", "Sidebar hiển thị phía bên trái màn hình");
+		$this->overwrite_translator("en", "left_sidebar_description", "Sidebar that appears on the left screen");
 		
-		$this->overwrite_translator("vi", "main_sidebar_description", "Sidebar chính trên trang của bạn.");
-		$this->overwrite_translator("en", "main_sidebar_description", "Main sidebar on your website.");
+		$this->overwrite_translator("vi", "main_sidebar_description", "Sidebar chính trên trang của bạn");
+		$this->overwrite_translator("en", "main_sidebar_description", "Main sidebar on your website");
 		
-		$this->overwrite_translator("vi", "default_tivi_description", "Chọn kênh Tivi mặc định để hiển thị ngoài trang chủ.");
-		$this->overwrite_translator("en", "default_tivi_description", "Choose default television channel to display on home page.");
+		$this->overwrite_translator("vi", "default_tivi_description", "Chọn kênh Tivi mặc định để hiển thị ngoài trang chủ");
+		$this->overwrite_translator("en", "default_tivi_description", "Choose default television channel to display on home page");
 		
 		$this->overwrite_translator("vi", "default_tivi", "Kênh Tivi mặc định");
 		$this->overwrite_translator("en", "default_tivi", "Default television channel");
@@ -175,7 +175,7 @@ class SB_Language {
 		$this->overwrite_translator("en", "leaderboard_ads", "Leaderboard ads");
 		
 		$this->overwrite_translator("vi", "enable_leaderboard_ads_description", "Bật hoặc tắt quảng cáo trên header");
-		$this->overwrite_translator("en", "enable_leaderboard_ads_description", "Turn on/off leaderboard ads");
+		$this->overwrite_translator("en", "enable_leaderboard_ads_description", "Turn on or turn off leaderboard ads");
 		
 		$this->overwrite_translator("vi", "enable_float_ads_description", "Bật hoặc tắt chức năng cho phép hiển thị quảng cáo trượt 2 bên trang");
 		$this->overwrite_translator("en", "enable_float_ads_description", "Turn on or turn off options to display float ads");
@@ -200,6 +200,51 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "show_title", "Hiển thị tiêu đề");
 		$this->overwrite_translator("en", "show_title", "Show title");
+		
+		$this->overwrite_translator("vi", "sb_framework_short_description", "Giới thiệu sơ lượt về SB Framework dành cho WordPress");
+		$this->overwrite_translator("en", "sb_framework_short_description", "Short descriptions about SB Framework for WordPress");
+		
+		$this->overwrite_translator("vi", "general_setting_description", "Cài đặt chung cho giao diện");
+		$this->overwrite_translator("en", "general_setting_description", "General settings for your site");
+		
+		$this->overwrite_translator("vi", "input_url_or_upload_new_logo", "Bạn có thể điền vào đường dẫn hoặc upload logo mới");
+		$this->overwrite_translator("en", "input_url_or_upload_new_logo", "You can type url or upload new logo file");
+		
+		$this->overwrite_translator("vi", "input_url_or_upload_new_favicon", "Bạn có thể điền vào đường dẫn hoặc upload favicon mới");
+		$this->overwrite_translator("en", "input_url_or_upload_new_favicon", "You can type url or upload new favicon file");
+		
+		$this->overwrite_translator("vi", "input_url_or_upload_new_banner", "Bạn có thể điền vào đường dẫn hoặc upload banner mới");
+		$this->overwrite_translator("en", "input_url_or_upload_new_banner", "You can type url or upload new banner file");
+		
+		$this->overwrite_translator("vi", "theme_created_by_sbteam", "Giao diện được tạo bởi SB Team");
+		$this->overwrite_translator("en", "theme_created_by_sbteam", "Theme is created by SB Team");
+		
+		$this->overwrite_translator("vi", "send_mail_if_have_question", "Mọi thắc mắc và đóng góp xin vui lòng liên hệ qua địa chỉ email");
+		$this->overwrite_translator("en", "send_mail_if_have_question", "If you have any questions or feedback, please send mail via");
+		
+		$this->overwrite_translator("vi", "no_javascript_text", "Các chức năng có sử dụng javascript sẽ không hoạt động nếu trình duyệt của bạn không hỗ trợ");
+		$this->overwrite_translator("en", "no_javascript_text", "Any functions are using javascript will be crashed if your browser doesn't support it");
+		
+		$this->overwrite_translator("vi", "not_have_permission_to_edit_theme", "Bạn không có quyền tùy chỉnh giao diện");
+		$this->overwrite_translator("en", "not_have_permission_to_edit_theme", "You don't have permissions to edit theme");
+		
+		$this->overwrite_translator("vi", "no_name_theme", "Giao diện chưa đặt tên");
+		$this->overwrite_translator("en", "no_name_theme", "No name theme");
+		
+		$this->overwrite_translator("vi", "about_sb_framework", "Giới thiệu SB Framework");
+		$this->overwrite_translator("en", "about_sb_framework", "About SB Framework");
+		
+		$this->overwrite_translator("vi", "switch_link_manager", "Bật hoặc tắt chức năng cho phép hiển thị trình quản lý links trên WordPress");
+		$this->overwrite_translator("en", "switch_link_manager", "Turn on or turn off WordPress Links management");
+		
+		$this->overwrite_translator("vi", "about_sb_framework_1", 'SB Framework là bộ mã nguồn được thực hiện bởi SB Team, mục đích của gói phần mềm này là giúp việc lập trình WordPress trở nên dễ dàng hơn. Bạn có thể tải bản cập nhật mới nhất từ trên <a target="_blank" href="https://github.com/skylarkcob/sb">repository</a> của GitHub.');
+		$this->overwrite_translator("en", "about_sb_framework_1", 'SB Framework is a PHP framework that created by SB Team, the purposes of this framework are to help coding WordPress more easier. You can download the latest version from <a target="_blank" href="https://github.com/skylarkcob/sb">SB\'s GitHub Repository</a>.');
+		
+		$this->overwrite_translator("vi", "about_sb_framework_2", 'SB Framework được thực hiện bởi <a target="_blank" href="https://github.com/skylarkcob">skylarkcob</a> và <a target="_blank" href="https://github.com/flyenuol">flyenuol</a>, mọi thắc mắc cũng như đóng góp xin vui lòng liên hệ qua địa chỉ email bên dưới hoặc gửi bài lên diễn đàn Học WordPress.');
+		$this->overwrite_translator("en", "about_sb_framework_2", 'SB Framework is writen by <a target="_blank" href="https://github.com/skylarkcob">skylarkcob</a> and <a target="_blank" href="https://github.com/flyenuol">flyenuol</a>, if you have any questions please send mail via the email address below this panel or write a post on learn WordPress forum.');
+		
+		$this->overwrite_translator("vi", "about_sb_framework_3", 'Nếu bạn cảm thấy SB Framework có ích với bạn và muốn đóng góp một ít công sức để các lập trình viên phát triển tiếp mã nguồn này, xin vui lòng sử dụng nút ủng hộ qua PayPal bên dưới.');
+		$this->overwrite_translator("en", "about_sb_framework_3", 'If you feel this framework helpful, you can use the PayPal donate button below to send a beer or a coffee cup to these founders. It will help us to create more functional on this framework.');
 	}
 	
 	

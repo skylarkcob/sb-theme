@@ -85,6 +85,14 @@ class SB_PHP {
 		return $result;
 	}
 	
+	public static function add_exclamation_mark($text) {
+		return self::add_punctuation($text, '!');
+	}
+	
+	public static function add_commas($text) {
+		return self::add_punctuation($text, ',');
+	}
+	
 	public static function get_path($file) {
 		return dirname($file);
 	}
@@ -99,6 +107,14 @@ class SB_PHP {
 		fwrite($ifp, base64_decode($data[1])); 
 		fclose($ifp);
 		return $output_file; 
+	}
+	
+	public static function add_punctuation_mark($text, $punc) {
+		$char = substr($text, -1);
+		if($punc != $char) {
+			$text .= $punc;
+		}
+		return $text;
 	}
 	
 	public static function add_dotted($text) {
