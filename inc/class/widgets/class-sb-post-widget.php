@@ -205,7 +205,7 @@ class SB_Post_Widget extends WP_Widget {
 			</p>
 			<?php $taxs = SB_WP::get_all_taxonomy_hierarchical(); ?>
 			<?php if($taxs) : ?>
-				<?php if("category" == $type || true) : ?>
+				<?php if("category" == $type) : ?>
 					<?php $style = "display: block"; ?>
 				<?php endif; ?>
 				<p id="sbPostCats" style="<?php echo $style; ?>">
@@ -223,7 +223,7 @@ class SB_Post_Widget extends WP_Widget {
 					<input id="<?php echo esc_attr( $this->get_field_id( 'taxonomy' ) ); ?>" class="widefat taxonomy" name="<?php echo esc_attr( $this->get_field_name( 'taxonomy' ) ); ?>" type="hidden" value="<?php echo esc_attr( $taxonomy ); ?>">
 				</p>
 			<?php endif; ?>
-			<p>
+			<p style="display: none">
 				<label for="<?php echo esc_attr( $this->get_field_id( 'category_type' ) ); ?>"><?php _e( SB_PHP::add_colon(SB_WP::phrase("category_type")), SB_DOMAIN ); ?></label>
 				<select id="<?php echo esc_attr( $this->get_field_id( 'category_type' ) ); ?>" class="widefat sb-category-type" name="<?php echo esc_attr( $this->get_field_name( 'category_type' ) ); ?>">
 					<?php foreach ( $taxs as $tax ) : ?>
@@ -261,7 +261,7 @@ class SB_Post_Widget extends WP_Widget {
 		$instance['type'] = $new_instance['type'];
 		$instance['category'] = $new_instance['category'];
 		$instance['number'] = empty( $new_instance['number'] ) ? $this->default_number : absint( $new_instance['number'] );
-		$instance['taxonomy'] = $new_instance['category_type'];
+		$instance['taxonomy'] = $new_instance['taxonomy'];
 		$instance['only_thumbnail'] = isset($new_instance['only_thumbnail']) ? 1 : 0;
 		$instance['order_by'] = $new_instance['order_by'];
 		$instance['order_type'] = $new_instance['order_type'];

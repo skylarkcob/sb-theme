@@ -1,25 +1,17 @@
 jQuery(document).ready(function($){
 	// Ẩn hoặc hiện danh sách chuyên mục cho SB Post Widget
-	var postWidget = $("div.sb-post-widget");
-	$("body").find(postWidget).each(function(){
-		var aPostWidget = $(this);
-		aPostWidget.find("select.sb-post-type").on("change", function(){
-			var chooseType = $(this);
-			var currentPostWidget = chooseType.closest("div.sb-post-widget");
-			var listCats = currentPostWidget.find("#sbPostCats");
-			if("category" == chooseType.val()) {
-				listCats.delay(100).fadeIn();
-			} else {
-				listCats.delay(100).fadeOut();
-			}
-			
-		});
-		
-		aPostWidget.find("select.sb-post-cat option").click(function(){
-			var currentCatOption = $(this);
-			var currentPostWidget = currentCatOption.closest("div.sb-post-widget");
-			currentPostWidget.find("input.taxonomy").val(currentCatOption.attr("data-taxonomy"));
-		});
+	$("body").delegate("select.sb-post-type", "change", function(){
+		var listCats = $(this).parent().parent().find("#sbPostCats");
+		if("category" == $(this).val()) {
+			listCats.delay(10).fadeIn();
+		} else {
+			listCats.delay(10).fadeOut();
+		}
+	});
+	
+	$("body").delegate("select.sb-post-cat option", "click", function(){
+		var taxonomy = $(this).attr("data-taxonomy"), inputTaxonomy = $(this).closest("div.sb-post-widget").find("input.taxonomy");
+		inputTaxonomy.val(taxonomy);
 	});
 	
 	// Xóa sidebar đang chứa SB Tab Widget
@@ -161,8 +153,4 @@ jQuery(document).ready(function($){
 			tb_remove();
 		}
 	}
-});
-
-jQuery( document ).ajaxComplete( function( event, XMLHttpRequest, ajaxOptions ) {
-    
 });
