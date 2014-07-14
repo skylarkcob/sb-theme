@@ -186,6 +186,36 @@ class SB_Language {
 		$this->overwrite_translator("vi", "order_by", "Sắp xếp theo");
 		$this->overwrite_translator("en", "order_by", "Order by");
 		
+		$this->overwrite_translator("vi", "home_setting", "Cài đặt hiển thị trang chủ");
+		$this->overwrite_translator("en", "home_setting", "Home settings");
+		
+		$this->overwrite_translator("vi", "social_setting", "Cài đặt thông tin mạng xã hội");
+		$this->overwrite_translator("en", "social_setting", "Social settings");
+		
+		$this->overwrite_translator("vi", "input_facebook_url", "Nhập vào đường dẫn đến trang Facebook của bạn");
+		$this->overwrite_translator("en", "input_facebook_url", "Enter your Facebook account url");
+		
+		$this->overwrite_translator("vi", "input_twitter_url", "Nhập vào đường dẫn đến trang Twitter của bạn");
+		$this->overwrite_translator("en", "input_twitter_url", "Enter your Twitter account url");
+		
+		$this->overwrite_translator("vi", "input_gplus_url", "Nhập vào đường dẫn đến trang Google Plus của bạn");
+		$this->overwrite_translator("en", "input_gplus_url", "Enter your Google Plus account url");
+		
+		$this->overwrite_translator("vi", "input_zingme_url", "Nhập vào đường dẫn đến trang Zing Me của bạn");
+		$this->overwrite_translator("en", "input_zingme_url", "Enter your Zing Me account url");
+		
+		$this->overwrite_translator("vi", "input_youtube_url", "Nhập vào đường dẫn đến trang YouTube của bạn");
+		$this->overwrite_translator("en", "input_youtube_url", "Enter your YouTube account url");
+		
+		$this->overwrite_translator("vi", "input_pinterest_url", "Nhập vào đường dẫn đến trang Pinterest của bạn");
+		$this->overwrite_translator("en", "input_pinterest_url", "Enter your Pinterest account url");
+		
+		$this->overwrite_translator("vi", "input_linkedin_url", "Nhập vào đường dẫn đến trang Linkedin của bạn");
+		$this->overwrite_translator("en", "input_linkedin_url", "Enter your Linkedin account url");
+		
+		$this->overwrite_translator("vi", "input_rss_url", "Nhập vào đường dẫn đến trang RSS của bạn");
+		$this->overwrite_translator("en", "input_rss_url", "Enter your site RSS url");
+		
 		$this->overwrite_translator("vi", "post_date", "Ngày đăng bài viết");
 		$this->overwrite_translator("en", "post_date", "Post date");
 		
@@ -200,6 +230,9 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "show_title", "Hiển thị tiêu đề");
 		$this->overwrite_translator("en", "show_title", "Show title");
+		
+		$this->overwrite_translator("vi", "sb_framework_utility_management", "Bật hoặc tắt các gói tiện ích kèm theo SB Framework");
+		$this->overwrite_translator("en", "sb_framework_utility_management", "SB Framework Utilities Management");
 		
 		$this->overwrite_translator("vi", "sb_framework_short_description", "Giới thiệu sơ lượt về SB Framework dành cho WordPress");
 		$this->overwrite_translator("en", "sb_framework_short_description", "Short descriptions about SB Framework for WordPress");
@@ -227,6 +260,48 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "not_have_permission_to_edit_theme", "Bạn không có quyền tùy chỉnh giao diện");
 		$this->overwrite_translator("en", "not_have_permission_to_edit_theme", "You don't have permissions to edit theme");
+		
+		$this->overwrite_translator("vi", "switch_shop_functional", "Bật hoặc tắt chức năng làm trang Shop cho WordPress");
+		$this->overwrite_translator("en", "switch_shop_functional", "Turn on or turn off shop functional for WordPress");
+		
+		$this->overwrite_translator("vi", "switch_manga_functional", "Bật hoặc tắt chức năng làm trang Manga cho WordPress");
+		$this->overwrite_translator("en", "switch_manga_functional", "Turn on or turn off manga functional for WordPress");
+		
+		$this->overwrite_translator("vi", "switch_tivi_functional", "Bật hoặc tắt chức năng làm trang xem Tivi cho WordPress");
+		$this->overwrite_translator("en", "switch_tivi_functional", "Turn on or turn off television functional for WordPress");
+		
+		$this->overwrite_translator("vi", "switch_sb_post_widget_functional", "Bật hoặc tắt chức năng widget hiển thị bài viết SB Post Widget");
+		$this->overwrite_translator("en", "switch_sb_post_widget_functional", "Turn on or turn off SB Post Widget to display posts on sidebar");
+		
+		$this->overwrite_translator("vi", "switch_sb_tab_widget_functional", "Bật hoặc tắt chức năng widget hiển thị tab SB Tab Widget");
+		$this->overwrite_translator("en", "switch_sb_tab_widget_functional", "Turn on or turn off SB Tab Widget to display widget as tabber on sidebar");
+		
+		$this->overwrite_translator("vi", "switch_sb_banner_widget_functional", "Bật hoặc tắt chức năng widget hiển thị bài viết SB Banner Widget");
+		$this->overwrite_translator("en", "switch_sb_banner_widget_functional", "Turn on or turn off SB Banner Widget to display banner image on sidebar");
+		
+		$this->overwrite_translator("vi", "switch_3d_functional", "Bật hoặc tắt chức năng cho phép đăng tải tập tin 3D .stl");
+		$this->overwrite_translator("en", "switch_3d_functional", "Turn on or turn off functional to post 3D file on WordPress site");
+		
+		$this->overwrite_translator("vi", "switch_scroll_top_functional", "Bật hoặc tắt chức năng cho phép hiển thị nút quay về đầu trang");
+		$this->overwrite_translator("en", "switch_scroll_top_functional", "Turn on or turn off functional to display scroll top button");
+		
+		$this->overwrite_translator("vi", "support_shop_functional", "Hỗ trợ trang Shop");
+		$this->overwrite_translator("en", "support_shop_functional", "Support shop");
+		
+		$this->overwrite_translator("vi", "support_manga_functional", "Hỗ trợ trang Manga");
+		$this->overwrite_translator("en", "support_manga_functional", "Support manga");
+		
+		$this->overwrite_translator("vi", "support_tivi_functional", "Hỗ trợ trang Tivi");
+		$this->overwrite_translator("en", "support_tivi_functional", "Support television");
+		
+		$this->overwrite_translator("vi", "support_3d_functional", "Đăng tập tin 3D");
+		$this->overwrite_translator("en", "support_3d_functional", "Support 3D file");
+		
+		$this->overwrite_translator("vi", "support_scroll_top_functional", "Nút quay về đầu trang");
+		$this->overwrite_translator("en", "support_scroll_top_functional", "Scroll top button");
+		
+		$this->overwrite_translator("vi", "support_link_functional", "Quản lý Links");
+		$this->overwrite_translator("en", "support_link_functional", "Links management");
 		
 		$this->overwrite_translator("vi", "no_name_theme", "Giao diện chưa đặt tên");
 		$this->overwrite_translator("en", "no_name_theme", "No name theme");

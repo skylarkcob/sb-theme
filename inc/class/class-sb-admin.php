@@ -138,7 +138,7 @@ class SB_Admin {
 	 
 	// Thêm trang cài đặt hiển thị trang chủ
 	private function add_home_setting() {
-		$this->add_section('sbtheme_home_section', 'Cài đặt hiển thị trang chủ');
+		$this->add_section('sbtheme_home_section', SB_WP::phrase('home_setting'));
 		$this->add_home_field_setting();
 	}
 	
@@ -182,7 +182,7 @@ class SB_Admin {
 	 
 	// Thêm trang cài đặt thông tin mạng xã hội
 	private function add_social_setting() {
-		$this->add_section('sbtheme_social_section', 'Cài đặt thông tin mạng xã hội');
+		$this->add_section('sbtheme_social_section', SB_WP::phrase('social_setting'));
 		$this->add_social_field('facebook', 'Facebook', 'facebook_callback');
 		$this->add_social_field('twitter', 'Twitter', 'twitter_callback');
 		$this->add_social_field('gplus', 'Google Plus', 'gplus_callback');
@@ -210,42 +210,42 @@ class SB_Admin {
 	
 	// Hàm hiển thị mục cài đặt Facebook
 	public function facebook_callback() {
-		$this->set_social_field('facebook', 'Nhập vào đường dẫn đến trang Facebook của bạn.');
+		$this->set_social_field('facebook', SB_PHP::add_dotted(SB_WP::phrase('input_facebook_url')));
 	}
 	
 	// Hàm hiển thị mục cài đặt Twitter
 	public function twitter_callback() {
-		$this->set_social_field('twitter', 'Nhập vào đường dẫn đến trang Twitter của bạn.');
+		$this->set_social_field('twitter', SB_PHP::add_dotted(SB_WP::phrase('input_twitter_url')));
 	}
 	
 	// Hàm hiển thị mục cài đặt Google Plus
 	public function gplus_callback() {
-		$this->set_social_field('gplus', 'Nhập vào đường dẫn đến trang Google Plus của bạn.');
+		$this->set_social_field('gplus', SB_PHP::add_dotted(SB_WP::phrase('input_gplus_url')));
 	}
 	
 	// Hàm hiển thị mục cài đặt Zing Me
 	public function zingme_callback() {
-		$this->set_social_field('zingme', 'Nhập vào đường dẫn đến trang Zing Me của bạn.');
+		$this->set_social_field('zingme', SB_PHP::add_dotted(SB_WP::phrase('input_zingme_url')));
 	}
 	
 	// Hàm hiển thị mục cài đặt YouTube
 	public function youtube_callback() {
-		$this->set_social_field('youtube', 'Nhập vào đường dẫn đến trang YouTube của bạn.');
+		$this->set_social_field('youtube', SB_PHP::add_dotted(SB_WP::phrase('input_youtube_url')));
 	}
 	
 	// Hàm hiển thị mục cài đặt Pinterest
 	public function pinterest_callback() {
-		$this->set_social_field('pinterest', 'Nhập vào đường dẫn đến trang Pinterest của bạn.');
+		$this->set_social_field('pinterest', SB_PHP::add_dotted(SB_WP::phrase('input_pinterest_url')));
 	}
 	
 	// Hàm hiển thị mục cài đặt Linkedin
 	public function linkedin_callback() {
-		$this->set_social_field('linkedin', 'Nhập vào đường dẫn đến trang Linkedin của bạn.');
+		$this->set_social_field('linkedin', SB_PHP::add_dotted(SB_WP::phrase('input_linkedin_url')));
 	}
 	
 	// Hàm hiển thị mục cài đặt RSS
 	public function rss_callback() {
-		$this->set_social_field('rss', 'Nhập vào đường dẫn đến trang RSS của bạn.');
+		$this->set_social_field('rss', SB_PHP::add_dotted(SB_WP::phrase('input_rss_url')));
 	}
 	
 	/*
@@ -267,16 +267,16 @@ class SB_Admin {
 	 * Tạo cài đặt quản lý các gói tiện ích
 	 */
 	private function add_sbmodule_setting() {
-		$this->add_section('sbtheme_sbmodule_section', 'Bật hoặc tắt các gói tiện ích kèm theo SB Framework');
-		$this->add_sbmodule_field('enable_shop', 'Hỗ trợ trang Shop', 'enable_shop_callback');
-		$this->add_sbmodule_field('enable_manga', 'Hỗ trợ trang Manga', 'enable_manga_callback');
-		$this->add_sbmodule_field('enable_tivi', 'Hỗ trợ trang Tivi', 'enable_tivi_callback');
+		$this->add_section('sbtheme_sbmodule_section', SB_WP::phrase('sb_framework_utility_management'));
+		$this->add_sbmodule_field('enable_shop', SB_WP::phrase('support_shop_functional'), 'enable_shop_callback');
+		$this->add_sbmodule_field('enable_manga', SB_WP::phrase('support_manga_functional'), 'enable_manga_callback');
+		$this->add_sbmodule_field('enable_tivi', SB_WP::phrase('support_tivi_functional'), 'enable_tivi_callback');
 		$this->add_sbmodule_field('enable_sb_post_widget', 'SB Post Widget', 'enable_sb_post_widget_callback');
 		$this->add_sbmodule_field('enable_sb_tab_widget', 'SB Tab Widget', 'enable_sb_tab_widget_callback');
 		$this->add_sbmodule_field('enable_sb_banner_widget', 'SB Banner Widget', 'enable_sb_banner_widget_callback');
-		$this->add_sbmodule_field('enable_3dfile', 'Đăng tập tin 3D', 'enable_3dstl_callback');
-		$this->add_sbmodule_field('enable_scroll_top', 'Nút quay về đầu trang', 'enable_scroll_top_callback');
-		$this->add_sbmodule_field('enable_links_manager', 'Quản lý Links', 'enable_links_manager_callback');
+		$this->add_sbmodule_field('enable_3dfile', SB_WP::phrase('support_3d_functional'), 'enable_3dstl_callback');
+		$this->add_sbmodule_field('enable_scroll_top', SB_WP::phrase('support_scroll_top_functional'), 'enable_scroll_top_callback');
+		$this->add_sbmodule_field('enable_links_manager', SB_WP::phrase('support_link_functional'), 'enable_links_manager_callback');
 		$this->add_sbmodule_field('enable_float_ads', SB_WP::phrase('float_ads'), 'enable_float_ads_callback');
 		$this->add_sbmodule_field('enable_leaderboard_ads', SB_WP::phrase('leaderboard_ads'), 'enable_leaderboard_ads_callback');
 	}
@@ -288,42 +288,42 @@ class SB_Admin {
 	
 	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng Shop
 	public function enable_shop_callback() {
-		$this->set_switch_field('enable_shop', 'Bật hoặc tắt chức năng làm trang Shop cho WordPress.');
+		$this->set_switch_field('enable_shop', SB_PHP::add_dotted(SB_WP::phrase('switch_shop_functional')));
 	}
 	
 	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng manga
 	public function enable_manga_callback() {
-		$this->set_switch_field('enable_manga', 'Bật hoặc tắt chức năng làm trang Manga cho WordPress.');
+		$this->set_switch_field('enable_manga', SB_PHP::add_dotted(SB_WP::phrase('switch_manga_functional')));
 	}
 	
 	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng tivi
 	public function enable_tivi_callback() {
-		$this->set_switch_field('enable_tivi', 'Bật hoặc tắt chức năng làm trang xem Tivi cho WordPress.');
+		$this->set_switch_field('enable_tivi', SB_PHP::add_dotted(SB_WP::phrase('switch_tivi_functional')));
 	}
 	
 	// Hàm hiển thị mục cài đặt bật hoặc tắt widget hiển thị bài viết
 	public function enable_sb_post_widget_callback() {
-		$this->set_switch_field('enable_sb_post_widget', 'Bật hoặc tắt chức năng widget hiển thị bài viết SB Post Widget.');
+		$this->set_switch_field('enable_sb_post_widget', SB_PHP::add_dotted(SB_WP::phrase('switch_sb_post_widget_functional')));
 	}
 	
 	// Hàm hiển thị mục cài đặt bật hoặc tắt widget hiển thị tab
 	public function enable_sb_tab_widget_callback() {
-		$this->set_switch_field('enable_sb_tab_widget', 'Bật hoặc tắt chức năng widget hiển thị tab SB Tab Widget.');
+		$this->set_switch_field('enable_sb_tab_widget', SB_PHP::add_dotted(SB_WP::phrase('switch_sb_tab_widget_functional')));
 	}
 	
 	// Hàm hiển thị mục cài đặt bật hoặc tắt widget hiển thị banner
 	public function enable_sb_banner_widget_callback() {
-		$this->set_switch_field('enable_sb_banner_widget', 'Bật hoặc tắt chức năng widget hiển thị bài viết SB Banner Widget.');
+		$this->set_switch_field('enable_sb_banner_widget', SB_PHP::add_dotted(SB_WP::phrase('switch_sb_banner_widget_functional')));
 	}
 	
 	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng upload tập tin .stl
 	public function enable_3dstl_callback() {
-		$this->set_switch_field('enable_3dfile', 'Bật hoặc tắt chức năng cho phép đăng tải tập tin 3D .stl.');
+		$this->set_switch_field('enable_3dfile', SB_PHP::add_dotted(SB_WP::phrase('switch_3d_functional')));
 	}
 	
 	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng hiển thị nút quay về đầu trang
 	public function enable_scroll_top_callback() {
-		$this->set_switch_field('enable_scroll_top', 'Bật hoặc tắt chức năng cho phép hiển thị nút quay về đầu trang.');
+		$this->set_switch_field('enable_scroll_top', SB_PHP::add_dotted(SB_WP::phrase('switch_scroll_top_functional')));
 	}
 	
 	// Hàm hiển thị mục cài đặt bật hoặc tắt chức năng quản lý links
@@ -396,14 +396,14 @@ class SB_Admin {
 		$new_input['banner'] = $this->set_input_data($input, 'banner', 'image');
 		$new_input['footer_text'] = $this->set_input_data($input, 'footer_text', 'default');
 		
-		$new_input['facebook'] = $this->set_input_data($input, 'facebook', 'text');
-		$new_input['twitter'] = $this->set_input_data($input, 'twitter', 'text');
-		$new_input['gplus'] = $this->set_input_data($input, 'gplus', 'text');
-		$new_input['zingme'] = $this->set_input_data($input, 'zingme', 'text');
-		$new_input['rss'] = $this->set_input_data($input, 'rss', 'text');
-		$new_input['youtube'] = $this->set_input_data($input, 'youtube', 'text');
-		$new_input['linkedin'] = $this->set_input_data($input, 'linkedin', 'text');
-		$new_input['pinterest'] = $this->set_input_data($input, 'pinterest', 'text');
+		$new_input['facebook'] = $this->set_input_data($input, 'facebook', 'url');
+		$new_input['twitter'] = $this->set_input_data($input, 'twitter', 'url');
+		$new_input['gplus'] = $this->set_input_data($input, 'gplus', 'url');
+		$new_input['zingme'] = $this->set_input_data($input, 'zingme', 'url');
+		$new_input['rss'] = $this->set_input_data($input, 'rss', 'url');
+		$new_input['youtube'] = $this->set_input_data($input, 'youtube', 'url');
+		$new_input['linkedin'] = $this->set_input_data($input, 'linkedin', 'url');
+		$new_input['pinterest'] = $this->set_input_data($input, 'pinterest', 'url');
 		
 		$new_input['enable_shop'] = $this->set_input_data($input, 'enable_shop', 'bool-nummber');
 		$new_input['enable_tivi'] = $this->set_input_data($input, 'enable_tivi', 'bool-nummber');
@@ -437,6 +437,10 @@ class SB_Admin {
 					break;
 				case 'text':
 					$data = sanitize_text_field( $input[$key] );
+					$kq = $data;
+					break;
+				case 'url':
+					$data = esc_url_raw( $input[$key] );
 					if(SB_PHP::is_url($data)) {
 						$kq = $data;
 					}

@@ -77,6 +77,10 @@ class SB_WP {
 		return $result;
 	}
 	
+	public static function get_permalink_struct() {
+		return get_option('permalink_structure');
+	}
+	
 	public static function send_mail($to, $subject, $body) {
 		//add_filter( 'wp_mail_content_type', array(self, 'set_html_content_type' ));
 		$done = wp_mail( $to, $subject, $body );

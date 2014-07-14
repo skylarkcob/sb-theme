@@ -192,7 +192,7 @@ class SB_Hook {
 	}
 	
 	public function float_ads_init() {
-		SB_Theme::float_ads();
+		SB_Theme::float_ads_sidebar();
 	}
 
 	public function sbtheme_widget_param($params) {
@@ -240,6 +240,8 @@ class SB_Hook {
 		if("vi" == $sb_language->get()) {
 			update_option("timezone_string", "Asia/Ho_Chi_Minh");
 			update_option("date_format", "d/m/Y");
+		}
+		if(empty(SB_WP::get_permalink_struct())) {
 			SB_WP::update_permalink("/%postname%");
 		}
 	}
