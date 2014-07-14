@@ -241,7 +241,8 @@ class SB_Hook {
 			update_option("timezone_string", "Asia/Ho_Chi_Minh");
 			update_option("date_format", "d/m/Y");
 		}
-		if(empty(SB_WP::get_permalink_struct())) {
+		$permalink_struct = SB_WP::get_permalink_struct();
+		if(empty($permalink_struct)) {
 			SB_WP::update_permalink("/%postname%");
 		}
 	}
