@@ -25,6 +25,10 @@ class SB_PHP {
 		date_default_timezone_set('Asia/Ho_Chi_Minh');
 	}
 	
+	public static function is_number($number) {
+		return is_numeric($number);
+	}
+	
 	public static function get_current_date($format = 'd-m-Y') {
 		self::timezone_hcm();
 		return date($format);

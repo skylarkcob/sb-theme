@@ -120,6 +120,24 @@ class SB_Language {
 		$this->overwrite_translator("vi", "only_show_thumbnail", "Chỉ hiển thị hình ảnh");
 		$this->overwrite_translator("en", "only_show_thumbnail", "Only show post's thumbnail");
 		
+		$this->overwrite_translator("vi", "excerpt_length", "Độ dài của đoạn chữ tóm tắt");
+		$this->overwrite_translator("en", "excerpt_length", "Excerpt length");
+		
+		$this->overwrite_translator("vi", "image_size", "Kích thước hình ảnh");
+		$this->overwrite_translator("en", "image_size", "Image size");
+		
+		$this->overwrite_translator("vi", "post_information", "Thông tin bài viết");
+		$this->overwrite_translator("en", "post_information", "Post information");
+		
+		$this->overwrite_translator("vi", "show_author", "Hiển thị tác giả");
+		$this->overwrite_translator("en", "show_author", "Show author");
+		
+		$this->overwrite_translator("vi", "show_date", "Hiển thị ngày tháng");
+		$this->overwrite_translator("en", "show_date", "Show date");
+		
+		$this->overwrite_translator("vi", "show_comment_count", "Hiển thị số bình luận");
+		$this->overwrite_translator("en", "show_comment_count", "Show comment count");
+		
 		$this->overwrite_translator("vi", "tivi_settings", "Cài đặt cho trang Tivi");
 		$this->overwrite_translator("en", "tivi_settings", "Television settings");
 		
@@ -140,6 +158,30 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "show_banner_on_sidebar", "Hiển thị banner trên sidebar");
 		$this->overwrite_translator("en", "show_banner_on_sidebar", "Show banner on sidebar");
+		
+		$this->overwrite_translator("vi", "tab_widget_description", "Hiển thị tab chứa các widget con");
+		$this->overwrite_translator("en", "tab_widget_description", "Show widget as tabber");
+		
+		$this->overwrite_translator("vi", "you_do_not_choose_sidebar", "Bạn chưa chọn sidebar để hiển thị");
+		$this->overwrite_translator("en", "you_do_not_choose_sidebar", "You haven't been choosen sidebar yet");
+		
+		$this->overwrite_translator("vi", "choose_sidebar", "Chọn sidebar");
+		$this->overwrite_translator("en", "choose_sidebar", "Choose sidebar");
+		
+		$this->overwrite_translator("vi", "do_not_choose_sidebar_contain_widget", "Không được chọn sidebar đang chứa widget này, nếu không widget sẽ không hiển thị");
+		$this->overwrite_translator("en", "do_not_choose_sidebar_contain_widget", "Do not choose sidebar that contains this widget or it will not be shown");
+		
+		$this->overwrite_translator("vi", "please_put_widget_into_sidebar", "Xin vui lòng đặt widget vào bên trong sidebar");
+		$this->overwrite_translator("en", "please_put_widget_into_sidebar", "Please put your widget into sidebar");
+		
+		$this->overwrite_translator("vi", "post_number", "Số lượng bài viết");
+		$this->overwrite_translator("en", "post_number", "Post numbers");
+		
+		$this->overwrite_translator("vi", "get_post_by", "Lấy bài viết theo");
+		$this->overwrite_translator("en", "get_post_by", "Get posts by");
+		
+		$this->overwrite_translator("vi", "show_excerpt", "Hiển thị tóm tắt bài viết");
+		$this->overwrite_translator("en", "show_excerpt", "Show excerpt");
 		
 		$this->overwrite_translator("vi", "title", "Tiêu đề");
 		$this->overwrite_translator("en", "title", "Title");
@@ -168,8 +210,14 @@ class SB_Language {
 		$this->overwrite_translator("vi", "float_ads_right_description", "Quảng cáo trượt bên phải trang");
 		$this->overwrite_translator("en", "float_ads_right_description", "Float ads on the right site");
 		
-		$this->overwrite_translator("vi", "float_ads", "Quảng 2 bên");
+		$this->overwrite_translator("vi", "float_ads", "Quảng cáo 2 bên");
 		$this->overwrite_translator("en", "float_ads", "Float ads");
+		
+		$this->overwrite_translator("vi", "addthis_share_button", "Nút chia sẻ AddThis");
+		$this->overwrite_translator("en", "addthis_share_button", "AddThis share button");
+		
+		$this->overwrite_translator("vi", "enable_addthis_description", "Bất hoặc tắt chức năng hiển thị nút chia sẻ AddThis");
+		$this->overwrite_translator("en", "enable_addthis_description", "Turn on or turn off AddThis share button");
 		
 		$this->overwrite_translator("vi", "leaderboard_ads", "Quảng cáo leaderboard");
 		$this->overwrite_translator("en", "leaderboard_ads", "Leaderboard ads");

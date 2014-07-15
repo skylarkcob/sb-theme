@@ -3,7 +3,7 @@ class SB_Tab_Widget extends WP_Widget {
 	public function __construct() {
 		parent::__construct( 'sb_tab_widget', __( 'SB Tab', SB_DOMAIN ), array(
 			'classname'   => 'widget_sb_tab',
-			'description' => __( 'Tạo widget tab.', SB_DOMAIN ),
+			'description' => __( SB_PHP::add_dotted(SB_WP::phrase("tab_widget_description")), SB_DOMAIN ),
 		));
 	}
 		
@@ -13,7 +13,7 @@ class SB_Tab_Widget extends WP_Widget {
 		$sidebar = $instance['sidebar'];
 		echo $args['before_widget'];
 		if(empty($sidebar)) {
-			echo '<p>Bạn chưa chọn sidebar để hiển thị.</p>';
+			echo '<p>'.SB_PHP::add_dotted(SB_WP::phrase("you_do_not_choose_sidebar")).'</p>';
 		} elseif($args['id'] != $sidebar) { ?>
 			<div class="sb-tab-widget">
 				<ul class="nav nav-pills list-tab"></ul>
@@ -27,7 +27,7 @@ class SB_Tab_Widget extends WP_Widget {
 							$sidebar_name = $sidebar_tmp['name'];
 						}
 						?>
-						<p>Xin vui lòng đặt widget vào sidebar <?php echo $sidebar_name; ?>.</p>
+						<p><?php echo SB_WP::phrase("please_put_widget_into_sidebar"); ?> <?php echo $sidebar_name; ?>.</p>
 					<?php endif; ?>
 				</div>
 			</div>
@@ -42,11 +42,11 @@ class SB_Tab_Widget extends WP_Widget {
 		$sidebars = SB_WP::get_sidebar(); ?>
 		<div class="sb-tab-widget sb-widget">
 			<p>
-				<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( 'Tiêu đề:', SB_DOMAIN ); ?></label>
+				<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( SB_PHP::add_colon(SB_WP::phrase("title")), SB_DOMAIN ); ?></label>
 				<input id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" class="widefat" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
 			</p>
-			<p id="listSidebars">
-				<label for="<?php echo esc_attr( $this->get_field_id( 'sidebar' ) ); ?>"><?php _e( 'Chọn sidebar:', SB_DOMAIN ); ?></label>
+			<p class="list-sidebar">
+				<label for="<?php echo esc_attr( $this->get_field_id( 'sidebar' ) ); ?>"><?php _e( SB_PHP::add_colon(SB_WP::phrase("choose_sidebar")), SB_DOMAIN ); ?></label>
 				<select id="<?php echo esc_attr( $this->get_field_id( 'sidebar' ) ); ?>" class="widefat sb-list-sidebars" name="<?php echo esc_attr( $this->get_field_name( 'sidebar' ) ); ?>">
 					<?php
 					foreach ( $sidebars as $id => $sb ) {
@@ -56,7 +56,7 @@ class SB_Tab_Widget extends WP_Widget {
 						printf('<option value="%s"%s>%s</option>', $id, $selected, $name);
 					} ?>
 				</select>
-				<em>Không được chọn sidebar đang chứa widget này, nếu không widget sẽ không hiển thị.</em>
+				<em><?php echo SB_PHP::add_dotted(SB_WP::phrase('do_not_choose_sidebar_contain_widget')); ?></em>
 			<p>
 		</div> <?php
 	}

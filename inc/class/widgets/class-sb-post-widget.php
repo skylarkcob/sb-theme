@@ -5,6 +5,8 @@ class SB_Post_Widget extends WP_Widget {
 	private $order_type = array();
 	
 	private $default_number = 5;
+	private $excerpt_length = 75;
+	private $thumbnail_size = array(100, 100);
 
 	public function __construct() {
 		$this->init();
@@ -58,6 +60,13 @@ class SB_Post_Widget extends WP_Widget {
 		$order_type = strtoupper($order_type);
 		//echo 'AAA'.$order_type;
 		$only_thumbnail = isset($instance['only_thumbnail']) ? absint($instance['only_thumbnail']) : 0;
+		$show_excerpt = isset($instance['show_excerpt']) ? absint($instance['show_excerpt']) : 0;
+		
+		$thumbnail_width = empty( $instance['thumbnail_width'] ) ? $this->thumbnail_size[0] : absint( $instance['thumbnail_width'] );
+		$thumbnail_height = empty( $instance['thumbnail_height'] ) ? $this->thumbnail_size[1] : absint( $instance['thumbnail_height'] );
+		$thumbnail_size = array($thumbnail_width, $thumbnail_height);
+		
+		$excerpt_length = empty( $instance['excerpt_length'] ) ? $this->excerpt_length : absint( $instance['excerpt_length'] );
 		switch($type) {
 			case 'random':
 				$args = array(
@@ -180,22 +189,35 @@ class SB_Post_Widget extends WP_Widget {
 		$category = isset( $instance['category'] ) ? $instance['category'] : 0;
 		$taxonomy = isset( $instance['taxonomy'] ) ? $instance['taxonomy'] : 'category';
 		$only_thumbnail = isset($instance['only_thumbnail']) ? absint($instance['only_thumbnail']) : 0;
+		$show_excerpt = isset($instance['show_excerpt']) ? absint($instance['show_excerpt']) : 0;
 		$order_by = isset( $instance['order_by'] ) ? $instance['order_by'] : 'title';
 		$order_type = isset($instance['order_type']) ? $instance['order_type'] : 'desc';
+		
+		$thumbnail_width = empty( $instance['thumbnail_width'] ) ? $this->thumbnail_size[0] : absint( $instance['thumbnail_width'] );
+		$thumbnail_height = empty( $instance['thumbnail_height'] ) ? $this->thumbnail_size[1] : absint( $instance['thumbnail_height'] );
+		$thumbnail_size = array($thumbnail_width, $thumbnail_height);
+		
+		$excerpt_length = empty( $instance['excerpt_length'] ) ? $this->excerpt_length : absint( $instance['excerpt_length'] );
 		?>
 		<div class="sb-post-widget sb-widget">
 			<p>
-				<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( 'Tiêu đề:', 'sbtheme' ); ?></label>
+				<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( SB_PHP::add_colon(SB_WP::phrase("title")), SB_DOMAIN ); ?></label>
 				<input id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" class="widefat" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
 			</p>
-			
-			<p>
-				<label for="<?php echo esc_attr( $this->get_field_id( 'number' ) ); ?>"><?php _e( 'Số lượng bài viết:', SB_DOMAIN ); ?></label>
-				<input id="<?php echo esc_attr( $this->get_field_id( 'number' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'number' ) ); ?>" type="text" value="<?php echo esc_attr( $number ); ?>" size="3" autocomplete="off">
-			</p>
+			<?php
+			$args = array(
+				'id'				=> $this->get_field_id('number'),
+				'name'				=> $this->get_field_name('number'),
+				'value'				=> $number,
+				'description'		=> SB_PHP::add_colon(SB_WP::phrase("post_number")),
+				'paragraph_id'		=> 'postNumber',
+				'paragraph_class'	=> 'post-number'
+			);
+			?>
+			<?php SB_Theme::widget_field_number($args); ?>
 
-			<p id="sbPostType">
-				<label for="<?php echo esc_attr( $this->get_field_id( 'type' ) ); ?>"><?php _e( 'Chọn kiểu hiển thị:', SB_DOMAIN ); ?></label>
+			<p class="post-type">
+				<label for="<?php echo esc_attr( $this->get_field_id( 'type' ) ); ?>"><?php _e( SB_PHP::add_colon(SB_WP::phrase("get_post_by")), SB_DOMAIN ); ?></label>
 				<select id="<?php echo esc_attr( $this->get_field_id( 'type' ) ); ?>" class="widefat sb-post-type" name="<?php echo esc_attr( $this->get_field_name( 'type' ) ); ?>">
 					<?php foreach ( $this->types as $key => $value ) : ?>
 					<?php if(("view" == $key && !SB_WP::is_support_post_views()) || ("like" == $key && !SB_WP::is_support_post_likes())) continue; ?>
@@ -207,8 +229,10 @@ class SB_Post_Widget extends WP_Widget {
 			<?php if($taxs) : ?>
 				<?php if("category" == $type) : ?>
 					<?php $style = "display: block"; ?>
+				<?php else : ?>
+					<?php $style = "display: none"; ?>
 				<?php endif; ?>
-				<p id="sbPostCats" style="<?php echo $style; ?>">
+				<p class="post-cat" style="<?php echo $style; ?>">
 					<label for="<?php echo esc_attr( $this->get_field_id( 'category' ) ); ?>"><?php _e( SB_WP::phrase('choose_category').':', SB_DOMAIN ); ?></label>
 					<select id="<?php echo esc_attr( $this->get_field_id( 'category' ) ); ?>" class="widefat sb-post-cat" name="<?php echo esc_attr( $this->get_field_name( 'category' ) ); ?>">
 						<?php foreach($taxs as $tax) : ?>
@@ -231,10 +255,58 @@ class SB_Post_Widget extends WP_Widget {
 					<?php endforeach; ?>
 				</select>
 			</p>
-			<p>
-				<input id="<?php echo esc_attr( $this->get_field_id( 'only_thumbnail' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'only_thumbnail' ) ); ?>" type="checkbox" value="<?php echo esc_attr( $only_thumbnail ); ?>" size="3" autocomplete="off" <?php checked( $only_thumbnail, 1, true ); ?>>
-				<label for="<?php echo esc_attr( $this->get_field_id( 'only_thumbnail' ) ); ?>"><?php _e( SB_WP::phrase("only_show_thumbnail"), SB_DOMAIN ); ?></label>
-			</p>
+			
+			<?php
+			$args = array(
+				'id'				=> $this->get_field_id('only_thumbnail'),
+				'name'				=> $this->get_field_name('only_thumbnail'),
+				'value'				=> $only_thumbnail,
+				'description'		=> SB_PHP::add_dotted(SB_WP::phrase("only_show_thumbnail")),
+				'paragraph_id'		=> 'onlyThumbnail',
+				'paragraph_class'	=> 'only-thumbnail'
+			);
+			?>
+			<?php SB_Theme::widget_field_checkbox($args); ?>
+			
+			<?php
+			$args = array(
+				'id_width'			=> $this->get_field_id('thumbnail_width'),
+				'name_width'		=> $this->get_field_name('thumbnail_width'),
+				'id_height'			=> $this->get_field_id('thumbnail_height'),
+				'name_height'		=> $this->get_field_name('thumbnail_height'),
+				'value'				=> $thumbnail_size,
+				'description'		=> SB_PHP::add_colon(SB_WP::phrase("image_size")),
+				'paragraph_id'		=> 'thumbnailSize',
+				'paragraph_class'	=> 'thumbnail-size'
+			);
+			?>
+			<?php SB_Theme::widget_field_image_size($args); ?>
+			
+			<?php
+			$args = array(
+				'id'				=> $this->get_field_id('show_excerpt'),
+				'name'				=> $this->get_field_name('show_excerpt'),
+				'value'				=> $show_excerpt,
+				'description'		=> SB_PHP::add_dotted(SB_WP::phrase("show_excerpt")),
+				'paragraph_id'		=> 'showExcerpt',
+				'paragraph_class'	=> 'show-excerpt'
+			);
+			?>
+			<?php SB_Theme::widget_field_checkbox($args); ?>
+
+			<?php
+			$args = array(
+				'id'				=> $this->get_field_id('excerpt_length'),
+				'name'				=> $this->get_field_name('excerpt_length'),
+				'value'				=> $excerpt_length,
+				'description'		=> SB_PHP::add_colon(SB_WP::phrase("excerpt_length")),
+				'paragraph_id'		=> 'excerptLength',
+				'display'			=> ((bool)$show_excerpt) ? true : false,
+				'paragraph_class'	=> 'excerpt-length'
+			);
+			?>
+			<?php SB_Theme::widget_field_number($args); ?>
+
 			<p>
 				<label for="<?php echo esc_attr( $this->get_field_id( 'order_by' ) ); ?>"><?php _e( SB_PHP::add_colon(SB_WP::phrase("order_by")), SB_DOMAIN ); ?></label>
 				<select id="<?php echo esc_attr( $this->get_field_id( 'order_by' ) ); ?>" class="widefat sb-category-type" name="<?php echo esc_attr( $this->get_field_name( 'order_by' ) ); ?>">
@@ -252,6 +324,43 @@ class SB_Post_Widget extends WP_Widget {
 				</select>
 			</p>
 			
+			<fieldset>
+				<legend><?php echo SB_PHP::add_colon(SB_WP::phrase('post_information')); ?></legend>
+				<?php
+				$args = array(
+					'id'				=> $this->get_field_id('show_author'),
+					'name'				=> $this->get_field_name('show_author'),
+					'value'				=> $show_author,
+					'description'		=> SB_PHP::add_dotted(SB_WP::phrase("show_author")),
+					'paragraph_id'		=> 'showAuthor',
+					'paragraph_class'	=> 'show-author'
+				);
+				?>
+				<?php SB_Theme::widget_field_checkbox($args); ?>
+				
+				<?php
+				$args = array(
+					'id'				=> $this->get_field_id('show_date'),
+					'name'				=> $this->get_field_name('show_date'),
+					'value'				=> $show_date,
+					'description'		=> SB_PHP::add_dotted(SB_WP::phrase("show_date")),
+					'paragraph_class'	=> 'show-date'
+				);
+				?>
+				<?php SB_Theme::widget_field_checkbox($args); ?>
+				
+				<?php
+				$args = array(
+					'id'				=> $this->get_field_id('show_comment_count'),
+					'name'				=> $this->get_field_name('show_comment_count'),
+					'value'				=> $show_comment_count,
+					'description'		=> SB_PHP::add_dotted(SB_WP::phrase("show_comment_count")),
+					'paragraph_class'	=> 'show-comment-count'
+				);
+				?>
+				<?php SB_Theme::widget_field_checkbox($args); ?>
+			</fieldset>
+			
 		</div>
 		<?php
 	}
@@ -263,8 +372,19 @@ class SB_Post_Widget extends WP_Widget {
 		$instance['number'] = empty( $new_instance['number'] ) ? $this->default_number : absint( $new_instance['number'] );
 		$instance['taxonomy'] = $new_instance['taxonomy'];
 		$instance['only_thumbnail'] = isset($new_instance['only_thumbnail']) ? 1 : 0;
+		$instance['show_excerpt'] = isset($new_instance['show_excerpt']) ? 1 : 0;
+		
+		$instance['show_author'] = isset($new_instance['show_author']) ? 1 : 0;
+		$instance['show_date'] = isset($new_instance['show_date']) ? 1 : 0;
+		$instance['show_comment_count'] = isset($new_instance['show_comment_count']) ? 1 : 0;
+		
 		$instance['order_by'] = $new_instance['order_by'];
 		$instance['order_type'] = $new_instance['order_type'];
+		
+		$instance['thumbnail_width'] = empty( $new_instance['thumbnail_width'] ) ? $this->thumbnail_size[0] : absint( $new_instance['thumbnail_width'] );
+		$instance['thumbnail_height'] = empty( $new_instance['thumbnail_height'] ) ? $this->thumbnail_size[1] : absint( $new_instance['thumbnail_height'] );
+		
+		$instance['excerpt_length'] = empty( $new_instance['excerpt_length'] ) ? $this->excerpt_length : absint( $new_instance['excerpt_length'] );
 		return $instance;
 	}
 }

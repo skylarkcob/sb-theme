@@ -278,6 +278,14 @@ class SB_WP {
 		return add_query_arg($args, $url);
 	}
 	
+	public static function utility_enabled($name) {
+		$options = self::option();
+		if(isset($options[ $name ]) && (bool)$options[ $name ]) {
+			return true;
+		}
+		return false;
+	}
+	
 	public static function option() {
 		return SB_Theme::option();
 	}

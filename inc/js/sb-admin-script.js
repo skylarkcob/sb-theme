@@ -1,7 +1,14 @@
 jQuery(document).ready(function($){
+	// Biến field chứa đường dẫn image từ media
+	var formField;
+	
+	/*
+	 *	SB Post Widget
+	 */
+	 
 	// Ẩn hoặc hiện danh sách chuyên mục cho SB Post Widget
 	$("body").delegate("select.sb-post-type", "change", function(){
-		var listCats = $(this).parent().parent().find("#sbPostCats");
+		var listCats = $(this).parent().parent().find("p.post-cat");
 		if("category" == $(this).val()) {
 			listCats.delay(10).fadeIn();
 		} else {
@@ -14,10 +21,47 @@ jQuery(document).ready(function($){
 		inputTaxonomy.val(taxonomy);
 	});
 	
+	$("body").delegate("input.sb-checkbox", "click", function(e){
+		var parentClass = $(this).parent().attr("class");
+		switch(parentClass) {
+			case 'only-thumbnail':
+				if($(this).is(':checked')) {
+					only_thumbnail_checked($(this), true);
+				} else {
+					only_thumbnail_checked($(this), false);
+				}
+				break;
+			case 'show-excerpt':
+				if($(this).is(':checked')) {
+					$(this).parent().parent().find("p.excerpt-length").fadeIn();
+				} else {
+					$(this).parent().parent().find("p.excerpt-length").fadeOut();
+				}
+				break;
+		}
+	});
+	
+	function only_thumbnail_checked(selector, value) {
+		var postWidget = selector.parent().parent();
+		if(true == value) {
+			postWidget.find("p.show-excerpt").fadeOut();
+			postWidget.find("p.excerpt-length").fadeOut();
+		} else {
+			postWidget.find("p.show-excerpt").fadeIn();
+			if(postWidget.find("p.show-excerpt input").is(":checked")) {
+				postWidget.find("p.excerpt-length").fadeIn();
+			}
+		}
+	}
+	
+	/*
+	 *	SB Tab Widget
+	 */
+	
 	// Xóa sidebar đang chứa SB Tab Widget
 	var sidebar = $('div.widgets-sortables');
 	$('body').find(sidebar).each(function(){
-		var aSidebar = $(this), sidebarId = aSidebar.attr("id");
+		var aSidebar = $(this);
 		remove_parent_sidebar_in_tab(aSidebar);
 		aSidebar.bind('DOMNodeInserted DOMNodeRemoved', function() {
 			remove_parent_sidebar_in_tab(aSidebar);
@@ -26,22 +70,25 @@ jQuery(document).ready(function($){
 	
 	function remove_parent_sidebar_in_tab(selector) {
 		var sidebarId = selector.attr("id");
-		selector.find("#listSidebars").each(function(){
+		selector.find("p.list-sidebar").each(function(){
 			var aListSidebar = $(this), sidebarOption = aListSidebar.find(".sb-list-sidebars option[value='" + sidebarId + "']");
 			sidebarOption.remove();
 		});
 	}
 	
+	/*
+	 *	SB Option Panel
+	 */
+	
 	// Trang cài đặt, tùy chỉnh giao diện
 	var sbOption = $("div.sb-option");
 	if(sbOption.length) {
-		var uploadCaller = null;
-		var formField;
+		var uploadCaller = null, optionField;
 		sbOption.find("a.insert-media").each(function(){
 			var insertMediaButton = $(this);
 			insertMediaButton.click(function(){
 				uploadCaller = $(this).closest("div.sbtheme-upload").find("input");
-				formField = uploadCaller.attr("name");
+				optionField = uploadCaller.attr("name");
 				tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
 				return false;
 			});
@@ -49,14 +96,14 @@ jQuery(document).ready(function($){
 		
 		window.original_send_to_editor = window.send_to_editor;
 		window.send_to_editor = function(html) {
-			if(formField) {
+			if(optionField) {
 				var imageUrl = $('img',html).attr('src');
 				uploadCaller.val(imageUrl);
 				tb_remove();
 				var mediaThumbnailBox = uploadCaller.closest("div.sbtheme-media-image").find("div.sbtheme.media.image");
 				mediaThumbnailBox.addClass("uploaded");
 				mediaThumbnailBox.html('<img src="' + imageUrl + '">');
-				formField = '';
+				optionField = '';
 			} else {
 				window.original_send_to_editor(html);
 			}
@@ -125,32 +172,28 @@ jQuery(document).ready(function($){
 		}
 		
 	}
+
+	/*
+	 *	SB Banner Widget
+	 */
 	
-	var sbWidget = $("body").find("div.sb-widget");
-	if(sbWidget.length) {
-		var formField;
-		sbWidget.find("a.insert-media").each(function(){
-			var uploadCaller = null;
-			
-			var uploadButton = $(this);
-			uploadCaller = uploadButton.closest("p");
-			
-			uploadButton.click(function(){
-				formField = $(this).parent().find("input");
-				tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
-				return false;
-			});
-		});
-		//window.original_send_to_editor = window.send_to_editor;
-		window.send_to_editor = function(html) {
-			if(formField) {
-				var imageUrl = $('img', html).attr('src');
-				formField.val(imageUrl);
-				formField = '';
-			} else {
-				//window.original_send_to_editor(html);
-			}
-			tb_remove();
+	// Xử lý nút upload hình ảnh trong widget
+	$("body").delegate("div.sb-widget .insert-media", "click", function(e){
+		formField = $(this).parent().find("input");
+		tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
+		return false;
+	});
+	
+	// Lấy đường dẫn từ thickbox cho vào field chứa url hình ảnh
+	window.original_send_to_editor = window.send_to_editor;
+	window.send_to_editor = function(html) {
+		if(formField) {
+			var imageUrl = $('img', html).attr('src');
+			formField.val(imageUrl);
+			formField = '';
+		} else {
+			window.original_send_to_editor(html);
 		}
+		tb_remove();
 	}
 });

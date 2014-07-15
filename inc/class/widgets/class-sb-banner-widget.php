@@ -58,7 +58,17 @@ class SB_Banner_Widget extends WP_Widget {
 				<label for="<?php echo esc_attr( $this->get_field_id( 'banner_url' ) ); ?>"><?php _e( SB_PHP::add_colon(SB_WP::phrase("banner_url")), SB_DOMAIN ); ?></label>
 				<input id="<?php echo esc_attr( $this->get_field_id( 'banner_url' ) ); ?>" class="widefat" name="<?php echo esc_attr( $this->get_field_name( 'banner_url' ) ); ?>" type="text" value="<?php echo esc_attr( $banner_url ); ?>">
 			</p>
-			<?php SB_Theme::widget_field_checkbox($this->get_field_id('use_title'), $this->get_field_name('use_title'), $show_title, SB_PHP::add_dotted(SB_WP::phrase("show_title"))); ?>
+			
+			<?php
+			$args = array(
+				'id'			=> $this->get_field_id('use_title'),
+				'name'			=> $this->get_field_name('use_title'),
+				'value'			=> $use_title,
+				'description'	=> SB_PHP::add_dotted(SB_WP::phrase("show_title")),
+				'paragraph_id'	=> 'useTitle'
+			);
+			?>
+			<?php SB_Theme::widget_field_checkbox($args); ?>
 		</div>
 		<?php
 	}

@@ -652,5 +652,5 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
 }
 
 body {
-	min-width: 480px;
+	min-width: 320px;
 }

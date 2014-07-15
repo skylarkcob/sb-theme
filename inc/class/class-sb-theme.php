@@ -86,13 +86,78 @@ class SB_Theme {
 		}
 	}
 	
-	public static function widget_field_checkbox($id, $name, $value, $description) {
+	public static function widget_field_checkbox($args = array()) {
+		$defaults = array(
+			'id'				=> '',
+			'name'				=> '',
+			'value'				=> '',
+			'description'		=> '',
+			'paragraph_id'		=> '',
+			'display'			=> true,
+			'input_class'		=> '',
+			'paragraph_class'	=> ''
+		);
+		$args = wp_parse_args($args, $defaults);
+		extract($args, EXTR_SKIP);
+		$input_class = trim($input_class." sb-checkbox");
 		?>
-		<p>
-			<input id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" type="checkbox" value="<?php echo esc_attr( $value ); ?>" <?php checked( $value, 1, true ); ?>>
+		<p class="<?php echo $paragraph_class; ?>">
+			<input id="<?php echo esc_attr( $id ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name ); ?>" type="checkbox" value="<?php echo esc_attr( $value ); ?>" <?php checked( $value, 1, true ); ?>>
 			<label for="<?php echo esc_attr( $id ); ?>"><?php _e( $description, SB_DOMAIN ); ?></label>
 		</p>
 		<?php
+	}
+	
+	public static function widget_field_number($args = array()) {
+		$defaults = array(
+			'id'				=> '',
+			'name'				=> '',
+			'value'				=> '',
+			'description'		=> '',
+			'paragraph_id'		=> '',
+			'display'			=> true,
+			'input_class'		=> '',
+			'paragraph_class'	=> ''
+		);
+		$args = wp_parse_args($args, $defaults);
+		extract($args, EXTR_SKIP);
+		$input_class = trim($input_class." sb-number");
+		?>
+		<p class="<?php echo $paragraph_class; ?>"<?php if(!$display) echo ' style="display:none"'; ?>>
+			<label for="<?php echo esc_attr( $id ); ?>"><?php _e( $description, SB_DOMAIN ); ?></label>
+			<input id="<?php echo esc_attr( $id ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name ); ?>" type="number" value="<?php echo esc_attr( $value ); ?>">
+		</p>
+		<?php
+	}
+	
+	public static function widget_field_image_size($args = array()) {
+		$defaults = array(
+			'id_width'			=> '',
+			'name_width'		=> '',
+			'id_height'			=> '',
+			'name_height'		=> '',
+			'value'				=> array(),
+			'description'		=> '',
+			'paragraph_id'		=> '',
+			'display'			=> true,
+			'input_class'		=> '',
+			'paragraph_class'	=> ''
+		);
+		$args = wp_parse_args($args, $defaults);
+		extract($args, EXTR_SKIP);
+		$input_class = trim($input_class." sb-number image-size");
+		?>
+		<p class="<?php echo $paragraph_class; ?>"<?php if(!$display) echo ' style="display:none"'; ?>>
+			<label for="<?php echo esc_attr( $id ); ?>"><?php _e( $description, SB_DOMAIN ); ?></label>
+			<input id="<?php echo esc_attr( $id_width ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name_width ); ?>" type="number" value="<?php echo esc_attr( $value[0] ); ?>">
+			<span>x</span>
+			<input id="<?php echo esc_attr( $id_height ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name_height ); ?>" type="number" value="<?php echo esc_attr( $value[1] ); ?>">
+		</p>
+		<?php
+	}
+	
+	public static function addthis_share_button() {
+		echo '<div class="addthis_native_toolbox"></div>';
 	}
 	
 	public static function option() {

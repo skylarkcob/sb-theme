@@ -279,6 +279,7 @@ class SB_Admin {
 		$this->add_sbmodule_field('enable_links_manager', SB_WP::phrase('support_link_functional'), 'enable_links_manager_callback');
 		$this->add_sbmodule_field('enable_float_ads', SB_WP::phrase('float_ads'), 'enable_float_ads_callback');
 		$this->add_sbmodule_field('enable_leaderboard_ads', SB_WP::phrase('leaderboard_ads'), 'enable_leaderboard_ads_callback');
+		$this->add_sbmodule_field('enable_addthis', SB_WP::phrase('addthis_share_button'), 'enable_addthis_callback');
 	}
 	
 	// Thêm mục cho trang quản lý các tiện ích
@@ -337,6 +338,10 @@ class SB_Admin {
 	
 	public function enable_leaderboard_ads_callback() {
 		$this->set_switch_field('enable_leaderboard_ads', SB_WP::phrase('enable_leaderboard_ads_description'));
+	}
+	
+	public function enable_addthis_callback() {
+		$this->set_switch_field('enable_addthis', SB_WP::phrase('enable_addthis_description'));
 	}
 	
 	private function set_switch_field($name, $description) {
@@ -412,6 +417,7 @@ class SB_Admin {
 		$new_input['enable_sb_banner_widget'] = $this->set_input_data($input, 'enable_sb_banner_widget', 'bool-nummber');
 		$new_input['enable_float_ads'] = $this->set_input_data($input, 'enable_float_ads', 'bool-nummber');
 		$new_input['enable_leaderboard_ads'] = $this->set_input_data($input, 'enable_leaderboard_ads', 'bool-nummber');
+		$new_input['enable_addthis'] = $this->set_input_data($input, 'enable_addthis', 'bool-nummber');
 		
 		$new_input['default_tivi'] = $this->set_input_data($input, 'default_tivi', 'int-nummber');
 		
@@ -678,6 +684,7 @@ class SB_Admin {
 							<?php settings_fields( 'sbtheme_option' ); ?>
 							<?php $this->do_settings_sections( $this->menu_slug ); ?>
 							<?php submit_button(SB_Theme::phrase("save_changes")); ?>
+							<div class="top-save-button"><?php submit_button(SB_Theme::phrase("save_changes")); ?></div>
 						</form>
 					</div>
 				</div>
