@@ -215,6 +215,10 @@ a:focus {
     text-align: center;
 }
 
+.sbtheme-list-section {
+	padding: 0;
+}
+
 .sbtheme-list-section li {
     margin: 0;
 }
