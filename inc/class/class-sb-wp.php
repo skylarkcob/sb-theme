@@ -31,6 +31,34 @@ class SB_WP {
 		echo self::get_login_uri();
 	}
 	
+	public static function get_author_post_url() {
+		return get_author_posts_url( get_the_author_meta( 'ID' ) );
+	}
+	
+	public static function get_image_url($name) {
+		return SB_Theme::get_image($name);
+	}
+	
+	public static function get_post_thumbnail($args = array()) {
+		$defaults = array(
+			'size'		=> array(),
+			'size_name'	=> 'thumbnail'
+		);
+		$args = wp_parse_args($args, $defaults);
+		extract($args, EXTR_SKIP);
+		$real_size = $size_name;
+
+		if(count($size) == 2) {
+			$real_size = $size;
+			$width = $size[0];
+			$height = $size[1];
+		}
+		if(has_post_thumbnail()) {
+			return get_the_post_thumbnail(get_the_ID(), $real_size);
+		}
+		return '<img class="no-thumbnail wp-post-image" width="'.$width.'" height="'.$height.'" src="'.self::get_image_url('no-thumbnail.png').'">';
+	}
+	
 	public static function get_url_value($url) {
 		return esc_url_raw($url);
 	}

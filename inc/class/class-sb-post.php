@@ -94,11 +94,7 @@ class SB_Post {
 	}
 	
 	public function comment_link() {
-		if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
-		?>
-		<span class="comments-link"><?php comments_popup_link( __( '0 bình luận', SB_DOMAIN ), __( '1 bình luận', SB_DOMAIN ), __( '% bình luận', SB_DOMAIN ) ); ?></span>
-		<?php
-		endif;
+		SB_Theme::post_comment_link();
 	}
 	
 	public function title($head = "h2") {

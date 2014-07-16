@@ -58,7 +58,7 @@ class SB_Post_Widget extends WP_Widget {
 		$order_by = isset($instance['order_by']) ? $instance['order_by'] : 'title';
 		$order_type = $instance['order_type'];
 		$order_type = strtoupper($order_type);
-		//echo 'AAA'.$order_type;
+
 		$only_thumbnail = isset($instance['only_thumbnail']) ? absint($instance['only_thumbnail']) : 0;
 		$show_excerpt = isset($instance['show_excerpt']) ? absint($instance['show_excerpt']) : 0;
 		
@@ -67,6 +67,10 @@ class SB_Post_Widget extends WP_Widget {
 		$thumbnail_size = array($thumbnail_width, $thumbnail_height);
 		
 		$excerpt_length = empty( $instance['excerpt_length'] ) ? $this->excerpt_length : absint( $instance['excerpt_length'] );
+		
+		$show_author = isset($instance['show_author']) ? absint($instance['show_author']) : 0;
+		$show_date = isset($instance['show_date']) ? absint($instance['show_date']) : 0;
+		$show_comment_count = isset($instance['show_comment_count']) ? absint($instance['show_comment_count']) : 0;
 		switch($type) {
 			case 'random':
 				$args = array(
@@ -118,9 +122,6 @@ class SB_Post_Widget extends WP_Widget {
 				$args = array();
 				$category = $instance['category'];
 				if($category > 0) {
-					//$child_cats = get_term_children($category, $taxonomy);
-					//array_push($child_cats, $category);
-					//$child_cats = array_merge($child_cats);
 					$args = array(
 						'posts_per_page'	=> $number,
 						'orderby'			=> $order_by,
@@ -142,9 +143,9 @@ class SB_Post_Widget extends WP_Widget {
 					'order'				=> $order_type
 				);
 		}
-		//print_r($args);
+
 		$sb_post = new WP_Query($args);
-		//print_r($sb_post);
+
 		if($sb_post->have_posts()) {
 			if("favorite" == $type && !is_user_logged_in()) return;
 			$args = $arr_tmp;
@@ -159,18 +160,34 @@ class SB_Post_Widget extends WP_Widget {
 						<?php while($sb_post->have_posts()) : $sb_post->the_post(); $a_post = new SB_Post(); ?>
 							<li>
 								<div <?php post_class("sb-post-widget"); ?>>
-									<?php $a_post->thumbnail(); ?>
+									<?php SB_Theme::post_thumbnail(array('size' => $thumbnail_size)); ?>
 									<?php if(1 != $only_thumbnail) : ?>
-									<header class="entry-header">
-										<div class="entry-meta">
-											<?php $a_post->title("h3"); ?>
-											<div class="entry-info">
-												<?php $a_post->meta(); ?>
-												<?php $a_post->comment_link(); ?>
+										<div class="post-content">
+											<div class="entry-header">
+												<?php $a_post->title("h3"); ?>
 											</div>
+											<?php if((bool)$show_excerpt) : ?>
+											<div class="excerpt">
+												<?php echo SB_PHP::substr(get_the_excerpt(), $excerpt_length); ?>
+											</div>
+											<?php endif; // Check show_excerpt ?>
+											<?php if((bool)$show_author || (bool)$show_date || (bool)$show_comment_count) : ?>
+											<div class="post-meta">
+												<?php
+													if((bool)$show_author) {
+														SB_Theme::post_author();
+													}
+													if((bool)$show_date) {
+														SB_Theme::post_date();
+													}
+													if((bool)$show_comment_count) {
+														SB_Theme::post_comment_link();
+													}
+												?>
+											</div>
+											<?php endif; // Check if show post meta ?>
 										</div>
-									</header>
-									<?php endif; ?>
+									<?php endif; // Check only_thumbnail ?>
 								</div>
 							</li>
 						<?php endwhile; wp_reset_postdata(); ?>
@@ -198,6 +215,10 @@ class SB_Post_Widget extends WP_Widget {
 		$thumbnail_size = array($thumbnail_width, $thumbnail_height);
 		
 		$excerpt_length = empty( $instance['excerpt_length'] ) ? $this->excerpt_length : absint( $instance['excerpt_length'] );
+		
+		$show_author = isset($instance['show_author']) ? absint($instance['show_author']) : 0;
+		$show_date = isset($instance['show_date']) ? absint($instance['show_date']) : 0;
+		$show_comment_count = isset($instance['show_comment_count']) ? absint($instance['show_comment_count']) : 0;
 		?>
 		<div class="sb-post-widget sb-widget">
 			<p>

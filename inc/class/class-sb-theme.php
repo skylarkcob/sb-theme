@@ -216,6 +216,51 @@ class SB_Theme {
 		include SB_TEMPLATE_PATH . "/template-theme-copyright.php";
 	}
 	
+	public static function copyright_text() {
+		echo '&copy; '.date('Y').' '.get_bloginfo('name').'. All Rights Reserved.';
+	}
+	
+	public static function post_comment_link() {
+		if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
+		?>
+		<span class="comments-link"><?php comments_popup_link( __( '0 '.strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '1 '.strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '% '.strtolower(SB_WP::phrase('comments')), SB_DOMAIN ) ); ?></span>
+		<?php
+		endif;
+	}
+	
+	public static function post_date() {
+		printf( '<span class="entry-date"><a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s" pubdate>%3$s</time></a></span>',
+			esc_url( get_permalink() ),
+			esc_attr( get_the_date( 'c' ) ),
+			esc_html( get_the_date() )
+		);
+	}
+	
+	public static function post_thumbnail($args = array()) {
+		$defaults = array(
+			'size'		=> array(),
+			'size_name'	=> 'thumbnail'
+		);
+		$args = wp_parse_args($args, $defaults);
+		extract($args, EXTR_SKIP);
+		$real_size = $size_name;
+		if(count($size) == 2) {
+			$real_size = $size;
+		}
+		?>
+		<div class="post-thumbnail">
+			<a href="<?php echo get_permalink(get_the_ID()); ?>"><?php echo SB_WP::get_post_thumbnail($args); ?></a>
+		</div>
+		<?php
+	}
+	
+	public static function post_author() {
+		printf( '<span class="byline"><span class="author vcard"><a class="url fn n" href="%1$s" rel="author">%2$s</a></span></span>',
+			esc_url( SB_WP::get_author_post_url() ),
+			get_author_name()
+		);
+	}
+	
     public static function menu($args = null) {
         $defaults = array(
             'theme_location'	=> '',
@@ -330,7 +375,7 @@ class SB_Theme {
     }
 	
 	public static function created_by() {
-		echo 'Giao diện được tạo bởi <a href="http://sauhi.com">SB Team</a>';
+		echo 'Giao diện được tạo bởi <a href="http://hocwp.net">SB Team</a>.';
 	}
 	
 	public static function author_box() {

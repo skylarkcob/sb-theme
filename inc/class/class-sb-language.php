@@ -31,8 +31,6 @@ class SB_Language {
 		$this->overwrite_translator("vi", "off", "Tắt");
 		$this->overwrite_translator("en", "off", "Off");
 		
-		//$this->overwrite_translator("vi", "sb_not_found", "Xin vui lòng đặt thư mục sb vào giao diện của bạn");
-		
 		$this->overwrite_translator("vi", "theme_settings", "Cài đặt giao diện");
 		$this->overwrite_translator("en", "theme_settings", "Theme Settings");
 		
@@ -96,7 +94,7 @@ class SB_Language {
 		$this->overwrite_translator("vi", "new_post", "Bài viết mới");
 		$this->overwrite_translator("en", "new_post", "New posts");
 		
-		$this->overwrite_translator("vi", "most_comment_post", "Bài viết mới");
+		$this->overwrite_translator("vi", "most_comment_post", "Bài viết nhiều bình luận");
 		$this->overwrite_translator("en", "most_comment_post", "Most comment posts");
 		
 		$this->overwrite_translator("vi", "random_post", "Bài viết ngẫu nhiên");
@@ -123,7 +121,7 @@ class SB_Language {
 		$this->overwrite_translator("vi", "excerpt_length", "Độ dài của đoạn chữ tóm tắt");
 		$this->overwrite_translator("en", "excerpt_length", "Excerpt length");
 		
-		$this->overwrite_translator("vi", "image_size", "Kích thước hình ảnh");
+		$this->overwrite_translator("vi", "image_size", "Kích thước ảnh");
 		$this->overwrite_translator("en", "image_size", "Image size");
 		
 		$this->overwrite_translator("vi", "post_information", "Thông tin bài viết");
@@ -134,6 +132,12 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "show_date", "Hiển thị ngày tháng");
 		$this->overwrite_translator("en", "show_date", "Show date");
+		
+		$this->overwrite_translator("vi", "comment", "Bình luận");
+		$this->overwrite_translator("en", "comment", "Comment");
+		
+		$this->overwrite_translator("vi", "comments", "Bình luận");
+		$this->overwrite_translator("en", "comments", "Comments");
 		
 		$this->overwrite_translator("vi", "show_comment_count", "Hiển thị số bình luận");
 		$this->overwrite_translator("en", "show_comment_count", "Show comment count");
