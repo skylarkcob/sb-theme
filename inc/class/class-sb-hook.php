@@ -144,7 +144,9 @@ class SB_Hook {
 		if(SB_WP::utility_enabled('enable_scroll_top')) {
 			$this->scroll_to_top();
 		}
-		$this->float_ads_init();
+		if(SB_WP::utility_enabled('enable_float_ads')) {
+			$this->float_ads_init();
+		}
 	}
 	
 	public function sbtheme_admin_hook() {

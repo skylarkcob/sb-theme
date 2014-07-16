@@ -286,8 +286,18 @@ class SB_Theme {
 	public static function float_ads_sidebar() {
 		$options = SB_WP::option();
 		if(isset($options['enable_float_ads']) && (bool)$options['enable_float_ads']) {
-			get_sidebar('float-ads-left');
-			get_sidebar('float-ads-right');
+			$sidebar_file = locate_template('sidebar-float-ads-left.php', false, false);
+			if(!empty($sidebar_file)) {
+				get_sidebar('float-ads-left');
+			} else {
+				self::float_ads('left');
+			}
+			$sidebar_file = locate_template('sidebar-float-ads-right.php', false, false);
+			if(!empty($sidebar_file)) {
+				get_sidebar('float-ads-right');
+			} else {
+				self::float_ads('right');
+			}
 		}
 	}
 	

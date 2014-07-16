@@ -6,7 +6,7 @@ class SB_Post_Widget extends WP_Widget {
 	
 	private $default_number = 5;
 	private $excerpt_length = 75;
-	private $thumbnail_size = array(100, 100);
+	private $thumbnail_size = array(128, 128);
 
 	public function __construct() {
 		$this->init();

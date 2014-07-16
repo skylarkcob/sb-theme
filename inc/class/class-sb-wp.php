@@ -362,5 +362,14 @@ class SB_WP {
 		}
 		return $tivi;
 	}
+	
+	public static function theme_file_exists($name) {
+		if('' != locate_template($name)) {
+			return true;
+		}
+		return false;
+	}
+	
+
 }
 ?>
