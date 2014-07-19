@@ -6,8 +6,8 @@
 <title><?php SB_Theme::title(); ?></title>
 <meta content="width=device-width,minimum-scale=1,maximum-scale=1" name="viewport">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
-<?php global $sb_options; ?>
-<?php $favicon = isset($sb_options['favicon']) ? $sb_options['favicon'] : ''; ?>
+<?php $options = SB_WP::option(); ?>
+<?php $favicon = isset($options['favicon']) ? $options['favicon'] : ''; ?>
 <?php if(!empty($favicon)) : ?>
 <link type="images/x-icon" href="<?php echo $favicon; ?>" rel="icon">
 <?php endif; ?>
