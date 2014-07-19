@@ -21,6 +21,26 @@ class SB_Theme {
 		include SB_TEMPLATE_PATH . "/template-theme-logo.php";
 	}
 	
+	public static function template($name) {
+		$name = str_replace(".php", "", $name);
+		$template = SB_TEMPLATE_PATH . "/" . $name . ".php";
+		if(file_exists($template)) {
+			include $template;
+		}
+	}
+	
+	public static function sidebar($slug = "") {
+		if(empty($slug)) {
+			if(SB_WP::theme_file_exists("sidebar.php")) {
+				get_sidebar();
+			}
+		} else {
+			if(SB_WP::theme_file_exists("sidebar-".$slug.".php")) {
+				get_sidebar($slug);
+			}
+		}
+	}
+	
 	public static function title() {
 		if(is_home()) {
 			echo get_bloginfo('name') . ' - ' . get_bloginfo('description');
@@ -45,6 +65,10 @@ class SB_Theme {
 			</div>
 		</div>
 		<?php
+	}
+	
+	public static function not_found() {
+		self::template("template-theme-404");
 	}
 	
 	private function float_ads_right() {
