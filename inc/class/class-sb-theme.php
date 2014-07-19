@@ -247,7 +247,7 @@ class SB_Theme {
 	public static function post_comment_link() {
 		if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
 		?>
-		<span class="comments-link"><?php comments_popup_link( __( '0 '.strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '1 '.strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '% '.strtolower(SB_WP::phrase('comments')), SB_DOMAIN ) ); ?></span>
+		<span class="comments-link"><?php comments_popup_link( __( '0 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '1 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '% '.strtolower(SB_WP::phrase('comments')), SB_DOMAIN ) ); ?></span>
 		<?php
 		endif;
 	}
