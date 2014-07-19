@@ -298,7 +298,23 @@ class SB_Hook {
 	}
 	
 	public function sbtheme_admin_init() {
-		
+		add_filter('user_contactmethods', array($this, 'sbtheme_add_user_contact_method'));
+	}
+	
+	public function sbtheme_add_user_contact_method($profile_fields) {
+		if(!isset($profile_fields['twitter'])) {
+			$profile_fields['twitter'] = 'Twitter URL';
+		}
+		if(!isset($profile_fields['facebook'])) {
+			$profile_fields['facebook'] = 'Facebook URL';
+		}
+		if(!isset($profile_fields['gplus'])) {
+			$profile_fields['gplus'] = 'Google+ URL';
+		}
+		if(isset($profile_fields['aim'])) {
+			unset($profile_fields['aim']);
+		}
+		return $profile_fields;
 	}
 	
 	public function sbtheme_init() {

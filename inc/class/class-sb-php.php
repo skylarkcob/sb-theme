@@ -29,6 +29,14 @@ class SB_PHP {
 		return is_numeric($number);
 	}
 	
+	public static function lowercase($str, $charset = 'UTF-8') {
+		return mb_strtolower($str, $charset);
+	}
+	
+	public static function uppercase($str, $charset = 'UTF-8') {
+		return mb_strtoupper($str, $charset);
+	}
+	
 	public static function get_current_date($format = 'd-m-Y') {
 		self::timezone_hcm();
 		return date($format);

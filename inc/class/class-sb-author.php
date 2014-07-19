@@ -47,6 +47,9 @@ class SB_Author extends SB_User {
 	
 	public function get_twitter_url() {
 		$url = $this->get_meta("twitter");
+		if(empty($url)) {
+			return '';
+		}
 		if(!SB_PHP::is_valid_url($url)) {
 			$url = "http://twitter.com/".basename($url);
 		}

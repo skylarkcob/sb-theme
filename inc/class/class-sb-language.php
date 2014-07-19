@@ -94,6 +94,9 @@ class SB_Language {
 		$this->overwrite_translator("vi", "new_post", "Bài viết mới");
 		$this->overwrite_translator("en", "new_post", "New posts");
 		
+		$this->overwrite_translator("vi", "category", "Chuyên mục");
+		$this->overwrite_translator("en", "category", "Category");
+		
 		$this->overwrite_translator("vi", "most_comment_post", "Bài viết nhiều bình luận");
 		$this->overwrite_translator("en", "most_comment_post", "Most comment posts");
 		

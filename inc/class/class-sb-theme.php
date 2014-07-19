@@ -191,6 +191,10 @@ class SB_Theme {
 		}
 		return (array)$sb_options;
 	}
+	
+	public static function options() {
+		return self::option();
+	}
 
     public static function breadcrumb() {
         if ( function_exists('yoast_breadcrumb') ) {
@@ -247,13 +251,13 @@ class SB_Theme {
 	public static function post_comment_link() {
 		if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
 		?>
-		<span class="comments-link"><?php comments_popup_link( __( '0 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '1 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '% '.strtolower(SB_WP::phrase('comments')), SB_DOMAIN ) ); ?></span>
+		<span class="comments-link"><i class="fa fa-comments"></i> <?php comments_popup_link( __( '0 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '1 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '% '.strtolower(SB_WP::phrase('comments')), SB_DOMAIN ) ); ?></span>
 		<?php
 		endif;
 	}
 	
 	public static function post_date() {
-		printf( '<span class="entry-date"><a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s" pubdate>%3$s</time></a></span>',
+		printf( '<span class="entry-date"><i class="fa fa-clock-o"></i> <a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s" pubdate>%3$s</time></a></span>',
 			esc_url( get_permalink() ),
 			esc_attr( get_the_date( 'c' ) ),
 			esc_html( get_the_date() )
@@ -279,7 +283,7 @@ class SB_Theme {
 	}
 	
 	public static function post_author() {
-		printf( '<span class="byline"><span class="author vcard"><a class="url fn n" href="%1$s" rel="author">%2$s</a></span></span>',
+		printf( '<span class="post-author"><i class="fa fa-user"></i> <span class="author vcard"><a class="url fn n" href="%1$s" rel="author">%2$s</a></span></span>',
 			esc_url( SB_WP::get_author_post_url() ),
 			get_author_name()
 		);
@@ -412,6 +416,14 @@ class SB_Theme {
 		echo 'Giao diện được tạo bởi <a href="http://hocwp.net">SB Team</a>.';
 	}
 	
+	public static function post_category() {
+		$categories_list = get_the_category_list( __( ', ', SB_DOMAIN ) );
+		if (!empty( $categories_list )) :
+		?>
+		<span class="post-cats"><i class="fa fa-briefcase"></i> <?php printf( __( SB_PHP::add_colon(SB_WP::phrase('category')).' %1$s', SB_DOMAIN ), $categories_list ); ?></span>
+		<?php endif;
+	}
+	
 	public static function author_box() {
 		$author = new SB_Author();
 		$description = $author->get_description();
@@ -432,17 +444,28 @@ class SB_Theme {
 					<li class="first">
 						<a href="<?php echo $author->get_post_url(); ?>">Xem tất cả bài viết của <?php echo $author->get_username(); ?> <span class="meta-nav">→</span></a>
 					</li>
+					<?php $website_url = $author->get_url(); ?>
+					<?php if(!empty($website_url)) : ?>
 					<li class="website">
-						<a target="_blank" class="ext-link" rel="external nofollow" href="<?php echo $author->get_url(); ?>" title="Ghé thăm trang chủ của <?php echo $author->get_username(); ?>">Blog</a>
+						<a target="_blank" class="ext-link" rel="external nofollow" href="<?php echo $website_url; ?>" title="Ghé thăm trang chủ của <?php echo $author->get_username(); ?>">Blog</a>
 					</li>
-
+					<?php endif; ?>
+					<?php $facebook_url = $author->get_facebook_url(); ?>
+					<?php if(!empty($facebook_url)) : ?>
 					<li class="facebook">
-						<a target="_blank" class="ext-link" href="<?php echo $author->get_facebook_url(); ?>" title="Theo dõi <?php echo $author->get_username(); ?> trên Facebook" rel="external nofollow">Facebook</a>
+						<a target="_blank" class="ext-link" href="<?php echo $facebook_url; ?>" title="Theo dõi <?php echo $author->get_username(); ?> trên Facebook" rel="external nofollow">Facebook</a>
 					</li>
+					<?php endif; ?>
+					<?php $gplus_url = $author->get_gplus_url(); ?>
+					<?php if(!empty($gplus_url)) : ?>
 					<li class="googleplus">
-						<a target="_blank" class="ext-link" href="<?php echo $author->get_gplus_url(); ?>" title="Theo dõi <?php echo $author->get_username(); ?> trên Goolge Plus" rel="external nofollow">Google Plus</a>
+						<a target="_blank" class="ext-link" href="<?php echo $gplus_url; ?>" title="Theo dõi <?php echo $author->get_username(); ?> trên Goolge Plus" rel="external nofollow">Google Plus</a>
 					</li>
-					<li class="twitter"><a rel="external" title="Theo dõi <?php echo $author->get_username(); ?> trên Twitter" href="<?php echo $author->get_twitter_url(); ?>">Twitter</a></li>
+					<?php endif; ?>
+					<?php $twitter_url = $author->get_twitter_url(); ?>
+					<?php if(!empty($twitter_url)) : ?>
+					<li class="twitter"><a rel="external" title="Theo dõi <?php echo $author->get_username(); ?> trên Twitter" href="<?php echo $twitter_url; ?>">Twitter</a></li>
+					<?php endif; ?>
 				</ul>
 			</div>
 		</div>
