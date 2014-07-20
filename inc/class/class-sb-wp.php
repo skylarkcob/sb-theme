@@ -105,6 +105,10 @@ class SB_WP {
 		return $result;
 	}
 	
+	public static function bbp_installed() {
+		return class_exists('bbPress');
+	}
+	
 	public static function get_permalink_struct() {
 		return get_option('permalink_structure');
 	}
@@ -370,6 +374,8 @@ class SB_WP {
 		return false;
 	}
 	
-
+	public function is_login_page() {
+		return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
+	}
 }
 ?>

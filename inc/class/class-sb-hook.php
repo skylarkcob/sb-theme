@@ -1,4 +1,6 @@
 <?php
+if ( !defined( 'ABSPATH' ) ) exit;
+
 class SB_Hook {
 	private $styles = array();
 	private $scripts = array();
@@ -119,6 +121,7 @@ class SB_Hook {
 	}
 	
 	private function run() {
+		
 		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
 		$this->sbtheme_sidebar_widget_hook();
 		add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
@@ -138,6 +141,97 @@ class SB_Hook {
 		
 		$this->sbtheme_admin_hook();
 		add_action('init', array($this, 'sbtheme_init'));
+		$this->sbtheme_custom_login_page();
+	}
+	
+	public static function sbtheme_custom_login_page() {
+		if(SB_WP::is_login_page()) {
+			add_action( 'login_enqueue_scripts', array('SB_Hook', 'sbtheme_login_style'));
+			add_filter( 'login_headerurl', array('SB_Hook', 'sbtheme_login_form_logo_url'));
+			add_filter('login_headertitle', array('SB_Hook', 'sbtheme_login_form_logo_description'));
+			add_filter('gettext', array('SB_Hook', 'sbtheme_login_form_text'), 20, 3);
+			add_filter( 'login_errors', array('SB_Hook', 'sbtheme_login_error_message'));
+			add_filter('login_message', array('SB_Hook', 'sbtheme_login_message'));
+		}
+	}
+	
+	public function sbtheme_login_style() {
+		echo '<link media="all" type="text/css" href="'.SB_CSS_URI.'/sb-login-style.css" id="sb-login-style-css" rel="stylesheet">';
+	}
+	
+	public function sbtheme_login_form_logo_url() {
+		return home_url('/');
+	}
+	
+	public function sbtheme_login_form_logo_description() {
+		return get_bloginfo('description');
+	}
+	
+	public function sbtheme_login_message($message) {
+		$action = $_REQUEST['action'];
+		if($action == 'register') {
+			$message = '<p class="message register">'.SB_PHP::add_dotted(SB_WP::phrase('register_for_this_site')).'</p>';
+		} elseif($action == 'lostpassword') {
+			$message = '<p class="message">'.SB_PHP::add_dotted(SB_WP::phrase('enter_your_email_to_receive_new_password')).'</p>';
+		}
+		return $message;
+	}
+	
+	public function sbtheme_login_error_message($error) {
+		if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'lostpassword') {
+			$error = '<strong>'.SB_PHP::add_colon(SB_WP::phrase('error')).'</strong> '.SB_PHP::add_dotted(SB_WP::phrase('please_enter_your_email_correctly'));
+		} elseif(isset($_REQUEST['registration']) && $_REQUEST['registration'] == 'disabled') {
+			$error = '<strong>'.SB_PHP::add_colon(SB_WP::phrase('error')).'</strong> '.SB_PHP::add_dotted(SB_WP::phrase('you_do_not_have_permission_to_register'));
+		} elseif(isset($_REQUEST['action']) && $_REQUEST['action'] == 'register') {
+			$error = '<strong>'.SB_PHP::add_colon(SB_WP::phrase('error')).'</strong> '.SB_PHP::add_dotted(SB_WP::phrase('please_check_your_information'));
+		} else {
+			$error = '<strong>'.SB_PHP::add_colon(SB_WP::phrase('login_failed')).'</strong> '.SB_PHP::add_dotted(SB_WP::phrase('please_enter_your_account_correctly'));
+		}
+		return $error;
+	}
+	
+	public function sbtheme_login_form_text( $translated_text, $text, $domain ) {
+		$str_text = SB_PHP::lowercase($translated_text);
+		$str_text = trim(trim(trim($str_text, '?'), '.'), ':');
+		switch ( $str_text ) {
+            case 'log in':
+                $translated_text = __( SB_WP::phrase('log_in'), SB_DOMAIN );
+                break;
+            case 'username':
+                $translated_text = __( SB_WP::phrase('username'), SB_DOMAIN );
+                break;
+			case 'password':
+                $translated_text = __( SB_WP::phrase('password'), SB_DOMAIN );
+                break;
+			case 'remember me':
+                $translated_text = __( SB_WP::phrase('remember_me'), SB_DOMAIN );
+                break;
+			case 'lost your password':
+                $translated_text = __( SB_WP::phrase('lost_your_password'), SB_DOMAIN );
+                break;
+			case '&larr; back to %s':
+                $translated_text = __( SB_WP::phrase('back_to_home_page'), SB_DOMAIN );
+                break;
+			case 'register':
+                $translated_text = __( SB_WP::phrase('register'), SB_DOMAIN );
+                break;
+			case 'e-mail':
+                $translated_text = __( SB_WP::phrase('email'), SB_DOMAIN );
+                break;
+			case 'a password will be e-mailed to you':
+                $translated_text = __( SB_PHP::add_dotted(SB_WP::phrase('a_password_will_be_email_to_you')), SB_DOMAIN );
+                break;
+			case 'username or e-mail':
+                $translated_text = __( SB_WP::phrase('username_or_email'), SB_DOMAIN );
+                break;
+			case 'get new password':
+                $translated_text = __( SB_WP::phrase('get_new_password'), SB_DOMAIN );
+                break;
+			case 'you are now logged out':
+                $translated_text = __( SB_WP::phrase('you_are_now_logged_out'), SB_DOMAIN );
+                break;
+        }
+		return $translated_text;
 	}
 	
 	public function sbtheme_footer_element() {
@@ -246,6 +340,23 @@ class SB_Hook {
 		if(empty($permalink_struct)) {
 			SB_WP::update_permalink("/%postname%");
 		}
+		if(SB_WP::bbp_installed() && is_user_logged_in()) {
+			add_filter( 'bbp_after_get_the_content_parse_args', array($this, 'bbp_enable_visual_editor'));
+			add_filter( 'bbp_get_single_forum_description', array($this, 'bbp_empty_description') );
+			add_filter( 'bbp_get_single_topic_description', array($this, 'bbp_empty_description') );
+		}
+	}
+	
+	public function bbp_enable_visual_editor( $args = array() ) {
+		$args['tinymce'] = true;
+		$args['media_buttons'] = true;
+		$args['dfw'] = true;
+		$args['teeny'] = false;
+		return $args;
+	}
+	
+	public function bbp_empty_description() {
+		return '';
 	}
 	
 	public function sb_woocommerce_image_size() {

@@ -688,3 +688,30 @@ body {
 .mobile-menu-button {
 	display: none;
 }
+
+.bbpress .wp-switch-editor {
+	padding-bottom: 22px;
+}
+
+#bbpress-forums div.wp-editor-container {
+    border: 1px solid #e5e5e5;
+}
+
+.bbpress .mce-reset {
+
+}
+
+.bbpress .entry-content img {
+	padding: 0;
+}
+
+.bbpress .bbp-topic-started-by a,
+.bbpress .bbp-topic-freshness-author a,
+.bbpress .bbp-topic-description a {
+	display: inline-block;
+}
+
+.bbpress .bbp-topic-form,
+.bbpress .bbp-reply-form {
+	background-color: #fefefe;
+}

@@ -186,6 +186,7 @@ class SB_Load {
 			$sb_language = new SB_Language();
 		}
 		$this->enable_sb_widget();
+		include SB_PATH . "/sb-constant.php";
 	}
 	
 	public function enable_sb_widget() {

@@ -97,11 +97,77 @@ class SB_Language {
 		$this->overwrite_translator("vi", "category", "Chuyên mục");
 		$this->overwrite_translator("en", "category", "Category");
 		
+		$this->overwrite_translator("vi", "username", "Tên tài khoản");
+		$this->overwrite_translator("en", "username", "Username");
+		
+		$this->overwrite_translator("vi", "login", "Đăng nhập");
+		$this->overwrite_translator("en", "login", "Login");
+		
+		$this->overwrite_translator("vi", "log_in", "Đăng nhập");
+		$this->overwrite_translator("en", "log_in", "Log in");
+		
+		$this->overwrite_translator("vi", "password", "Mật khẩu");
+		$this->overwrite_translator("en", "password", "Password");
+		
+		$this->overwrite_translator("vi", "remember_me", "Nhớ đăng nhập");
+		$this->overwrite_translator("en", "remember_me", "Remember me");
+		
+		$this->overwrite_translator("vi", "lost_your_password", "Quên mật khẩu");
+		$this->overwrite_translator("en", "lost_your_password", "Lost your password");
+		
+		$this->overwrite_translator("vi", "back_to_home_page", "Quay lại trang chủ");
+		$this->overwrite_translator("en", "back_to_home_page", "Back to home page");
+		
+		$this->overwrite_translator("vi", "register", "Đăng ký");
+		$this->overwrite_translator("en", "register", "Register");
+		
+		$this->overwrite_translator("vi", "email", "Địa chỉ email");
+		$this->overwrite_translator("en", "email", "E-mail");
+		
+		$this->overwrite_translator("vi", "you_are_now_logged_out", "Bạn đã đăng xuất khỏi hệ thống");
+		$this->overwrite_translator("en", "you_are_now_logged_out", "You are now logged out");
+		
+		$this->overwrite_translator("vi", "get_new_password", "Nhận mật khẩu mới");
+		$this->overwrite_translator("en", "get_new_password", "Get New Password");
+		
+		$this->overwrite_translator("vi", "username_or_email", "Tên tài khoản hoặc địa chỉ email");
+		$this->overwrite_translator("en", "username_or_email", "Username or E-mail");
+		
+		$this->overwrite_translator("vi", "a_password_will_be_email_to_you", "Mật khẩu sẽ được chuyển đến email của bạn");
+		$this->overwrite_translator("en", "a_password_will_be_email_to_you", "A password will be e-mailed to you");
+		
 		$this->overwrite_translator("vi", "most_comment_post", "Bài viết nhiều bình luận");
 		$this->overwrite_translator("en", "most_comment_post", "Most comment posts");
 		
+		$this->overwrite_translator("vi", "enter_your_email_to_receive_new_password", "Điền vào địa chỉ email của bạn để nhận lại mật khẩu");
+		$this->overwrite_translator("en", "enter_your_email_to_receive_new_password", "Please enter your email to receive password");
+		
 		$this->overwrite_translator("vi", "random_post", "Bài viết ngẫu nhiên");
 		$this->overwrite_translator("en", "random_post", "Random posts");
+		
+		$this->overwrite_translator("vi", "login_failed", "Đăng nhập thất bại");
+		$this->overwrite_translator("en", "login_failed", "Login failed");
+		
+		$this->overwrite_translator("vi", "error", "Lỗi");
+		$this->overwrite_translator("en", "error", "Error");
+		
+		$this->overwrite_translator("vi", "please_enter_your_account_correctly", "Xin vui lòng nhập đúng tên tài khoản và mật khẩu của bạn");
+		$this->overwrite_translator("en", "please_enter_your_account_correctly", "Please enter your account correctly");
+		
+		$this->overwrite_translator("vi", "please_enter_your_email_correctly", "Xin vui lòng nhập chính xác địa chỉ email");
+		$this->overwrite_translator("en", "please_enter_your_email_correctly", "Please enter your email address correctly");
+		
+		$this->overwrite_translator("vi", "you_do_not_have_permission_to_register", "Chức năng đăng ký tài khoản hiện đang tắt");
+		$this->overwrite_translator("en", "you_do_not_have_permission_to_register", "User registration is currently not allowed");
+		
+		$this->overwrite_translator("vi", "you_do_not_have_permission_to_register", "Chức năng đăng ký tài khoản hiện đang tắt");
+		$this->overwrite_translator("en", "you_do_not_have_permission_to_register", "User registration is currently not allowed");
+		
+		$this->overwrite_translator("vi", "register_for_this_site", "Đăng ký làm thành viên");
+		$this->overwrite_translator("en", "register_for_this_site", "Register for this site");
+		
+		$this->overwrite_translator("vi", "please_check_your_information", "Xin vui lòng kiểm tra lại thông tin");
+		$this->overwrite_translator("en", "please_check_your_information", "Please check your information");
 		
 		$this->overwrite_translator("vi", "most_view_post", "Bài viết được xem nhiều");
 		$this->overwrite_translator("en", "most_view_post", "Most view posts");
