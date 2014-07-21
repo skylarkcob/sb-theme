@@ -157,6 +157,12 @@ class SB_Hook {
 	
 	public function sbtheme_login_style() {
 		echo '<link media="all" type="text/css" href="'.SB_CSS_URI.'/sb-login-style.css" id="sb-login-style-css" rel="stylesheet">';
+		$options = SB_WP::option();
+		if(isset($options['logo']) && !empty($options['logo'])) {
+			echo '<style>';
+			echo 'body.login div#login h1 a{background-image:url("'.$options['logo'].'");}';
+			echo '</style>';
+		}
 	}
 	
 	public function sbtheme_login_form_logo_url() {
