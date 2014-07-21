@@ -715,3 +715,9 @@ body {
 .bbpress .bbp-reply-form {
 	background-color: #fefefe;
 }
+
+#bbpress-forums #bbp_topic_subscription {
+    margin-bottom: 0;
+    margin-right: 5px;
+    vertical-align: -1px;
+}

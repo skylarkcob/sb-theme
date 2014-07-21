@@ -109,6 +109,19 @@ class SB_WP {
 		return class_exists('bbPress');
 	}
 	
+	public static function bbpress_installed() {
+		return self::bbp_installed();
+	}
+	
+	
+	
+	public static function is_user_page() {
+		if(function_exists('bbp_is_single_user')) {
+			return bbp_is_single_user();
+		}
+		return false;
+	}
+	
 	public static function get_permalink_struct() {
 		return get_option('permalink_structure');
 	}

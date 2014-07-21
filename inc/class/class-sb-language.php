@@ -151,6 +151,57 @@ class SB_Language {
 		$this->overwrite_translator("vi", "error", "Lỗi");
 		$this->overwrite_translator("en", "error", "Error");
 		
+		$this->overwrite_translator("vi", "forums", "Diễn đàn");
+		$this->overwrite_translator("en", "forums", "Forums");
+		
+		$this->overwrite_translator("vi", "topics", "Chủ đề");
+		$this->overwrite_translator("en", "topics", "Topics");
+		
+		$this->overwrite_translator("vi", "topic", "Chủ đề");
+		$this->overwrite_translator("en", "topic", "Topic");
+		
+		$this->overwrite_translator("vi", "tags", "Thẻ");
+		$this->overwrite_translator("en", "tags", "Tags");
+		
+		$this->overwrite_translator("vi", "favorite", "Yêu thích");
+		$this->overwrite_translator("en", "favorite", "Favorite");
+		
+		$this->overwrite_translator("vi", "favorited", "Đã thích");
+		$this->overwrite_translator("en", "favorited", "Favorited");
+		
+		$this->overwrite_translator("vi", "subscribe", "Theo dõi");
+		$this->overwrite_translator("en", "subscribe", "Subscribe");
+		
+		$this->overwrite_translator("vi", "unsubscribe", "Bỏ theo dõi");
+		$this->overwrite_translator("en", "unsubscribe", "Unsubscribe");
+		
+		$this->overwrite_translator("vi", "you_can_post_html_content", "Bạn có thể sử dụng thẻ HTML trong nội dung bài viết");
+		$this->overwrite_translator("en", "you_can_post_html_content", "Your account has the ability to post unrestricted HTML content");
+		
+		$this->overwrite_translator("vi", "notify_follow_up_email", "Thông báo khi có bài viết mới qua email");
+		$this->overwrite_translator("en", "notify_follow_up_email", "Notify me of follow-up replies via email");
+		
+		$this->overwrite_translator("vi", "freshness", "Hoạt động cuối");
+		$this->overwrite_translator("en", "freshness", "Freshness");
+		
+		$this->overwrite_translator("vi", "search", "Tìm kiếm");
+		$this->overwrite_translator("en", "search", "Search");
+		
+		$this->overwrite_translator("vi", "started_by", "Được tạo bởi");
+		$this->overwrite_translator("en", "started_by", "Started by");
+		
+		$this->overwrite_translator("vi", "posts", "Bài viết");
+		$this->overwrite_translator("en", "posts", "Posts");
+		
+		$this->overwrite_translator("vi", "forum", "Diễn đàn");
+		$this->overwrite_translator("en", "forum", "Forum");
+		
+		$this->overwrite_translator("vi", "home", "Trang chủ");
+		$this->overwrite_translator("en", "home", "Home");
+		
+		$this->overwrite_translator("vi", "account_information", "Thông tin tài khoản");
+		$this->overwrite_translator("en", "account_information", "Your profiles");
+		
 		$this->overwrite_translator("vi", "lost_password", "Quên mật khẩu");
 		$this->overwrite_translator("en", "lost_password", "Lost password");
 		

@@ -46,6 +46,14 @@ class SB_Theme {
 			echo get_bloginfo('name') . ' - ' . get_bloginfo('description');
 		} elseif(is_post_type_archive('product')) {
 			echo 'Danh sách sản phẩm';
+		} elseif(is_post_type_archive('forum')) {
+			echo SB_WP::phrase('forums').' '.get_bloginfo('name');
+		} elseif(is_singular('forum')) {
+			echo get_the_title().' - '.get_bloginfo('name');
+		} elseif(is_singular('topic')) {
+			echo get_the_title();
+		} elseif(SB_WP::is_user_page()) {
+			echo SB_WP::phrase('account_information');
 		} elseif(is_tax()) {
 			single_term_title();
 		} else {

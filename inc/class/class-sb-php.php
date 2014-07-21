@@ -25,6 +25,30 @@ class SB_PHP {
 		date_default_timezone_set('Asia/Ho_Chi_Minh');
 	}
 	
+	public static function remove_punctuation($str) {
+		return preg_replace('/^\PL+|\PL\z/', '', $str);
+	}
+	
+	public static function is_punctuation($char) {
+		$punctuations = array('.', '!', ':', ',', ';', '?');
+		if(in_array($char, $punctuations)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static function get_last_char($str) {
+		return mb_substr($str, -1);
+	}
+	
+	public static function get_punctuation($str) {
+		$punctuation = SB_PHP::get_last_char($str);
+		if(!SB_PHP::is_punctuation($punctuation)) {
+			$punctuation = '';
+		}
+		return $punctuation;
+	}
+	
 	public static function is_number($number) {
 		return is_numeric($number);
 	}
