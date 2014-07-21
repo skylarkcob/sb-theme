@@ -151,6 +151,12 @@ class SB_Language {
 		$this->overwrite_translator("vi", "error", "Lỗi");
 		$this->overwrite_translator("en", "error", "Error");
 		
+		$this->overwrite_translator("vi", "lost_password", "Quên mật khẩu");
+		$this->overwrite_translator("en", "lost_password", "Lost password");
+		
+		$this->overwrite_translator("vi", "registration_form", "Đăng ký tài khoản");
+		$this->overwrite_translator("en", "registration_form", "Registration form");
+		
 		$this->overwrite_translator("vi", "please_enter_your_account_correctly", "Xin vui lòng nhập đúng tên tài khoản và mật khẩu của bạn");
 		$this->overwrite_translator("en", "please_enter_your_account_correctly", "Please enter your account correctly");
 		

@@ -145,7 +145,7 @@ class SB_Hook {
 	}
 	
 	public static function sbtheme_custom_login_page() {
-		if(SB_WP::is_login_page()) {
+		if(!is_admin() && SB_WP::is_login_page()) {
 			add_action( 'login_enqueue_scripts', array('SB_Hook', 'sbtheme_login_style'));
 			add_filter( 'login_headerurl', array('SB_Hook', 'sbtheme_login_form_logo_url'));
 			add_filter('login_headertitle', array('SB_Hook', 'sbtheme_login_form_logo_description'));
@@ -235,6 +235,12 @@ class SB_Hook {
                 break;
 			case 'you are now logged out':
                 $translated_text = __( SB_WP::phrase('you_are_now_logged_out'), SB_DOMAIN );
+                break;
+			case 'registration form':
+                $translated_text = __( SB_WP::phrase('registration_form'), SB_DOMAIN );
+                break;
+			case 'lost password':
+                $translated_text = __( SB_WP::phrase('lost_password'), SB_DOMAIN );
                 break;
         }
 		return $translated_text;
