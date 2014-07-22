@@ -168,7 +168,29 @@ class SB_Hook {
 			case 'tags':
 				$translated_text = __( SB_WP::phrase('tags').$punctuation, SB_DOMAIN );
 				break;
+			case 'normal':
+				$translated_text = __( SB_WP::phrase('normal').$punctuation, SB_DOMAIN );
+				break;
+			case 'edit':
+				$translated_text = __( SB_WP::phrase('edit').$punctuation, SB_DOMAIN );
+				break;
+			case 'close':
+				$translated_text = __( SB_WP::phrase('close').$punctuation, SB_DOMAIN );
+				break;
+			case 'author':
+				$translated_text = __( SB_WP::phrase('author').$punctuation, SB_DOMAIN );
+				break;
+			case 'reply':
+				$translated_text = __( SB_WP::phrase('reply').$punctuation, SB_DOMAIN );
+				break;
+			case 'reply to':
+				$translated_text = __( SB_WP::phrase('reply_to').$punctuation, SB_DOMAIN );
+				break;
+			case 'reply to: %s':
+				$translated_text = __( SB_PHP::add_colon(SB_WP::phrase('reply_to')).' %s', SB_DOMAIN );
+				break;
 		}
+		//echo $translated_text;
 		return $translated_text;
 	}
 	
@@ -191,8 +213,8 @@ class SB_Hook {
 			case 'freshness':
 				$translated_text = __( SB_WP::phrase('freshness').$punctuation, SB_DOMAIN );
 				break;
-			case 'started by':
-				$translated_text = __( SB_WP::phrase('started_by').$punctuation, SB_DOMAIN );
+			case 'started by: %1$s':
+				$translated_text = __( SB_PHP::add_colon(SB_WP::phrase('started_by')).' %1$s', SB_DOMAIN );
 				break;
 			case 'topic':
 				$translated_text = __( SB_WP::phrase('topic').$punctuation, SB_DOMAIN );
@@ -214,6 +236,18 @@ class SB_Hook {
 				break;
 			case 'favorited':
 				$translated_text = __( SB_WP::phrase('favorited').$punctuation, SB_DOMAIN );
+				break;
+			case 'topic title (maximum length: %d)':
+				$translated_text = __( SB_WP::phrase('topic_title').' ('.SB_PHP::add_colon(SB_WP::phrase('maximum_length')).' %d)'.$punctuation, SB_DOMAIN );
+				break;
+			case 'topic tags':
+				$translated_text = __( SB_WP::phrase('topic_tags').$punctuation, SB_DOMAIN );
+				break;
+			case 'topic type':
+				$translated_text = __( SB_WP::phrase('topic_type').$punctuation, SB_DOMAIN );
+				break;
+			case 'topic status':
+				$translated_text = __( SB_WP::phrase('topic_status').$punctuation, SB_DOMAIN );
 				break;
 		}
 		return $translated_text;

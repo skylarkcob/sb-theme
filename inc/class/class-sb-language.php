@@ -52,6 +52,27 @@ class SB_Language {
 		$this->overwrite_translator("vi", "version", "Phiên bản");
 		$this->overwrite_translator("en", "version", "Version");
 		
+		$this->overwrite_translator("vi", "topic_title", "Tiêu đề bài viết");
+		$this->overwrite_translator("en", "topic_title", "Topic title");
+		
+		$this->overwrite_translator("vi", "topic_type", "Thể loại bài viết");
+		$this->overwrite_translator("en", "topic_type", "Topic type");
+		
+		$this->overwrite_translator("vi", "topic_status", "Trạng thái bài viết");
+		$this->overwrite_translator("en", "topic_status", "Topic status");
+		
+		$this->overwrite_translator("vi", "topic_tags", "Thẻ bài viết");
+		$this->overwrite_translator("en", "topic_tags", "Topic tags");
+		
+		$this->overwrite_translator("vi", "normal", "Bình thường");
+		$this->overwrite_translator("en", "normal", "Normal");
+		
+		$this->overwrite_translator("vi", "edit", "Sửa");
+		$this->overwrite_translator("en", "edit", "Edit");
+		
+		$this->overwrite_translator("vi", "close", "Đóng");
+		$this->overwrite_translator("en", "close", "Close");
+		
 		$this->overwrite_translator("vi", "choose_language_description", "Lựa chọn ngôn ngữ để sử dụng trên giao diện được tạo bởi SB Team");
 		$this->overwrite_translator("en", "choose_language_description", "Choose language to use on SB Framework");
 		
@@ -208,6 +229,12 @@ class SB_Language {
 		$this->overwrite_translator("vi", "registration_form", "Đăng ký tài khoản");
 		$this->overwrite_translator("en", "registration_form", "Registration form");
 		
+		$this->overwrite_translator("vi", "maximum_length", "Độ dài tối đa");
+		$this->overwrite_translator("en", "maximum_length", "Maximum length");
+		
+		$this->overwrite_translator("vi", "create_new_topic_in", "Tạo bài viết trong");
+		$this->overwrite_translator("en", "create_new_topic_in", "Create new topic in");
+		
 		$this->overwrite_translator("vi", "please_enter_your_account_correctly", "Xin vui lòng nhập đúng tên tài khoản và mật khẩu của bạn");
 		$this->overwrite_translator("en", "please_enter_your_account_correctly", "Please enter your account correctly");
 		
@@ -255,6 +282,15 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "show_author", "Hiển thị tác giả");
 		$this->overwrite_translator("en", "show_author", "Show author");
+		
+		$this->overwrite_translator("vi", "author", "Tác giả");
+		$this->overwrite_translator("en", "author", "Author");
+		
+		$this->overwrite_translator("vi", "reply", "Trả lời");
+		$this->overwrite_translator("en", "reply", "Reply");
+		
+		$this->overwrite_translator("vi", "reply_to", "Trả lời cho");
+		$this->overwrite_translator("en", "reply_to", "Reply to");
 		
 		$this->overwrite_translator("vi", "show_date", "Hiển thị ngày tháng");
 		$this->overwrite_translator("en", "show_date", "Show date");
