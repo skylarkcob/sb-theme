@@ -6,7 +6,7 @@ class SB_Post_Widget extends WP_Widget {
 	
 	private $default_number = 5;
 	private $excerpt_length = 75;
-	private $thumbnail_size = array(128, 128);
+	private $thumbnail_size = array(128, 100);
 
 	public function __construct() {
 		$this->init();
@@ -164,7 +164,7 @@ class SB_Post_Widget extends WP_Widget {
 									<?php if(1 != $only_thumbnail) : ?>
 										<div class="post-content">
 											<div class="entry-header">
-												<?php $a_post->title("h3"); ?>
+												<h3 class="entry-title"><a rel="bookmark" href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
 											</div>
 											<?php if((bool)$show_excerpt) : ?>
 											<div class="excerpt">

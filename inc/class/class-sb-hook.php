@@ -150,8 +150,8 @@ class SB_Hook {
 			if(SB_WP::bbpress_installed()) {
 				add_filter('gettext', array($this, 'sbtheme_translation_bbpress'), 20, 3);
 			}
+			add_filter('gettext', array($this, 'sbtheme_translation_all'), 20, 3);
 		}
-		add_filter('gettext', array($this, 'sbtheme_translation_all'), 20, 3);
 	}
 	
 	public function sbtheme_translation_all($translated_text, $text, $domain) {

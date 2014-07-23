@@ -205,7 +205,9 @@ class SB_Theme {
 	}
 
     public static function breadcrumb() {
-        if ( function_exists('yoast_breadcrumb') ) {
+		if(function_exists('is_bbpress') && is_bbpress()) {
+		
+		} elseif ( function_exists('yoast_breadcrumb') ) {
             yoast_breadcrumb('<div class="breadcrumb">', '</div>');
         }
     }

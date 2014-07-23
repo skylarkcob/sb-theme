@@ -52,11 +52,13 @@ class SB_WP {
 			$real_size = $size;
 			$width = $size[0];
 			$height = $size[1];
+			$style = ' style="width:'.$width.'px; height:'.$height.'px;"';
 		}
 		if(has_post_thumbnail()) {
 			return get_the_post_thumbnail(get_the_ID(), $real_size);
 		}
-		return '<img class="no-thumbnail wp-post-image" width="'.$width.'" height="'.$height.'" src="'.self::get_image_url('no-thumbnail.png').'">';
+		
+		return '<img class="no-thumbnail wp-post-image" width="'.$width.'" height="'.$height.'" src="'.self::get_image_url('no-thumbnail.png').'"'.$style.'>';
 	}
 	
 	public static function get_url_value($url) {

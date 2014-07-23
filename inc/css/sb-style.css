@@ -721,3 +721,17 @@ body {
     margin-right: 5px;
     vertical-align: -1px;
 }
+
+.widget i {
+	color: #999;
+}
+
+.widget .post-meta {
+	margin-top: 10px;
+}
+
+.page-header {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding: 0;
+}
