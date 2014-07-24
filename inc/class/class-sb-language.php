@@ -31,8 +31,44 @@ class SB_Language {
 		$this->overwrite_translator("vi", "off", "Tắt");
 		$this->overwrite_translator("en", "off", "Off");
 		
+		$this->overwrite_translator("vi", "pages", "Trang");
+		$this->overwrite_translator("en", "pages", "Pages");
+		
+		$this->overwrite_translator("vi", "get_started_here", "Bắt đầu từ đây");
+		$this->overwrite_translator("en", "get_started_here", "Get started here");
+		
+		$this->overwrite_translator("vi", "ready_publish_first_post", "Sẵn sàng để đăng bài viết đầu tiên của bạn");
+		$this->overwrite_translator("en", "ready_publish_first_post", "Ready to publish your first post");
+		
+		$this->overwrite_translator("vi", "nothing_found", "Không tìm thấy nội dung");
+		$this->overwrite_translator("en", "nothing_found", "Nothing found");
+		
+		$this->overwrite_translator("vi", "no_post_found", "Không tìm thấy nội dung, xin vui lòng thử lại bằng cách dùng công cụ tìm kiếm");
+		$this->overwrite_translator("en", "no_post_found", "It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help");
+		
+		$this->overwrite_translator("vi", "no_search_result", "Không tìm thấy kết quả, xin vui lòng thử tìm kiếm lại với từ khóa khác");
+		$this->overwrite_translator("en", "no_search_result", "Sorry, but nothing matched your search terms. Please try again with some different keywords");
+		
+		$this->overwrite_translator("vi", "sitemap", "Sơ đồ trang web");
+		$this->overwrite_translator("en", "sitemap", "Sitemap");
+		
+		$this->overwrite_translator("vi", "page_not_found", "Không tìm thấy trang");
+		$this->overwrite_translator("en", "page_not_found", "Page not found");
+		
+		$this->overwrite_translator("vi", "page_not_found_description", "Trang bạn đang xem hiện không tồn tại, xin vui lòng dùng công cụ tìm kiếm bên dưới hoặc liên hệ với người quản lý");
+		$this->overwrite_translator("en", "page_not_found_description", "Sorry, no posts matched your criteria. You can try to use the search form below or contact the administrator");
+		
+		$this->overwrite_translator("vi", "search_post_by_tag", "Tìm kiếm bài viết theo thẻ");
+		$this->overwrite_translator("en", "search_post_by_tag", "Search post by tag");
+		
+		$this->overwrite_translator("vi", "search_post_by_category", "Tìm kiếm bài viết theo chuyên mục");
+		$this->overwrite_translator("en", "search_post_by_category", "Search post by category");
+		
 		$this->overwrite_translator("vi", "theme_settings", "Cài đặt giao diện");
 		$this->overwrite_translator("en", "theme_settings", "Theme Settings");
+		
+		$this->overwrite_translator("vi", "view_all_post_in_category", "Xem tất cả bài viết của chuyên mục");
+		$this->overwrite_translator("en", "view_all_post_in_category", "View all posts in category");
 		
 		$this->overwrite_translator("vi", "general_settings", "Thiết lập chung");
 		$this->overwrite_translator("en", "general_settings", "General Settings");

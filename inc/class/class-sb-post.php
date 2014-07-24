@@ -88,7 +88,11 @@ class SB_Post {
 			$size = $this->thumbnail_size;
 		}
 		if($this->has_thumbnail()) {
-			return get_the_post_thumbnail($this->post->ID, $size);
+			if('television' == $this->post->post_type) {
+				return get_the_post_thumbnail($this->post->ID, $size, array('alt' => trim(strip_tags($this->get_meta('wpcf-tivi-title'))), 'title' => trim(strip_tags($this->get_meta('wpcf-tivi-title')))));
+			} else {
+				return get_the_post_thumbnail($this->post->ID, $size);
+			}
 		}
 		return '<img class="no-thumbnail wp-post-image" src="'.$this->thumbnail_default.'">';
 	}
@@ -131,9 +135,14 @@ class SB_Post {
 	}
 	
 	public function thumbnail($size = "") {
+		if('television' == $this->post->post_type) {
+			$title = trim(strip_tags($this->get_meta('wpcf-tivi-title')));
+		} else {
+			$title = trim(strip_tags($this->post->post_title));
+		}
 		?>
 		<div class="post-thumbnail">
-			<a href="<?php $this->permalink(); ?>"><?php echo $this->get_thumbnail($size); ?></a>
+			<a href="<?php $this->permalink(); ?>" title="<?php echo $title; ?>"><?php echo $this->get_thumbnail($size); ?></a>
 		</div>
 		<?php
 	}

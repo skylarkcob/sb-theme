@@ -36,7 +36,10 @@ class SB_Tivi {
 				$value = str_replace("[sb_tivi_server]", "", $value);
 				$value = str_replace("[/sb_tivi_server]", "", $value);
 				$value = trim(trim($value, ']'), '[');
-				$value = str_replace("&", "&amp;", SB_WP::tivi_source_edit(trim($value), $this->size[0], $this->size[1]));
+				$value = str_replace(']', '', $value);
+				if(!SB_PHP::is_string_contain($value, 'wp-content')) {
+					$value = str_replace("&", "&amp;", SB_WP::tivi_source_edit(trim($value), $this->size[0], $this->size[1]));
+				}
 				array_push($kq, $value);
 			}
 		}

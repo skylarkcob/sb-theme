@@ -79,6 +79,10 @@ class SB_Theme {
 		self::template("template-theme-404");
 	}
 	
+	public static function site_tree() {
+		self::template('template-theme-site-tree');
+	}
+	
 	private function float_ads_right() {
 		?>
 		<div id="sbFloatAdsLeft" class="sb-float-ads sb-float-ads-left sb-ads">
@@ -560,6 +564,10 @@ class SB_Theme {
 	
 	public static function get_image($name) {
 		return SB_IMAGES_URI . "/" . $name;
+	}
+	
+	public static function nothing_found() {
+		self::template("template-theme-no-post");
 	}
 	
 	public static function paypal_donate($value = 5) {

@@ -161,6 +161,14 @@ class SB_PHP {
 		return $text;
 	}
 	
+	public static function add_punctuation($text, $punc) {
+		$char = substr($text, -1);
+		if($punc != $char) {
+			$text .= $punc;
+		}
+		return $text;
+	}
+	
 	public static function add_colon($text) {
 		$char = substr($text, -1);
 		if(':' != $char) {

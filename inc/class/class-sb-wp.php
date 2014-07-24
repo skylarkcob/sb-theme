@@ -107,8 +107,105 @@ class SB_WP {
 		return $result;
 	}
 	
+	public static function category_has_child($cat_id) {
+		$cats = get_categories(array("hide_empty" => 0, "parent" => $cat_id));
+		if($cats) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static function list_sub_category($cat_id) {
+		$cats = get_categories(array("parent" => $cat_id, "depth" => 1, "hide_empty" => 0));
+		if($cats) {
+			?>
+				<ul class="sb-cat-tree sub-tree sub-category">
+					<?php foreach($cats as $cat) : ?>
+						<?php
+						$class = 'tree-child';
+						if(self::category_has_child($cat->term_id)) {
+							$class .= ' has-sub';
+						} else {
+							$class .= ' no-sub';
+						}
+						?>				
+						<li class="<?php echo $class; ?>">
+							<span class="arrow"></span>
+							<a href="<?php echo get_category_link($cat->term_id); ?>" title="<?php echo __(SB_WP::phrase('view_all_post_in_category'), SB_DOMAIN).' '.$cat->name; ?>"><?php echo $cat->name; ?></a>
+							<?php self::list_sub_category($cat->term_id); ?>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			<?php
+		}
+	}
+	
+	public static function all_category() {
+		$cats = get_categories(array("hide_empty" => 0));
+		if($cats) {
+			echo '<div class="sb-sitemap-cat">';
+			echo '<h3 class="sitemap-node-title">'.SB_WP::phrase('search_post_by_category').'</h3>';
+			echo '<div class="categories">';
+			foreach($cats as $cat) {
+				echo '<a href="'.get_category_link($cat->term_id).'" title="'.__(SB_WP::phrase('view_all_post_in_category'), SB_DOMAIN).' '.$cat->name.'">'.$cat->name.'</a>';
+			}
+			echo '</div></div>';
+		}
+	}
+	
+	public static function tag_cloud() {
+		$tags = get_tags();
+		if($tags) {
+			$args = array(
+				'before_widget' => '',
+				'after_widget'	=> '',
+				'before_title'	=> '<h3 class="sitemap-node-title">',
+				'after_title'	=> '</h3>'
+			);
+			$instance = array(
+				'title'	=> SB_WP::phrase('search_post_by_tag')
+			);
+			echo '<div class="sb-sitemap-tag">';
+			the_widget('WP_Widget_Tag_Cloud', $instance, $args);
+			echo '</div>';
+		}
+	}
+	
+	public static function list_sub_page($page_id) {
+		$pages = get_pages(array("parent" => $page_id, "depth" => 1));
+		if($pages) :
+		?>
+			<ul class="sb-page-tree sub-tree sub-page">
+				<?php foreach($pages as $page) : ?>
+					<?php
+					$class = 'tree-child';
+					if(self::page_has_child($page->ID)) {
+						$class .= ' has-sub';
+					} else {
+						$class .= ' no-sub';
+					}
+					?>				
+					<li class="<?php echo $class; ?>">
+						<span class="arrow"></span>
+						<a href="<?php echo get_page_link($page->ID); ?>" title="<?php echo $page->post_title; ?>"><?php echo $page->post_title; ?></a>
+						<?php self::list_sub_page($page->ID); ?>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		<?php
+		endif;
+	}
+	
 	public static function bbp_installed() {
 		return class_exists('bbPress');
+	}
+	
+	public static function page_has_child($page_id) {
+		$pages = get_pages(array("child_of" => $page_id));
+		if($pages) {
+			return true;
+		}
+		return false;
 	}
 	
 	public static function bbpress_installed() {

@@ -1,4 +1,17 @@
-body.login div#login h1 a{background-image:url(../images/hocwp-logo.png);background-size:282px 100px;padding-bottom:30px;height:80px;width:320px}#login{padding-top:60px}.wp-core-ui .button-primary{font-size:15px;margin-bottom:-20px;margin-top:10px;padding-bottom:35px!important;padding-top:10px!important;width:100%}.login #backtoblog{display:none}@media screen and (max-width:769px){.wp-core-ui .button,.wp-core-ui .button.button-large,.wp-core-ui .button.button-small,a.preview,input#publish,input#save-post{padding-bottom:10px!important}#login{padding-bottom:10px}}
+body.login div#login h1 a{background-image:url(../images/hocwp-logo.png);background-size:282px 100px;padding-bottom:30px;height:80px;width:320px}#login{padding-top:60px}.wp-core-ui .button-primary{font-size:15px;margin-bottom:-20px;margin-top:10px;padding-bottom:35px!important;padding-top:10px!important;width:100%}.login #backtoblog{display:none}
+
+@media screen and (max-width:769px) {
+	.wp-core-ui .button,
+	.wp-core-ui .button.button-large,
+	.wp-core-ui .button.button-small,
+	a.preview,
+	input#publish,
+	input#save-post {
+		height: 48px;
+		padding-bottom: 10px! important;
+	}
+	#login{padding-bottom:10px}
+}
 .login .wp-core-ui .button-group.button-large .button, .wp-core-ui .button.button-large {
 	line-height: 23px;
 }

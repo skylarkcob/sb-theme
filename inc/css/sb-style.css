@@ -140,7 +140,9 @@ a:focus {
 }
 
 .woocommerce #content .product .cart > .button.single_add_to_cart_button:after,
-.woocommerce #content .product > .button.add_to_cart_button:after {
+.woocommerce #content .product > .button.add_to_cart_button:after,
+.sb-site-tree .has-sub .arrow:before,
+.sb-site-tree .no-sub .arrow:before {
 	font-family: "FontAwesome";
 }
 
@@ -734,4 +736,117 @@ body {
 	margin-top: 0;
 	margin-bottom: 0;
 	padding: 0;
+}
+
+.sb-site-tree,
+.sb-site-tree .sub-tree {
+    margin: 0;
+    padding: 0;
+}
+
+.sb-site-tree li {
+	line-height: 35px;
+	list-style: none outside none;
+}
+
+.sb-site-tree .has-sub {
+
+}
+
+.sb-site-tree .arrow {
+	font-size: 13px;
+}
+
+.sb-site-tree .has-sub .arrow:before {
+	content: "\f0d7";
+}
+
+.sb-site-tree .no-sub .arrow:before {
+	content: "\f0da";
+}
+.sb-site-tree .sub-tree {
+
+}
+.sb-site-tree .sub-tree li {
+    background-image: url("../images/tree-bg.gif");
+	background-position: 0 4px;
+    background-repeat: no-repeat;
+    padding-left: 25px;
+}
+
+.sb-site-tree .sub-tree,
+.sb-site-tree .tree-node-empty,
+.sb-site-tree .sub-tree .tree-node-empty {
+	background-image: url("../images/tree-empty-bg.gif");
+	background-repeat: repeat-y;
+}
+
+.sb-site-tree .no-sub .arrow {
+
+}
+
+.sb-site-tree .tree-node-empty {
+	height: 30px;
+}
+
+.sb-site-tree .list-tree-node,
+.sb-sitemap-cat {
+	margin-top: 20px;
+}
+
+.sb-site-tree h3.tree-title {
+	font-size: 13px;
+}
+
+.sb-site-tree .tagcloud a,
+.sb-sitemap-tag .tagcloud a,
+.sb-sitemap-cat .categories a {
+    background-color: #e5e5e5;
+    border-radius: 3px;
+    font-size: 13px !important;
+    padding: 3px 10px;
+}
+
+.sb-site-tree .tagcloud a:hover,
+.sb-sitemap-tag .tagcloud a:hover,
+.sb-sitemap-cat .categories a:hover,
+.sb-sitemap-cat .categories a:hover {
+	color: #fafafa;
+}
+
+.sb-sitemap-cat .categories a {
+	display: inline-block;
+	margin-bottom: 5px;
+	margin-right: 5px;
+}
+
+h3.sitemap-node-title {
+    font-size: 25px;
+    margin-bottom: 10px;
+}
+
+.not-found-title {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+.sb-not-found .search-form {
+	margin: 20px 0;
+}
+
+.sb-not-found .search-submit,
+.sb-no-post .search-submit {
+	height: 34px;
+}
+
+.sb-no-post .search-field {
+    margin-right: 10px;
+    width: 400px;
+}
+
+.sb-not-found .not-found-image {
+    display: block;
+    height: auto;
+    margin: 20px auto;
+    width: 400px;
 }
