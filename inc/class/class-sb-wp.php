@@ -78,7 +78,7 @@ class SB_WP {
 	}
 	
 	public static function get_signup_url() {
-		return wp_registration_url();
+		return apply_filters('sb_register_url', wp_registration_url());
 	}
 	
 	public static function get_singup_uri() {
@@ -448,6 +448,74 @@ class SB_WP {
 	
 	public static function phrase($phrase) {
 		return SB_Theme::phrase($phrase);
+	}
+	
+	public static function bbpress_register_page() {
+		if(self::bbpress_installed() && shortcode_exists( 'bbp-register' )) {
+			
+			echo '<div class="sb-bbp-register">';
+			if(is_user_logged_in()) {
+				echo '<p>'.SB_PHP::add_dotted(SB_WP::phrase('you_are_logged_in')).'</p>';
+			} else {
+				echo do_shortcode('[bbp-register]');
+			}
+			echo '</div>';
+		}
+	}
+	
+	public static function bbpress_login_url() {
+		$kq = "";
+		$login_page = get_page_by_path('login');
+		if($login_page) {
+			$kq = get_page_link($login_page);
+		}
+		return $kq;
+	}
+	
+	public static function bbpress_register_url() {
+		$kq = "";
+		$register_page = get_page_by_path('register');
+		if($register_page) {
+			$kq = get_page_link($register_page);
+		}
+		return $kq;
+	}
+	
+	public static function bbpress_lost_password_url() {
+		$kq = "";
+		$lost_password_page = get_page_by_path('lost-password');
+		if($lost_password_page) {
+			$kq = get_page_link($lost_password_page);
+		}
+		return $kq;
+	}
+	
+	public static function bbpress_login_page() {
+		if(self::bbpress_installed() && shortcode_exists( 'bbp-login' )) {
+			echo '<div class="sb-bbp-login">';
+
+			if(is_user_logged_in()) {
+				echo '<p>'.SB_PHP::add_dotted(SB_WP::phrase('you_are_logged_in')).'</p>';
+			} else {
+				echo do_shortcode('[bbp-login]');
+				echo '<p><a href="'.self::bbpress_register_url().'">'.SB_PHP::add_punctuation(SB_WP::phrase('need_an_account'), '.').'</a> | <a href="'.self::bbpress_lost_password_url().'">'.SB_PHP::add_punctuation(SB_WP::phrase('forgot_your_password'), '?').'</a></p>';
+			}
+			
+			echo '</div>';
+		}
+	}
+	
+	public static function bbpress_lost_password_page() {
+		if(self::bbpress_installed() && shortcode_exists( 'bbp-lost-pass' )) {
+			echo '<div class="sb-bbp-lost-password">';
+			if(is_user_logged_in()) {
+				echo '<p>'.SB_PHP::add_dotted(SB_WP::phrase('you_are_logged_in')).'</p>';
+			} else {
+				echo do_shortcode('[bbp-lost-pass]');
+			}
+			echo '</div>';
+			
+		}
 	}
 	
 	public static function query_publish($query) {

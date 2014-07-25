@@ -430,7 +430,7 @@ class SB_Theme {
     }
 	
 	public static function created_by() {
-		echo 'Giao diện được tạo bởi <a href="http://hocwp.net">SB Team</a>.';
+		echo SB_WP::phrase('theme_created_by').' <a href="http://hocwp.net">SB Team</a>.';
 	}
 	
 	public static function post_category() {

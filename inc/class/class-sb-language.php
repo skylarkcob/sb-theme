@@ -469,6 +469,9 @@ class SB_Language {
 		$this->overwrite_translator("vi", "order_type", "Kiểu sắp xếp");
 		$this->overwrite_translator("en", "order_type", "Order type");
 		
+		$this->overwrite_translator("vi", "you_are_logged_in", "Bạn đã đăng nhập vào hệ thống");
+		$this->overwrite_translator("en", "you_are_logged_in", "You are logged in");
+		
 		$this->overwrite_translator("vi", "show_title", "Hiển thị tiêu đề");
 		$this->overwrite_translator("en", "show_title", "Show title");
 		
@@ -546,6 +549,15 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "no_name_theme", "Giao diện chưa đặt tên");
 		$this->overwrite_translator("en", "no_name_theme", "No name theme");
+		
+		$this->overwrite_translator("vi", "need_an_account", "Bạn chưa có tài khoản? Hãy ghé sang trang đăng ký để tạo mới");
+		$this->overwrite_translator("en", "need_an_account", "Need an account? Sign up for one now");
+		
+		$this->overwrite_translator("vi", "forgot_your_password", "Bạn quên đã quên mật khẩu");
+		$this->overwrite_translator("en", "forgot_your_password", "Forgot your password");
+		
+		$this->overwrite_translator("vi", "theme_created_by", "Giao diện được tạo bởi");
+		$this->overwrite_translator("en", "theme_created_by", "Theme is created by");
 		
 		$this->overwrite_translator("vi", "about_sb_framework", "Giới thiệu SB Framework");
 		$this->overwrite_translator("en", "about_sb_framework", "About SB Framework");
