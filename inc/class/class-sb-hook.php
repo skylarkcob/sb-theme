@@ -280,18 +280,16 @@ class SB_Hook {
 				break;
 			default:				
 		}
-
 		return $translated_text;
 	}
 	
 	public function sbtheme_custom_login_page() {
 		if(!is_admin() && SB_WP::is_login_page()) {
-			add_action( 'login_enqueue_scripts', array('SB_Hook', 'sbtheme_login_style'));
-			add_filter( 'login_headerurl', array('SB_Hook', 'sbtheme_login_form_logo_url'));
-			add_filter('login_headertitle', array('SB_Hook', 'sbtheme_login_form_logo_description'));
-			add_filter('gettext', array('SB_Hook', 'sbtheme_login_form_text'), 20, 3);
-			add_filter( 'login_errors', array('SB_Hook', 'sbtheme_login_error_message'));
-			add_filter('login_message', array('SB_Hook', 'sbtheme_login_message'));
+			add_action( 'login_enqueue_scripts', array($this, 'sbtheme_login_style'));
+			add_filter( 'login_headerurl', array($this, 'sbtheme_login_form_logo_url'));
+			add_filter('login_headertitle', array($this, 'sbtheme_login_form_logo_description'));
+			add_filter( 'login_errors', array($this, 'sbtheme_login_error_message'));
+			add_filter('login_message', array($this, 'sbtheme_login_message'));
 		}
 	}
 	
