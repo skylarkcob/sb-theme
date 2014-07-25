@@ -60,6 +60,7 @@ define("SB_PAYPAL_DONATE_BUTTON_CARD_URL", "https://www.paypalobjects.com/en_US/
 define("SB_SUPPORT_EMAIL", "laidinhcuongvn@gmail.com");
 
 // Get sb_options
+global $sb_options;
 $sb_options = get_option('sb_options');
 
 class SB_Load {
@@ -162,8 +163,6 @@ class SB_Load {
 	
 	// Include all handle
 	public function run() {
-		global $sb_language;
-		
 		foreach($this->items as $item) {
 			if(array_key_exists($item, $this->handles)) {
 				$path = $this->handles[$item];
@@ -183,7 +182,12 @@ class SB_Load {
 			$hook = new SB_Hook();
 		}
 		if(class_exists("SB_Language")) {
-			$sb_language = new SB_Language();
+			global $sb_language;
+			$lang = 'vi';
+			if(isset($options['language'])) {
+				$lang = $options['language'];
+			}
+			$sb_language = new SB_Language($lang);
 		}
 		$this->enable_sb_widget();
 		include SB_PATH . "/sb-constant.php";

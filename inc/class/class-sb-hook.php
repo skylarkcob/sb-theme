@@ -147,9 +147,6 @@ class SB_Hook {
 	
 	public function sbtheme_translation() {
 		if(!is_admin()) {
-			if(SB_WP::bbpress_installed()) {
-				add_filter('gettext', array($this, 'sbtheme_translation_bbpress'), 20, 3);
-			}
 			add_filter('gettext', array($this, 'sbtheme_translation_all'), 20, 3);
 		}
 	}
@@ -157,99 +154,133 @@ class SB_Hook {
 	public function sbtheme_translation_all($translated_text, $text, $domain) {
 		$punctuation = SB_PHP::get_punctuation($translated_text);
 		$str_text = SB_PHP::remove_punctuation(SB_PHP::lowercase($translated_text));
-		
 		switch($str_text) {
 			case 'home':
-				$translated_text = __( SB_WP::phrase('home').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('home').$punctuation;
 				break;
 			case 'search':
-				$translated_text = __( SB_WP::phrase('search').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('search').$punctuation;
 				break;
 			case 'tags':
-				$translated_text = __( SB_WP::phrase('tags').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('tags').$punctuation;
 				break;
 			case 'normal':
-				$translated_text = __( SB_WP::phrase('normal').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('normal').$punctuation;
 				break;
 			case 'edit':
-				$translated_text = __( SB_WP::phrase('edit').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('edit').$punctuation;
 				break;
 			case 'close':
-				$translated_text = __( SB_WP::phrase('close').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('close').$punctuation;
 				break;
 			case 'author':
-				$translated_text = __( SB_WP::phrase('author').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('author').$punctuation;
 				break;
 			case 'reply':
-				$translated_text = __( SB_WP::phrase('reply').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('reply').$punctuation;
 				break;
 			case 'reply to':
-				$translated_text = __( SB_WP::phrase('reply_to').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('reply_to').$punctuation;
 				break;
 			case 'reply to: %s':
-				$translated_text = __( SB_PHP::add_colon(SB_WP::phrase('reply_to')).' %s', SB_DOMAIN );
+				$translated_text = SB_PHP::add_colon(SB_WP::phrase('reply_to')).' %s';
 				break;
-		}
-		//echo $translated_text;
-		return $translated_text;
-	}
-	
-	public function sbtheme_translation_bbpress($translated_text, $text, $domain) {
-		$punctuation = SB_PHP::get_punctuation($translated_text);
-		$str_text = SB_PHP::remove_punctuation(SB_PHP::lowercase($translated_text));
-		switch($str_text) {
+			case 'log in':
+                $translated_text = SB_WP::phrase('log_in').$punctuation;
+                break;
+            case 'username':
+                $translated_text = SB_WP::phrase('username').$punctuation;
+                break;
+			case 'password':
+                $translated_text = SB_WP::phrase('password').$punctuation;
+                break;
+			case 'remember me':
+                $translated_text = SB_WP::phrase('remember_me').$punctuation;
+                break;
+			case 'lost your password':
+                $translated_text = SB_WP::phrase('lost_your_password').$punctuation;
+                break;
+			case '&larr; back to %s':
+                $translated_text = SB_WP::phrase('back_to_home_page').$punctuation;
+                break;
+			case 'register':
+                $translated_text = SB_WP::phrase('register').$punctuation;
+                break;
+			case 'e-mail':
+                $translated_text = SB_WP::phrase('email').$punctuation;
+                break;
+			case 'a password will be e-mailed to you':
+                $translated_text = SB_PHP::add_dotted(SB_WP::phrase('a_password_will_be_email_to_you')).$punctuation;
+                break;
+			case 'username or e-mail':
+                $translated_text = SB_WP::phrase('username_or_email').$punctuation;
+                break;
+			case 'get new password':
+                $translated_text = SB_WP::phrase('get_new_password').$punctuation;
+                break;
+			case 'you are now logged out':
+                $translated_text = SB_WP::phrase('you_are_now_logged_out').$punctuation;
+                break;
+			case 'registration form':
+                $translated_text = SB_WP::phrase('registration_form').$punctuation;
+                break;
+			case 'lost password':
+                $translated_text = SB_WP::phrase('lost_password').$punctuation;
+                break;
 			case 'forums':
-				$translated_text = __( SB_WP::phrase('forums').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('forums').$punctuation;
 				break;
 			case 'forum':
-				$translated_text = __( SB_WP::phrase('forum').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('forum').$punctuation;
 				break;
 			case 'topics':
-				$translated_text = __( SB_WP::phrase('topics').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('topics').$punctuation;
 				break;
 			case 'posts':
-				$translated_text = __( SB_WP::phrase('posts').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('posts').$punctuation;
 				break;
 			case 'freshness':
-				$translated_text = __( SB_WP::phrase('freshness').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('freshness').$punctuation;
 				break;
 			case 'started by: %1$s':
-				$translated_text = __( SB_PHP::add_colon(SB_WP::phrase('started_by')).' %1$s', SB_DOMAIN );
+				$translated_text = SB_PHP::add_colon(SB_WP::phrase('started_by')).' %1$s';
 				break;
 			case 'topic':
-				$translated_text = __( SB_WP::phrase('topic').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('topic').$punctuation;
 				break;
 			case 'notify me of follow-up replies via email':
-				$translated_text = __( SB_WP::phrase('notify_follow_up_email').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('notify_follow_up_email').$punctuation;
 				break;
 			case 'your account has the ability to post unrestricted html content':
-				$translated_text = __( SB_WP::phrase('you_can_post_html_content').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('you_can_post_html_content').$punctuation;
 				break;
 			case 'subscribe':
-				$translated_text = __( SB_WP::phrase('subscribe').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('subscribe').$punctuation;
 				break;
 			case 'unsubscribe':
-				$translated_text = __( SB_WP::phrase('unsubscribe').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('unsubscribe').$punctuation;
 				break;
 			case 'favorite':
-				$translated_text = __( SB_WP::phrase('favorite').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('favorite').$punctuation;
 				break;
 			case 'favorited':
-				$translated_text = __( SB_WP::phrase('favorited').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('favorited').$punctuation;
 				break;
 			case 'topic title (maximum length: %d)':
-				$translated_text = __( SB_WP::phrase('topic_title').' ('.SB_PHP::add_colon(SB_WP::phrase('maximum_length')).' %d)'.$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('topic_title').' ('.SB_PHP::add_colon(SB_WP::phrase('maximum_length')).' %d)'.$punctuation;
 				break;
 			case 'topic tags':
-				$translated_text = __( SB_WP::phrase('topic_tags').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('topic_tags').$punctuation;
 				break;
 			case 'topic type':
-				$translated_text = __( SB_WP::phrase('topic_type').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('topic_type').$punctuation;
 				break;
 			case 'topic status':
-				$translated_text = __( SB_WP::phrase('topic_status').$punctuation, SB_DOMAIN );
+				$translated_text = SB_WP::phrase('topic_status').$punctuation;
 				break;
+			default:				
 		}
+
 		return $translated_text;
 	}
 	
@@ -305,56 +336,7 @@ class SB_Hook {
 		return $error;
 	}
 	
-	public function sbtheme_login_form_text( $translated_text, $text, $domain ) {
-		$punctuation = SB_PHP::get_punctuation($translated_text);
-		$str_text = SB_PHP::lowercase($translated_text);
-		$str_text = trim(trim(trim($str_text, '?'), '.'), ':');
-		switch ( $str_text ) {
-            case 'log in':
-                $translated_text = __( SB_WP::phrase('log_in').$punctuation, SB_DOMAIN );
-                break;
-            case 'username':
-                $translated_text = __( SB_WP::phrase('username').$punctuation, SB_DOMAIN );
-                break;
-			case 'password':
-                $translated_text = __( SB_WP::phrase('password').$punctuation, SB_DOMAIN );
-                break;
-			case 'remember me':
-                $translated_text = __( SB_WP::phrase('remember_me').$punctuation, SB_DOMAIN );
-                break;
-			case 'lost your password':
-                $translated_text = __( SB_WP::phrase('lost_your_password').$punctuation, SB_DOMAIN );
-                break;
-			case '&larr; back to %s':
-                $translated_text = __( SB_WP::phrase('back_to_home_page').$punctuation, SB_DOMAIN );
-                break;
-			case 'register':
-                $translated_text = __( SB_WP::phrase('register').$punctuation, SB_DOMAIN );
-                break;
-			case 'e-mail':
-                $translated_text = __( SB_WP::phrase('email').$punctuation, SB_DOMAIN );
-                break;
-			case 'a password will be e-mailed to you':
-                $translated_text = __( SB_PHP::add_dotted(SB_WP::phrase('a_password_will_be_email_to_you')).$punctuation, SB_DOMAIN );
-                break;
-			case 'username or e-mail':
-                $translated_text = __( SB_WP::phrase('username_or_email').$punctuation, SB_DOMAIN );
-                break;
-			case 'get new password':
-                $translated_text = __( SB_WP::phrase('get_new_password').$punctuation, SB_DOMAIN );
-                break;
-			case 'you are now logged out':
-                $translated_text = __( SB_WP::phrase('you_are_now_logged_out').$punctuation, SB_DOMAIN );
-                break;
-			case 'registration form':
-                $translated_text = __( SB_WP::phrase('registration_form').$punctuation, SB_DOMAIN );
-                break;
-			case 'lost password':
-                $translated_text = __( SB_WP::phrase('lost_password').$punctuation, SB_DOMAIN );
-                break;
-        }
-		return $translated_text;
-	}
+
 	
 	public function sbtheme_footer_element() {
 		if(SB_WP::utility_enabled('enable_scroll_top')) {

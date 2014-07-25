@@ -7,16 +7,7 @@ class SB_Language {
 	public function __construct($lang = "vi") {
 		$this->init();
 		$this->translator_init();
-		if("vi" != $lang) {
-			$this->language = $lang;
-		} else {
-			$options = SB_WP::option();
-			if(isset($options['language'])) {
-				$this->language = $options['language'];
-			} else {
-				SB_Option::update("language", "vi");
-			}
-		}
+		$this->language = $lang;
 	}
 	
 	private function init() {

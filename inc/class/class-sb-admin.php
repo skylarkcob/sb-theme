@@ -46,18 +46,16 @@ class SB_Admin {
 	
 	// Thêm giá trị vào danh sách các tab
 	private function tab_init() {
-		global $sb_language;
-		$sb_language = new SB_Language();
 		$this->data_section = SB_PHP::get_session('data_section');
-		$this->add_tab('general', $sb_language->phrase("general_settings"), 'sbtheme_general_section');
-		$this->add_tab('home', $sb_language->phrase("home_page_settings"), 'sbtheme_home_section');
+		$this->add_tab('general', SB_WP::phrase("general_settings"), 'sbtheme_general_section');
+		$this->add_tab('home', SB_WP::phrase("home_page_settings"), 'sbtheme_home_section');
 		if(SB_WP::enable_tivi()) {
-			$this->add_tab('tivi', $sb_language->phrase("tivi_settings"), 'sbtheme_tivi_section');
+			$this->add_tab('tivi', SB_WP::phrase("tivi_settings"), 'sbtheme_tivi_section');
 		}
-		$this->add_tab('ads', $sb_language->phrase("ads_settings"), 'sbtheme_ads_section');
-		$this->add_tab('social', $sb_language->phrase("social_network_settings"), 'sbtheme_social_section');
-		$this->add_tab('sbmodule', $sb_language->phrase("utility_management"), 'sbtheme_sbmodule_section');
-		$this->add_tab('aboutsb', $sb_language->phrase("about_sb"), 'sbtheme_aboutsb_section');
+		$this->add_tab('ads', SB_WP::phrase("ads_settings"), 'sbtheme_ads_section');
+		$this->add_tab('social', SB_WP::phrase("social_network_settings"), 'sbtheme_social_section');
+		$this->add_tab('sbmodule', SB_WP::phrase("utility_management"), 'sbtheme_sbmodule_section');
+		$this->add_tab('aboutsb', SB_WP::phrase("about_sb"), 'sbtheme_aboutsb_section');
 	}
 	
 	/*
@@ -68,7 +66,7 @@ class SB_Admin {
 	private function add_general_setting() {
 		global $sb_language;
 		$this->add_section('sbtheme_general_section', SB_WP::phrase("general_setting_description"));
-		$this->add_general_field('language', $sb_language->phrase("choose_language"), "language_callback");
+		$this->add_general_field('language', SB_WP::phrase("choose_language"), "language_callback");
 		$this->add_general_field('logo', 'Logo', 'logo_callback');
 		$this->add_general_field('favicon', 'Favicon', 'favicon_callback');
 		$this->add_general_field('banner', 'Banner', 'banner_callback');
@@ -610,7 +608,7 @@ class SB_Admin {
 	// Tạo menu con bên trong menu Appearance
 	public function sbtheme_add_options_menu() {
 		global $sb_language;
-		add_submenu_page('themes.php', $sb_language->phrase("theme_settings"), 'SB Options', $this->capability, $this->menu_slug, array($this, 'sbtheme_settings_page'));
+		add_submenu_page('themes.php', SB_WP::phrase("theme_settings"), 'SB Options', $this->capability, $this->menu_slug, array($this, 'sbtheme_settings_page'));
 	}
 	
 	private function set_active_class($count, $section_id) {
@@ -639,7 +637,7 @@ class SB_Admin {
 			<h2><?php echo $name; ?></h2>
 			<?php $version = SB_WP::get_theme_version($theme); ?>
 			<?php if(!empty($version)) : ?>
-			<span><?php echo $sb_language->phrase('version'); ?> <?php echo $version; ?></span>
+			<span><?php echo SB_WP::phrase('version'); ?> <?php echo $version; ?></span>
 			<?php endif; ?>
 		</div>
 		<?php
@@ -654,7 +652,7 @@ class SB_Admin {
 		$this->options = $option->get_all_option();
 	?>
 		<div class="wrap sb-option">
-			<noscript><div class="no-js"><?php echo SB_PHP::add_punctuation_mark(SB_WP::phrase('no_javascript_text')); ?></div></noscript>
+			<noscript><div class="no-js"><?php echo SB_PHP::add_exclamation_mark(SB_WP::phrase('no_javascript_text')); ?></div></noscript>
 			<h2></h2>
 			<?php if (isset($_GET["settings-updated"])) : ?>
 				<div id="message" class="updated">

@@ -3,9 +3,7 @@ class SB_Option {
 	private $option;
 	public function __construct() {
 		global $sb_options;
-		if(!is_array($sb_options)) {
-			$sb_options = $this->get_option();
-		}
+		$sb_options = $this->get_option();
 		$this->option = $sb_options;
 	}
 	

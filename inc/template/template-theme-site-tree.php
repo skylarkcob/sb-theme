@@ -1,5 +1,7 @@
 <div class="sb-site-tree">
+<?php do_action("sb_site_tree_before"); ?>
 <h3 class="tree-title"><?php echo SB_PHP::add_colon(SB_WP::phrase('sitemap')); ?></h3>
+
 <ul class="list-tree-node">
 	<li class="tree-level-1 has-sub">
 		<span class="arrow"></span>
@@ -51,6 +53,6 @@
 </ul>
 <?php
 SB_WP::tag_cloud();
-SB_WP::all_category();
+do_action("sb_site_tree_after");
 ?>
 </div>

@@ -198,10 +198,8 @@ class SB_Theme {
 	
 	public static function option() {
 		global $sb_options;
-		if(!is_array($sb_options) || (is_array($sb_options) && count($sb_options) < 1)) {
-			$sb_options = new SB_Option();
-		}
-		return (array)$sb_options;
+		$sb_options = new SB_Option();
+		return (array)$sb_options->get_all_option();
 	}
 	
 	public static function options() {
@@ -248,8 +246,13 @@ class SB_Theme {
 	
 	public static function phrase($phrase) {
 		global $sb_language;
-		if(empty($sb_language)) {
-			$sb_language = new SB_Language();
+		if(null == $sb_language || empty($sb_language)) {
+			$options = SB_WP::option();
+			$lang = 'vi';
+			if(isset($options['language'])) {
+				$lang = $options['language'];
+			}
+			$sb_language = new SB_Language($lang);
 		}
 		return $sb_language->phrase($phrase);
 	}
