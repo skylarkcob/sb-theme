@@ -41,6 +41,43 @@ class SB_Theme {
 		}
 	}
 	
+	public static function menu_social() {
+		self::template('template-theme-social');
+	}
+	
+	public static function menu_login() {
+		if(is_user_logged_in()) : ?>
+			<?php $user = wp_get_current_user(); ?>
+			<ul>
+				<li><?php echo SB_PHP::add_colon(SB_WP::phrase('you_are_login_as')); ?> <a href="<?php echo admin_url('profile.php'); ?>"><?php echo $user->user_login; ?></a></li>
+				<?php if(current_user_can('publish_posts')) : ?>
+				<li><a href="<?php echo admin_url('post-new.php'); ?>"><?php echo SB_WP::phrase('create_post'); ?></a></li>
+				<?php endif; ?>
+				<li><a href="<?php SB_WP::logout_uri(); ?>"><?php echo SB_WP::phrase('logout'); ?></a></li>
+			</ul>
+		<?php else : ?>
+			<form method="post" action="<?php SB_WP::login_uri(); ?>" id="loginform" name="loginform">
+			
+			<p class="login-username">
+				<label for="user_login"></label>
+				<input type="text" size="20" value="" class="input" id="user_login" name="log" placeholder="<?php echo SB_WP::phrase('username'); ?>">
+			</p>
+			<p class="login-password">
+				<label for="user_pass"></label>
+				<input type="password" size="20" value="" class="input" id="user_pass" name="pwd" placeholder="<?php echo SB_WP::phrase('password'); ?>">
+			</p>
+			
+			<p class="login-remember"><label><input type="checkbox" value="forever" id="rememberme" name="rememberme" checked="checked"> <?php echo SB_PHP::add_punctuation(SB_WP::phrase('remember_me'), '?'); ?></label></p>
+			<p class="login-submit">
+				<input type="submit" value="<?php echo SB_WP::phrase('login'); ?>" class="button-primary" id="wp-submit" name="wp-submit">
+			</p>
+			<p class="signup">
+				<a class="button-primary" href="<?php SB_WP::signup_url(); ?>"><?php echo SB_WP::phrase('register'); ?></a>
+			</p>
+		</form>
+		<?php endif;
+	}
+	
 	public static function title() {
 		if(is_home()) {
 			echo get_bloginfo('name') . ' - ' . get_bloginfo('description');
@@ -218,9 +255,9 @@ class SB_Theme {
 		if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : ?>
 	
 		<nav id="comment-nav-<?php echo $type; ?>" class="navigation comment-navigation" role="navigation">
-			<h4 class="screen-reader-text"><?php _e( 'Phân trang bình luận', SB_DOMAIN ); ?></h4>
-			<div class="nav-previous"><?php previous_comments_link( __( '&larr; Cũ hơn', SB_DOMAIN ) ); ?></div>
-			<div class="nav-next"><?php next_comments_link( __( 'Mới hơn &rarr;', SB_DOMAIN ) ); ?></div>
+			<h4 class="screen-reader-text"><?php _e( SB_WP::phrase('comment_navigation'), SB_DOMAIN ); ?></h4>
+			<div class="nav-previous"><?php previous_comments_link( __( '&larr; '.SB_WP::phrase('older_comments'), SB_DOMAIN ) ); ?></div>
+			<div class="nav-next"><?php next_comments_link( __( SB_WP::phrase('newer_comments').' &rarr;', SB_DOMAIN ) ); ?></div>
 		</nav><!-- #comment-nav-above -->
 		
 		<?php endif; // Check for comment navigation.
@@ -377,9 +414,9 @@ class SB_Theme {
 
     public static function search_form($args = array()) {
         $defaults = array(
-            'label_text'		=> 'Tìm kiếm:',
-            'placeholder_text'	=> 'Nhập từ khóa...',
-            'submit_text'		=> 'Tìm kiếm',
+            'label_text'		=> __(SB_WP::phrase('search'), SB_DOMAIN),
+            'placeholder_text'	=> __(SB_WP::phrase('enter_keyword').'...', SB_DOMAIN),
+            'submit_text'		=> __(SB_WP::phrase('search'), SB_DOMAIN),
             'form_class'		=> ''
         );
         $args = wp_parse_args($args, $defaults);
@@ -503,64 +540,20 @@ class SB_Theme {
 		$aria_req = ( $req ? " aria-required='true'" : '' );
 		$args = array(
 			'fields'				=> apply_filters( 'comment_form_default_fields', array(
-												'author' => '<p class="comment-form-author">' .
-													'<input id="author" placeholder="Tên *" name="author" type="text" value="' .
-													esc_attr( $commenter['comment_author'] ) . '" size="30"' . $aria_req . ' />'.
-													'<label for="author">' . __( '' ) . '</label> ' .
-													( $req ? '<span class="required"></span>' : '' )  .
-													'</p>',
-												'email' => '<p class="comment-form-email">' .
-													'<input id="email" placeholder="Email *" name="email" type="text" value="' .
-													esc_attr(  $commenter['comment_author_email'] ) .
-													'" size="30"' . $aria_req . ' />'  .
-													'<label for="email">' . __( '' ) .
-													'</label> ' .
-													( $req ? '<span class="required"></span>' : '' ) .
-													'</p>',
-												'url' => '<p class="comment-form-url">' .
-													'<input id="url" name="url" placeholder="Website" type="text" value="' .
-													esc_attr( $commenter['comment_author_url'] ) .
-													'" size="30" /> ' .
-													'<label for="url">' .
-													__( '', SB_DOMAIN ) .
-													'</label>' .
-												   '</p>'
-											)
+					'author' => '<p class="comment-form-author">' . '<label for="author">' . __( SB_WP::phrase('your_name'), SB_DOMAIN ) . '</label> ' . ( $req ? '<span class="required">*</span>' : '' ) . '<input id="author" placeholder="'.SB_WP::phrase('your_name').' *" name="author" type="text" value="' . esc_attr( $commenter['comment_author'] ) . '"' . $aria_req . ' class="sb-author-info"></p>',
+					'email' => '<p class="comment-form-email">' . '<label for="email">' . __( SB_WP::phrase('your_email'), SB_DOMAIN ) . '</label> ' . ( $req ? '<span class="required">*</span>' : '' ) . '<input id="email" placeholder="'.SB_WP::phrase('your_email').' *" name="email" type="text" value="' . esc_attr(  $commenter['comment_author_email'] ) . '"' . $aria_req . ' class="sb-author-info"></p>',
+					'url' => '<p class="comment-form-url">' . '<label for="url">' . __( SB_WP::phrase('your_website'), SB_DOMAIN ) . '</label>' . '<input id="url" name="url" placeholder="'.SB_WP::phrase('your_website').'" type="text" value="' . esc_attr( $commenter['comment_author_url'] ) . '" class="sb-author-info"></p>'
+				)
 			),
-			'comment_field'			=> '<p class="comment-form-comment">' .
-											'<label for="comment">' . __( '' ) . '</label>' .
-											'<textarea id="comment" name="comment" placeholder="Nội dung bình luận..." aria-required="true"></textarea>' .
-											'</p>',
-			'comment_notes_before'	=> '<p class="comment-notes before">' .
-											__( 'Địa chỉ email của bạn sẽ được giữ bí mật.' ) .
-											( $req ? ' Những mục đánh dấu (*) là bắt buộc.' : '' ) .
-											'</p>',
-			'comment_notes_after'	=> '<p class="form-allowed-tags comment-notes after">' .
-											sprintf( 
-												__( 'Bạn có thể sử dụng các thẻ <abbr title="Các thẻ HTML được phép sử dụng">HTML</abbr> như: %s' ),
-												' <code>' .
-												allowed_tags() .
-												'</code>' ) .
-												'</p>',
-			'must_log_in'			=> '<p class="must-log-in">' .
-											sprintf(
-												__( 'Bạn phải <a href="%s">đăng nhập</a> trước khi gửi bình luận.' ),
-												wp_login_url( apply_filters( 'the_permalink', get_permalink() ) )
-											) .
-											'</p>',
-
-			'logged_in_as'			=> '<p class="logged-in-as">' .
-											sprintf(
-												__( 'Bạn đang đăng nhập với tên tài khoản <a href="%1$s">%2$s</a>. <a href="%3$s" title="Thoát khỏi tài khoản">Đăng xuất?</a>' ),
-												admin_url( 'profile.php' ),
-												esc_attr( $user_identity ),
-												wp_logout_url( apply_filters( 'the_permalink', get_permalink( ) ) )
-											) .
-											'</p>',
-			'title_reply'			=> '<div class="comment-title">Bình luận</div>',
-			'label_submit'			=> 'Gửi bình luận',
+			'comment_field'			=> '<p class="comment-form-comment">' . '<label for="comment">' . __( SB_WP::phrase('comment_body'), SB_DOMAIN ) . '</label>' . '<textarea id="comment" name="comment" placeholder="" aria-required="true" class="sb-comment-msg"></textarea></p>',
+			'comment_notes_before'	=> '<p class="comment-notes before">' . __( SB_PHP::add_dotted(SB_WP::phrase('your_email_not_published')), SB_DOMAIN ) . __( $req ? ' '.sprintf(SB_PHP::add_dotted(SB_WP::phrase('require_field_mark')), '(*)') : '' ) . '</p>',
+			'comment_notes_after'	=> '<p class="form-allowed-tags comment-notes after">' . sprintf( __( sprintf(SB_PHP::add_colon(SB_WP::phrase('allow_html_tags')), '<abbr title="'.__(SB_WP::phrase('html_intro')).'">HTML</abbr>').' %s' ), ' <code>' . allowed_tags() . '</code>' ) . '</p>',
+			'must_log_in'			=> '<p class="must-log-in">' . sprintf(__( 'Bạn phải <a href="%s">đăng nhập</a> trước khi gửi bình luận.' ), wp_login_url( apply_filters( 'the_permalink', get_permalink() ) ) ) . '</p>',
+			'logged_in_as'			=> '<p class="logged-in-as">' . sprintf(__( __(SB_WP::phrase('you_are_login_as'), SB_DOMAIN).' <a href="%1$s">%2$s</a>. <a href="%3$s" title="'.__(SB_WP::phrase("logout"), SB_DOMAIN).'">'.__(SB_WP::phrase("logout"), SB_DOMAIN).'?</a>' ), admin_url( 'profile.php' ), esc_attr( $user_identity ), wp_logout_url( apply_filters( 'the_permalink', get_permalink( ) ) )) . '</p>',
+			'title_reply'			=> '<a name="leaveyourcomment"></a><div class="comment-title">'.__(SB_WP::phrase('leave_reply'), SB_DOMAIN).'</div>',
+			'label_submit'			=> __(SB_WP::phrase("post_comment"), SB_DOMAIN),
 			'title_reply_to'		=>  __( 'Trả lời bình luận của %s' ),
-			'cancel_reply_link'		=> 'Hủy trả lời'
+			'cancel_reply_link'		=> __(SB_WP::phrase('cancel_reply'), SB_DOMAIN)
 		);
 		return $args;
 	}

@@ -440,7 +440,7 @@ class SB_Admin {
 					}
 					break;
 				case 'text':
-					$data = sanitize_text_field( $input[$key] );
+					$data = trim(sanitize_text_field( $input[$key] ));
 					$kq = $data;
 					break;
 				case 'url':
@@ -503,7 +503,8 @@ class SB_Admin {
 	
 	// Mục cho nhập dữ liệu chuỗi
 	private function text_field($name, $value, $description) {
-		printf('<input type="text" id="%1s" name="%2s" value="%3s" /><p class="description">%4s</p>', $name, esc_attr($this->get_field_name($name)), $value, $description);
+		$value = trim($value);
+		printf('<input type="text" id="%1$s" name="%2$s" value="%3$s" class=""><p class="description">%4$s</p>', $name, esc_attr($this->get_field_name($name)), $value, $description);
 	}
 	
 	// Điều khiển gán giá trị cho mục nhất định

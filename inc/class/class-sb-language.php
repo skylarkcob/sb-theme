@@ -22,6 +22,39 @@ class SB_Language {
 		$this->overwrite_translator("vi", "off", "Tắt");
 		$this->overwrite_translator("en", "off", "Off");
 		
+		$this->overwrite_translator("vi", "first_name", "Tên");
+		$this->overwrite_translator("en", "first_name", "First name");
+		
+		$this->overwrite_translator("vi", "last_name", "Họ");
+		$this->overwrite_translator("en", "last_name", "Last name");
+		
+		$this->overwrite_translator("vi", "you_are_login_as", "Xin chào");
+		$this->overwrite_translator("en", "you_are_login_as", "You are logged in as");
+		
+		$this->overwrite_translator("vi", "hello", "Xin chào");
+		$this->overwrite_translator("en", "hello", "Hello");
+		
+		$this->overwrite_translator("vi", "name", "Tên");
+		$this->overwrite_translator("en", "name", "Name");
+		
+		$this->overwrite_translator("vi", "your_name", "Tên của bạn");
+		$this->overwrite_translator("en", "your_name", "Your name");
+		
+		$this->overwrite_translator("vi", "your_email", "Email của bạn");
+		$this->overwrite_translator("en", "your_email", "Your email");
+		
+		$this->overwrite_translator("vi", "your_website", "Website của bạn");
+		$this->overwrite_translator("en", "your_website", "Your website");
+		
+		$this->overwrite_translator("vi", "add_your_comment", "Viết ý kiến của bạn");
+		$this->overwrite_translator("en", "add_your_comment", "Leave Yours +");
+		
+		$this->overwrite_translator("vi", "logout", "Thoát");
+		$this->overwrite_translator("en", "logout", "Logout");
+		
+		$this->overwrite_translator("vi", "create_post", "Tạo bài viết");
+		$this->overwrite_translator("en", "create_post", "Create post");
+		
 		$this->overwrite_translator("vi", "pages", "Trang");
 		$this->overwrite_translator("en", "pages", "Pages");
 		
@@ -99,6 +132,39 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "close", "Đóng");
 		$this->overwrite_translator("en", "close", "Close");
+		
+		$this->overwrite_translator("vi", "allow_html_tags", "Bạn có thể sử dụng những thẻ %s và thuộc tính sau");
+		$this->overwrite_translator("en", "allow_html_tags", "You may use these %s tags and attributes");
+		
+		$this->overwrite_translator("vi", "html_intro", "Ngôn ngữ liên kết siêu văn bản");
+		$this->overwrite_translator("en", "html_intro", "HyperText Markup Language");
+		
+		$this->overwrite_translator("vi", "require_field_mark", "Những mục bắt buộc được đánh dấu %s");
+		$this->overwrite_translator("en", "require_field_mark", "Required fields are marked %s");
+		
+		$this->overwrite_translator("vi", "your_email_not_published", "Địa chỉ email của bạn sẽ được giữ bí mật");
+		$this->overwrite_translator("en", "your_email_not_published", "Your email address will not be published");
+		
+		$this->overwrite_translator("vi", "cancel_reply", "Hủy trả lời");
+		$this->overwrite_translator("en", "cancel_reply", "Cancel reply");
+		
+		$this->overwrite_translator("vi", "post_comment", "Gửi bình luận");
+		$this->overwrite_translator("en", "post_comment", "Post comment");
+		
+		$this->overwrite_translator("vi", "comment_navigation", "Phân trang bình luận");
+		$this->overwrite_translator("en", "comment_navigation", "Comment navigation");
+		
+		$this->overwrite_translator("vi", "older_comments", "Bình luận cũ hơn");
+		$this->overwrite_translator("en", "older_comments", "Older comments");
+		
+		$this->overwrite_translator("vi", "newer_comments", "Bình luận mới hơn");
+		$this->overwrite_translator("en", "newer_comments", "Newer Comments");
+		
+		$this->overwrite_translator("vi", "comment_body", "Nội dung tin nhắn");
+		$this->overwrite_translator("en", "comment_body", "Comment body");
+		
+		$this->overwrite_translator("vi", "leave_reply", "Gửi bình luận");
+		$this->overwrite_translator("en", "leave_reply", "Leave a reply");
 		
 		$this->overwrite_translator("vi", "choose_language_description", "Lựa chọn ngôn ngữ để sử dụng trên giao diện được tạo bởi SB Team");
 		$this->overwrite_translator("en", "choose_language_description", "Choose language to use on SB Framework");
@@ -184,6 +250,9 @@ class SB_Language {
 		$this->overwrite_translator("vi", "a_password_will_be_email_to_you", "Mật khẩu sẽ được chuyển đến email của bạn");
 		$this->overwrite_translator("en", "a_password_will_be_email_to_you", "A password will be e-mailed to you");
 		
+		$this->overwrite_translator("vi", "password_length_must_be_at_least", "Mật khẩu ít nhất phải dài %s ký tự");
+		$this->overwrite_translator("en", "password_length_must_be_at_least", "Password must be at least %s characters");
+		
 		$this->overwrite_translator("vi", "most_comment_post", "Bài viết nhiều bình luận");
 		$this->overwrite_translator("en", "most_comment_post", "Most comment posts");
 		
@@ -204,6 +273,18 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "topics", "Chủ đề");
 		$this->overwrite_translator("en", "topics", "Topics");
+		
+		$this->overwrite_translator("vi", "says", "Nói");
+		$this->overwrite_translator("en", "says", "Says");
+		
+		$this->overwrite_translator("vi", "at", "Lúc");
+		$this->overwrite_translator("en", "at", "At");
+		
+		$this->overwrite_translator("vi", "comment_awaiting_moderation", "Bình luận của bạn đang được chờ để xét duyệt");
+		$this->overwrite_translator("en", "comment_awaiting_moderation", "Your comment is awaiting moderation");
+		
+		$this->overwrite_translator("vi", "comment_closed", "Bình luận đã được đóng");
+		$this->overwrite_translator("en", "comment_closed", "Comments are closed");
 		
 		$this->overwrite_translator("vi", "topic", "Chủ đề");
 		$this->overwrite_translator("en", "topic", "Topic");
@@ -234,6 +315,9 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "search", "Tìm kiếm");
 		$this->overwrite_translator("en", "search", "Search");
+		
+		$this->overwrite_translator("vi", "enter_keyword", "Nhập từ khóa");
+		$this->overwrite_translator("en", "enter_keyword", "Enter your keyword");
 		
 		$this->overwrite_translator("vi", "started_by", "Được tạo bởi");
 		$this->overwrite_translator("en", "started_by", "Started by");

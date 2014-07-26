@@ -147,7 +147,10 @@ class SB_Hook {
 	
 	public function sbtheme_translation() {
 		if(!is_admin()) {
-			add_filter('gettext', array($this, 'sbtheme_translation_all'), 20, 3);
+			$lang = SB_WP::get_current_language();
+			if("en" != $lang) {
+				add_filter('gettext', array($this, 'sbtheme_translation_all'), 20, 3);
+			}
 		}
 	}
 	
@@ -210,7 +213,7 @@ class SB_Hook {
                 $translated_text = SB_WP::phrase('email').$punctuation;
                 break;
 			case 'a password will be e-mailed to you':
-                $translated_text = SB_PHP::add_dotted(SB_WP::phrase('a_password_will_be_email_to_you')).$punctuation;
+                $translated_text = SB_WP::phrase('a_password_will_be_email_to_you').$punctuation;
                 break;
 			case 'username or e-mail':
                 $translated_text = SB_WP::phrase('username_or_email').$punctuation;
@@ -285,7 +288,7 @@ class SB_Hook {
 	
 	public function sbtheme_custom_login_page() {
 		if(!is_admin() && SB_WP::is_login_page()) {
-			add_action( 'login_enqueue_scripts', array($this, 'sbtheme_login_style'));
+			$this->sbtheme_login_style_and_script();
 			add_filter( 'login_headerurl', array($this, 'sbtheme_login_form_logo_url'));
 			add_filter('login_headertitle', array($this, 'sbtheme_login_form_logo_description'));
 			add_filter( 'login_errors', array($this, 'sbtheme_login_error_message'));
@@ -295,12 +298,23 @@ class SB_Hook {
 	
 	public function sbtheme_login_style() {
 		echo '<link media="all" type="text/css" href="'.SB_CSS_URI.'/sb-login-style.css" id="sb-login-style-css" rel="stylesheet">';
+
 		$options = SB_WP::option();
 		if(isset($options['logo']) && !empty($options['logo'])) {
 			echo '<style>';
 			echo 'body.login div#login h1 a{background-image:url("'.$options['logo'].'");}';
 			echo '</style>';
 		}
+	}
+	
+	public function sbtheme_login_style_and_script() {
+		add_action( 'login_enqueue_scripts', array($this, 'sbtheme_login_style'));
+		add_action( 'login_enqueue_scripts', array($this, 'sbtheme_login_script'));
+	}
+	
+	public function sbtheme_login_script() {
+		wp_register_script('sb-login', SB_JS_URI.'/sb-login-script.js', array(), false, true);
+		wp_enqueue_script('sb-login');
 	}
 	
 	public function sbtheme_login_form_logo_url() {

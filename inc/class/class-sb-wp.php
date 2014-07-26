@@ -453,7 +453,7 @@ class SB_WP {
 	public static function bbpress_register_page() {
 		if(self::bbpress_installed() && shortcode_exists( 'bbp-register' )) {
 			
-			echo '<div class="sb-bbp-register">';
+			echo '<div class="sb-bbp-register sb-form">';
 			if(is_user_logged_in()) {
 				echo '<p>'.SB_PHP::add_dotted(SB_WP::phrase('you_are_logged_in')).'</p>';
 			} else {
@@ -461,6 +461,19 @@ class SB_WP {
 			}
 			echo '</div>';
 		}
+	}
+	
+	public static function get_current_language() {
+		$lang = "vi";
+		$option = SB_WP::option();
+		if(isset($option['language']) && !empty($option['language'])) {
+			$lang = $option['language'];
+		}
+		return $lang;
+	}
+	
+	public static function register_form() {
+		
 	}
 	
 	public static function bbpress_login_url() {

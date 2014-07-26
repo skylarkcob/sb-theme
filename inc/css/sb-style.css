@@ -625,6 +625,26 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
     width: 100%;
 }
 
+.comment-notes code {
+    background-color: #f5f5f5;
+    color: #cacaca;
+    line-height: 24px;
+    padding: 10px;
+}
+
+.comment-respond .comment-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.comment-respond .sb-comment-msg {
+    background-color: #fcfcfc;
+    color: #444;
+    min-height: 180px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
 #comments #comment,
 .sb-post-widget ol {
 	margin: 0;
@@ -867,3 +887,224 @@ h3.sitemap-node-title {
     margin: 20px auto;
     width: 400px;
 }
+
+.sb-bbp-login .math-captcha-form {
+	margin-top: 20px;
+}
+
+.sb-bbp-register p > label {
+    display: block;
+    margin-bottom: 20px;
+    margin-top: 15px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.sb-form em {
+    color: #ccc;
+    display: block;
+    font-size: 13px;
+    margin-bottom: 10px;
+    margin-top: 2px;
+}
+
+.sb-bbp-register input,
+.sb-bbp-login input[type="text"],
+.sb-bbp-login input[type="password"],
+.sb-bbp-lost-password .bbp-username input {
+    display: block;
+    min-width: 300px;
+}
+
+.sb-bbp-register div.bbp-submit-wrapper,
+.sb-bbp-login div.bbp-submit-wrapper,
+.sb-bbp-lost-password div.bbp-submit-wrapper {
+	float: left;
+}
+.sb-bbp-register div.bbp-submit-wrapper .button,
+.sb-bbp-login div.bbp-submit-wrapper .button,
+.sb-bbp-lost-password div.bbp-submit-wrapper .button  {
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+
+.sb-bbp-login input[type="checkbox"] {
+    display: inline-block;
+    margin-top: 0;
+}
+
+.sb-bbp-login .bbp-remember-me label {
+    display: inline-block;
+    vertical-align: -3px;
+}
+
+.sb-bbp-login input.mc-input,
+.sb-bbp-lost-password input.mc-input,
+.comment-respond input.mc-input {
+    display: inline-block;
+    height: 26px;
+    min-width: 60px;
+    text-align: center;
+    width: 60px;
+}
+
+.sb-bbp-login div.bbp-submit-wrapper {
+	margin-bottom: 10px;
+}
+
+.comment-respond .math-captcha-form span {
+    display: block;
+    margin-top: 5px;
+}
+
+.comment-respond input.mc-input {
+    margin-top: -2px;
+}
+
+.sb-comment-area {
+    background-color: #fff;
+	color: #757575;
+    padding: 15px 30px;
+}
+
+.comments-area .comments-title {
+    border-bottom: 1px solid #ececec;
+    letter-spacing: -0.2px;
+    padding: 20px 0 10px;
+    text-transform: uppercase;
+}
+
+.sb-comment-area .yours {
+    float: right;
+}
+
+.sb-comment-area .comment-author .avatar {
+    border: 1px solid #c8c8c8;
+    float: left;
+    height: 45px;
+    margin-right: 10px;
+    padding: 2px;
+    width: 45px;
+}
+
+.sb-comment-area .comment-content {
+    font: 13px 'Open Sans',sans-serif;
+    margin-left: 60px;
+}
+
+.sb-comment-area .says {
+	display: none;
+}
+
+.sb-comment-area .fn a {
+    color: #000;
+    display: block;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 17px;
+}
+
+.sb-comment-area .comment-meta a {
+    color: #c5c5c5;
+    font-size: 13px;
+    line-height: 17px;
+}
+
+.sb-comment-area .comment-meta a:hover {
+	color: #000;
+}
+
+.sb-comment-area .comment-body p {
+    line-height: 20px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.comments-area li {
+	border-bottom: 1px solid #ececec;
+	margin-top: 10px;
+}
+
+.sb-comment-area .children li {
+	margin-left: 10%;
+}
+
+.sb-comment-area .children {
+	border-top: 1px solid #ececec;
+}
+
+.sb-comment-area .comment.parent {
+	border-bottom: medium none;
+}
+
+.sb-comment-area .comment-edit-link {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+}
+
+.sb-comment-area .comment-body .reply {
+    bottom: 0;
+    position: absolute;
+    right: 10px;
+}
+
+.sb-comment-area .comment-body .reply a {
+    background-color: #464646;
+    color: #fff;
+    display: block;
+    font-size: 11px;
+    min-width: 50px;
+    padding: 5px 10px;
+    text-align: center;
+}
+
+.sb-comment-area .comment-body .reply a:hover {
+	background-color: #5e5e5e;
+}
+
+.sb-comment-area .comment-respond input.sb-author-info {
+    display: block;    
+    height: 30px;
+    min-width: 300px;
+    padding: 5px;
+}
+
+.sb-comment-area .comment-respond textarea,
+.sb-comment-area .comment-respond input.sb-author-info {
+	font: 12px/17px "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.sb-comment-area .comment-respond input.sb-author-info,
+.sb-comment-area .comment-respond input.mc-input,
+.sb-comment-area .comment-respond textarea {
+	background-color: #f1f0f0;
+    border: 1px solid #dedede;
+    border-radius: 0;
+    color: #5d5c5c;
+}
+
+.sb-comment-area .comment-respond label,
+.sb-comment-area .comment-respond .required {
+    display: none;
+}
+
+.sb-comment-area .comment-respond input.sb-author-info:focus,
+.sb-comment-area .comment-respond input.mc-input:focus,
+.sb-comment-area .comment-respond textarea:focus {
+	background-color: #fafafa;
+}
+
+.comments-area .comment-body {
+    padding-bottom: 28px;
+    position: relative;
+}
+
+.sb-comment-area .comment-notes.before {
+    font-size: 13px;
+}
+
+input:focus::-webkit-input-placeholder { color:transparent; }
+input:focus:-moz-placeholder { color:transparent; }
+input:focus::-moz-placeholder { color:transparent; }
+input:focus:-ms-input-placeholder { color:transparent; }

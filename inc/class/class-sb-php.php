@@ -23,6 +23,7 @@ class SB_PHP {
 	
 	public static function timezone_hcm() {
 		date_default_timezone_set('Asia/Ho_Chi_Minh');
+		
 	}
 	
 	public static function remove_punctuation($str) {

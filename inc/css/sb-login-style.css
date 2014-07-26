@@ -20,3 +20,39 @@ body.login div#login h1 a{background-image:url(../images/hocwp-logo.png);backgro
     padding-bottom: 5px;
     padding-top: 0;
 }
+
+.login-action-lostpassword #login_error strong:before {
+    content: "";
+    display: block;
+    height: 0;
+    margin-bottom: 10px;
+    width: 0;
+}
+
+#login input.mc-input {
+    height: 32px !important;
+    margin: 0 5px;
+    padding: 4px;
+    text-align: center;
+}
+
+#login {
+	margin-bottom: 50px;
+}
+
+.math-captcha-form label {
+    display: block;
+    margin-bottom: 2px;
+}
+
+#login em {
+    color: #ccc;
+    display: block;
+    font-size: 13px;
+    margin-bottom: 10px;
+    margin-top: -15px;
+}
+
+#login input.error {
+    border: 1px solid #dd4b39;
+}
