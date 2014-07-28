@@ -328,6 +328,12 @@ class SB_Theme {
 			esc_html( get_the_date() )
 		);
 	}
+
+    public static function related_post() {
+        echo '<div class="sb-related-post">';
+        SB_WP::related_post();
+        echo '</div>';
+    }
 	
 	public static function post_thumbnail($args = array()) {
 		$defaults = array(

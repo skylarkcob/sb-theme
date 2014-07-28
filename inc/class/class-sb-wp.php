@@ -68,7 +68,13 @@ class SB_WP {
 	public static function get_login_url() {
 		return self::get_login_uri();
 	}
-	
+
+    public static function related_post() {
+        if(function_exists('related_posts')) {
+            related_posts();
+        }
+    }
+
 	public static function get_post_per_page() {
 		return get_option('posts_per_page');
 	}

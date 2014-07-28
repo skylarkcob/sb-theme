@@ -170,9 +170,9 @@ class SB_Post_Widget extends WP_Widget {
 												<h3 class="entry-title"><a rel="bookmark" href="<?php the_permalink(); ?>"><?php echo SB_PHP::substr(get_the_title(), $title_length); ?></a></h3>
 											</div>
 											<?php if((bool)$show_excerpt) : ?>
-											<div class="excerpt">
-												<?php echo SB_PHP::substr(get_the_excerpt(), $excerpt_length); ?>
-											</div>
+                                                <div class="excerpt">
+                                                    <?php echo SB_PHP::substr(get_the_excerpt(), $excerpt_length); ?>
+                                                </div>
 											<?php endif; // Check show_excerpt ?>
 											<?php if((bool)$show_author || (bool)$show_date || (bool)$show_comment_count) : ?>
 											<div class="post-meta">
