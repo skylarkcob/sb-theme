@@ -316,7 +316,7 @@ class SB_Theme {
 	public static function post_comment_link() {
 		if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
 		?>
-		<span class="comments-link post-comment"><i class="fa fa-comments"></i> <?php comments_popup_link( __( '0 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '1 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '% '.strtolower(SB_WP::phrase('comments')), SB_DOMAIN ) ); ?></span>
+		<span class="comments-link post-comment"><i class="fa fa-comments"></i> <?php comments_popup_link( __( '<span class="count">0</span> <span class="text">'.mb_strtolower(SB_WP::phrase('comment')).'</span>', SB_DOMAIN ), __( '1 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '% '.strtolower(SB_WP::phrase('comments')), SB_DOMAIN ) ); ?></span>
 		<?php
 		endif;
 	}
@@ -350,7 +350,7 @@ class SB_Theme {
 	public static function post_author() {
 		printf( '<span class="post-author"><i class="fa fa-user"></i> <span class="author vcard"><a class="url fn n" href="%1$s" rel="author">%2$s</a></span></span>',
 			esc_url( SB_WP::get_author_post_url() ),
-			get_author_name()
+			get_the_author_meta('user_nicename')
 		);
 	}
 	

@@ -43,6 +43,7 @@ class SB_Hook {
 		$options = SB_WP::option();
 		$widget = new SB_Widget();
 		$this->sidebars[] = $this->register_sidebar('primary', 'Main Sidebar', SB_PHP::add_dotted(SB_Theme::phrase("main_sidebar_description")));
+        $this->sidebars[] = $this->register_sidebar('footer', 'Footer Widgets', SB_PHP::add_dotted(SB_Theme::phrase("footer_sidebar_description")));
 		do_action("sbtheme_widget_area");
 		if(isset($options['enable_leaderboard_ads']) && (bool)$options['enable_leaderboard_ads']) {
 			SB_WP::register_sidebar( 'leaderboard-ads', "Leaderboard Banner", SB_PHP::add_dotted(SB_Theme::phrase("leaderboard_banner_description")));

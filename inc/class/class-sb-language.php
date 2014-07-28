@@ -648,6 +648,9 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "about_sb_framework", "Giới thiệu SB Framework");
 		$this->overwrite_translator("en", "about_sb_framework", "About SB Framework");
+
+        $this->overwrite_translator("vi", "footer_sidebar_description", "Khung chứa các widget dưới footer");
+        $this->overwrite_translator("en", "footer_sidebar_description", "Display widgets on footer");
 		
 		$this->overwrite_translator("vi", "switch_link_manager", "Bật hoặc tắt chức năng cho phép hiển thị trình quản lý links trên WordPress");
 		$this->overwrite_translator("en", "switch_link_manager", "Turn on or turn off WordPress Links management");
