@@ -98,7 +98,18 @@ class SB_Theme {
 		}
 	}
 	
-	private function float_ads_left() {
+	public static function logo_ads() {
+		?>
+		<div class="logo-ads sb-logo-ads">
+			<div class="site-branding">
+				<?php SB_Theme::logo(); ?>
+			</div>
+			<?php SB_Theme::leaderboard_ads(); ?>
+		</div>
+		<?php
+	}
+	
+	public static function float_ads_left() {
 		?>
 		<div id="sbFloatAdsRight" class="sb-float-ads sb-float-ads-right sb-ads">
 			<div class="float-ads-inner">
@@ -120,7 +131,7 @@ class SB_Theme {
 		self::template('template-theme-site-tree');
 	}
 	
-	private function float_ads_right() {
+	public static function float_ads_right() {
 		?>
 		<div id="sbFloatAdsLeft" class="sb-float-ads sb-float-ads-left sb-ads">
 			<div class="float-ads-inner">
@@ -134,7 +145,7 @@ class SB_Theme {
 		<?php
 	}
 	
-	private function leaderboard_ads() {
+	public static function leaderboard_ads() {
 		?>
 		<div id="sbLeaderboardAds" class="sb-ads leaderboard">
 			<div class="sb-ads-inner">

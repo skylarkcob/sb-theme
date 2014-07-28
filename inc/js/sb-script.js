@@ -90,6 +90,25 @@ jQuery(document).ready(function($){
 		});
 	});
 	
+	$("#respond").submit(function(e){
+		var commentBody = $(this).find("textarea"), commentName = $(this).find("#author"), commentEmail = $(this).find("#email"), mathCaptcha = $(this).find("#mc-input");
+		if((commentBody.length && "" == commentBody.val()) || (commentName.length && "" == commentName.val()) || (commentEmail.length && "" == commentEmail.val()) || (mathCaptcha.length && ("" == mathCaptcha.val() || false == $.isNumeric(mathCaptcha.val())))) {
+			if(e.preventDefault) {
+				e.preventDefault();
+			} else {
+				e.returnValue = false;
+			}
+		}
+	});
+	
+	var sbLogoAds = $("div.sb-logo-ads");
+	if(sbLogoAds.length) {
+		var sbLeaderboard = sbLogoAds.find("div.sb-ads");
+		if(sbLeaderboard.length) {
+			var marginTop = Math.abs(parseInt(sbLogoAds.height()/2)) - 45;
+			sbLeaderboard.css("margin-top", marginTop + "px");
+		}
+	}
 	
 });
 

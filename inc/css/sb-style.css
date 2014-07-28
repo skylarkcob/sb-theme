@@ -645,6 +645,10 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
     padding-right: 6px;
 }
 
+.comment-respond .form-submit input[type="submit"] {
+    padding: 8px 14px;
+}
+
 #comments #comment,
 .sb-post-widget ol {
 	margin: 0;
@@ -1072,7 +1076,7 @@ h3.sitemap-node-title {
 
 .sb-comment-area .comment-respond textarea,
 .sb-comment-area .comment-respond input.sb-author-info {
-	font: 12px/17px "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font: 13px/1.4em "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 .sb-comment-area .comment-respond input.sb-author-info,
@@ -1108,3 +1112,137 @@ input:focus::-webkit-input-placeholder { color:transparent; }
 input:focus:-moz-placeholder { color:transparent; }
 input:focus::-moz-placeholder { color:transparent; }
 input:focus:-ms-input-placeholder { color:transparent; }
+
+/* ===================================
+ * AUTHOR BOX
+ * =================================== */
+ 
+.author-wrap {
+    background-color: #f5f5f5;
+    border: 1px solid #eee;
+    display: block;
+    margin: 10px 0 30px;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.author-gravatar {
+    border-radius: 0;
+    float: left;
+    height: 84px;
+    line-height: 1;
+    margin: 0;
+    width: 84px;
+}
+
+.author-gravatar img {
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    border-radius: 0;
+    box-shadow: 0 0 8px 0 #ececec;
+    height: 84px;
+    padding: 3px;
+    width: 84px;
+}
+
+.author-info {
+    margin-left: 100px;
+}
+
+.author-title {
+    color: #555555;
+    display: block;
+    font-family: Raleway,sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 26px;
+    margin: 0 0 10px;
+}
+
+.author-title a,
+.sb-site .author-title a {
+    color: #454545;
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4em;
+}
+
+.author-description {
+    display: block;
+    font-size: 13px;
+}
+
+.author-description p {
+    margin: 0;
+}
+
+.author-wrap ul {
+    border-top: 2px solid #e9e9e9;
+    list-style: none outside none;
+    margin: 8px 0 0;
+    overflow: hidden;
+    padding: 10px 0 0;
+}
+
+.author-wrap ul li {
+    border-left: 1px solid #eee;
+    display: inline-block;
+    margin: 0;
+    padding: 0 5px 0 7px;
+}
+
+.author-wrap ul li:first-child {
+    border: medium none;
+    padding: 0 0 0 1px;
+}
+
+.author-wrap li a {
+    color: #ccc;
+    font-size: 16px;
+}
+
+.author-wrap li a:hover {
+    color: #aaa;
+    text-decoration: none;
+}
+
+/* ===================================
+ * END AUTHOR BOX
+ * =================================== */
+ 
+.sb-ads .widget {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sb-ads.leaderboard,
+.sb-ads.leaderboard .widget {
+    height: 90px;
+    width: 728px;
+}
+
+.sb-ads.leaderboard {
+    float: right;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.site-branding {
+	float: left;
+}
+
+.logo-ads {
+	overflow: hidden;
+}
+
+.widget-area .widget_sb_banner {
+    background: none repeat scroll 0 0 transparent !important;
+    border: medium none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    text-align: center;
+}

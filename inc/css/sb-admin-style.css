@@ -78,6 +78,10 @@ a:focus {
 	margin-top: 8px;
 }
 
+#media-items .media-item {
+	min-height: 50px;
+}
+
 /* ======================================
 	SB Widget
 ====================================== */
