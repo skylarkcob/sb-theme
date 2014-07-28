@@ -316,13 +316,13 @@ class SB_Theme {
 	public static function post_comment_link() {
 		if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
 		?>
-		<span class="comments-link"><i class="fa fa-comments"></i> <?php comments_popup_link( __( '0 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '1 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '% '.strtolower(SB_WP::phrase('comments')), SB_DOMAIN ) ); ?></span>
+		<span class="comments-link post-comment"><i class="fa fa-comments"></i> <?php comments_popup_link( __( '0 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '1 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '% '.strtolower(SB_WP::phrase('comments')), SB_DOMAIN ) ); ?></span>
 		<?php
 		endif;
 	}
 	
 	public static function post_date() {
-		printf( '<span class="entry-date"><i class="fa fa-clock-o"></i> <a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s" pubdate>%3$s</time></a></span>',
+		printf( '<span class="entry-date post-date"><i class="fa fa-clock-o"></i> <a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s" pubdate>%3$s</time></a></span>',
 			esc_url( get_permalink() ),
 			esc_attr( get_the_date( 'c' ) ),
 			esc_html( get_the_date() )

@@ -24,6 +24,9 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "first_name", "Tên");
 		$this->overwrite_translator("en", "first_name", "First name");
+
+        $this->overwrite_translator("vi", "title_length", "Độ dài tiêu đề");
+        $this->overwrite_translator("en", "title_length", "Title length");
 		
 		$this->overwrite_translator("vi", "last_name", "Họ");
 		$this->overwrite_translator("en", "last_name", "Last name");

@@ -7,6 +7,7 @@ class SB_Post_Widget extends WP_Widget {
 	private $default_number = 5;
 	private $excerpt_length = 75;
 	private $thumbnail_size = array(128, 100);
+    private $title_length = 50;
 
 	public function __construct() {
 		$this->init();
@@ -71,6 +72,8 @@ class SB_Post_Widget extends WP_Widget {
 		$show_author = isset($instance['show_author']) ? absint($instance['show_author']) : 0;
 		$show_date = isset($instance['show_date']) ? absint($instance['show_date']) : 0;
 		$show_comment_count = isset($instance['show_comment_count']) ? absint($instance['show_comment_count']) : 0;
+
+        $title_length = empty( $instance['title_length'] ) ? $this->title_length : absint( $instance['title_length'] );
 		switch($type) {
 			case 'random':
 				$args = array(
@@ -164,7 +167,7 @@ class SB_Post_Widget extends WP_Widget {
 									<?php if(1 != $only_thumbnail) : ?>
 										<div class="post-content">
 											<div class="entry-header">
-												<h3 class="entry-title"><a rel="bookmark" href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
+												<h3 class="entry-title"><a rel="bookmark" href="<?php the_permalink(); ?>"><?php echo SB_PHP::substr(get_the_title(), $title_length); ?></a></h3>
 											</div>
 											<?php if((bool)$show_excerpt) : ?>
 											<div class="excerpt">
@@ -215,7 +218,8 @@ class SB_Post_Widget extends WP_Widget {
 		$thumbnail_size = array($thumbnail_width, $thumbnail_height);
 		
 		$excerpt_length = empty( $instance['excerpt_length'] ) ? $this->excerpt_length : absint( $instance['excerpt_length'] );
-		
+        $title_length = empty( $instance['title_length'] ) ? $this->title_length : absint( $instance['title_length'] );
+
 		$show_author = isset($instance['show_author']) ? absint($instance['show_author']) : 0;
 		$show_date = isset($instance['show_date']) ? absint($instance['show_date']) : 0;
 		$show_comment_count = isset($instance['show_comment_count']) ? absint($instance['show_comment_count']) : 0;
@@ -328,6 +332,19 @@ class SB_Post_Widget extends WP_Widget {
 			?>
 			<?php SB_Theme::widget_field_number($args); ?>
 
+            <?php
+            $args = array(
+                'id'				=> $this->get_field_id('title_length'),
+                'name'				=> $this->get_field_name('title_length'),
+                'value'				=> $title_length,
+                'description'		=> SB_PHP::add_colon(SB_WP::phrase("title_length")),
+                'paragraph_id'		=> 'titleLength',
+                'display'			=> ((bool)$title_length) ? true : false,
+                'paragraph_class'	=> 'title-length'
+            );
+            ?>
+            <?php SB_Theme::widget_field_number($args); ?>
+
 			<p>
 				<label for="<?php echo esc_attr( $this->get_field_id( 'order_by' ) ); ?>"><?php _e( SB_PHP::add_colon(SB_WP::phrase("order_by")), SB_DOMAIN ); ?></label>
 				<select id="<?php echo esc_attr( $this->get_field_id( 'order_by' ) ); ?>" class="widefat sb-category-type" name="<?php echo esc_attr( $this->get_field_name( 'order_by' ) ); ?>">
@@ -406,6 +423,7 @@ class SB_Post_Widget extends WP_Widget {
 		$instance['thumbnail_height'] = empty( $new_instance['thumbnail_height'] ) ? $this->thumbnail_size[1] : absint( $new_instance['thumbnail_height'] );
 		
 		$instance['excerpt_length'] = empty( $new_instance['excerpt_length'] ) ? $this->excerpt_length : absint( $new_instance['excerpt_length'] );
+        $instance['title_length'] = empty( $new_instance['title_length'] ) ? $this->title_length : absint( $new_instance['title_length'] );
 		return $instance;
 	}
 }
