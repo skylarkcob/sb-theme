@@ -21,6 +21,11 @@ class SB_Hook {
 		if(file_exists($main_style)) {
 			$this->styles['sbtheme-style'] = SB_THEME_URI . "/main-style.css";
 		}
+        $this->styles['sb-mobile-style'] = SB_CSS_URI . "/sb-mobile-style.css";
+        $main_mobile_style = SB_THEME_PATH . "/main-mobile-style.css";
+        if(file_exists($main_mobile_style)) {
+            $this->styles['sbtheme-mobile-style'] = SB_THEME_URI . "/main-mobile-style.css";
+        }
 	}
 	
 	private function script_init() {
@@ -84,7 +89,12 @@ class SB_Hook {
 	public function script_and_style() {
 		// Enqueue style
 		foreach($this->styles as $key => $url) {
-			wp_register_style($key, $url);
+            if("sbtheme-mobile-style" == $key || "sb-mobile-style" == $key) {
+                wp_register_style($key, $url, array(), false, "only screen and (min-width: 320px) and (max-width: 1024px)");
+            } else {
+                wp_register_style($key, $url);
+            }
+
 			wp_enqueue_style($key);
 		}
 		

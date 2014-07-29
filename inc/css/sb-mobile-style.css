@@ -1,0 +1,44 @@
+body {
+    max-width: 100%;
+    width: 100%;
+}
+.sb-site {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.post .entry-title {
+
+}
+
+@media only screen and (max-width: 768px) {
+    .sb-ads.leaderboard {
+        display: none;
+    }
+
+
+}
+
+@media only screen and (max-width: 640px) {
+
+}
+
+@media only screen and (max-width: 600px) {
+
+}
+
+@media only screen and (max-width: 533px) {
+
+}
+
+@media only screen and (max-width: 480px) {
+
+}
+
+@media only screen and (max-width: 360px) {
+
+}
+
+@media only screen and (max-width: 320px) {
+
+}
