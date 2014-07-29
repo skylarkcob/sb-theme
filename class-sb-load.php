@@ -163,6 +163,10 @@ class SB_Load {
 	
 	// Include all handle
 	public function run() {
+        if(class_exists("SB_PHP")) {
+            return;
+        }
+        include SB_LIB_PATH . "/mobile-detect/Mobile_Detect.php";
 		foreach($this->items as $item) {
 			if(array_key_exists($item, $this->handles)) {
 				$path = $this->handles[$item];

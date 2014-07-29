@@ -11,12 +11,18 @@ body {
 
 }
 
+@media only screen and (max-width: 980px) {
+
+}
+
+@media only screen and (max-width: 800px) {
+
+}
+
 @media only screen and (max-width: 768px) {
     .sb-ads.leaderboard {
         display: none;
     }
-
-
 }
 
 @media only screen and (max-width: 640px) {

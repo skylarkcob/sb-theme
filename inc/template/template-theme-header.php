@@ -4,7 +4,10 @@
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <title><?php SB_Theme::title(); ?></title>
-<meta content="width=device-width,minimum-scale=1,maximum-scale=1" name="viewport">
+<?php $detect = new Mobile_Detect(); ?>
+<?php if($detect->isMobile()) : ?>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<?php endif; ?>
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 <?php $options = SB_WP::option(); ?>
 <?php $favicon = isset($options['favicon']) ? $options['favicon'] : ''; ?>

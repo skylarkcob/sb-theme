@@ -316,7 +316,7 @@ class SB_Theme {
 	public static function post_comment_link() {
 		if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
 		?>
-		<span class="comments-link post-comment"><i class="fa fa-comments"></i> <?php comments_popup_link( __( '<span class="count">0</span> <span class="text">'.mb_strtolower(SB_WP::phrase('comment')).'</span>', SB_DOMAIN ), __( '1 '.mb_strtolower(SB_WP::phrase('comment')), SB_DOMAIN ), __( '% '.strtolower(SB_WP::phrase('comments')), SB_DOMAIN ) ); ?></span>
+		<span class="comments-link post-comment"><i class="fa fa-comments"></i> <?php comments_popup_link( __( '<span class="count">0</span> <span class="text">'.mb_strtolower(SB_WP::phrase('comment')).'</span>', SB_DOMAIN ), __( '<span class="count">1</span> <span class="text">'.mb_strtolower(SB_WP::phrase('comment'))."</span>", SB_DOMAIN ), __( '<span class="count">%</span> <span class="text">'.strtolower(SB_WP::phrase('comments'))."</span>", SB_DOMAIN ) ); ?></span>
 		<?php
 		endif;
 	}
