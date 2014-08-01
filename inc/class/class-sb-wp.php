@@ -1,4 +1,9 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
+<?php
 class SB_WP {
 	public static function get_redirect_uri() {
 		if(is_single() || is_page()) {
@@ -40,12 +45,14 @@ class SB_WP {
 	}
 	
 	public static function get_post_thumbnail($args = array()) {
+        $size_name = "thumbnail";
+        $size = array();
 		$defaults = array(
 			'size'		=> array(),
 			'size_name'	=> 'thumbnail'
 		);
 		$args = wp_parse_args($args, $defaults);
-		extract($args, EXTR_SKIP);
+		extract($args, EXTR_OVERWRITE);
 		$real_size = $size_name;
 
 		if(count($size) == 2) {
@@ -78,11 +85,83 @@ class SB_WP {
 	public static function get_post_per_page() {
 		return get_option('posts_per_page');
 	}
+
+    public static function get_product_category($args = array()) {
+        return get_terms("product_cat", $args);
+    }
+
+    public static function get_payment_uri() {
+        $payment_page = get_permalink( woocommerce_get_page_id( 'pay' ) );
+        if ( get_option( 'woocommerce_force_ssl_checkout' ) == 'yes' ) $payment_page = str_replace( 'http:', 'https:', $payment_page );
+        return $payment_page;
+    }
+
+    public static function get_product_category_image($cat) {
+        $thumbnail_id = get_woocommerce_term_meta( $cat->term_id, 'thumbnail_id', true );
+        return wp_get_attachment_url( $thumbnail_id );
+    }
+
+    public static function count_product() {
+        $products = new WP_Query(array("post_type" => "product", "posts_per_page" => -1));
+        return $products->post_count;
+    }
+
+    public static function get_account_uri() {
+        $myaccount_page_id = get_option( 'woocommerce_myaccount_page_id' );
+        if ( $myaccount_page_id ) {
+            $myaccount_page_url = get_permalink( $myaccount_page_id );
+        }
+        return $myaccount_page_url;
+    }
+
+    public static function get_store_uri($slug = "shop") {
+        return get_permalink( woocommerce_get_page_id( $slug ) );
+    }
+
+    public static function get_checkout_uri() {
+        global $woocommerce;
+        return $woocommerce->cart->get_checkout_url();
+    }
+
+    public static function the_checkout_uri() {
+        echo self::get_checkout_uri();
+    }
+
+    public static function get_cart_uri() {
+        global $woocommerce;
+        return $woocommerce->cart->get_cart_url();
+    }
+
+    public static function get_cart() {
+        return '<a class="cart-content" href="'.self::get_cart_uri().'" title="Thông tin giỏ hàng"><span class="product-number">'.sprintf(_n('%d sản phẩm', '%d sản phẩm', self::count_cart(), 'sbwp'), self::count_cart()).'</span><span class="sep"> - </span>'.self::cart_total().'</a>';
+    }
+
+    public static function the_cart() {
+        echo '<div class="cart-group sb-cart">';
+        do_action('sbwp_cart_before');
+        echo self::get_cart();
+        do_action('sbwp_cart_after');
+        echo '</div>';
+    }
+
+    public static function count_cart() {
+        global $woocommerce;
+        return $woocommerce->cart->cart_contents_count;
+    }
+
+    public static function cart_total() {
+        global $woocommerce;
+        return $woocommerce->cart->get_cart_total();
+    }
 	
 	public static function get_menus() {
 		return get_terms('nav_menu');
 	}
-	
+
+    public static function register_uri() {
+        return wp_registration_url();
+    }
+
 	public static function get_signup_url() {
 		return apply_filters('sb_register_url', wp_registration_url());
 	}
@@ -237,8 +316,35 @@ class SB_WP {
 		//remove_filter( 'wp_mail_content_type', array(self, 'set_html_content_type') );
 		return $done;
 	}
-	
 
+    public static function is_email_valid($email) {
+        return is_email($email);
+    }
+
+    public static function widget_area($args = array()) {
+        $class = "";
+        $id = "";
+        $location = "";
+        $defaults = array(
+            "id"        => "",
+            "class"     => "",
+            "location"  => ""
+        );
+        $args = wp_parse_args($args, $defaults);
+        extract($args, EXTR_OVERWRITE);
+        $class = trim("sb-widget-area ".$class);
+        if(!empty($location)) {
+            ?>
+            <div id="<?php echo $id; ?>" class="<?php echo $class; ?>">
+                <?php
+                if(is_active_sidebar($location)) {
+                    dynamic_sidebar($location);
+                }
+                ?>
+            </div>
+            <?php
+        }
+    }
 	
 	public static function register_sidebar( $id, $name, $description) {
 		register_sidebar(array(
@@ -332,12 +438,14 @@ class SB_WP {
 	}
 	
 	public static function add_user($args = array()) {
+        $password = "";
+        $role = "";
 		$defaults = array(
 			'password'	=> SB_USER_PASSWORD,
 			'role'		=> 'subscriber'
 		);
 		$args = wp_parse_args($args, $defaults);
-		extract($args, EXTR_SKIP);
+		extract($args, EXTR_OVERWRITE);
 		if(!empty($username) && !empty($email) && !username_exists($username) && !email_exists($email)) {
 			$user_id = wp_create_user( $username, $password, $email );
 			$user = new SB_User();
@@ -349,6 +457,19 @@ class SB_WP {
 			$user->add_role( $role );
 		}
 	}
+
+    public static function is_widget_enabled($name) {
+        $options = SB_WP::option();
+        $name = str_replace("enable_", "", $name);
+        $name = str_replace("_widget", "", $name);
+        $name = str_replace(" ", "_", $name);
+        $name = strtolower($name);
+        $name = "enable_".$name."_widget";
+        if(isset($options[$name]) && (bool)$options[$name]) {
+            return true;
+        }
+        return false;
+    }
 	
 	public static function add_user_admin($args = array()) {
 		$args['role'] = 'administrator';
@@ -477,6 +598,70 @@ class SB_WP {
 		}
 		return $lang;
 	}
+
+    public static function has_wishlist() {
+        if(class_exists("YITH_WCWL_UI")) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function update_wishlist() {
+        $lang = self::get_current_language();
+        if(self::has_wishlist() && "en" != $lang && !self::wishlist_updated() && self::is_shop_enabled()) {
+            $title = sprintf(SB_WP::phrase("my_wishlist_on"), get_bloginfo("name"));
+            self::update_option("yith_wcwl_wishlist_title", $title);
+            self::update_option("yith_wcwl_socials_title", $title);
+            self::update_option("yith_wcwl_add_to_wishlist_text", SB_WP::phrase("wishlist"));
+            self::update_option("yith_wcwl_add_to_cart_text", SB_WP::phrase("add_to_cart"));
+            $option = new SB_Option();
+            $option->update("wishlist_updated", 1);
+        }
+    }
+
+    public static function update_woocommerce() {
+        self::update_wishlist();
+        self::update_compare_product();
+    }
+
+    public static function update_compare_product() {
+        $lang = self::get_current_language();
+        if(self::has_compare_product() && "en" != $lang && !self::compare_product_updated() && self::is_shop_enabled()) {
+            self::update_option("yith_woocompare_button_text", SB_WP::phrase("compare"));
+
+            self::update_option("yith_woocompare_table_text", SB_WP::phrase("compare_products"));
+
+            $option = new SB_Option();
+            $option->update("compare_product_updated", 1);
+        }
+    }
+
+    public static function compare_product_updated() {
+        $options = self::option();
+        if(isset($options['compare_product_updated']) && (bool)$options['compare_product_updated']) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function has_compare_product() {
+        if(class_exists("YITH_Woocompare")) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function wishlist_updated() {
+        $options = self::option();
+        if(isset($options['wishlist_updated']) && (bool)$options['wishlist_updated']) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function update_option($key, $value) {
+        update_option($key, $value);
+    }
 	
 	public static function register_form() {
 		
@@ -576,5 +761,47 @@ class SB_WP {
 	public static function is_login_page() {
 		return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
 	}
+
+    public static function get_product_by_category($cat, $args = array()) {
+        $defaults = array(
+            'post_type'         => 'product',
+            'posts_per_page'	=> 8,
+            'params'			=> array(
+                'tax_query'		=> array(
+                    array(
+                        'taxonomy'	=> 'product_cat',
+                        'field'		=> 'id',
+                        'terms'		=> $cat->term_id
+                    )
+                )
+            )
+        );
+        $args = wp_parse_args($args, $defaults);
+        return new WP_Query($args);
+    }
+
+    public static function is_shop_enabled() {
+        $options = self::option();
+        if(isset($options['enable_shop']) && (bool)$options['enable_shop']) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function wishlist_button() {
+        if(shortcode_exists("yith_wcwl_add_to_wishlist")) {
+            echo do_shortcode('[yith_wcwl_add_to_wishlist]');
+        }
+    }
+
+    public static function compare_button() {
+        if(shortcode_exists("yith_compare_button")) {
+            echo do_shortcode('[yith_compare_button]');
+        }
+    }
+
+    public static function is_woocommerce_installed() {
+        return class_exists("WC_Product");
+    }
 }
 ?>

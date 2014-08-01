@@ -1,4 +1,9 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
+<?php
 class SB_Shortcode {
 	public function __construct() {
 		global $sb_enable_3dfile;

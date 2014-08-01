@@ -1,4 +1,9 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
+<?php
 class SB_Tab_Widget extends WP_Widget {
 	public function __construct() {
 		parent::__construct( 'sb_tab_widget', __( 'SB Tab', SB_DOMAIN ), array(

@@ -1,3 +1,8 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
 <section class="no-results not-found sb-no-post">
 	<header class="page-header">
 		<h2 class="page-title"><?php _e( SB_WP::phrase('nothing_found'), SB_DOMAIN ); ?></h2>

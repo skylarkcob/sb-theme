@@ -1,4 +1,9 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
+<?php
 class SB_Theme {
 	public static function header() {
 		include SB_TEMPLATE_PATH . "/template-theme-header.php";
@@ -169,8 +174,108 @@ class SB_Theme {
 				break;
 		}
 	}
-	
+
+    public static function widget_field_select($args = array()) {
+        $paragraph_class = "";
+        $id = "";
+        $name = "";
+        $field_class = "";
+        $label_text = "";
+        $list_options = array();
+        $value = "";
+        $description = "";
+
+        $defaults = array(
+            "id"                => "",
+            "name"              => "",
+            "label_text"        => "",
+            "value"             => "",
+            "paragraph_class"   => "",
+            "field_class"       => "",
+            "list_options"      => array()
+        );
+
+        $args = wp_parse_args($args, $defaults);
+
+        extract($args, EXTR_OVERWRITE);
+        ?>
+        <p class="<?php echo $paragraph_class; ?>">
+            <label for="<?php echo esc_attr( $id ); ?>"><?php _e( SB_PHP::add_colon($label_text), SB_DOMAIN ); ?></label>
+            <select id="<?php echo esc_attr( $id ); ?>" class="<?php echo $field_class; ?>" name="<?php echo esc_attr( $name ); ?>">
+                <?php foreach ( $list_options as $key => $option ) : ?>
+                    <option value="<?php echo esc_attr( $key ); ?>"<?php selected( $value, $key ); ?>><?php echo $option; ?></option>
+                <?php endforeach; ?>
+            </select>
+            <?php if(!empty($description)) : ?>
+                <em><?php _e($description, SB_DOMAIN); ?></em>
+            <?php endif; ?>
+        </p>
+        <?php
+    }
+
+    public static function widget_field_textarea($args = array()) {
+        $paragraph_class = "";
+        $input_class = "";
+        $id = "";
+        $name = "";
+        $value = "";
+        $description = "";
+        $label_text = "";
+        $textarea_rows = 3;
+
+        $defaults = array(
+            "input_class"   => "widefat",
+            "textarea_rows" => 3
+        );
+
+        $args = wp_parse_args($args, $defaults);
+
+        extract($args, EXTR_OVERWRITE);
+        ?>
+        <p class="<?php echo $paragraph_class; ?>">
+            <label for="<?php echo esc_attr( $id ); ?>"><?php _e( SB_PHP::add_colon($label_text), SB_DOMAIN ); ?></label>
+            <textarea id="<?php echo esc_attr( $id ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name ); ?>" rows="<?php echo $textarea_rows; ?>"><?php echo esc_attr( $value ); ?></textarea>
+            <?php if(!empty($description)) : ?>
+                <em><?php _e($description, SB_DOMAIN); ?></em>
+            <?php endif; ?>
+        </p>
+    <?php
+    }
+
+    public static function widget_field_text($args = array()) {
+        $paragraph_class = "";
+        $input_class = "";
+        $id = "";
+        $name = "";
+        $value = "";
+        $description = "";
+        $label_text = "";
+
+        $defaults = array(
+            "input_class"   => "widefat"
+        );
+
+        $args = wp_parse_args($args, $defaults);
+
+        extract($args, EXTR_OVERWRITE);
+        ?>
+        <p class="<?php echo $paragraph_class; ?>">
+            <label for="<?php echo esc_attr( $id ); ?>"><?php _e( SB_PHP::add_colon($label_text), SB_DOMAIN ); ?></label>
+            <input id="<?php echo esc_attr( $id ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name ); ?>" type="text" value="<?php echo esc_attr( $value ); ?>">
+            <?php if(!empty($description)) : ?>
+                <em><?php _e($description, SB_DOMAIN); ?></em>
+            <?php endif; ?>
+        </p>
+    <?php
+    }
+
 	public static function widget_field_checkbox($args = array()) {
+        $input_class = '';
+        $paragraph_class = '';
+        $id = '';
+        $description = '';
+        $name = '';
+        $value = '';
 		$defaults = array(
 			'id'				=> '',
 			'name'				=> '',
@@ -182,17 +287,27 @@ class SB_Theme {
 			'paragraph_class'	=> ''
 		);
 		$args = wp_parse_args($args, $defaults);
-		extract($args, EXTR_SKIP);
+		extract($args, EXTR_OVERWRITE);
 		$input_class = trim($input_class." sb-checkbox");
 		?>
 		<p class="<?php echo $paragraph_class; ?>">
 			<input id="<?php echo esc_attr( $id ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name ); ?>" type="checkbox" value="<?php echo esc_attr( $value ); ?>" <?php checked( $value, 1, true ); ?>>
 			<label for="<?php echo esc_attr( $id ); ?>"><?php _e( $description, SB_DOMAIN ); ?></label>
+            <?php if(!empty($description)) : ?>
+                <em><?php _e($description, SB_DOMAIN); ?></em>
+            <?php endif; ?>
 		</p>
 		<?php
 	}
 	
 	public static function widget_field_number($args = array()) {
+        $input_class = '';
+        $paragraph_class = '';
+        $display = '';
+        $id = '';
+        $description = '';
+        $name = '';
+        $value = '';
 		$defaults = array(
 			'id'				=> '',
 			'name'				=> '',
@@ -204,17 +319,30 @@ class SB_Theme {
 			'paragraph_class'	=> ''
 		);
 		$args = wp_parse_args($args, $defaults);
-		extract($args, EXTR_SKIP);
+		extract($args, EXTR_OVERWRITE);
 		$input_class = trim($input_class." sb-number");
 		?>
 		<p class="<?php echo $paragraph_class; ?>"<?php if(!$display) echo ' style="display:none"'; ?>>
 			<label for="<?php echo esc_attr( $id ); ?>"><?php _e( $description, SB_DOMAIN ); ?></label>
 			<input id="<?php echo esc_attr( $id ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name ); ?>" type="number" value="<?php echo esc_attr( $value ); ?>">
+            <?php if(!empty($description)) : ?>
+                <em><?php _e($description, SB_DOMAIN); ?></em>
+            <?php endif; ?>
 		</p>
 		<?php
 	}
 	
 	public static function widget_field_image_size($args = array()) {
+        $input_class = '';
+        $paragraph_class = '';
+        $display = '';
+        $description = '';
+        $id = '';
+        $id_width = '';
+        $id_height = '';
+        $name_width = '';
+        $name_height = '';
+        $value = array();
 		$defaults = array(
 			'id_width'			=> '',
 			'name_width'		=> '',
@@ -228,7 +356,7 @@ class SB_Theme {
 			'paragraph_class'	=> ''
 		);
 		$args = wp_parse_args($args, $defaults);
-		extract($args, EXTR_SKIP);
+		extract($args, EXTR_OVERWRITE);
 		$input_class = trim($input_class." sb-number image-size");
 		?>
 		<p class="<?php echo $paragraph_class; ?>"<?php if(!$display) echo ' style="display:none"'; ?>>
@@ -236,6 +364,9 @@ class SB_Theme {
 			<input id="<?php echo esc_attr( $id_width ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name_width ); ?>" type="number" value="<?php echo esc_attr( $value[0] ); ?>">
 			<span>x</span>
 			<input id="<?php echo esc_attr( $id_height ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name_height ); ?>" type="number" value="<?php echo esc_attr( $value[1] ); ?>">
+            <?php if(!empty($description)) : ?>
+                <em><?php _e($description, SB_DOMAIN); ?></em>
+            <?php endif; ?>
 		</p>
 		<?php
 	}
@@ -336,12 +467,14 @@ class SB_Theme {
     }
 	
 	public static function post_thumbnail($args = array()) {
+        $size_name = 'thumbnail';
+        $size = array();
 		$defaults = array(
 			'size'		=> array(),
 			'size_name'	=> 'thumbnail'
 		);
 		$args = wp_parse_args($args, $defaults);
-		extract($args, EXTR_SKIP);
+		extract($args, EXTR_OVERWRITE);
 		$real_size = $size_name;
 		if(count($size) == 2) {
 			$real_size = $size;
@@ -361,15 +494,19 @@ class SB_Theme {
 	}
 	
     public static function menu($args = null) {
+        $menu_class = "";
+        $theme_location = "";
         $defaults = array(
             'theme_location'	=> '',
             'menu_class'		=> ''
         );
         $args = wp_parse_args($args, $defaults);
-        extract($args, EXTR_SKIP);
+        extract($args, EXTR_OVERWRITE);
         $menu_class .= ' sf-menu '.$theme_location;
         $menu_class = trim($menu_class);
+        echo '<div class="wrap row sb-navigation '.$theme_location.'">';
         wp_nav_menu(array('theme_location' => $theme_location, 'menu_class' => $menu_class));
+        echo '</div>';
     }
 
     public static function head_title_bar($title) {
@@ -399,6 +536,14 @@ class SB_Theme {
 			}
 		}
 	}
+
+    public static function wishlist_button() {
+        SB_WP::wishlist_button();
+    }
+
+    public static function compare_button() {
+        SB_WP::compare_button();
+    }
 	
 	public static function tivi_server_list($list_server) {
 		if(count($list_server) > 1) : $count = 1; ?>
@@ -429,7 +574,24 @@ class SB_Theme {
     <?php
     }
 
+    public static function login_link() {
+        ?>
+        <a href="<?php echo SB_WP::login_uri(); ?>"><i class="fa fa-lock"></i> <?php _e(SB_WP::phrase("login"), SB_DOMAIN); ?></a>
+        <?php
+    }
+
+
+
+    public static function register_link() {
+        echo '<a href="'.SB_WP::register_uri().'"><i class="fa fa-key"></i> '.SB_WP::phrase("register").'</a>';
+    }
+
     public static function search_form($args = array()) {
+        $form_class = "";
+        $label_text = "";
+        $placeholder_text = "";
+        $submit_text = "";
+        $post_type = "post";
         $defaults = array(
             'label_text'		=> __(SB_WP::phrase('search'), SB_DOMAIN),
             'placeholder_text'	=> __(SB_WP::phrase('enter_keyword').'...', SB_DOMAIN),
@@ -437,24 +599,43 @@ class SB_Theme {
             'form_class'		=> ''
         );
         $args = wp_parse_args($args, $defaults);
-        extract($args, EXTR_SKIP);
+        extract($args, EXTR_OVERWRITE);
         $form_class = trim($form_class.' search-form');
         ?>
-        <form role="search" method="get" class="<?php echo $form_class; ?>" action="<?php echo esc_url(home_url('/')); ?>">
-            <label>
-                <span class="screen-reader-text"><?php echo $label_text; ?></span>
-                <input type="search" class="search-field" placeholder="<?php echo $placeholder_text; ?>" value="" name="s">
-            </label>
-            <input type="submit" class="search-submit" value="<?php echo $submit_text; ?>">
-        </form>
+        <div class="sb-search">
+            <form role="search" method="get" class="<?php echo $form_class; ?>" action="<?php echo esc_url(home_url('/')); ?>">
+                <label>
+                    <span class="screen-reader-text"><?php echo $label_text; ?></span>
+                    <input type="search" class="search-field" placeholder="<?php echo $placeholder_text; ?>" value="" name="s">
+                </label>
+                <input type="hidden" name="post_type" value="<?php echo $post_type; ?>">
+                <input type="submit" class="search-submit" value="<?php echo $submit_text; ?>">
+            </form>
+        </div>
     <?php
+    }
+
+    public static function hotline_image() {
+        $options = SB_WP::option();
+        if(isset($options["hotline_image"]) && !empty($options["hotline_image"])) {
+            printf('<div class="sb-hotline"><img src="%s" alt="Hotline"></div>', $options["hotline_image"]);
+        }
     }
 
     public static function feed_form($args = array()) {
         self::feedburner_form($args);
     }
 
+    public static function subscribe_box($args = array()) {
+        self::feedburner_form($args);
+    }
+
     public static function feedburner_form($args = array()) {
+        $form_class = "";
+        $label_text = "";
+        $placeholder_text = "";
+        $submit_text = "";
+        $name = "";
         $defaults = array(
             'name'				=> '',
             'label_text'		=> 'Nhập địa chỉ email:',
@@ -463,7 +644,7 @@ class SB_Theme {
             'form_class'		=> ''
         );
         $args = wp_parse_args($args, $defaults);
-        extract($args, EXTR_SKIP);
+        extract($args, EXTR_OVERWRITE);
         $form_class = trim($form_class.' feed-form');
         do_action('sbwp_before_feed_form');
         ?>

@@ -1,10 +1,17 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+
 class SB_Language {
 	private $translators = array();
 	private $languages = array();
 	private $language = "vi";
 	
-	public function __construct($lang = "vi") {
+	public function __construct($lang = "") {
+        if(empty($lang)) {
+            $lang = SB_WP::get_current_language();
+        }
 		$this->init();
 		$this->translator_init();
 		$this->language = $lang;
@@ -219,12 +226,57 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "login", "Đăng nhập");
 		$this->overwrite_translator("en", "login", "Login");
-		
+
+        $this->overwrite_translator("vi", "hotline", "Hotline");
+        $this->overwrite_translator("en", "hotline", "Hotline");
+
+        $this->overwrite_translator("vi", "skype_widget_description", "Tài khoản Skype");
+        $this->overwrite_translator("en", "skype_widget_description", "Skype account");
+
+        $this->overwrite_translator("vi", "list_yahoo_widget_description", "Danh sách tài khoản Yahoo, cách nhau bằng dấu phẩy");
+        $this->overwrite_translator("en", "list_yahoo_widget_description", "List yahoo accounts, separate by commas");
+
+        $this->overwrite_translator("vi", "email_description", "Địa chỉ e-mail");
+        $this->overwrite_translator("en", "email_description", "E-mail address");
+
+        $this->overwrite_translator("vi", "hotline_description", "Số điện thoại đường dây nóng");
+        $this->overwrite_translator("en", "hotline_description", "Hotline phone number");
+
+        $this->overwrite_translator("vi", "support_widget_description", "Widget chứa thông tin hỗ trợ");
+        $this->overwrite_translator("en", "support_widget_description", "Widget that contains support links");
+
+        $this->overwrite_translator("vi", "switch_sb_support_widget_functional", "Bật hoặc tắt chức năng hiển thị Widget chứa thông tin hỗ trợ");
+        $this->overwrite_translator("en", "switch_sb_support_widget_functional", "Turn on or turn off the Widget that contains support links");
+
+        $this->overwrite_translator("vi", "switch_sb_link_widget_functional", "Bật hoặc tắt chức năng hiển thị Widget chứa link");
+        $this->overwrite_translator("en", "switch_sb_link_widget_functional", "Turn on or turn off the Widget that displays links");
+
+        $this->overwrite_translator("vi", "choose_link_type", "Chọn kiểu link");
+        $this->overwrite_translator("en", "choose_link_type", "Choose link type");
+
+        $this->overwrite_translator("vi", "menu", "Menu");
+        $this->overwrite_translator("en", "menu", "Menu");
+
+        $this->overwrite_translator("vi", "title_icon", "Biểu tượng tiêu đề");
+        $this->overwrite_translator("en", "title_icon", "Title icon");
+
+        $this->overwrite_translator("vi", "widget_title_icon_description", "Tên biểu tượng của Font Awesome, ví dụ: book, support,...");
+        $this->overwrite_translator("en", "widget_title_icon_description", "Font Awesome icon's name, ex: book, support,...");
+
 		$this->overwrite_translator("vi", "log_in", "Đăng nhập");
 		$this->overwrite_translator("en", "log_in", "Log in");
+
+        $this->overwrite_translator("vi", "your_order", "Đơn hàng của bạn");
+        $this->overwrite_translator("en", "your_order", "Your order");
+
+        $this->overwrite_translator("vi", "total", "Tổng cộng");
+        $this->overwrite_translator("en", "total", "Total");
 		
 		$this->overwrite_translator("vi", "password", "Mật khẩu");
 		$this->overwrite_translator("en", "password", "Password");
+
+        $this->overwrite_translator("vi", "remove", "Xóa");
+        $this->overwrite_translator("en", "remove", "Remove");
 		
 		$this->overwrite_translator("vi", "remember_me", "Nhớ đăng nhập");
 		$this->overwrite_translator("en", "remember_me", "Remember me");
@@ -238,8 +290,11 @@ class SB_Language {
 		$this->overwrite_translator("vi", "register", "Đăng ký");
 		$this->overwrite_translator("en", "register", "Register");
 		
-		$this->overwrite_translator("vi", "email", "Địa chỉ email");
+		$this->overwrite_translator("vi", "email", "Email");
 		$this->overwrite_translator("en", "email", "E-mail");
+
+        $this->overwrite_translator("vi", "email_address", "Địa chỉ email");
+        $this->overwrite_translator("en", "email_address", "E-mail address");
 		
 		$this->overwrite_translator("vi", "you_are_now_logged_out", "Bạn đã đăng xuất khỏi hệ thống");
 		$this->overwrite_translator("en", "you_are_now_logged_out", "You are now logged out");
@@ -330,9 +385,48 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "forum", "Diễn đàn");
 		$this->overwrite_translator("en", "forum", "Forum");
-		
-		$this->overwrite_translator("vi", "home", "Trang chủ");
-		$this->overwrite_translator("en", "home", "Home");
+
+        $this->overwrite_translator("vi", "product_description", "Mô tả sản phẩm");
+        $this->overwrite_translator("en", "product_description", "Product description");
+
+        $this->overwrite_translator("vi", "product_information", "Thông tin sản phẩm");
+        $this->overwrite_translator("en", "product_information", "Product information");
+
+        $this->overwrite_translator("vi", "your_review", "Đánh giá của bạn");
+        $this->overwrite_translator("en", "your_review", "Your review");
+
+        $this->overwrite_translator("vi", "submit", "Gửi");
+        $this->overwrite_translator("en", "submit", "Submit");
+
+        $this->overwrite_translator("vi", "phone", "Điện thoại");
+        $this->overwrite_translator("en", "phone", "Phone");
+
+        $this->overwrite_translator("vi", "street_address", "Địa chỉ nhà và tên đường");
+        $this->overwrite_translator("en", "street_address", "Street address");
+
+        $this->overwrite_translator("vi", "town_or_city", "Thị trấn / Thành phố");
+        $this->overwrite_translator("en", "town_or_city", "Town / City");
+
+        $this->overwrite_translator("vi", "ship_to_different_address", "Giao hàng tới địa chỉ khác");
+        $this->overwrite_translator("en", "ship_to_different_address", "Ship to a different address");
+
+        $this->overwrite_translator("vi", "billing_details", "Thông tin thanh toán");
+        $this->overwrite_translator("en", "billing_details", "Billing details");
+
+        $this->overwrite_translator("vi", "address", "Địa chỉ");
+        $this->overwrite_translator("en", "address", "Address");
+
+        $this->overwrite_translator("vi", "company_name", "Tên công ty");
+        $this->overwrite_translator("en", "company_name", "Company name");
+
+        $this->overwrite_translator("vi", "compare", "So sánh");
+        $this->overwrite_translator("en", "compare", "Compare");
+
+        $this->overwrite_translator("vi", "compare_products", "So sánh sản phẩm");
+        $this->overwrite_translator("en", "compare_products", "Compare products");
+
+        $this->overwrite_translator("vi", "add_to_cart", "Thêm vào giỏ");
+        $this->overwrite_translator("en", "add_to_cart", "Add to cart");
 		
 		$this->overwrite_translator("vi", "account_information", "Thông tin tài khoản");
 		$this->overwrite_translator("en", "account_information", "Your profiles");
@@ -573,6 +667,9 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "input_url_or_upload_new_logo", "Bạn có thể điền vào đường dẫn hoặc upload logo mới");
 		$this->overwrite_translator("en", "input_url_or_upload_new_logo", "You can type url or upload new logo file");
+
+        $this->overwrite_translator("vi", "input_url_or_upload_new_image", "Bạn có thể điền vào đường dẫn hoặc upload hình mới");
+        $this->overwrite_translator("en", "input_url_or_upload_new_image", "You can type url or upload new image file");
 		
 		$this->overwrite_translator("vi", "input_url_or_upload_new_favicon", "Bạn có thể điền vào đường dẫn hoặc upload favicon mới");
 		$this->overwrite_translator("en", "input_url_or_upload_new_favicon", "You can type url or upload new favicon file");
@@ -582,6 +679,15 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "theme_created_by_sbteam", "Giao diện được tạo bởi SB Team");
 		$this->overwrite_translator("en", "theme_created_by_sbteam", "Theme is created by SB Team");
+
+        $this->overwrite_translator("vi", "sale_off", "Đang khuyến mại");
+        $this->overwrite_translator("en", "sale_off", "Sale off");
+
+        $this->overwrite_translator("vi", "newest", "Mới nhất");
+        $this->overwrite_translator("en", "newest", "Newest");
+
+        $this->overwrite_translator("vi", "hottest", "Hot nhất");
+        $this->overwrite_translator("en", "hottest", "Hottest");
 		
 		$this->overwrite_translator("vi", "send_mail_if_have_question", "Mọi thắc mắc và đóng góp xin vui lòng liên hệ qua địa chỉ email");
 		$this->overwrite_translator("en", "send_mail_if_have_question", "If you have any questions or feedback, please send mail via");
@@ -645,9 +751,150 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "theme_created_by", "Giao diện được tạo bởi");
 		$this->overwrite_translator("en", "theme_created_by", "Theme is created by");
-		
-		$this->overwrite_translator("vi", "about_sb_framework", "Giới thiệu SB Framework");
+
+        $this->overwrite_translator("vi", "product_already_in_wishlist", "Sản phẩm đã thêm vào danh sách ưa thích");
+        $this->overwrite_translator("en", "product_already_in_wishlist", "Product is already in the wishlist");
+
+        $this->overwrite_translator("vi", "about_sb_framework", "Giới thiệu SB Framework");
 		$this->overwrite_translator("en", "about_sb_framework", "About SB Framework");
+
+        $this->overwrite_translator("vi", "browse_wishlist", "Danh sách ưu thích");
+        $this->overwrite_translator("en", "browse_wishlist", "Browse wishlist");
+
+        $this->overwrite_translator("vi", "product_detail", "Chi tiết sản phẩm");
+        $this->overwrite_translator("en", "product_detail", "Product details");
+
+        $this->overwrite_translator("vi", "reviews", "Đánh giá");
+        $this->overwrite_translator("en", "reviews", "Reviews");
+
+        $this->overwrite_translator("vi", "home", "Trang chủ");
+        $this->overwrite_translator("en", "home", "Home");
+
+        $this->overwrite_translator("vi", "products", "Sản phẩm");
+        $this->overwrite_translator("en", "products", "Products");
+
+        $this->overwrite_translator("vi", "order_note_description", "Ghi chú về đơn hàng của bạn");
+        $this->overwrite_translator("en", "order_note_description", "Notes about your order, e.g. special notes for delivery");
+
+        $this->overwrite_translator("vi", "shipping_fees", "Phí vận chuyển");
+        $this->overwrite_translator("en", "shipping_fees", "Shipping fees");
+
+        $this->overwrite_translator("vi", "product", "Sản phẩm");
+        $this->overwrite_translator("en", "product", "Product");
+
+        $this->overwrite_translator("vi", "added", "Đã thêm");
+        $this->overwrite_translator("en", "added", "Added");
+
+        $this->overwrite_translator("vi", "product_name", "Tên sản phẩm");
+        $this->overwrite_translator("en", "product_name", "Product name");
+
+        $this->overwrite_translator("vi", "order_notes", "Ghi chú đơn hàng");
+        $this->overwrite_translator("en", "order_notes", "Order notes");
+
+        $this->overwrite_translator("vi", "direct_bank_transfer", "Chuyển khoản qua ngân hàng");
+        $this->overwrite_translator("en", "direct_bank_transfer", "Direct bank transfer");
+
+        $this->overwrite_translator("vi", "order_total", "Tổng tiền phải thanh toán");
+        $this->overwrite_translator("en", "order_total", "Order total");
+
+        $this->overwrite_translator("vi", "place_order", "Gửi đơn hàng");
+        $this->overwrite_translator("en", "place_order", "Place order");
+
+        $this->overwrite_translator("vi", "coupon_code", "Mã giảm giá");
+        $this->overwrite_translator("en", "coupon_code", "Coupon code");
+
+        $this->overwrite_translator("vi", "apply_coupon", "Áp dụng mã giảm giá");
+        $this->overwrite_translator("en", "apply_coupon", "Apply coupon");
+
+        $this->overwrite_translator("vi", "update_cart", "Cập nhật giỏ hàng");
+        $this->overwrite_translator("en", "update_cart", "Update cart");
+
+        $this->overwrite_translator("vi", "cart_totals", "Tổng cộng giỏ hàng");
+        $this->overwrite_translator("en", "cart_totals", "Cart totals");
+
+        $this->overwrite_translator("vi", "cart", "Giỏ hàng");
+        $this->overwrite_translator("en", "cart", "Cart");
+
+        $this->overwrite_translator("vi", "more_address_description", "Phường, khu vực, quận, huyện,... (không bắt buộc)");
+        $this->overwrite_translator("en", "more_address_description", "Apartment, suite, unit etc. (optional)");
+
+        $this->overwrite_translator("vi", "save_address", "Lưu địa chỉ");
+        $this->overwrite_translator("en", "save_address", "Save address");
+
+        $this->overwrite_translator("vi", "confirm_new_password", "Nhập lại mật khẩu mới");
+        $this->overwrite_translator("en", "confirm_new_password", "Confirm new password");
+
+        $this->overwrite_translator("vi", "billing_address", "Địa chỉ thanh toán");
+        $this->overwrite_translator("en", "billing_address", "Billing address");
+
+        $this->overwrite_translator("vi", "is_a_required_field", "là thông tin bắt buộc");
+        $this->overwrite_translator("en", "is_a_required_field", "is a required field");
+
+        $this->overwrite_translator("vi", "my_address_description", "Thông tin địa chỉ bên dưới mặc định sẽ được sử dụng để thanh toán và nhận hàng");
+        $this->overwrite_translator("en", "my_address_description", "The following addresses will be used on the checkout page by default");
+
+        $this->overwrite_translator("vi", "my_addresses", "Địa chỉ của tôi");
+        $this->overwrite_translator("en", "my_addresses", "My addresses");
+
+        $this->overwrite_translator("vi", "wishlist", "Ưa thích");
+        $this->overwrite_translator("en", "wishlist", "Wishlist");
+
+        $this->overwrite_translator("vi", "in_stock", "Còn hàng");
+        $this->overwrite_translator("en", "in_stock", "In stock");
+
+        $this->overwrite_translator("vi", "unit_price", "Giá");
+        $this->overwrite_translator("en", "unit_price", "Unit price");
+
+        $this->overwrite_translator("vi", "stock_status", "Tình trạng");
+        $this->overwrite_translator("en", "stock_status", "Stock status");
+
+        $this->overwrite_translator("vi", "share_on", "Chia sẻ");
+        $this->overwrite_translator("en", "share_on", "Share on");
+
+        $this->overwrite_translator("vi", "add_to_wisthlist", "Ưa thích");
+        $this->overwrite_translator("en", "add_to_wishlist", "Add to wishlist");
+
+        $this->overwrite_translator("vi", "my_wishlist_on", "Danh sách sản phẩm ưa thích trên %s");
+        $this->overwrite_translator("en", "my_wishlist_on", "My wishlist on %s");
+
+        $this->overwrite_translator("vi", "not_setup_this_type_address", "Bạn chưa thiết lập thông tin cho loại địa chỉ này");
+        $this->overwrite_translator("en", "not_setup_this_type_address", "You have not set up this type of address yet");
+
+        $this->overwrite_translator("vi", "account_dashboard_descrition", 'Từ bản điều khiển, bạn có thể xem những đơn hàng gần đây, quản lý thông tin địa chỉ nhận hàng, <a href="%s">sửa mật khẩu cũng và thông tin tài khoản</a>');
+        $this->overwrite_translator("en", "account_dashboard_description", 'From your account dashboard you can view your recent orders, manage your shipping and billing addresses and <a href="%s">edit your password and account details</a>');
+
+        $this->overwrite_translator("vi", "hello_account", 'Xin chào <strong>%1$s</strong> (không phải %1$s? <a href="%2$s">Thoát</a>)');
+        $this->overwrite_translator("en", "hello_account", 'Hello <strong>%1$s</strong> (not %1$s? <a href="%2$s">Sign out</a>)');
+
+        $this->overwrite_translator("vi", "save_changes", "Lưu thay đổi");
+        $this->overwrite_translator("en", "save_changes", "Save changes");
+
+        $this->overwrite_translator("vi", "password_with_description", "Mật khẩu (nếu không thay đổi thì để trống)");
+        $this->overwrite_translator("en", "password_with_description", "Password (leave blank to leave unchanged)");
+
+        $this->overwrite_translator("vi", "shipping_address", "Địa chỉ nhận hàng");
+        $this->overwrite_translator("en", "shipping_address", "Shipping address");
+
+        $this->overwrite_translator("vi", "proceed_to_checkout", "Tiến hành thanh toán");
+        $this->overwrite_translator("en", "proceed_to_checkout", "Proceed to checkout");
+
+        $this->overwrite_translator("vi", "price", "Giá");
+        $this->overwrite_translator("en", "price", "Price");
+
+        $this->overwrite_translator("vi", "quantity", "Số lượng");
+        $this->overwrite_translator("en", "quantity", "Quantity");
+
+        $this->overwrite_translator("vi", "shipping_free", "Giao hàng miễn phí");
+        $this->overwrite_translator("en", "shipping_free", "Shipping free");
+
+        $this->overwrite_translator("vi", "cart_subtotal", "Tổng tiền mua hàng");
+        $this->overwrite_translator("en", "cart_subtotal", "Cart subtotal");
+
+        $this->overwrite_translator("vi", "description", "Mô tả");
+        $this->overwrite_translator("en", "description", "Description");
+
+        $this->overwrite_translator("vi", "availability", "Tình trạng");
+        $this->overwrite_translator("en", "availability", "Availability");
 
         $this->overwrite_translator("vi", "footer_sidebar_description", "Khung chứa các widget dưới footer");
         $this->overwrite_translator("en", "footer_sidebar_description", "Display widgets on footer");
@@ -710,7 +957,7 @@ class SB_Language {
 	}
 	
 	public function translator_exists($phrase) {
-		foreach($this->translators as $key => $value) {
+		foreach($this->translators as $value) {
 			if(array_key_exists($phrase, $value)) {
 				return true;
 			}
@@ -727,10 +974,11 @@ class SB_Language {
 	}
 	
 	public function phrase($phrase) {
-		$text = '';
 		if($this->phrase_exists($phrase)) {
 			$text = $this->translators[$this->language][$phrase];
-		}
+		} else {
+            $text = $phrase;
+        }
 		return $text;
 	}
 	
@@ -746,4 +994,3 @@ class SB_Language {
 		return $this->languages;
 	}
 }
-?>

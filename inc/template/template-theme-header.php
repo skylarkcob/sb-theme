@@ -1,3 +1,8 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
 <?php global $sb_language; ?>
 <!DOCTYPE html>
 <html lang="<?php echo $sb_language->get(); ?>">

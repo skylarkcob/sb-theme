@@ -1,4 +1,9 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
+<?php
 class SB_Admin {
 	
 	/*
@@ -68,8 +73,10 @@ class SB_Admin {
 		$this->add_section('sbtheme_general_section', SB_WP::phrase("general_setting_description"));
 		$this->add_general_field('language', SB_WP::phrase("choose_language"), "language_callback");
 		$this->add_general_field('logo', 'Logo', 'logo_callback');
+        $this->add_general_field('footer_logo', 'Footer logo', 'footer_logo_callback');
 		$this->add_general_field('favicon', 'Favicon', 'favicon_callback');
 		$this->add_general_field('banner', 'Banner', 'banner_callback');
+        $this->add_general_field('hotline_image', 'Hotline', 'hotline_image_callback');
 		$this->add_general_field('footer_text', SB_WP::phrase('footer_text'), 'footer_text_callback');
 	}
 	
@@ -81,6 +88,14 @@ class SB_Admin {
 	// Hàm hiển thị mục cài đặt logo
 	public function logo_callback() {
 		$this->set_media_image_field('logo', SB_PHP::add_dotted(SB_WP::phrase("input_url_or_upload_new_logo")));
+    }
+
+    public function footer_logo_callback() {
+        $this->set_media_image_field('footer_logo', SB_PHP::add_dotted(SB_WP::phrase("input_url_or_upload_new_logo")));
+    }
+
+    public function hotline_image_callback() {
+        $this->set_media_image_field('hotline_image', SB_PHP::add_dotted(SB_WP::phrase("input_url_or_upload_new_image")));
     }
 	
 	// Hàm hiển thị mục cài đặt favicon
@@ -99,14 +114,23 @@ class SB_Admin {
 	}
 	
 	public function footer_text_callback() {
-		$this->rich_editor_field('footer_text', SB_PHP::add_dotted(SB_WP::phrase('footer_text_description')));
+        $args = array(
+            "media_buttons" => false,
+            "wpautop"       => true
+        );
+		$this->rich_editor_field('footer_text', SB_PHP::add_dotted(SB_WP::phrase('footer_text_description')), $args);
 	}
 	
-	private function rich_editor_field($name, $description) {
+	private function rich_editor_field($name, $description, $args = array()) {
+        $defaults = array(
+            "textarea_name" => esc_attr($this->get_field_name($name)),
+            "textarea_rows" => 5
+        );
+        $args = wp_parse_args($args, $defaults);
 		$value = $this->get_option_value($name);
 		?>
 		<div id="sbRichEditor" class="sb-rich-editor">
-			<?php wp_editor( $value, $name, array("textarea_name" => esc_attr($this->get_field_name($name)), 'textarea_rows' => 5) ); ?>
+			<?php wp_editor($value, $name, $args); ?>
 			<p class="description"><?php echo $description; ?></p>
 		</div>
 		<?php
@@ -269,9 +293,13 @@ class SB_Admin {
 		$this->add_sbmodule_field('enable_shop', SB_WP::phrase('support_shop_functional'), 'enable_shop_callback');
 		$this->add_sbmodule_field('enable_manga', SB_WP::phrase('support_manga_functional'), 'enable_manga_callback');
 		$this->add_sbmodule_field('enable_tivi', SB_WP::phrase('support_tivi_functional'), 'enable_tivi_callback');
+
 		$this->add_sbmodule_field('enable_sb_post_widget', 'SB Post Widget', 'enable_sb_post_widget_callback');
+        $this->add_sbmodule_field('enable_sb_support_widget', 'SB Support Widget', 'enable_sb_support_widget_callback');
+        $this->add_sbmodule_field('enable_sb_link_widget', 'SB Link Widget', 'enable_sb_link_widget_callback');
 		$this->add_sbmodule_field('enable_sb_tab_widget', 'SB Tab Widget', 'enable_sb_tab_widget_callback');
 		$this->add_sbmodule_field('enable_sb_banner_widget', 'SB Banner Widget', 'enable_sb_banner_widget_callback');
+
 		$this->add_sbmodule_field('enable_3dfile', SB_WP::phrase('support_3d_functional'), 'enable_3dstl_callback');
 		$this->add_sbmodule_field('enable_scroll_top', SB_WP::phrase('support_scroll_top_functional'), 'enable_scroll_top_callback');
 		$this->add_sbmodule_field('enable_links_manager', SB_WP::phrase('support_link_functional'), 'enable_links_manager_callback');
@@ -304,6 +332,14 @@ class SB_Admin {
 	public function enable_sb_post_widget_callback() {
 		$this->set_switch_field('enable_sb_post_widget', SB_PHP::add_dotted(SB_WP::phrase('switch_sb_post_widget_functional')));
 	}
+
+    public function enable_sb_support_widget_callback() {
+        $this->set_switch_field('enable_sb_support_widget', SB_PHP::add_dotted(SB_WP::phrase('switch_sb_support_widget_functional')));
+    }
+
+    public function enable_sb_link_widget_callback() {
+        $this->set_switch_field('enable_sb_link_widget', SB_PHP::add_dotted(SB_WP::phrase('switch_sb_link_widget_functional')));
+    }
 	
 	// Hàm hiển thị mục cài đặt bật hoặc tắt widget hiển thị tab
 	public function enable_sb_tab_widget_callback() {
@@ -394,10 +430,12 @@ class SB_Admin {
         $new_input = array();
 		
 		$new_input['language'] = $this->set_input_data($input, 'language');
-        $new_input['logo'] = $this->set_input_data($input, 'logo', 'image');		
-        $new_input['favicon'] = $this->set_input_data($input, 'favicon', 'icon');		
+        $new_input['logo'] = $this->set_input_data($input, 'logo', 'image');
+        $new_input['footer_logo'] = $this->set_input_data($input, 'footer_logo', 'image');
+        $new_input['favicon'] = $this->set_input_data($input, 'favicon', 'icon');
 		$new_input['banner'] = $this->set_input_data($input, 'banner', 'image');
-		$new_input['footer_text'] = $this->set_input_data($input, 'footer_text', 'default');
+        $new_input['hotline_image'] = $this->set_input_data($input, 'hotline_image', 'image');
+		$new_input['footer_text'] = $this->set_input_data($input, 'footer_text', 'html');
 		
 		$new_input['facebook'] = $this->set_input_data($input, 'facebook', 'url');
 		$new_input['twitter'] = $this->set_input_data($input, 'twitter', 'url');
@@ -410,12 +448,17 @@ class SB_Admin {
 		
 		$new_input['enable_shop'] = $this->set_input_data($input, 'enable_shop', 'bool-nummber');
 		$new_input['enable_tivi'] = $this->set_input_data($input, 'enable_tivi', 'bool-nummber');
+
 		$new_input['enable_sb_post_widget'] = $this->set_input_data($input, 'enable_sb_post_widget', 'bool-nummber');
+        $new_input['enable_sb_support_widget'] = $this->set_input_data($input, 'enable_sb_support_widget', 'bool-nummber');
+        $new_input['enable_sb_link_widget'] = $this->set_input_data($input, 'enable_sb_link_widget', 'bool-nummber');
 		$new_input['enable_sb_tab_widget'] = $this->set_input_data($input, 'enable_sb_tab_widget', 'bool-nummber');
 		$new_input['enable_sb_banner_widget'] = $this->set_input_data($input, 'enable_sb_banner_widget', 'bool-nummber');
+
 		$new_input['enable_float_ads'] = $this->set_input_data($input, 'enable_float_ads', 'bool-nummber');
 		$new_input['enable_leaderboard_ads'] = $this->set_input_data($input, 'enable_leaderboard_ads', 'bool-nummber');
 		$new_input['enable_addthis'] = $this->set_input_data($input, 'enable_addthis', 'bool-nummber');
+        $new_input['enable_links_manager'] = $this->set_input_data($input, 'enable_links_manager', 'bool-nummber');
 		
 		$new_input['default_tivi'] = $this->set_input_data($input, 'default_tivi', 'int-nummber');
 		
@@ -439,6 +482,9 @@ class SB_Admin {
 						$kq = $data;
 					}
 					break;
+                case 'html':
+                    $kq = wpautop($input[$key]);
+                    break;
 				case 'text':
 					$data = trim(sanitize_text_field( $input[$key] ));
 					$kq = $data;

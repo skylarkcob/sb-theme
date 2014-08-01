@@ -1,4 +1,9 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
+<?php
 if ( !defined( 'ABSPATH' ) ) exit;
 
 class SB_Hook {
@@ -154,21 +159,200 @@ class SB_Hook {
 		add_action('init', array($this, 'sbtheme_init'));
 		$this->sbtheme_custom_login_page();
 		$this->sbtheme_translation();
+        if(SB_WP::is_shop_enabled()) {
+            add_filter( 'woocommerce_product_tabs', array($this, 'sbtheme_product_tab') );
+            add_filter('woocommerce_cart_shipping_method_full_label', array($this, 'sbtheme_shipping_label'));
+            add_filter('woocommerce_order_button_text', array($this, 'sbtheme_order_button_text'));
+            add_filter('woocommerce_default_address_fields', array($this, 'sbtheme_default_address_fields'));
+        }
 	}
-	
+
+    public function sbtheme_order_button_text() {
+        return SB_WP::phrase("place_order");
+    }
+
 	public function sbtheme_translation() {
 		if(!is_admin()) {
 			$lang = SB_WP::get_current_language();
 			if("en" != $lang) {
 				add_filter('gettext', array($this, 'sbtheme_translation_all'), 20, 3);
+                add_filter( 'gettext_with_context', array($this, "sbtheme_translate_text_with_context") );
 			}
 		}
 	}
+
+    public function sbtheme_translate_text_with_context($translated) {
+        $punctuation = SB_PHP::get_punctuation($translated);
+        $str_text = SB_PHP::remove_punctuation(SB_PHP::lowercase($translated));
+        switch($str_text) {
+            case 'street address':
+                $translated = SB_WP::phrase("street_address");
+                break;
+            case 'notes about your order, e.g. special notes for delivery':
+                $translated = SB_WP::phrase("order_note_description");
+                break;
+            case 'apartment, suite, unit etc. (optional)':
+                $translated = SB_WP::phrase("more_address_description");
+                break;
+        }
+        return $translated;
+    }
+
+    public function sbtheme_default_address_fields() {
+        $fields = array(
+            'country'            => array(
+                'type'     => 'country',
+                'label'    => __( 'Country', 'woocommerce' ),
+                'required' => true,
+                'class'    => array( 'form-row-wide', 'address-field', 'update_totals_on_change' ),
+            ),
+            'first_name'         => array(
+                'label'    => __( 'First Name', 'woocommerce' ),
+                'required' => true,
+                'class'    => array( 'form-row-first' ),
+            ),
+            'last_name'          => array(
+                'label'    => __( 'Last Name', 'woocommerce' ),
+                'required' => true,
+                'class'    => array( 'form-row-last' ),
+                'clear'    => true
+            ),
+            'company'            => array(
+                'label' => __( 'Company Name', 'woocommerce' ),
+                'class' => array( 'form-row-wide' ),
+            ),
+            'address_1'          => array(
+                'label'       => __( 'Address', 'woocommerce' ),
+                'placeholder' => _x( 'Street address', 'placeholder', 'woocommerce' ),
+                'required'    => true,
+                'class'       => array( 'form-row-wide', 'address-field' )
+            ),
+            'address_2'          => array(
+                'placeholder' => _x( SB_WP::phrase('more_address_description'), 'placeholder', 'woocommerce' ),
+                'class'       => array( 'form-row-wide', 'address-field' ),
+                'required'    => false
+            ),
+            'city'               => array(
+                'label'       => __( 'Town / City', 'woocommerce' ),
+                'placeholder' => __( 'Town / City', 'woocommerce' ),
+                'required'    => true,
+                'class'       => array( 'form-row-wide', 'address-field' )
+            ),
+            'state'              => array(
+                'type'        => 'state',
+                'label'       => __( 'State / County', 'woocommerce' ),
+                'placeholder' => __( 'State / County', 'woocommerce' ),
+                'required'    => true,
+                'class'       => array( 'form-row-first', 'address-field' ),
+                'validate'    => array( 'state' )
+            ),
+            'postcode'           => array(
+                'label'       => __( 'Postcode / Zip', 'woocommerce' ),
+                'placeholder' => __( 'Postcode / Zip', 'woocommerce' ),
+                'required'    => true,
+                'class'       => array( 'form-row-last', 'address-field' ),
+                'clear'       => true,
+                'validate'    => array( 'postcode' )
+            ),
+        );
+        return $fields;
+    }
 	
-	public function sbtheme_translation_all($translated_text, $text, $domain) {
+	public function sbtheme_translation_all($translated_text) {
 		$punctuation = SB_PHP::get_punctuation($translated_text);
-		$str_text = SB_PHP::remove_punctuation(SB_PHP::lowercase($translated_text));
+        $str_text = SB_PHP::lowercase($translated_text);
+        $str_text = SB_PHP::remove_punctuation($str_text);
 		switch($str_text) {
+            case 'remove':
+                $translated_text = SB_WP::phrase('remove').$punctuation;
+                break;
+            case 'availability':
+                $translated_text = SB_WP::phrase('availability').$punctuation;
+                break;
+            case 'added':
+                $translated_text = SB_WP::phrase('added').$punctuation;
+                break;
+            case 'product name':
+                $translated_text = SB_WP::phrase('product_name').$punctuation;
+                break;
+            case 'share on':
+                $translated_text = SB_WP::phrase('share_on').$punctuation;
+                break;
+            case 'stock status':
+                $translated_text = SB_WP::phrase('stock_status').$punctuation;
+                break;
+            case 'unit price':
+                $translated_text = SB_WP::phrase('unit_price').$punctuation;
+                break;
+            case 'in stock':
+                $translated_text = SB_WP::phrase('in_stock').$punctuation;
+                break;
+            case 'hello <strong>%1$s</strong> (not %1$s? <a href="%2$s">sign out</a>)':
+                $translated_text = SB_WP::phrase('hello_account').$punctuation;
+                break;
+            case 'from your account dashboard you can view your recent orders, manage your shipping and billing addresses and <a href="%s">edit your password and account details</a>':
+                $translated_text = SB_WP::phrase('account_dashboard_descrition').$punctuation;
+                break;
+            case 'my addresses':
+                $translated_text = SB_WP::phrase('my_addresses');
+                break;
+            case 'the following addresses will be used on the checkout page by default':
+                $translated_text = SB_WP::phrase('my_address_description');
+                break;
+            case 'confirm new password':
+                $translated_text = SB_WP::phrase('confirm_new_password');
+                break;
+            case 'password (leave blank to leave unchanged)':
+                $translated_text = SB_WP::phrase('password_with_description');
+                break;
+            case 'save changes':
+                $translated_text = SB_WP::phrase('save_changes');
+                break;
+            case 'is a required field':
+                $translated_text = SB_WP::phrase('is_a_required_field');
+                break;
+            case 'you have not set up this type of address yet':
+                $translated_text = SB_WP::phrase("not_setup_this_type_address").$punctuation;
+                break;
+            case 'product':
+                $translated_text = SB_WP::phrase('product');
+                break;
+            case 'price':
+                $translated_text = SB_WP::phrase('price');
+                break;
+            case 'quantity':
+                $translated_text = SB_WP::phrase('quantity');
+                break;
+            case 'coupon code':
+                $translated_text = SB_WP::phrase('coupon_code');
+                break;
+            case 'apply coupon':
+                $translated_text = SB_WP::phrase('apply_coupon');
+                break;
+            case 'update cart':
+                $translated_text = SB_WP::phrase('update_cart');
+                break;
+            case 'proceed to checkout':
+                $translated_text = SB_WP::phrase('proceed_to_checkout');
+                break;
+            case 'cart totals':
+                $translated_text = SB_WP::phrase('cart_totals');
+                break;
+            case 'cart subtotal':
+                $translated_text = SB_WP::phrase('cart_subtotal');
+                break;
+            case 'cart':
+                $translated_text = SB_WP::phrase('cart');
+                break;
+            case 'order total':
+                $translated_text = SB_WP::phrase('order_total');
+                break;
+            case 'direct bank transfer':
+                $translated_text = SB_WP::phrase('direct_bank_transfer').$punctuation;
+                break;
+            case 'place order':
+                $translated_text = SB_WP::phrase('place_order').$punctuation;
+                break;
 			case 'home':
 				$translated_text = SB_WP::phrase('home').$punctuation;
 				break;
@@ -292,11 +476,146 @@ class SB_Hook {
 			case 'topic status':
 				$translated_text = SB_WP::phrase('topic_status').$punctuation;
 				break;
-			default:				
+            case 'the product is already in the wishlist':
+                $translated_text = SB_PHP::add_punctuation(SB_WP::phrase("product_already_in_wishlist"), "!");
+                break;
+            case 'browse wishlist':
+                $translated_text = SB_WP::phrase("browse_wishlist");
+                break;
+            case 'reviews':
+                $translated_text = SB_WP::phrase("reviews");
+                break;
+            case 'description':
+                $translated_text = SB_WP::phrase("description");
+                break;
+            case 'category':
+                $translated_text = SB_WP::phrase("category").$punctuation;
+                break;
+            case 'tags':
+                $translated_text = SB_WP::phrase("tags").$punctuation;
+                break;
+            case 'reviews (%d)':
+                $translated_text = SB_WP::phrase("reviews")." (%d)";
+                break;
+            case 'your review':
+                $translated_text = SB_WP::phrase("your_review");
+                break;
+            case 'submit':
+                $translated_text = SB_WP::phrase("submit");
+                break;
+            case 'add to cart':
+                $translated_text = SB_WP::phrase("add_to_cart");
+                break;
+            case 'products':
+                $translated_text = SB_WP::phrase("products");
+                break;
+            case 'home':
+                $translated_text = SB_WP::phrase("home");
+                break;
+            case 'company name':
+                $translated_text = SB_WP::phrase("company_name");
+                break;
+            case 'address':
+                $translated_text = SB_WP::phrase("address");
+                break;
+            case 'email address':
+                $translated_text = SB_WP::phrase("email_address");
+                break;
+            case 'phone':
+                $translated_text = SB_WP::phrase("phone");
+                break;
+            case 'billing details':
+                $translated_text = SB_WP::phrase("billing_details");
+                break;
+            case 'billing address':
+                $translated_text = SB_WP::phrase("billing_address");
+                break;
+            case 'shipping address':
+                $translated_text = SB_WP::phrase("shipping_address");
+                break;
+            case 'save address':
+                $translated_text = SB_WP::phrase("save_address");
+                break;
+            case 'ship to a different address':
+                $translated_text = SB_WP::phrase("ship_to_different_address");
+                break;
+            case 'first name':
+                $translated_text = SB_WP::phrase("first_name");
+                break;
+            case 'last name':
+                $translated_text = SB_WP::phrase("last_name");
+                break;
+            case 'street address':
+                $translated_text = SB_WP::phrase("street_address");
+                break;
+            case 'town / city':
+                $translated_text = SB_WP::phrase("town_or_city");
+                break;
+            case 'your order':
+                $translated_text = SB_WP::phrase("your_order");
+                break;
+            case 'total':
+                $translated_text = SB_WP::phrase("total");
+                break;
+            case 'shipping and handling':
+                $translated_text = SB_WP::phrase("shipping_fees");
+                break;
+            case 'order notes':
+                $translated_text = SB_WP::phrase("order_notes");
+                break;
 		}
 		return $translated_text;
 	}
-	
+
+    public function sbtheme_shipping_label($label) {
+        $tmp = SB_PHP::lowercase($label);
+        if(SB_PHP::is_string_contain($tmp, 'free')) {
+            $label = SB_WP::phrase('shipping_free');
+        }
+        return $label;
+    }
+
+
+
+    public function sbtheme_product_tab( $tabs = array() ) {
+        global $product, $post;
+
+        // Description tab - shows product content
+        if(function_exists("woocommerce_product_description_tab")) {
+            if ( $post->post_content ) {
+                $tabs['description'] = array(
+                    'title'    => __( SB_WP::phrase("product_description"), SB_DOMAIN ),
+                    'priority' => 10,
+                    'callback' => 'woocommerce_product_description_tab'
+                );
+            }
+        }
+
+        // Additional information tab - shows attributes
+        if(function_exists("woocommerce_product_additional_information_tab")) {
+            if ( $product && ( $product->has_attributes() || ( $product->enable_dimensions_display() && ( $product->has_dimensions() || $product->has_weight() ) ) ) ) {
+                $tabs['additional_information'] = array(
+                    'title'    => __( SB_WP::phrase("product_information"), SB_DOMAIN ),
+                    'priority' => 20,
+                    'callback' => 'woocommerce_product_additional_information_tab'
+                );
+            }
+        }
+
+        // Reviews tab - shows comments
+        if(function_exists("comments_template")) {
+            if ( comments_open() ) {
+                $tabs['reviews'] = array(
+                    'title'    => sprintf( __( SB_WP::phrase("reviews").' (%d)', SB_DOMAIN ), get_comments_number( $post->ID ) ),
+                    'priority' => 30,
+                    'callback' => 'comments_template'
+                );
+            }
+        }
+
+        return $tabs;
+    }
+
 	public function sbtheme_custom_login_page() {
 		if(!is_admin() && SB_WP::is_login_page()) {
 			$this->sbtheme_login_style_and_script();
@@ -450,7 +769,7 @@ class SB_Hook {
 			'footer'	=> __( 'Footer menu', 'sbtheme' ),
 			'primary'	=> __('Primary menu', 'sbtheme')
 		));
-		if(SB_WP::utility_enabled('enable_shop')) {
+		if(SB_WP::is_shop_enabled()) {
 			add_theme_support( 'woocommerce' );
 			add_image_size('product_large', 600, 600, false);
 			add_image_size('product_large_crop', 600, 600, true);
@@ -487,7 +806,9 @@ class SB_Hook {
 	}
 	
 	public function sb_woocommerce_image_size() {
-		if(SB_WP::utility_enabled('enable_shop')) {
+        $option = new SB_Option();
+        $woocommerce_image_size_updated = (bool)$option->get("woocommerce_image_size_updated");
+		if(SB_WP::is_shop_enabled() && SB_WP::is_woocommerce_installed() && !$woocommerce_image_size_updated) {
 			$catalog = array(
 				'width'		=> '400',
 				'height'	=> '400',
@@ -506,6 +827,7 @@ class SB_Hook {
 			update_option( 'shop_catalog_image_size', $catalog );
 			update_option( 'shop_single_image_size', $single );
 			update_option( 'shop_thumbnail_image_size', $thumbnail );
+            $option->update("woocommerce_image_size_updated", 1);
 		}
 	}
 	
@@ -566,10 +888,7 @@ class SB_Hook {
 			}
 		}
 		$this->session_init();
-		global $pagenow;
-		if ( SB_WP::utility_enabled('enable_shop') && is_admin() && isset( $_GET['activated'] ) && $pagenow == 'themes.php' ) {
-			$this->sb_woocommerce_image_size();
-		}
+        $this->sb_woocommerce_image_size();
 	}
 }
 ?>

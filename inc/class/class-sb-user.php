@@ -1,4 +1,9 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
+<?php
 class SB_User extends WP_User {
 	public $user;
 	private $favorite_key = 'favorite_';

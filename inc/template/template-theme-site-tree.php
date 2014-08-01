@@ -1,3 +1,8 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
 <div class="sb-site-tree">
 <?php do_action("sb_site_tree_before"); ?>
 <h3 class="tree-title"><?php echo SB_PHP::add_colon(SB_WP::phrase('sitemap')); ?></h3>

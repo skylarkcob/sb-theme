@@ -1,3 +1,8 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
 <div class="sb-footer-copyright">
     <div class="row">
         <div class="col-xs-12 col-sm-8 text-left blog-copyright">

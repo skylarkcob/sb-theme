@@ -1,9 +1,16 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
+<?php
 class SB_Widget {
 	public $widgets = array(
 		'SB_Post_Widget',
 		'SB_Banner_Widget',
-		'SB_Tab_Widget'
+		'SB_Tab_Widget',
+        'SB_Support_Widget',
+        'SB_Link_Widget'
 	);
 	
 	private $use_widgets = array();

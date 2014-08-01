@@ -1,3 +1,8 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
 <?php if(has_post_thumbnail()) : ?>
 	<div class="post-thumbnail">
 		<?php global $thumbnail_size; ?>

@@ -1,4 +1,9 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
+<?php
 class SB_PHP {
 	public static function url_exists($url) {
 		if (!$fp = curl_init($url)) return false;
@@ -27,6 +32,10 @@ class SB_PHP {
 	}
 	
 	public static function remove_punctuation($str) {
+        $last_char = self::get_last_char($str);
+        if(')' == $last_char) {
+            return $str;
+        }
 		return preg_replace('/^\PL+|\PL\z/', '', $str);
 	}
 	
@@ -123,10 +132,16 @@ class SB_PHP {
 	}
 	
 	public static function add_exclamation_mark($text) {
+        if(empty($text)) {
+            return $text;
+        }
 		return self::add_punctuation($text, '!');
 	}
 	
 	public static function add_commas($text) {
+        if(empty($text)) {
+            return $text;
+        }
 		return self::add_punctuation($text, ',');
 	}
 	
@@ -147,6 +162,9 @@ class SB_PHP {
 	}
 	
 	public static function add_punctuation_mark($text, $punc) {
+        if(empty($text)) {
+            return $text;
+        }
 		$char = substr($text, -1);
 		if($punc != $char) {
 			$text .= $punc;
@@ -163,6 +181,9 @@ class SB_PHP {
 	}
 	
 	public static function add_punctuation($text, $punc) {
+        if(empty($text)) {
+            return $text;
+        }
 		$char = substr($text, -1);
 		if($punc != $char) {
 			$text .= $punc;

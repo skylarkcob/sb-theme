@@ -93,9 +93,6 @@ class SB_Load {
 		global $sb_enable_manga, $sb_enable_shop;
 		$this->class_init();
 		foreach($this->handles as $key => $handle) {
-			if(('class-sb-product' == $key && !$sb_enable_shop) || ('class-sb-manga' == $key && !$sb_enable_manga)) {
-				continue;
-			}
 			$this->add($key);
 		}
 	}
@@ -194,11 +191,11 @@ class SB_Load {
 			$sb_language = new SB_Language($lang);
 		}
 		$this->enable_sb_widget();
+        SB_WP::update_woocommerce();
 		include SB_PATH . "/sb-constant.php";
 	}
 	
 	public function enable_sb_widget() {
-		
 		$options = SB_WP::option();
 		if(isset($options['enable_sb_post_widget']) && (bool)$options['enable_sb_post_widget']) {
 			$this->add_widget("SB_Post_Widget");
@@ -209,6 +206,12 @@ class SB_Load {
 		if(isset($options['enable_sb_banner_widget']) && (bool)$options['enable_sb_banner_widget']) {
 			$this->add_widget("SB_Banner_Widget");
 		}
+        if(isset($options['enable_sb_support_widget']) && (bool)$options['enable_sb_support_widget']) {
+            $this->add_widget("SB_Support_Widget");
+        }
+        if(SB_WP::is_widget_enabled("sb_link")) {
+            $this->add_widget("SB_Link_Widget");
+        }
 	}
 	
 	public function add_widget($name) {

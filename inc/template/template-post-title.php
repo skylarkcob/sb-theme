@@ -1,3 +1,8 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
 <?php if(is_single()) : ?>
 	<h1 class="entry-title post-title"><?php the_title(); ?></h1>
 <?php else : ?>

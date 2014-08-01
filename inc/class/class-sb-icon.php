@@ -1,4 +1,9 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
+<?php
 class SB_Icon {
 	public static function url($name) {
 		return trailingslashit(SB_IMAGES_URI) . $name;
