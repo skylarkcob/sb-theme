@@ -1,8 +1,10 @@
 jQuery(document).ready(function($){
-	
+    var sl = jQuery;
+    var body = sl("body");
+
 	var sfMenu = $('ul.sf-menu');
 	if(sfMenu.length) {
-		$("body").find(sfMenu).each(function(){
+		body.find(sfMenu).each(function(){
 			$(this).superfish();
 		});
 	}
@@ -10,7 +12,7 @@ jQuery(document).ready(function($){
 	var bootstrapCarousel = $('.carousel');
 	if(bootstrapCarousel.length) {
 		$("body").find(bootstrapCarousel).each(function(){
-			$(this).carousel();
+			//$(this).carousel();
 		});
 	}
 	
@@ -26,7 +28,7 @@ jQuery(document).ready(function($){
 	}
 	
 	var embedBox = $("div.file-embed");
-	$("body").find(embedBox).each(function(){
+	body.find(embedBox).each(function(){
 		$(this).bind("mousewheel", function(){
 			return false;
 		});
@@ -41,7 +43,7 @@ jQuery(document).ready(function($){
 		function show_scroll_to_top() {
 			scrollToTop.fadeIn();
 		}
-		
+
 		if ( $( window ).scrollTop() > scrollPositionShown ) {
 			show_scroll_to_top();
 		}
@@ -62,7 +64,7 @@ jQuery(document).ready(function($){
 	}
 	
 	// SB Tab Widget
-	$("body").find(".sb-tab-widget").each(function(){
+	body.find(".sb-tab-widget").each(function(){
 		var aTab = $(this), listTab = aTab.find("ul.list-tab"), tabContent = aTab.find("div.tab-content");
 		tabContent.children("div.tab-item").each(function(){
 			var widgetId = $(this).attr("id");
@@ -71,7 +73,7 @@ jQuery(document).ready(function($){
 		listTab.find("li:first-child").addClass("active");
 		tabContent.find("div:first-child").addClass("active");
 		if(listTab.is(":empty")) {
-			listTab.closest("div").find("div.tab-content").css("margin-top", 0);
+			listTab.closest("div").find("div.tab-content").css({"marginTop": 0});
 		}
 		
 		aTab.find("a.tab-title").each(function(){
@@ -90,13 +92,13 @@ jQuery(document).ready(function($){
 		});
 	});
 	
-	$("#respond").submit(function(e){
+	$("#respond").on("submit", function(event){
 		var commentBody = $(this).find("textarea"), commentName = $(this).find("#author"), commentEmail = $(this).find("#email"), mathCaptcha = $(this).find("#mc-input");
 		if((commentBody.length && "" == commentBody.val()) || (commentName.length && "" == commentName.val()) || (commentEmail.length && "" == commentEmail.val()) || (mathCaptcha.length && ("" == mathCaptcha.val() || false == $.isNumeric(mathCaptcha.val())))) {
-			if(e.preventDefault) {
-				e.preventDefault();
+			if(event.preventDefault) {
+                event.preventDefault();
 			} else {
-				e.returnValue = false;
+                event.returnValue = false;
 			}
 		}
 	});
@@ -106,7 +108,7 @@ jQuery(document).ready(function($){
 		var sbLeaderboard = sbLogoAds.find("div.sb-ads");
 		if(sbLeaderboard.length) {
 			var marginTop = Math.abs(parseInt(sbLogoAds.height()/2)) - 45;
-			sbLeaderboard.css("margin-top", marginTop + "px");
+			sbLeaderboard.css({"marginTop": marginTop + "px"});
 		}
 	}
 	

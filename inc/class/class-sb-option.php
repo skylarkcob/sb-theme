@@ -2,8 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
+
 class SB_Option {
 	private $option;
 	public function __construct() {
@@ -69,4 +68,3 @@ class SB_Option {
 		return $this->get('linkedin');
 	}
 }
-?>

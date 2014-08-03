@@ -2,8 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
+
 class SB_Admin {
 	
 	/*
@@ -77,6 +76,7 @@ class SB_Admin {
 		$this->add_general_field('favicon', 'Favicon', 'favicon_callback');
 		$this->add_general_field('banner', 'Banner', 'banner_callback');
         $this->add_general_field('hotline_image', 'Hotline', 'hotline_image_callback');
+        $this->add_general_field('list_yahoo', SB_WP::phrase('list_yahoo'), 'list_yahoo_callback');
 		$this->add_general_field('footer_text', SB_WP::phrase('footer_text'), 'footer_text_callback');
 	}
 	
@@ -120,6 +120,15 @@ class SB_Admin {
         );
 		$this->rich_editor_field('footer_text', SB_PHP::add_dotted(SB_WP::phrase('footer_text_description')), $args);
 	}
+
+    public function list_yahoo_callback() {
+        $args = array(
+            "media_buttons" => false,
+            "wpautop"       => true,
+            "quicktags"     => false
+        );
+        $this->rich_editor_field('list_yahoo', SB_PHP::add_dotted(SB_WP::phrase('list_yahoo_support_description')), $args);
+    }
 	
 	private function rich_editor_field($name, $description, $args = array()) {
         $defaults = array(
@@ -145,6 +154,7 @@ class SB_Admin {
 		$langs = $sb_language->get_list();
 		$value = $this->get_option_value($name);
 		?>
+        <label for="<?php echo $name; ?>"></label>
 		<select id="<?php echo $name; ?>" name="<?php echo esc_attr($this->get_field_name($name)); ?>">
 			<?php foreach($langs as $key => $title) : ?>
 			<option value="<?php echo $key; ?>"<?php selected( $value, $key ); ?>><?php echo $title; ?></option>
@@ -436,6 +446,7 @@ class SB_Admin {
 		$new_input['banner'] = $this->set_input_data($input, 'banner', 'image');
         $new_input['hotline_image'] = $this->set_input_data($input, 'hotline_image', 'image');
 		$new_input['footer_text'] = $this->set_input_data($input, 'footer_text', 'html');
+        $new_input['list_yahoo'] = $this->set_input_data($input, 'list_yahoo', 'html');
 		
 		$new_input['facebook'] = $this->set_input_data($input, 'facebook', 'url');
 		$new_input['twitter'] = $this->set_input_data($input, 'twitter', 'url');

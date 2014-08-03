@@ -2,8 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
+
 class SB_PHP {
 	public static function url_exists($url) {
 		if (!$fp = curl_init($url)) return false;
@@ -105,6 +104,12 @@ class SB_PHP {
 		}
 		return false;
 	}
+
+    public static function paragraph_to_array($list_paragraph) {
+        $list_paragraph = str_replace("</p>", "", $list_paragraph);
+        $list_paragraph = explode("<p>", $list_paragraph);
+        return array_filter($list_paragraph);
+    }
 	
 	public static function is_favicon_url($url) {
 		$favicon_formats = array("png", "ico");
@@ -287,7 +292,17 @@ class SB_PHP {
 		}
 		return false;
 	}
-	
+
+    public static function str_contains($string, $key) {
+        return self::is_string_contain($string, $key);
+    }
+
+    public  static function add_string_unique($old_string, $text) {
+        if(!self::is_string_contain($old_string, $text)) {
+            $old_string .= $text;
+        }
+        $old_string = trim($old_string);
+        return $old_string;
+    }
 	
 }
-?>

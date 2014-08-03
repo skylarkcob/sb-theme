@@ -2,8 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
+
 class SB_Tivi {
 	private $id;
 	private $tivi;
@@ -60,4 +59,3 @@ class SB_Tivi {
 		return $this->tivi->post_title;
 	}
 }
-?>

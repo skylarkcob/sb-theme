@@ -85,6 +85,33 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "sitemap", "Sơ đồ trang web");
 		$this->overwrite_translator("en", "sitemap", "Sitemap");
+
+        $this->overwrite_translator("vi", "list_wishlist", "Danh sách ưa thích");
+        $this->overwrite_translator("en", "list_wishlist", "Wishlist");
+
+        $this->overwrite_translator("vi", "personal_information", "Thông tin cá nhân");
+        $this->overwrite_translator("en", "personal_information", "Personal information");
+
+        $this->overwrite_translator("vi", "checkout", "Thanh toán");
+        $this->overwrite_translator("en", "checkout", "Checkout");
+
+        $this->overwrite_translator("vi", "list_yahoo", "Danh sách tài khoản Yahoo");
+        $this->overwrite_translator("en", "list_yahoo", "List Yahoo account");
+
+        $this->overwrite_translator("vi", "online_support", "Hỗ trợ trực tuyến");
+        $this->overwrite_translator("en", "online_support", "Online support");
+
+        $this->overwrite_translator("vi", "list_yahoo_support_description", "Nhập danh sách tài khoản Yahoo, mỗi nhóm là một dòng bao gồm tên hiển thị và tên tài khoản cách nhau bởi dấu phẩy");
+        $this->overwrite_translator("en", "list_yahoo_support_description", "Enter list Yahoo account, each line includes a display name and account names separated by commas");
+
+        $this->overwrite_translator("vi", "cart_content", "Thông tin giỏ hàng");
+        $this->overwrite_translator("en", "cart_content", "The cart content");
+
+        $this->overwrite_translator("vi", "show_x_x_of_x_result", 'Hiển thị %1$s – %2$s trên tổng số %3$s kết quả');
+        $this->overwrite_translator("en", "show_x_x_of_x_result", 'Showing %1$s – %2$s of %3$s results');
+
+        $this->overwrite_translator("vi", "show_single_result", "Hiển thị 1 kết quả");
+        $this->overwrite_translator("en", "show_single_result", "Showing the single result");
 		
 		$this->overwrite_translator("vi", "page_not_found", "Không tìm thấy trang");
 		$this->overwrite_translator("en", "page_not_found", "Page not found");
@@ -142,6 +169,42 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "close", "Đóng");
 		$this->overwrite_translator("en", "close", "Close");
+
+        $this->overwrite_translator("vi", "all", "Tất cả");
+        $this->overwrite_translator("en", "all", "All");
+
+        $this->overwrite_translator("vi", "sort_by_popularity", "Sắp xếp theo độ phổ biến");
+        $this->overwrite_translator("en", "sort_by_popularity", "Sort by popularity");
+
+        $this->overwrite_translator("vi", "sort_by_rating", "Sắp xếp theo đánh giá trung bình");
+        $this->overwrite_translator("en", "sort_by_rating", "Sort by average rating");
+
+        $this->overwrite_translator("vi", "sort_by_newness", "Sắp xếp theo thời gian đăng");
+        $this->overwrite_translator("en", "sort_by_newness", "Sort by newness");
+
+        $this->overwrite_translator("vi", "sort_by_price_asc", "Sắp xếp theo giá thấp đến cao");
+        $this->overwrite_translator("en", "sort_by_price_asc", "Sort by price: low to high");
+
+        $this->overwrite_translator("vi", "sort_by_price_desc", "Sắp xếp theo giá cao đến thấp");
+        $this->overwrite_translator("en", "sort_by_price_desc", "Sort by price: high to low");
+
+        $this->overwrite_translator("vi", "default_sorting", "Sắp xếp mặc định");
+        $this->overwrite_translator("en", "default_sorting", "Default sorting");
+
+        $this->overwrite_translator("vi", "no_product_found", "Không có sản phẩm");
+        $this->overwrite_translator("en", "no_product_found", "No products were found matching your selection");
+
+        $this->overwrite_translator("vi", "show_x_result", "Hiển thị tất cả %d kết quả");
+        $this->overwrite_translator("en", "show_x_result", "Showing all %d results");
+
+        $this->overwrite_translator("vi", "no_product_in_wishlist", "Chưa có sản phẩm trong danh sách ưa thích");
+        $this->overwrite_translator("en", "no_product_in_wishlist", "No products were added to the wishlist");
+
+        $this->overwrite_translator("vi", "product_added", "Sản phẩm đã được thêm");
+        $this->overwrite_translator("en", "product_added", "Product added");
+
+        $this->overwrite_translator("vi", "product_successfully_removed", "Sản phẩm đã được xóa thành công");
+        $this->overwrite_translator("en", "product_successfully_removed", "Product successfully removed");
 		
 		$this->overwrite_translator("vi", "allow_html_tags", "Bạn có thể sử dụng những thẻ %s và thuộc tính sau");
 		$this->overwrite_translator("en", "allow_html_tags", "You may use these %s tags and attributes");

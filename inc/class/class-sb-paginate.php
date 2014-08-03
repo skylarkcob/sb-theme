@@ -2,8 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
+
 class SB_Paginate {
     public static function build($args = null) {
         $defaults = array(
@@ -91,4 +90,3 @@ class SB_Paginate {
         return $paged;
     }
 }
-?>

@@ -2,8 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
+
 class SB_Post {
 	public $post;
 	private $thumbnail_size = "thumbnail_crop";
@@ -130,7 +129,7 @@ class SB_Post {
 	}
 	
 	public function meta() {
-		printf( '<span class="entry-date"><a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s" pubdate>%3$s</time></a></span> <span class="byline"><span class="author vcard"><a class="url fn n" href="%4$s" rel="author">%5$s</a></span></span>',
+		printf( '<span class="entry-date"><a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s">%3$s</time></a></span> <span class="byline"><span class="author vcard"><a class="url fn n" href="%4$s" rel="author">%5$s</a></span></span>',
 			esc_url( $this->get_permalink() ),
 			esc_attr( $this->get_date( 'c' ) ),
 			esc_html( $this->get_date() ),

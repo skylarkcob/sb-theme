@@ -2,8 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
+
 class SB_Theme {
 	public static function header() {
 		include SB_TEMPLATE_PATH . "/template-theme-header.php";
@@ -361,8 +360,10 @@ class SB_Theme {
 		?>
 		<p class="<?php echo $paragraph_class; ?>"<?php if(!$display) echo ' style="display:none"'; ?>>
 			<label for="<?php echo esc_attr( $id ); ?>"><?php _e( $description, SB_DOMAIN ); ?></label>
+            <label for="<?php echo esc_attr( $id_width ); ?>"></label>
 			<input id="<?php echo esc_attr( $id_width ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name_width ); ?>" type="number" value="<?php echo esc_attr( $value[0] ); ?>">
 			<span>x</span>
+            <label for="<?php echo esc_attr( $id_height ); ?>"></label>
 			<input id="<?php echo esc_attr( $id_height ); ?>" class="<?php echo $input_class; ?>" name="<?php echo esc_attr( $name_height ); ?>" type="number" value="<?php echo esc_attr( $value[1] ); ?>">
             <?php if(!empty($description)) : ?>
                 <em><?php _e($description, SB_DOMAIN); ?></em>
@@ -396,7 +397,7 @@ class SB_Theme {
 	public static function comment_navigation( $type ) {
 		if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : ?>
 	
-		<nav id="comment-nav-<?php echo $type; ?>" class="navigation comment-navigation" role="navigation">
+		<nav id="comment-nav-<?php echo $type; ?>" class="navigation comment-navigation">
 			<h4 class="screen-reader-text"><?php _e( SB_WP::phrase('comment_navigation'), SB_DOMAIN ); ?></h4>
 			<div class="nav-previous"><?php previous_comments_link( __( '&larr; '.SB_WP::phrase('older_comments'), SB_DOMAIN ) ); ?></div>
 			<div class="nav-next"><?php next_comments_link( __( SB_WP::phrase('newer_comments').' &rarr;', SB_DOMAIN ) ); ?></div>
@@ -418,7 +419,7 @@ class SB_Theme {
 		?>
 			<div class="sb-tivi no-source"><p>Kênh bạn đang xem hiện chưa cập nhật.</p></div>
 		<?php else : ?>
-		<div class="sb-tivi-outer text-center"><iframe id="sbTV" src="<?php echo $src; ?>" class="sb-tivi" data-number="1" scrolling="no"></iframe></div>
+		<div class="sb-tivi-outer text-center"><iframe id="sbTV" src="<?php echo $src; ?>" class="sb-tivi" data-number="1"></iframe></div>
 		<?php
 		endif;
 	}
@@ -453,7 +454,7 @@ class SB_Theme {
 	}
 	
 	public static function post_date() {
-		printf( '<span class="entry-date post-date"><i class="fa fa-clock-o"></i> <a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s" pubdate>%3$s</time></a></span>',
+		printf( '<span class="entry-date post-date"><i class="fa fa-clock-o"></i> <a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s">%3$s</time></a></span>',
 			esc_url( get_permalink() ),
 			esc_attr( get_the_date( 'c' ) ),
 			esc_html( get_the_date() )
@@ -576,7 +577,7 @@ class SB_Theme {
 
     public static function login_link() {
         ?>
-        <a href="<?php echo SB_WP::login_uri(); ?>"><i class="fa fa-lock"></i> <?php _e(SB_WP::phrase("login"), SB_DOMAIN); ?></a>
+        <a href="<?php SB_WP::login_uri(); ?>"><i class="fa fa-lock"></i> <?php _e(SB_WP::phrase("login"), SB_DOMAIN); ?></a>
         <?php
     }
 
@@ -603,7 +604,7 @@ class SB_Theme {
         $form_class = trim($form_class.' search-form');
         ?>
         <div class="sb-search">
-            <form role="search" method="get" class="<?php echo $form_class; ?>" action="<?php echo esc_url(home_url('/')); ?>">
+            <form method="get" class="<?php echo $form_class; ?>" action="<?php echo esc_url(home_url('/')); ?>">
                 <label>
                     <span class="screen-reader-text"><?php echo $label_text; ?></span>
                     <input type="search" class="search-field" placeholder="<?php echo $placeholder_text; ?>" value="" name="s">
@@ -771,6 +772,81 @@ class SB_Theme {
 				break;
 		}
 	}
+
+    public static function carousel_navigation($args = array()) {
+        $id = "";
+        $count = 0;
+        extract($args, EXTR_OVERWRITE);
+        if(!is_numeric($count) || 0 == $count || empty($id)) {
+            return;
+        }
+        ?>
+        <ol class="carousel-indicators sb-carousel-navigation">
+            <?php for($i = 0; $i < $count; $i++) : $class = "indicator"; if(0 == $i) $class .= ' active'; ?>
+                <li data-target="#<?php echo $id; ?>" data-slide-to="<?php echo $i; ?>" class="<?php echo $class; ?>"></li>
+            <?php endfor; ?>
+        </ol>
+        <?php
+    }
+
+    public static function carousel_before($args = array()) {
+        $id = "";
+        $class = "";
+        extract($args, EXTR_OVERWRITE);
+        if(empty($id)) {
+            return;
+        }
+        $class = SB_PHP::add_string_unique($class, " carousel");
+        $class = SB_PHP::add_string_unique($class, " slide");
+        printf('<div id="%1$s" class="%2$s"><div class="carousel-inner">', $id, $class);
+    }
+
+    public static function carousel_after($args = array()) {
+        $id = "";
+        $count = 0;
+        extract($args, EXTR_OVERWRITE);
+        echo '</div>';
+        self::carousel_navigation($args);
+        echo '</div>';
+        self::carousel_control($args);
+    }
+
+    public static function carousel_control($args = array()) {
+        $id = "";
+        extract($args, EXTR_OVERWRITE);
+        if(!is_numeric($id) || 0 == $id) {
+            return;
+        }
+        ?>
+        <div class="slide-control sb-carousel-control">
+            <a data-slide="prev" href="#<?php echo $id; ?>" class="prev"><i class="fa fa-angle-left"></i></a>
+            <a data-slide="next" href="#<?php echo $id; ?>" class="next"><i class="fa fa-angle-right"></i></a>
+        </div>
+        <?php
+    }
+
+    public static function the_cart() {
+        SB_WP::the_cart();
+    }
+
+    public static function tab_content_control($args = array()) {
+        $tabs = array();
+        extract($args, EXTR_OVERWRITE);
+        if(!is_array($tabs) || count($tabs) < 1) {
+            return;
+        }
+        $first_tab = array_shift($tabs);
+        ?>
+        <ul class="nav nav-pills">
+            <?php $icon = (isset($first_tab['icon']) && !empty($first_tab['icon'])) ? 'fa-'.$first_tab['icon'] : 'none'; ?>
+            <li class="active sb-tab"><i class="fa <?php echo $icon; ?>"></i> <a data-toggle="tab" href="#<?php echo $first_tab['id']; ?>"><?php echo $first_tab['text']; ?></a></li>
+            <?php foreach($tabs as $tab) : ?>
+                <?php $icon = (isset($tab['icon']) && !empty($tab['icon'])) ? 'fa-'.$tab['icon'] : 'none'; ?>
+                <li class="sb-tab"><i class="fa <?php echo $icon; ?>"></i> <a data-toggle="tab" href="#<?php echo $tab['id']; ?>"><?php echo $tab['text']; ?></a></li>
+            <?php endforeach; ?>
+        </ul>
+        <?php
+    }
 	
 }
 ?>

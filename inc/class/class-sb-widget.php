@@ -2,8 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
+
 class SB_Widget {
 	public $widgets = array(
 		'SB_Post_Widget',
@@ -48,4 +47,3 @@ class SB_Widget {
 		}
 	}
 }
-?>

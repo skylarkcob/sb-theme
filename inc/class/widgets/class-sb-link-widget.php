@@ -2,8 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
+
 class SB_Link_Widget extends WP_Widget {
     private $link_type = array(
         "link"      => "WP Links",

@@ -2,9 +2,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
-if ( !defined( 'ABSPATH' ) ) exit;
 
 class SB_Hook {
 	private $styles = array();
@@ -164,6 +161,8 @@ class SB_Hook {
             add_filter('woocommerce_cart_shipping_method_full_label', array($this, 'sbtheme_shipping_label'));
             add_filter('woocommerce_order_button_text', array($this, 'sbtheme_order_button_text'));
             add_filter('woocommerce_default_address_fields', array($this, 'sbtheme_default_address_fields'));
+            add_filter('woocommerce_catalog_orderby', array($this, 'sbtheme_product_sort_default'));
+            add_filter('add_to_cart_fragments', array($this, 'sbtheme_auto_update_cart'));
         }
 	}
 
@@ -257,6 +256,25 @@ class SB_Hook {
         );
         return $fields;
     }
+
+    public function sbtheme_product_sort_default() {
+        $args = array(
+            'menu_order' => __( SB_WP::phrase('default_sorting'), SB_DOMAIN ),
+            'popularity' => __( SB_WP::phrase('sort_by_popularity'), SB_DOMAIN ),
+            'rating'     => __( SB_WP::phrase('sort_by_rating'), SB_DOMAIN ),
+            'date'       => __( SB_WP::phrase('sort_by_newness'), SB_DOMAIN ),
+            'price'      => __( SB_WP::phrase('sort_by_price_asc'), SB_DOMAIN ),
+            'price-desc' => __( SB_WP::phrase('sort_by_price_desc'), SB_DOMAIN )
+        );
+        return $args;
+    }
+
+    public function sbtheme_auto_update_cart( $fragments ) {
+        ob_start();
+        SB_Theme::the_cart();
+        $fragments['div.cart-group'] = ob_get_clean();
+        return $fragments;
+    }
 	
 	public function sbtheme_translation_all($translated_text) {
 		$punctuation = SB_PHP::get_punctuation($translated_text);
@@ -265,6 +283,15 @@ class SB_Hook {
 		switch($str_text) {
             case 'remove':
                 $translated_text = SB_WP::phrase('remove').$punctuation;
+                break;
+            case 'product successfully removed':
+                $translated_text = SB_WP::phrase('product_successfully_removed').$punctuation;
+                break;
+            case 'no products were added to the wishlist':
+                $translated_text = SB_WP::phrase('no_product_in_wishlist').$punctuation;
+                break;
+            case 'product added':
+                $translated_text = SB_WP::phrase('product_added').$punctuation;
                 break;
             case 'availability':
                 $translated_text = SB_WP::phrase('availability').$punctuation;

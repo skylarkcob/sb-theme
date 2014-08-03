@@ -2,8 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
+
 class SB_Support_Widget extends WP_Widget {
     public function __construct() {
         parent::__construct( 'sb_support_widget', __( 'SB Support', SB_DOMAIN ), array(
@@ -46,7 +45,7 @@ class SB_Support_Widget extends WP_Widget {
                     $y_accounts = explode(',', $list_yahoo);
                     foreach($y_accounts as $acc) {
                         $acc = trim($acc);
-                        $yahoo .= sprintf('<a href="ymsgr:SendIM?%1$s"><img align="middle" border="0" alt="Yahoo Messenger" src="http://opi.yahoo.com/online?u=%2$s&amp;m=g&amp;t=1&amp;l=us"></a> ', $acc, $acc);
+                        $yahoo .= sprintf('<a href="ymsgr:SendIM?%1$s"><img alt="Yahoo Messenger" src="http://opi.yahoo.com/online?u=%2$s&amp;m=g&amp;t=1&amp;l=us"></a> ', $acc, $acc);
                     }
                     $yahoo = trim($yahoo);
                     ?>

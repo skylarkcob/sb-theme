@@ -2,8 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-?>
-<?php
+
 class SB_WP {
 	public static function get_redirect_uri() {
 		if(is_single() || is_page()) {
@@ -133,7 +132,7 @@ class SB_WP {
     }
 
     public static function get_cart() {
-        return '<a class="cart-content" href="'.self::get_cart_uri().'" title="Thông tin giỏ hàng"><span class="product-number">'.sprintf(_n('%d sản phẩm', '%d sản phẩm', self::count_cart(), 'sbwp'), self::count_cart()).'</span><span class="sep"> - </span>'.self::cart_total().'</a>';
+        return '<a class="cart-content" href="'.self::get_cart_uri().'" title="'.SB_WP::phrase('cart_content').'"><span class="product-number">'.sprintf(_n('%d '.SB_WP::phrase('product'), '%d '.SB_WP::phrase('products'), self::count_cart(), 'sbwp'), self::count_cart()).'</span><span class="sep"> - </span>'.self::cart_total().'</a>';
     }
 
     public static function the_cart() {
@@ -191,6 +190,29 @@ class SB_WP {
 		}
 		return $result;
 	}
+
+    public static function get_list_yahoo() {
+        $options = self::option();
+        $kq = array();
+        if(isset($options['list_yahoo'])) {
+            $list_yahoo = $options['list_yahoo'];
+            $list_yahoo = SB_PHP::paragraph_to_array($list_yahoo);
+            foreach($list_yahoo as $yahoo) {
+                $item = explode(",", $yahoo);
+                $text = "";
+                $username = "";
+                if(count($item) > 0) {
+                    $text = trim($item[0]);
+                }
+                if(count($item) > 1) {
+                    $username = trim($item[1]);
+                }
+                $account = array("text" => $text, "username" => $username);
+                array_push($kq, $account);
+            }
+        }
+        return $kq;
+    }
 	
 	public static function category_has_child($cat_id) {
 		$cats = get_categories(array("hide_empty" => 0, "parent" => $cat_id));
@@ -666,7 +688,24 @@ class SB_WP {
 	public static function register_form() {
 		
 	}
-	
+
+    public static function get_wishlist_url() {
+        $page_id = get_option("yith_wcwl_wishlist_page_id");
+        return get_page_link($page_id);
+    }
+
+    public static function get_page_by_slug($slug) {
+        return get_page_by_path($slug);
+    }
+
+    public static function get_account_url() {
+        return self::get_account_uri();
+    }
+
+    public static function get_cart_url() {
+        return self::get_cart_uri();
+    }
+
 	public static function bbpress_login_url() {
 		$kq = "";
 		$login_page = get_page_by_path('login');
@@ -766,15 +805,97 @@ class SB_WP {
         $defaults = array(
             'post_type'         => 'product',
             'posts_per_page'	=> 8,
-            'params'			=> array(
-                'tax_query'		=> array(
-                    array(
-                        'taxonomy'	=> 'product_cat',
-                        'field'		=> 'id',
-                        'terms'		=> $cat->term_id
-                    )
+            'tax_query'		=> array(
+                array(
+                    'taxonomy'	=> 'product_cat',
+                    'field'		=> 'id',
+                    'terms'		=> $cat->term_id
                 )
             )
+        );
+        $args = wp_parse_args($args, $defaults);
+        return new WP_Query($args);
+    }
+
+    public static function get_product_best_sell_by_category($cat, $args = array()) {
+        $defaults = array(
+            'post_type'         => 'product',
+            'posts_per_page'	=> 8,
+            'meta_key'			=> 'total_sales',
+            'orderby'			=> 'meta_value',
+            'tax_query'		    => array(
+                array(
+                    'taxonomy'	=> 'product_cat',
+                    'field'		=> 'id',
+                    'terms'		=> $cat->term_id
+                )
+            )
+        );
+        $args = wp_parse_args($args, $defaults);
+        return new WP_Query($args);
+    }
+
+    public static function get_product_sale($args = array()) {
+        $defaults = array(
+            'post_type'         => 'product',
+            'posts_per_page'    => 8,
+            'meta_query'        => array(
+                'relation' => 'OR',
+                array(
+                    'key'           => '_sale_price',
+                    'value'         => 0,
+                    'compare'       => '>',
+                    'type'          => 'numeric'
+                ),
+                array(
+                    'key'           => '_min_variation_sale_price',
+                    'value'         => 0,
+                    'compare'       => '>',
+                    'type'          => 'numeric'
+                )
+            )
+        );
+        $args = wp_parse_args($args, $defaults);
+        return new WP_Query($args);
+    }
+
+    public static function get_product_sale_by_category($cat, $args = array()) {
+        $defaults = array(
+            'post_type'         => 'product',
+            'posts_per_page'    => 8,
+            'meta_query'        => array(
+                'relation' => 'OR',
+                array(
+                    'key'           => '_sale_price',
+                    'value'         => 0,
+                    'compare'       => '>',
+                    'type'          => 'numeric'
+                ),
+                array(
+                    'key'           => '_min_variation_sale_price',
+                    'value'         => 0,
+                    'compare'       => '>',
+                    'type'          => 'numeric'
+                )
+            ),
+            'tax_query'		    => array(
+                array(
+                    'taxonomy'	=> 'product_cat',
+                    'field'		=> 'id',
+                    'terms'		=> $cat->term_id
+                )
+            )
+        );
+        $args = wp_parse_args($args, $defaults);
+        return new WP_Query($args);
+    }
+
+    public static function get_product_best_sell($args = array()) {
+        $defaults = array(
+            'post_type'         => 'product',
+            'posts_per_page'    => 8,
+            'meta_key'			=> 'total_sales',
+            'orderby'			=> 'meta_value'
         );
         $args = wp_parse_args($args, $defaults);
         return new WP_Query($args);

@@ -12,9 +12,11 @@ $sb_post = new SB_Post();
 				$int_count = get_comments_number();
 				printf( _n( '1 '.SB_PHP::lowercase(SB_WP::phrase('comment')), '%1$s '.SB_PHP::lowercase(SB_WP::phrase('comments')), $int_count, SB_DOMAIN ), number_format_i18n( $int_count ) );
 			?>
-			<span class="yours"><a href="#leaveyourcomment"><?php _e(SB_WP::phrase('add_your_comment'), SB_DOMAIN); ?></a></span>
+			<span class="yours"><a href="<?php the_permalink(); ?>#leaveyourcomment"><?php _e(SB_WP::phrase('add_your_comment'), SB_DOMAIN); ?></a></span>
 		</div>
+
 		<?php SB_Theme::comment_navigation( 'above' ); ?>
+
 		<ol class="comment-list">
 			<?php
 				wp_list_comments( array(
@@ -25,14 +27,18 @@ $sb_post = new SB_Post();
 					'callback'		=> 'sbtheme_comment_callback'
 				) );
 			?>
-		</ol><!-- .comment-list -->
+		</ol>
+
 		<?php SB_Theme::comment_navigation( 'below' ); ?>
+
 	<?php endif; // have_comments() ?>
-	<?php if ( ! $sb_post->is_comment_allowed() ) : ?>
-			<p class="no-comments"><h5><?php _e( SB_PHP::add_dotted(SB_WP::phrase('comment_closed')), SB_DOMAIN ); ?><h5></p>
-	<?php else : ?>
-		<?php comment_form( SB_Theme::comment_form_args() ); ?>
-	<?php endif; ?>
+
+    <?php if ( ! $sb_post->is_comment_allowed() ) : ?>
+        <p class="no-comments"><?php _e( SB_PHP::add_dotted(SB_WP::phrase('comment_closed')), SB_DOMAIN ); ?></p>
+    <?php else : ?>
+        <?php comment_form( SB_Theme::comment_form_args() ); ?>
+    <?php endif; ?>
+
 </div><!-- #comments -->
 <?php
 function sbtheme_comment_callback( $comment, $args, $depth ) {

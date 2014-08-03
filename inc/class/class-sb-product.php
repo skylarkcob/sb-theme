@@ -44,8 +44,6 @@ class SB_Product extends WC_Product {
         echo $this->get_add_to_cart_button();
     }
 
-
-
     public function get_price($type = "price") {
         $product = $this->product;
         $price = 0;
@@ -97,8 +95,12 @@ class SB_Product extends WC_Product {
         return false;
     }
 
-    public function sale_percentage() {
-        echo '-'.SB_PHP::percentage($this->get_price('sale'), $this->get_price('regular'), 2).'%';
+    public function sale_percentage($precision = 2) {
+        echo '-'.$this->get_sale_percentage($precision).'%';
+    }
+
+    public function get_sale_percentage($precision = 2) {
+        return SB_PHP::percentage($this->get_price('sale'), $this->get_price('regular'), $precision);
     }
 
     public function get_bulk_discount() {
