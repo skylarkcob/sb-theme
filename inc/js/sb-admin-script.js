@@ -93,13 +93,14 @@ jQuery(document).ready(function($){
 				return false;
 			});
 		});
-		
+
+        /*
 		window.original_send_to_editor = window.send_to_editor;
 		window.send_to_editor = function(html) {
 			if(optionField) {
 				var imageUrl = $('img',html).attr('src');
 				uploadCaller.val(imageUrl);
-				tb_remove();
+
 				var mediaThumbnailBox = uploadCaller.closest("div.sbtheme-media-image").find("div.sbtheme.media.image");
 				mediaThumbnailBox.addClass("uploaded");
 				mediaThumbnailBox.html('<img src="' + imageUrl + '">');
@@ -107,7 +108,9 @@ jQuery(document).ready(function($){
 			} else {
 				window.original_send_to_editor(html);
 			}
+            tb_remove();
 		}
+		*/
 		
 		sbOption.find("div.sbtheme-media-image").each(function(){
 			var mediaGroup = $(this);

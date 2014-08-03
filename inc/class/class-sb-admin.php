@@ -144,6 +144,8 @@ class SB_Admin {
 		</div>
 		<?php
 	}
+
+
 	
 	private function set_select_field($name, $description) {
 		$this->set_field($name, $description, 'select');
@@ -175,6 +177,8 @@ class SB_Admin {
 	}
 	
 	private function add_home_field_setting() {
+        $this->add_home_field("main_slider", SB_WP::phrase("main_slider"), "main_slider_callback");
+        $this->add_home_field("sub_slider", SB_WP::phrase("sub_slider"), "sub_slider_callback");
 		if(SB_WP::enable_tivi()) {
 			$this->add_home_field("default_tivi", SB_WP::phrase("default_tivi"), "default_tivi_callback");
 		}
@@ -207,6 +211,26 @@ class SB_Admin {
 		<p class="description"><?php echo SB_PHP::add_dotted(SB_WP::phrase("default_tivi_description")); ?></p>
 		<?php
 	}
+
+    public function main_slider_callback() {
+        $args = array(
+            "media_buttons" => true,
+            "wpautop"       => true,
+            "quicktags"     => false,
+            "textarea_rows" => 10
+        );
+        $this->rich_editor_field('main_slider', SB_PHP::add_dotted(SB_WP::phrase('main_slider_setting_description')), $args);
+    }
+
+    public function sub_slider_callback() {
+        $args = array(
+            "media_buttons" => true,
+            "wpautop"       => true,
+            "quicktags"     => false,
+            "textarea_rows" => 10
+        );
+        $this->rich_editor_field('sub_slider', SB_PHP::add_dotted(SB_WP::phrase('main_slider_setting_description')), $args);
+    }
 	
 	/*
 	 * Tạo cài đặt thông tin mạng xã hội
@@ -472,6 +496,8 @@ class SB_Admin {
         $new_input['enable_links_manager'] = $this->set_input_data($input, 'enable_links_manager', 'bool-nummber');
 		
 		$new_input['default_tivi'] = $this->set_input_data($input, 'default_tivi', 'int-nummber');
+        $new_input['main_slider'] = $this->set_input_data($input, 'main_slider', 'html');
+        $new_input['sub_slider'] = $this->set_input_data($input, 'sub_slider', 'html');
 		
         return $new_input;
     }

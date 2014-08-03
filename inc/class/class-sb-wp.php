@@ -89,6 +89,32 @@ class SB_WP {
         return get_terms("product_cat", $args);
     }
 
+    public static function format_price($args = array()) {
+        $suffix = "₫";
+        $prefix = "";
+        $price = 0;
+        $decimals = 0;
+        $dec_point = ',';
+        $thousands_sep = '.';
+        $has_space = true;
+        extract($args, EXTR_OVERWRITE);
+        if($has_space) {
+            if(!empty($suffix)) {
+                $suffix = ' '.$suffix;
+            }
+            if(!empty($prefix)) {
+                $prefix .= ' ';
+            }
+        }
+        $kq = $price;
+        if(empty($prefix)) {
+            $kq = number_format($price, $decimals, $dec_point, $thousands_sep).$suffix;
+        } elseif(empty($suffix)) {
+            $kq = $prefix.number_format($price, $decimals, $dec_point, $thousands_sep);
+        }
+        return $kq;
+    }
+
     public static function get_payment_uri() {
         $payment_page = get_permalink( woocommerce_get_page_id( 'pay' ) );
         if ( get_option( 'woocommerce_force_ssl_checkout' ) == 'yes' ) $payment_page = str_replace( 'http:', 'https:', $payment_page );
@@ -689,6 +715,32 @@ class SB_WP {
 		
 	}
 
+    public static function get_slider($id) {
+        $options = self::option();
+        $kq = array();
+        if(isset($options[$id])) {
+            $lines = $options[$id];
+            $lines = SB_PHP::paragraph_to_array($lines);
+            foreach($lines as $line) {
+                $items = explode(",", $line);
+                $text = "";
+                $link = "";
+                $url = "";
+                if(count($items) > 0) {
+                    $text = trim($items[0]);
+                }
+                if(count($items) > 1) {
+                    $link = trim($items[1]);
+                }
+                if(count($items) > 2) {
+                    $url = trim($items[2]);
+                }
+                array_push($kq, array("text" => $text, "link" => $link, "url" => $url));
+            }
+        }
+        return $kq;
+    }
+
     public static function get_wishlist_url() {
         $page_id = get_option("yith_wcwl_wishlist_page_id");
         return get_page_link($page_id);
@@ -704,6 +756,18 @@ class SB_WP {
 
     public static function get_cart_url() {
         return self::get_cart_uri();
+    }
+
+    public static function get_current_user() {
+        return wp_get_current_user();
+    }
+
+    public static function is_logged_in() {
+        return is_user_logged_in();
+    }
+
+    public static function get_logout_url() {
+        return wp_logout_url();
     }
 
 	public static function bbpress_login_url() {

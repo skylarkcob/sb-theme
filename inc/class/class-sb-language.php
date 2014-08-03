@@ -101,6 +101,18 @@ class SB_Language {
         $this->overwrite_translator("vi", "online_support", "Hỗ trợ trực tuyến");
         $this->overwrite_translator("en", "online_support", "Online support");
 
+        $this->overwrite_translator("vi", "main_slider", "Slider chính");
+        $this->overwrite_translator("en", "main_slider", "Main slider");
+
+        $this->overwrite_translator("vi", "sub_slider", "Slider phụ");
+        $this->overwrite_translator("en", "sub_slider", "Sub slider");
+
+        $this->overwrite_translator("vi", "hello_user", 'Chào bạn %1$s');
+        $this->overwrite_translator("en", "hello_user", 'Welcome %1$s');
+
+        $this->overwrite_translator("vi", "main_slider_setting_description", "Nhập danh sách hình ảnh cho slider, mỗi nhóm là một dòng bao gồm tiêu đề, link bài viết và link hình ảnh");
+        $this->overwrite_translator("en", "main_slider_setting_description", "Enter list images for slider, each line includes a text label, image link and image url separated by commas");
+
         $this->overwrite_translator("vi", "list_yahoo_support_description", "Nhập danh sách tài khoản Yahoo, mỗi nhóm là một dòng bao gồm tên hiển thị và tên tài khoản cách nhau bởi dấu phẩy");
         $this->overwrite_translator("en", "list_yahoo_support_description", "Enter list Yahoo account, each line includes a display name and account names separated by commas");
 
@@ -905,8 +917,23 @@ class SB_Language {
         $this->overwrite_translator("vi", "in_stock", "Còn hàng");
         $this->overwrite_translator("en", "in_stock", "In stock");
 
+        $this->overwrite_translator("vi", "out_of_stock", "Hết hàng");
+        $this->overwrite_translator("en", "out_of_stock", "Out of stock");
+
         $this->overwrite_translator("vi", "unit_price", "Giá");
         $this->overwrite_translator("en", "unit_price", "Unit price");
+
+        $this->overwrite_translator("vi", "write_product_review", "Viết nhận xét về sản phẩm");
+        $this->overwrite_translator("en", "write_product_review", "Write review for product");
+
+        $this->overwrite_translator("vi", "status", "Tình trạng");
+        $this->overwrite_translator("en", "status", "Status");
+
+        $this->overwrite_translator("vi", "weight", "Trọng lượng");
+        $this->overwrite_translator("en", "weight", "Weight");
+
+        $this->overwrite_translator("vi", "brand", "Thương hiệu");
+        $this->overwrite_translator("en", "brand", "Brand");
 
         $this->overwrite_translator("vi", "stock_status", "Tình trạng");
         $this->overwrite_translator("en", "stock_status", "Stock status");

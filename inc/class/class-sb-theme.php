@@ -373,9 +373,82 @@ class SB_Theme {
 	}
 	
 	public static function addthis_share_button() {
-		echo '<div class="addthis_native_toolbox"></div>';
+		echo '<div class="sb-addthis"><div class="addthis_native_toolbox"></div></div>';
 	}
-	
+
+    public static function product_detail() {
+        $sb_product = new SB_Product();
+        ?>
+        <div class="sb-product-details">
+            <h2 class="product-name entry-title"><?php the_title(); ?></h2>
+            <dl>
+                <?php
+                $price = $sb_product->get_price();
+                $stock = $sb_product->get_stock_status();
+                $weight = $sb_product->get_weight();
+                $brand = $sb_product->get_brand();
+                $category = $sb_product->get_category();
+                $tag = $sb_product->get_tag();
+                ?>
+                <dt class="price"><?php _e(SB_PHP::add_colon(SB_WP::phrase("price")), SB_DOMAIN); ?></dt>
+                <dd class="price"><?php echo SB_WP::format_price(array("price" => $price)); ?></dd>
+
+                <dt><?php _e(SB_PHP::add_colon(SB_WP::phrase("status")), SB_DOMAIN); ?></dt>
+                <dd class="available"><?php echo $stock; ?></dd>
+
+                <dt><?php _e(SB_PHP::add_colon(SB_WP::phrase("weight")), SB_DOMAIN); ?></dt>
+                <dd><?php echo $weight; ?></dd>
+
+                <?php if(!empty($brand)) : ?>
+                <dt class="size"><?php _e(SB_PHP::add_colon(SB_WP::phrase("brand")), SB_DOMAIN); ?></dt>
+                <dd class="size">
+                    <a href="javascript:;"><?php echo $brand; ?></a>
+                </dd>
+                <?php endif; ?>
+
+                <?php if(!empty($category)) : ?>
+                <dt><?php _e(SB_PHP::add_colon(SB_WP::phrase("category")), SB_DOMAIN); ?></dt>
+                <dd><?php echo $category; ?></dd>
+                <?php endif; ?>
+
+                <?php if(!empty($tag)) : ?>
+                <dt>Tags:</dt>
+                <dd><?php echo $tag; ?></dd>
+                <?php endif; ?>
+
+            </dl>
+            <div class="product-review">
+                <?php self::product_rate_result(); ?>
+                <a class="new-review" href="#comment"><?php _e(SB_WP::phrase("write_product_review"), SB_DOMAIN); ?></a>
+                <?php SB_Theme::addthis_share_button(); ?>
+            </div>
+        </div>
+        <?php
+    }
+
+    public static function product_rate_result() {
+        global $product;
+
+        if ( get_option( 'woocommerce_enable_review_rating' ) === 'no' )
+            return;
+
+        $count   = $product->get_rating_count();
+        $average = $product->get_average_rating();
+
+        if ( $count > 0 ) : ?>
+
+            <div class="woocommerce-product-rating" itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+                <div class="star-rating" title="<?php printf( __( 'Rated %s out of 5', 'woocommerce' ), $average ); ?>">
+			<span style="width:<?php echo ( ( $average / 5 ) * 100 ); ?>%">
+				<strong itemprop="ratingValue" class="rating"><?php echo esc_html( $average ); ?></strong> <?php _e( 'out of 5', 'woocommerce' ); ?>
+			</span>
+                </div>
+                <a href="#reviews" class="woocommerce-review-link" rel="nofollow">(<?php printf( _n( '%s customer review', '%s customer reviews', $count, 'woocommerce' ), '<span itemprop="ratingCount" class="count">' . $count . '</span>' ); ?>)</a>
+            </div>
+
+        <?php endif;
+    }
+
 	public static function option() {
 		global $sb_options;
 		$sb_options = new SB_Option();
@@ -581,6 +654,34 @@ class SB_Theme {
         <?php
     }
 
+    public static function welcome_account($args = array()) {
+        if(is_user_logged_in()) {
+            $user = SB_WP::get_current_user();
+            $account_url = "";
+            extract($args, EXTR_OVERWRITE);
+            if(empty($account_url)) {
+                if(SB_WP::is_woocommerce_installed()) {
+                    $account_url = SB_WP::get_account_url();
+                } else {
+                    //$account_url = SB_W
+                }
+            }
+            $hello_user = sprintf(__(SB_WP::phrase("hello_user"), SB_DOMAIN), $user->user_nicename);
+            printf('<a href="%1$s" title=""><i class="fa fa-lock"></i> %2$s</a>', $account_url, $hello_user);
+        }
+    }
+
+    public static function welcome_account_link($args = array()) {
+        self::welcome_account($args);
+    }
+
+
+
+    public static function logout_link() {
+        if(SB_WP::is_logged_in()) {
+            printf('<a href="%1$s" title=""><i class="fa fa-key"></i> %2$s</a>', SB_WP::get_logout_url(), __(SB_WP::phrase("logout"), SB_DOMAIN));
+        }
+    }
 
 
     public static function register_link() {
@@ -776,6 +877,8 @@ class SB_Theme {
     public static function carousel_navigation($args = array()) {
         $id = "";
         $count = 0;
+        $items = array();
+        $control_type = "button";
         extract($args, EXTR_OVERWRITE);
         if(!is_numeric($count) || 0 == $count || empty($id)) {
             return;
@@ -783,7 +886,21 @@ class SB_Theme {
         ?>
         <ol class="carousel-indicators sb-carousel-navigation">
             <?php for($i = 0; $i < $count; $i++) : $class = "indicator"; if(0 == $i) $class .= ' active'; ?>
-                <li data-target="#<?php echo $id; ?>" data-slide-to="<?php echo $i; ?>" class="<?php echo $class; ?>"></li>
+                <li data-target="#<?php echo $id; ?>" data-slide-to="<?php echo $i; ?>" class="<?php echo $class; ?>">
+                    <?php
+                    if(count($items) > $i) {
+                        if("text" == $control_type) {
+                            $link = $items[$i]["link"];
+                            $text = $items[$i]["text"];
+                            printf('<a href="%1$s" title="">%2$s</a>', $link, $text);
+                        } elseif ("image" == $control_type) {
+                            $link = $items[$i]["link"];
+                            $image = $items[$i]["url"];
+                            printf('<a href="%1$s" title=""><img src="%2$s" alt=""></a>', $link, $image);
+                        }
+                    }
+                    ?>
+                </li>
             <?php endfor; ?>
         </ol>
         <?php
@@ -802,9 +919,6 @@ class SB_Theme {
     }
 
     public static function carousel_after($args = array()) {
-        $id = "";
-        $count = 0;
-        extract($args, EXTR_OVERWRITE);
         echo '</div>';
         self::carousel_navigation($args);
         echo '</div>';
@@ -813,8 +927,9 @@ class SB_Theme {
 
     public static function carousel_control($args = array()) {
         $id = "";
+        $hide_control = true;
         extract($args, EXTR_OVERWRITE);
-        if(!is_numeric($id) || 0 == $id) {
+        if(empty($id) || $hide_control) {
             return;
         }
         ?>

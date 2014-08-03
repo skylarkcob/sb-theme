@@ -8,11 +8,16 @@ jQuery(document).ready(function($){
 			$(this).superfish();
 		});
 	}
-	
+
 	var bootstrapCarousel = $('.carousel');
 	if(bootstrapCarousel.length) {
 		$("body").find(bootstrapCarousel).each(function(){
-			//$(this).carousel();
+            /*
+			$(this).carousel({
+                pause: true,
+                interval: 3000
+            });
+            */
 		});
 	}
 	

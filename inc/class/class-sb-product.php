@@ -44,6 +44,47 @@ class SB_Product extends WC_Product {
         echo $this->get_add_to_cart_button();
     }
 
+    public function get_stock_status() {
+        if($this->product->is_in_stock()) {
+            return __(SB_WP::phrase("in_stock"), SB_DOMAIN);
+        }
+        return __(SB_WP::phrase("out_of_stock"), SB_DOMAIN);
+    }
+
+    public function get_tag($args = array()) {
+        $separate_by = ', ';
+        extract($args, EXTR_OVERWRITE);
+        return $this->product->get_tags($separate_by, '', '');
+    }
+
+    public function get_category($args = array()) {
+        $separate_by = ', ';
+        extract($args, EXTR_OVERWRITE);
+        return $this->product->get_categories($separate_by, '', '');
+    }
+
+    public function get_weight() {
+        $lang = SB_WP::get_current_language();
+        $weight_id = "trong-luong";
+        if("en" == $lang) {
+            $weight_id = "weight";
+        }
+        $weight = $this->product->get_attribute($weight_id);
+        if(empty($weight)) {
+            $weight = '0.00g';
+        }
+        return $weight;
+    }
+
+    public function get_brand() {
+        $lang = SB_WP::get_current_language();
+        $attr = "thuong-hieu";
+        if("en" == $lang) {
+            $attr = "brand";
+        }
+        return $this->product->get_attribute($attr);
+    }
+
     public function get_price($type = "price") {
         $product = $this->product;
         $price = 0;
