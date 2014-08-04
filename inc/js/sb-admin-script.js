@@ -1,6 +1,7 @@
 jQuery(document).ready(function($){
 	// Biến field chứa đường dẫn image từ media
 	var formField;
+    var body = $("body");
 	
 	/*
 	 *	SB Post Widget
@@ -88,6 +89,7 @@ jQuery(document).ready(function($){
 			var insertMediaButton = $(this);
 			insertMediaButton.click(function(){
 				uploadCaller = $(this).closest("div.sbtheme-upload").find("input");
+                formField = uploadCaller;
 				optionField = uploadCaller.attr("name");
 				tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
 				return false;
@@ -193,6 +195,13 @@ jQuery(document).ready(function($){
 		if(formField) {
 			var imageUrl = $('img', html).attr('src');
 			formField.val(imageUrl);
+
+            var mediaThumbnailBox = formField.closest("div.sbtheme-media-image").find("div.sbtheme.media.image");
+            if(mediaThumbnailBox.length) {
+                mediaThumbnailBox.addClass("uploaded");
+                mediaThumbnailBox.html('<img src="' + imageUrl + '">');
+            }
+
 			formField = '';
 		} else {
 			window.original_send_to_editor(html);

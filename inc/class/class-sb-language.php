@@ -929,6 +929,21 @@ class SB_Language {
         $this->overwrite_translator("vi", "status", "Tình trạng");
         $this->overwrite_translator("en", "status", "Status");
 
+        $this->overwrite_translator("vi", "customer_review", "Nhận xét từ khách hàng");
+        $this->overwrite_translator("en", "customer_review", "Customer review");
+
+        $this->overwrite_translator("vi", "out_of_5", 'Trên 5');
+        $this->overwrite_translator("en", "out_of_5", 'Out of 5');
+
+        $this->overwrite_translator("vi", "x_out_of_5", '%1$s trên 5');
+        $this->overwrite_translator("en", "x_out_of_5", '%1$s out of 5');
+
+        $this->overwrite_translator("vi", "rated_x_out_of_5", 'Được đánh giá %1$s trên 5');
+        $this->overwrite_translator("en", "rated_x_out_of_5", 'Rated %1$s out of 5');
+
+        $this->overwrite_translator("vi", "customer_reviews", "Nhận xét từ khách hàng");
+        $this->overwrite_translator("en", "customer_reviews", "Customer reviews");
+
         $this->overwrite_translator("vi", "weight", "Trọng lượng");
         $this->overwrite_translator("en", "weight", "Weight");
 

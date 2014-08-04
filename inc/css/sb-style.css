@@ -570,6 +570,14 @@ img {
     margin: 0 0 5px;
 }
 
+.woocommerce .star-rating, .woocommerce-page .star-rating {
+    width: 6.4em;
+}
+
+.woocommerce .star-rating span:before, .woocommerce-page .star-rating span:before {
+
+}
+
 .sb-product-details .new-review {
     display: block;
     font-weight: 700;
@@ -656,7 +664,10 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
 }
 
 .single div.woocommerce-product-rating .star-rating {
-	margin-top: 3px;
+    color: #ff9900;
+    letter-spacing: 1px;
+    line-height: 11px;
+    margin-top: 3px;
 }
 
 .woocommerce .woocommerce-message:before, .woocommerce .woocommerce-error:before, .woocommerce .woocommerce-info:before, .woocommerce-page .woocommerce-message:before, .woocommerce-page .woocommerce-error:before, .woocommerce-page .woocommerce-info:before {

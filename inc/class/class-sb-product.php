@@ -104,6 +104,22 @@ class SB_Product extends WC_Product {
         return $price;
     }
 
+    public function get_related($args = array()) {
+        $posts_per_page = 5;
+        $defaults = array(
+            'post_type'            => 'product',
+            'ignore_sticky_posts'  => 1,
+            'no_found_rows'        => 1,
+            'posts_per_page'       => $posts_per_page
+        );
+        $args = wp_parse_args($args, $defaults);
+        extract($args, EXTR_OVERWRITE);
+        $related = $this->product->get_related($posts_per_page);
+        $args["post__in"] = $related;
+        $args["post__not_in"] = array($this->product->ID);
+        return new WP_Query($args);
+    }
+
     public function price() {
         $price = $this->get_price();
         if(0 == $price) {

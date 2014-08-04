@@ -67,4 +67,14 @@ class SB_Option {
 	public function get_linkedin_uri() {
 		return $this->get('linkedin');
 	}
+
+    public function change_data_url($old_url, $new_url) {
+        if(0 == strcmp($old_url, $new_url)) return;
+        foreach($this->option as $key => $option) {
+            if(SB_PHP::is_string_contain($option, $old_url)) {
+                $option = str_replace($old_url, $new_url, $option);
+                $this->update($key, $option);
+            }
+        }
+    }
 }

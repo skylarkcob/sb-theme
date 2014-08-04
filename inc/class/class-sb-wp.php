@@ -23,8 +23,8 @@ class SB_WP {
 		return get_permalink(get_page_by_path($slug));
 	}
 	
-	public static function remove_trailing_slash($string) {
-		return untrailingslashit($string);
+	public static function add_trailing_slash($string) {
+		return trailingslashit($string);
 	}
 	
 	public static function get_login_uri() {
@@ -441,10 +441,10 @@ class SB_WP {
 	}
 	
 	public static function change_url( $url ) {
-
+        $url = SB_WP::remove_trailing_slash($url);
 		if ( SB_PHP::is_url_valid( $url ) ) {
 			$old_url = get_option( 'siteurl' );
-			
+			$old_url = SB_WP::remove_trailing_slash($old_url);
 			if ( strcmp( $old_url, $url ) != 0 ) {
 				self::update_permalink( '/%postname%' );
 				update_option( 'siteurl', $url );
@@ -455,16 +455,22 @@ class SB_WP {
 				}
 				
 			}
-			
+
+            $option = new SB_Option();
+            $option->change_data_url($old_url, $url);
+
 			$old_url = get_option( 'home' );
-			
+            $old_url = SB_WP::remove_trailing_slash($old_url);
 			if( strcmp( $old_url, $url ) != 0 ) {
 				update_option( 'home', $url );
 			}
-			
 		}
 		
 	}
+
+    public static function remove_trailing_slash($string) {
+        return untrailingslashit($string);
+    }
 	
 	public static function get_theme() {
 		return wp_get_theme();
