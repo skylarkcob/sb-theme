@@ -29,6 +29,14 @@ class SB_PHP {
 		date_default_timezone_set('Asia/Ho_Chi_Minh');
 		
 	}
+
+    public static function get_input_number($value) {
+        $result = 0;
+        if(is_numeric($value)) {
+            $result = absint(intval($value));
+        }
+        return $result;
+    }
 	
 	public static function remove_punctuation($str) {
         $last_char = self::get_last_char($str);

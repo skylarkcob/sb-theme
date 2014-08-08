@@ -19,6 +19,14 @@ class SB_User extends WP_User {
 	public function set($user) {
 		$this->init($user);
 	}
+
+    public function set_by_id($id) {
+        $this->user = get_user_by("id", $id);
+    }
+
+    public function get_user($by, $value) {
+        return get_user_by($by, $value);
+    }
 	
 	public function add($user) {
 		$this->init($user);
@@ -106,4 +114,117 @@ class SB_User extends WP_User {
 		}
 		return array();
 	}
+
+    public function get_point() {
+        $point = intval($this->get_meta("point"));
+        if(1 > $point) {
+            $point = 0;
+        }
+        return $point;
+    }
+
+    public function set_point($point) {
+        $this->update_meta("point", $point);
+    }
+
+    public function update_point($point) {
+        $old_point = $this->get_point();
+        $old_point += $point;
+        $this->set_point($old_point);
+    }
+
+    public function get_post_comment() {
+        return (array)$this->get_meta("post_comment");
+    }
+
+    public function count_comment_on_this_post() {
+        if(is_single()) {
+            $post_comment = $this->get_post_comment();
+            foreach($post_comment as $value) {
+                if(isset($value["post"]) && $value["post"] == get_the_ID()) {
+                    return $value["count"];
+                }
+            }
+        }
+        return 0;
+    }
+
+    public function count_comment_on_post($post) {
+        $post_comment = $this->get_post_comment();
+        foreach($post_comment as $value) {
+            if(isset($value["post"]) && $value["post"] == $post->ID) {
+                return $value["count"];
+            }
+        }
+        return 0;
+    }
+
+    public function remove_a_post_comment($post_comment, $post) {
+        $kq = array();
+        $count = count($post_comment);
+        for($i = 0; $i < $count; $i++) {
+            if((isset($post_comment[$i]["post"]) && $post_comment[$i]["post"] == $post->ID) || !isset($post_comment[$i]["post"])) {
+                continue;
+            } else {
+                $item = array(
+                    "post"      => $post_comment[$i]["post"],
+                    "count"     => $post_comment[$i]["count"]
+                );
+                array_push($kq, $item);
+            }
+        }
+        return $kq;
+    }
+
+    public function update_post_comment($comment) {
+        if($comment) {
+            $post = get_post($comment->comment_post_ID);
+            if($post) {
+                $post_comment = $this->get_post_comment();
+                $count_comment_on_post = $this->count_comment_on_post($post);
+                if(0 == $count_comment_on_post) {
+                    $item = array(
+                        "post"      => $post->ID,
+                        "count"     => 1
+                    );
+                    array_push($post_comment, $item);
+                    $this->update_meta("post_comment", $post_comment);
+                } else {
+                    $count_comment_on_post++;
+                    $post_comment = $this->remove_a_post_comment($post_comment, $post);
+                    $item = array(
+                        "post"      => $post->ID,
+                        "count"     => $count_comment_on_post
+                    );
+                    array_push($post_comment, $item);
+                    $this->update_meta("post_comment", $post_comment);
+                }
+            }
+        }
+    }
+
+    public function is_valid() {
+        if($this->user->ID > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function is_own_post($id = 0) {
+        if(1 > $id) {
+            $id = get_the_ID();
+        }
+        $post = get_post($id);
+        if($post->post_author == $this->user->ID) {
+            return true;
+        }
+        return false;
+    }
+
+    public function count_own_post_comment($comment) {
+        if($this->is_own_post()) {
+            $this->update_post_comment($comment);
+        }
+    }
+
 }

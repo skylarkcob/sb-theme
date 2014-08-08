@@ -15,6 +15,9 @@ class SB_Language {
 		$this->init();
 		$this->translator_init();
 		$this->language = $lang;
+        if(defined("SB_LANGUAGE") && in_array(SB_LANGUAGE, $this->languages)) {
+            $this->language = SB_LANGUAGE;
+        }
 	}
 	
 	private function init() {
@@ -28,21 +31,45 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "off", "Tắt");
 		$this->overwrite_translator("en", "off", "Off");
+
+        $this->overwrite_translator("vi", "account_setting_page", "Cài đặt thông tin cho tài khoản");
+        $this->overwrite_translator("en", "account_setting_page", "Settings for user account");
+
+        $this->overwrite_translator("vi", "user_post_point", "Điểm cho bài viết");
+        $this->overwrite_translator("en", "user_post_point", "Point for writing post");
+
+        $this->overwrite_translator("vi", "user_post_point_setting_description", "Điểm cho thành viên khi người dùng tạo bài viết mới");
+        $this->overwrite_translator("en", "user_post_point_setting_description", "The number of point for user when they write a post");
 		
 		$this->overwrite_translator("vi", "first_name", "Tên");
 		$this->overwrite_translator("en", "first_name", "First name");
+
+        $this->overwrite_translator("vi", "user_comment_point", "Điểm cho bình luận");
+        $this->overwrite_translator("en", "user_comment_point", "Point for writing comment");
+
+        $this->overwrite_translator("vi", "user_comment_point_setting_description", "Điểm cho thành viên khi người dùng gửi bình luận");
+        $this->overwrite_translator("en", "user_comment_point_setting_description", "The number of point for user when they write a comment");
 
         $this->overwrite_translator("vi", "title_length", "Độ dài tiêu đề");
         $this->overwrite_translator("en", "title_length", "Title length");
 		
 		$this->overwrite_translator("vi", "last_name", "Họ");
 		$this->overwrite_translator("en", "last_name", "Last name");
+
+        $this->overwrite_translator("vi", "account", "Tài khoản");
+        $this->overwrite_translator("en", "account", "Account");
 		
 		$this->overwrite_translator("vi", "you_are_login_as", "Xin chào");
 		$this->overwrite_translator("en", "you_are_login_as", "You are logged in as");
 		
 		$this->overwrite_translator("vi", "hello", "Xin chào");
 		$this->overwrite_translator("en", "hello", "Hello");
+
+        $this->overwrite_translator("vi", "user_point", "Tính điểm thành viên");
+        $this->overwrite_translator("en", "user_point", "User point");
+
+        $this->overwrite_translator("vi", "enable_user_point_description", "Bật hoặc tắc chức năng tính điểm cho thành viên");
+        $this->overwrite_translator("en", "enable_user_point_description", "Turn on or turn off functional to count user point");
 		
 		$this->overwrite_translator("vi", "name", "Tên");
 		$this->overwrite_translator("en", "name", "Name");

@@ -49,8 +49,8 @@ class SB_Hook {
 	private function sidebar_init() {
 		$options = SB_WP::option();
 		$widget = new SB_Widget();
-		$this->sidebars[] = $this->register_sidebar('primary', 'Main Sidebar', SB_PHP::add_dotted(SB_Theme::phrase("main_sidebar_description")));
-        $this->sidebars[] = $this->register_sidebar('footer', 'Footer Widgets', SB_PHP::add_dotted(SB_Theme::phrase("footer_sidebar_description")));
+		$this->register_sidebar('primary', 'Main Sidebar', SB_PHP::add_dotted(SB_Theme::phrase("main_sidebar_description")));
+        $this->register_sidebar('footer', 'Footer Widgets', SB_PHP::add_dotted(SB_Theme::phrase("footer_sidebar_description")));
 		do_action("sbtheme_widget_area");
 		if(isset($options['enable_leaderboard_ads']) && (bool)$options['enable_leaderboard_ads']) {
 			SB_WP::register_sidebar( 'leaderboard-ads', "Leaderboard Banner", SB_PHP::add_dotted(SB_Theme::phrase("leaderboard_banner_description")));
@@ -87,6 +87,8 @@ class SB_Hook {
 			}
 		}
 	}
+
+
 	
 	public function script_and_style() {
 		// Enqueue style
@@ -164,7 +166,19 @@ class SB_Hook {
             add_filter('woocommerce_catalog_orderby', array($this, 'sbtheme_product_sort_default'));
             add_filter('add_to_cart_fragments', array($this, 'sbtheme_auto_update_cart'));
         }
+        if(SB_WP::is_user_point_enabled()) {
+            add_action('wp_insert_comment', array($this, 'on_comment_inserted'), 99, 2);
+        }
 	}
+
+    public function on_comment_inserted($comment_id, $comment_object) {
+        $comment = get_comment($comment_id);
+        $user = new SB_User();
+        $user->set_by_id($comment->user_id);
+        if($comment && $user->is_valid()) {
+            $user->update_post_comment($comment);
+        }
+    }
 
     public function sbtheme_order_button_text() {
         return SB_WP::phrase("place_order");
@@ -518,9 +532,6 @@ class SB_Hook {
             case 'category':
                 $translated_text = SB_WP::phrase("category").$punctuation;
                 break;
-            case 'tags':
-                $translated_text = SB_WP::phrase("tags").$punctuation;
-                break;
             case 'reviews (%d)':
                 $translated_text = SB_WP::phrase("reviews")." (%d)";
                 break;
@@ -535,9 +546,6 @@ class SB_Hook {
                 break;
             case 'products':
                 $translated_text = SB_WP::phrase("products");
-                break;
-            case 'home':
-                $translated_text = SB_WP::phrase("home");
                 break;
             case 'company name':
                 $translated_text = SB_WP::phrase("company_name");
@@ -724,9 +732,22 @@ class SB_Hook {
 			add_action('admin_menu', array($this, 'sbtheme_custom_menu_page'), 102);
 			//add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
 			add_action('admin_init', array($this, 'sbtheme_admin_init'), 99);
+            add_action( 'save_post', array($this, 'on_post_published') );
 		}
 	}
-	
+
+    public function on_post_published($post_id) {
+        $post = get_post($post_id);
+        if(empty($post->post_status) || "publish" != $post->post_status) {
+            return;
+        }
+        $user = new SB_User();
+        $user->set_by_id($post->post_author);
+        if(SB_WP::is_user_point_enabled()) {
+            $user->update_point(SB_WP::get_user_post_point());
+        }
+    }
+
 	public function sbtheme_custom_menu_page() {
 		remove_submenu_page( 'themes.php', 'customize.php' );
 		remove_submenu_page( 'themes.php', 'theme-editor.php' );

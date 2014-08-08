@@ -178,6 +178,32 @@ class SB_WP {
         global $woocommerce;
         return $woocommerce->cart->get_cart_total();
     }
+
+    public static function is_user_point_enabled() {
+        $options = self::option();
+        if(isset($options["enable_user_point"]) && (bool)$options["enable_user_point"]) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function get_user_post_point() {
+        $options = self::option();
+        $point = SB_USER_POST_POINT;
+        if(isset($options["user_post_point"]) && 1 < $options["user_post_point"]) {
+            $point = $options["user_post_point"];
+        }
+        return $point;
+    }
+
+    public static function get_user_comment_point() {
+        $options = self::option();
+        $point = SB_USER_COMMENT_POINT;
+        if(isset($options["user_comment_point"]) && 1 < $options["user_comment_point"]) {
+            $point = $options["user_comment_point"];
+        }
+        return $point;
+    }
 	
 	public static function get_menus() {
 		return get_terms('nav_menu');

@@ -59,6 +59,9 @@ class SB_Admin {
 		$this->add_tab('ads', SB_WP::phrase("ads_settings"), 'sbtheme_ads_section');
 		$this->add_tab('social', SB_WP::phrase("social_network_settings"), 'sbtheme_social_section');
 		$this->add_tab('sbmodule', SB_WP::phrase("utility_management"), 'sbtheme_sbmodule_section');
+
+        $this->add_tab('account', SB_WP::phrase("account"), 'sbtheme_account_section');
+
 		$this->add_tab('aboutsb', SB_WP::phrase("about_sb"), 'sbtheme_aboutsb_section');
 	}
 	
@@ -319,6 +322,25 @@ class SB_Admin {
 	private function add_tivi_setting() {
 		$this->add_section('sbtheme_tivi_section', SB_WP::phrase("tivi_settings_description"));
 	}
+
+    private function add_account_setting() {
+        $this->add_section("sbtheme_account_section", SB_WP::phrase("account_setting_page"));
+        $this->add_account_field("user_post_point", SB_WP::phrase("user_post_point"), "user_post_point_callback");
+        $this->add_account_field("user_comment_point", SB_WP::phrase("user_comment_point"), "user_comment_point_callback");
+    }
+
+    public function user_post_point_callback() {
+        $this->set_number_field("user_post_point", SB_PHP::add_dotted(SB_WP::phrase("user_post_point_setting_description")));
+    }
+
+    public function user_comment_point_callback() {
+        $this->set_number_field("user_comment_point", SB_PHP::add_dotted(SB_WP::phrase("user_comment_point_setting_description")));
+    }
+
+    private function add_account_field($id, $title, $callback) {
+        $this->add_field($id, $title, 'sbtheme_account_section', $callback);
+    }
+
 	/*
 	 * Tạo cài đặt quản lý các gói tiện ích
 	 */
@@ -340,6 +362,7 @@ class SB_Admin {
 		$this->add_sbmodule_field('enable_float_ads', SB_WP::phrase('float_ads'), 'enable_float_ads_callback');
 		$this->add_sbmodule_field('enable_leaderboard_ads', SB_WP::phrase('leaderboard_ads'), 'enable_leaderboard_ads_callback');
 		$this->add_sbmodule_field('enable_addthis', SB_WP::phrase('addthis_share_button'), 'enable_addthis_callback');
+        $this->add_sbmodule_field('enable_user_point', SB_WP::phrase('user_point'), 'enable_user_point_callback');
 	}
 	
 	// Thêm mục cho trang quản lý các tiện ích
@@ -411,6 +434,10 @@ class SB_Admin {
 	public function enable_addthis_callback() {
 		$this->set_switch_field('enable_addthis', SB_WP::phrase('enable_addthis_description'));
 	}
+
+    public function enable_user_point_callback() {
+        $this->set_switch_field('enable_user_point', SB_WP::phrase('enable_user_point_description'));
+    }
 	
 	private function set_switch_field($name, $description) {
 		$this->set_field($name, $description, 'switch');
@@ -493,11 +520,15 @@ class SB_Admin {
 		$new_input['enable_float_ads'] = $this->set_input_data($input, 'enable_float_ads', 'bool-nummber');
 		$new_input['enable_leaderboard_ads'] = $this->set_input_data($input, 'enable_leaderboard_ads', 'bool-nummber');
 		$new_input['enable_addthis'] = $this->set_input_data($input, 'enable_addthis', 'bool-nummber');
+        $new_input['enable_user_point'] = $this->set_input_data($input, 'enable_user_point', 'bool-nummber');
         $new_input['enable_links_manager'] = $this->set_input_data($input, 'enable_links_manager', 'bool-nummber');
 		
 		$new_input['default_tivi'] = $this->set_input_data($input, 'default_tivi', 'int-nummber');
         $new_input['main_slider'] = $this->set_input_data($input, 'main_slider', 'html');
         $new_input['sub_slider'] = $this->set_input_data($input, 'sub_slider', 'html');
+
+        $new_input['user_post_point'] = $this->set_input_data($input, 'user_post_point', 'nummber');
+        $new_input['user_comment_point'] = $this->set_input_data($input, 'user_comment_point', 'nummber');
 		
         return $new_input;
     }
@@ -538,6 +569,9 @@ class SB_Admin {
 				case 'int-number':
 					$kq = absint($input[$key]);
 					break;
+                case 'number':
+                    $kq = SB_PHP::get_input_number($input[$key]);
+                    break;
 				default:
 					$kq = $input[$key];
 			}
@@ -589,6 +623,21 @@ class SB_Admin {
 		$value = trim($value);
 		printf('<input type="text" id="%1$s" name="%2$s" value="%3$s" class=""><p class="description">%4$s</p>', $name, esc_attr($this->get_field_name($name)), $value, $description);
 	}
+
+    private function number_field($name, $value, $description) {
+        $value = trim($value);
+        if("user_post_point" == $name && intval($value) < 1) {
+            $value = SB_USER_POST_POINT;
+        }
+        if("user_comment_point" == $name && intval($value) < 1) {
+            $value = SB_USER_COMMENT_POINT;
+        }
+        printf('<input type="number" id="%1$s" name="%2$s" value="%3$s" class=""><p class="description">%4$s</p>', $name, esc_attr($this->get_field_name($name)), $value, $description);
+    }
+
+    private function set_number_field($name, $description) {
+        $this->set_field($name, $description, "number");
+    }
 	
 	// Điều khiển gán giá trị cho mục nhất định
 	private function set_field($name, $description, $type) {
@@ -602,6 +651,9 @@ class SB_Admin {
 			case 'switch':
 				$this->switch_field($name, $this->get_option_value($name), $description);
 				break;
+            case 'number':
+                $this->number_field($name, $this->get_option_value($name), $description);
+                break;
 			case 'select':
 				$this->select_field($name, $description);
 				break;
@@ -675,7 +727,7 @@ class SB_Admin {
 		$this->add_social_setting();
 		
 		$this->add_sbmodule_setting();
-		
+		$this->add_account_setting();
 		$this->add_aboutsb_setting();
 	}
 	
