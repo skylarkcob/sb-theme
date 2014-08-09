@@ -44,6 +44,15 @@ class SB_Language {
 		$this->overwrite_translator("vi", "first_name", "Tên");
 		$this->overwrite_translator("en", "first_name", "First name");
 
+        $this->overwrite_translator("vi", "reply_comment_to_x", 'Trả lời bình luận của %s');
+        $this->overwrite_translator("en", "reply_comment_to_x", 'Reply to %s');
+
+        $this->overwrite_translator("vi", "you_must", "Bạn phải");
+        $this->overwrite_translator("en", "you_must", "You must");
+
+        $this->overwrite_translator("vi", "before_leave_a_comment", "Trước khi gửi bình luận");
+        $this->overwrite_translator("en", "before_leave_a_comment", "Before leave a comment");
+
         $this->overwrite_translator("vi", "user_comment_point", "Điểm cho bình luận");
         $this->overwrite_translator("en", "user_comment_point", "Point for writing comment");
 
@@ -58,6 +67,51 @@ class SB_Language {
 
         $this->overwrite_translator("vi", "account", "Tài khoản");
         $this->overwrite_translator("en", "account", "Account");
+
+        $this->overwrite_translator("vi", "ago", "Trước");
+        $this->overwrite_translator("en", "ago", "Ago");
+
+        $this->overwrite_translator("vi", "second", "Giây");
+        $this->overwrite_translator("en", "second", "Second");
+
+        $this->overwrite_translator("vi", "seconds", "Giây");
+        $this->overwrite_translator("en", "seconds", "Seconds");
+
+        $this->overwrite_translator("vi", "minute", "Phút");
+        $this->overwrite_translator("en", "minute", "Minute");
+
+        $this->overwrite_translator("vi", "minutes", "Phút");
+        $this->overwrite_translator("en", "minutes", "Minutes");
+
+        $this->overwrite_translator("vi", "hour", "Giờ");
+        $this->overwrite_translator("en", "hour", "Hour");
+
+        $this->overwrite_translator("vi", "hours", "Giờ");
+        $this->overwrite_translator("en", "hours", "Hours");
+
+        $this->overwrite_translator("vi", "day", "Ngày");
+        $this->overwrite_translator("en", "day", "Day");
+
+        $this->overwrite_translator("vi", "days", "Ngày");
+        $this->overwrite_translator("en", "days", "Days");
+
+        $this->overwrite_translator("vi", "week", "Tuần");
+        $this->overwrite_translator("en", "week", "Week");
+
+        $this->overwrite_translator("vi", "weeks", "Tuần");
+        $this->overwrite_translator("en", "weeks", "Weeks");
+
+        $this->overwrite_translator("vi", "month", "Tháng");
+        $this->overwrite_translator("en", "month", "Month");
+
+        $this->overwrite_translator("vi", "months", "Tháng");
+        $this->overwrite_translator("en", "months", "Months");
+
+        $this->overwrite_translator("vi", "year", "Năm");
+        $this->overwrite_translator("en", "year", "Year");
+
+        $this->overwrite_translator("vi", "years", "Năm");
+        $this->overwrite_translator("en", "years", "Years");
 		
 		$this->overwrite_translator("vi", "you_are_login_as", "Xin chào");
 		$this->overwrite_translator("en", "you_are_login_as", "You are logged in as");
@@ -88,6 +142,15 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "logout", "Thoát");
 		$this->overwrite_translator("en", "logout", "Logout");
+
+        $this->overwrite_translator("vi", "time_between_post_setting_description", "Thành viên chỉ được đăng bài viết cách nhau x phút");
+        $this->overwrite_translator("en", "time_between_post_setting_description", "User can only publish post after x minute(s)");
+
+        $this->overwrite_translator("vi", "time_between_posts", "Thời gian giữa các bài viết");
+        $this->overwrite_translator("en", "time_between_posts", "Time between posts");
+
+        $this->overwrite_translator("vi", "you_must_wait_x_minute_before_publish_next_post", "Bạn phải đợi thêm %s phút nữa mới có thể đăng bài viết");
+        $this->overwrite_translator("en", "you_must_wait_x_minute_before_publish_next_post", "You must wait % minute(s) before publishing the next post");
 		
 		$this->overwrite_translator("vi", "create_post", "Tạo bài viết");
 		$this->overwrite_translator("en", "create_post", "Create post");

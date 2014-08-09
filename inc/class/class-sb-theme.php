@@ -848,11 +848,11 @@ class SB_Theme {
 			'comment_field'			=> '<p class="comment-form-comment">' . '<label for="comment">' . __( SB_WP::phrase('comment_body'), SB_DOMAIN ) . '</label>' . '<textarea id="comment" name="comment" placeholder="" aria-required="true" class="sb-comment-msg"></textarea></p>',
 			'comment_notes_before'	=> '<p class="comment-notes before">' . __( SB_PHP::add_dotted(SB_WP::phrase('your_email_not_published')), SB_DOMAIN ) . __( $req ? ' '.sprintf(SB_PHP::add_dotted(SB_WP::phrase('require_field_mark')), '(*)') : '' ) . '</p>',
 			'comment_notes_after'	=> '<p class="form-allowed-tags comment-notes after">' . sprintf( __( sprintf(SB_PHP::add_colon(SB_WP::phrase('allow_html_tags')), '<abbr title="'.__(SB_WP::phrase('html_intro')).'">HTML</abbr>').' %s' ), ' <code>' . allowed_tags() . '</code>' ) . '</p>',
-			'must_log_in'			=> '<p class="must-log-in">' . sprintf(__( 'Bạn phải <a href="%s">đăng nhập</a> trước khi gửi bình luận.' ), wp_login_url( apply_filters( 'the_permalink', get_permalink() ) ) ) . '</p>',
+			'must_log_in'			=> '<p class="must-log-in">' . sprintf(__( SB_WP::phrase("you_must").' <a href="%s">'.SB_PHP::lowercase(SB_WP::phrase("login")).'</a> '.SB_PHP::lowercase(SB_PHP::add_dotted(SB_WP::phrase("before_leave_a_comment"))) ), wp_login_url( apply_filters( 'the_permalink', get_permalink() ) ) ) . '</p>',
 			'logged_in_as'			=> '<p class="logged-in-as">' . sprintf(__( __(SB_WP::phrase('you_are_login_as'), SB_DOMAIN).' <a href="%1$s">%2$s</a>. <a href="%3$s" title="'.__(SB_WP::phrase("logout"), SB_DOMAIN).'">'.__(SB_WP::phrase("logout"), SB_DOMAIN).'?</a>' ), admin_url( 'profile.php' ), esc_attr( $user_identity ), wp_logout_url( apply_filters( 'the_permalink', get_permalink( ) ) )) . '</p>',
 			'title_reply'			=> '<a name="leaveyourcomment"></a><div class="comment-title">'.__(SB_WP::phrase('leave_reply'), SB_DOMAIN).'</div>',
 			'label_submit'			=> __(SB_WP::phrase("post_comment"), SB_DOMAIN),
-			'title_reply_to'		=>  __( 'Trả lời bình luận của %s' ),
+			'title_reply_to'		=>  __( SB_WP::phrase("reply_comment_to_x") ),
 			'cancel_reply_link'		=> __(SB_WP::phrase('cancel_reply'), SB_DOMAIN)
 		);
 		return $args;

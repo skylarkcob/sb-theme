@@ -1165,6 +1165,7 @@ h3.sitemap-node-title {
 .comments-area li {
 	border-bottom: 1px solid #ececec;
 	margin-top: 10px;
+    padding-bottom: 15px;
 }
 
 .sb-comment-area .children li {
@@ -1235,6 +1236,10 @@ h3.sitemap-node-title {
 .sb-comment-area .comment-respond input.mc-input:focus,
 .sb-comment-area .comment-respond textarea:focus {
 	background-color: #fafafa;
+}
+
+.sb-comment-area .comment-respond textarea {
+    width: 600px;
 }
 
 .comments-area .comment-body {

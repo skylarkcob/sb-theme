@@ -11,6 +11,10 @@ body {
 
 }
 
+.sb-comment-area .comment-respond textarea {
+    max-width: 98%;
+}
+
 @media only screen and (max-width: 980px) {
 
 }

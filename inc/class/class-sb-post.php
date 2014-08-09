@@ -12,7 +12,14 @@ class SB_Post {
 		$this->post = get_post();
 		$this->thumbnail_default = SB_IMAGES_URI.'/no-thumbnail.png';
 	}
-	
+
+    public function is_valid() {
+        if($this->post->ID > 0) {
+            return true;
+        }
+        return false;
+    }
+
 	public function init($post) {
 		$this->post = $post;
 	}
@@ -150,5 +157,61 @@ class SB_Post {
 		</div>
 		<?php
 	}
+
+    public function human_time_diff() {
+        if(!$this->is_valid()) {
+            global $post;
+        } else {
+            $post = $this->post;
+        }
+
+        $date = get_post_time('G', true, $post);
+        $langs = array(
+            SB_PHP::lowercase(SB_WP::phrase('second')),
+            SB_PHP::lowercase(SB_WP::phrase('minute')),
+            SB_PHP::lowercase(SB_WP::phrase('hour')),
+            SB_PHP::lowercase(SB_WP::phrase('day')),
+            SB_PHP::lowercase(SB_WP::phrase('week')),
+            SB_PHP::lowercase(SB_WP::phrase('month')),
+            SB_PHP::lowercase(SB_WP::phrase('year')),
+            SB_PHP::lowercase(SB_WP::phrase('seconds')),
+            SB_PHP::lowercase(SB_WP::phrase('minutes')),
+            SB_PHP::lowercase(SB_WP::phrase('hours')),
+            SB_PHP::lowercase(SB_WP::phrase('days')),
+            SB_PHP::lowercase(SB_WP::phrase('weeks')),
+            SB_PHP::lowercase(SB_WP::phrase('months')),
+            SB_PHP::lowercase(SB_WP::phrase('years'))
+        );
+        $chunks = array(
+            array( 60 * 60 * 24 * 365 , __( $langs[6], SB_DOMAIN ), __( $langs[13], SB_DOMAIN ) ),
+            array( 60 * 60 * 24 * 30 , __( $langs[5], SB_DOMAIN ), __( $langs[12], SB_DOMAIN ) ),
+            array( 60 * 60 * 24 * 7, __( $langs[4], SB_DOMAIN ), __( $langs[11], SB_DOMAIN ) ),
+            array( 60 * 60 * 24 , __( $langs[3], SB_DOMAIN ), __( $langs[10], SB_DOMAIN ) ),
+            array( 60 * 60 , __( $langs[2], SB_DOMAIN ), __( $langs[9], SB_DOMAIN ) ),
+            array( 60 , __( $langs[1], SB_DOMAIN ), __( $langs[8], SB_DOMAIN ) ),
+            array( 1, __( $langs[0], SB_DOMAIN ), __( $langs[7], SB_DOMAIN ) )
+        );
+        if ( !is_numeric( $date ) ) {
+            $time_chunks = explode( ':', str_replace( ' ', ':', $date ) );
+            $date_chunks = explode( '-', str_replace( ' ', '-', $date ) );
+            $date = gmmktime( (int)$time_chunks[1], (int)$time_chunks[2], (int)$time_chunks[3], (int)$date_chunks[1], (int)$date_chunks[2], (int)$date_chunks[0] );
+        }
+        $current_time = SB_WP::current_time_mysql();
+        $newer_date = ( !$newer_date ) ? strtotime( $current_time ) : $newer_date;
+        $since = $newer_date - $date;
+        if ( 0 > $since )
+            return __( SB_WP::phrase("recently"), SB_DOMAIN );
+        for ( $i = 0, $j = count($chunks); $i < $j; $i++) {
+            $seconds = $chunks[$i][0];
+            if ( ( $count = floor($since / $seconds) ) != 0 )
+                break;
+        }
+        $output = ( 1 == $count ) ? '1 '. $chunks[$i][1] : $count . ' ' . $chunks[$i][2];
+        if ( !(int)trim($output) ){
+            $output = '0 ' . __( $langs[0], SB_DOMAIN );
+        }
+        $output .= __(' '.SB_PHP::lowercase(SB_WP::phrase("ago")), SB_DOMAIN);
+        return $output;
+    }
 }
 ?>

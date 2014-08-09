@@ -8,7 +8,30 @@ class SB_PHP {
 		if (!$fp = curl_init($url)) return false;
 		return true;
 	}
-	
+
+    public static function mysql_time_format() {
+        return "Y-m-d H:i:s";
+    }
+
+    public static function date_plus_minute($date, $minute) {
+        $kq = new DateTime($date);
+        $time_modify = "+".$minute;
+        if($minute > 1) {
+            $time_modify .= " minutes";
+        } else {
+            $time_modify .= " minute";
+        }
+        $kq->modify($time_modify);
+        return $kq->format(self::mysql_time_format());
+    }
+
+    public static function date_minus_minute($date1, $date2) {
+        $date1 = new DateTime($date1);
+        $date2 = new DateTime($date2);
+        $diff = $date1->diff($date2);
+        return round(date_create('@0')->add($diff)->getTimestamp()/60, 0);
+    }
+
 	public static function substr($str, $len, $more = '...', $charset = 'UTF-8'){
 		$str = html_entity_decode($str, ENT_QUOTES, $charset);
 		if(mb_strlen($str, $charset) > $len) {

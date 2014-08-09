@@ -7,3 +7,4 @@ if(SB_WP::bbp_installed()) {
 
 define("SB_USER_POST_POINT", 10);
 define("SB_USER_COMMENT_POINT", 5);
+define("SB_TIME_BETWEEN_POST", 2);

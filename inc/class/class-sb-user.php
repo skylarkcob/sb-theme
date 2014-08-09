@@ -133,6 +133,12 @@ class SB_User extends WP_User {
         $this->set_point($old_point);
     }
 
+    public function minus_point($point) {
+        $old_point = $this->get_point();
+        $old_point -= $point;
+        $this->set_point($old_point);
+    }
+
     public function get_post_comment() {
         return (array)$this->get_meta("post_comment");
     }
@@ -199,6 +205,9 @@ class SB_User extends WP_User {
                     array_push($post_comment, $item);
                     $this->update_meta("post_comment", $post_comment);
                 }
+                $author = new SB_User();
+                $author->set_by_id($post->post_author);
+                $author->minus_point(SB_WP::get_user_comment_point());
             }
         }
     }
@@ -221,10 +230,42 @@ class SB_User extends WP_User {
         return false;
     }
 
+    public function is_own_this_post() {
+        return $this->is_own_post();
+    }
+
     public function count_own_post_comment($comment) {
         if($this->is_own_post()) {
             $this->update_post_comment($comment);
         }
     }
 
+    public function update_last_post_time($time = "") {
+        if(empty($time)) {
+            $time = SB_WP::current_time_mysql();
+        }
+        $this->update_meta("last_post_time", $time);
+    }
+
+    public function get_last_post_time() {
+        return $this->get_meta("last_post_time");
+    }
+
+    public function get_last_post_minute_diff() {
+        $last_post_time = $this->get_last_post_time();
+        return SB_WP::get_human_minute_diff(strtotime($last_post_time));
+    }
+
+    public function set_next_post_time($time = "") {
+        if(empty($time)) {
+            $time = SB_WP::current_time_mysql();
+        }
+
+        $time_between_post = SB_WP::get_time_between_post();
+        $this->update_meta("next_post_time", SB_PHP::date_plus_minute($time, $time_between_post));
+    }
+
+    public function get_next_post_time() {
+        return $this->get_meta("next_post_time");
+    }
 }

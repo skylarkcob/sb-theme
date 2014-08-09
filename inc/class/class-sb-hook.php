@@ -175,8 +175,11 @@ class SB_Hook {
         $comment = get_comment($comment_id);
         $user = new SB_User();
         $user->set_by_id($comment->user_id);
-        if($comment && $user->is_valid()) {
-            $user->update_post_comment($comment);
+        if(SB_WP::is_user_point_enabled()) {
+            if($comment && $user->is_valid()) {
+                $user->update_post_comment($comment);
+                $user->update_point(SB_WP::get_user_comment_point());
+            }
         }
     }
 
@@ -733,18 +736,55 @@ class SB_Hook {
 			//add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
 			add_action('admin_init', array($this, 'sbtheme_admin_init'), 99);
             add_action( 'save_post', array($this, 'on_post_published') );
+            add_action('admin_notices', array($this, 'admin_notices'));
 		}
 	}
 
     public function on_post_published($post_id) {
+        if ( (defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE) || (defined( 'DOING_AJAX' ) && DOING_AJAX) || (! current_user_can( 'edit_post', $post_id )) || (false !== wp_is_post_revision( $post_id )) ) {
+            return;
+        }
         $post = get_post($post_id);
         if(empty($post->post_status) || "publish" != $post->post_status) {
+            delete_transient( "post_after_x_minute" );
             return;
         }
         $user = new SB_User();
         $user->set_by_id($post->post_author);
+        $user_can_publish_post = apply_filters("sb_user_can_publish_post", true);
         if(SB_WP::is_user_point_enabled()) {
-            $user->update_point(SB_WP::get_user_post_point());
+
+            if(!$user_can_publish_post) {
+                set_transient( "post_after_x_minute", "no" );
+                remove_action('save_post', array($this, "on_post_published"));
+                wp_update_post(array('ID' => $post_id, 'post_status' => 'draft'));
+                add_action('save_post', array($this, "on_post_published"));
+            } else {
+
+                delete_transient( "post_after_x_minute" );
+
+                $last_post_time = $user->get_last_post_time();
+                $user->update_point(SB_WP::get_user_post_point());
+                $time = SB_WP::current_time_mysql();
+                $user->update_last_post_time($time);
+                $user->set_next_post_time($time);
+            }
+        }
+
+    }
+
+    public function admin_notices() {
+        if ( get_transient( "post_after_x_minute" ) == "no" ) {
+            $user = new SB_User();
+            SB_WP::admin_notices_message(array("message" => __(sprintf(SB_PHP::add_dotted(SB_WP::phrase("you_must_wait_x_minute_before_publish_next_post")), SB_PHP::date_minus_minute(SB_WP::current_time_mysql(), $user->get_next_post_time())), SB_DOMAIN), "is_error" => true, "id" => "sbPostLimit"));
+            ?>
+            <script>
+                jQuery(document).ready(function($){
+                   $("div.updated").css("display", "none");
+                });
+            </script>
+            <?php
+            delete_transient( "post_after_x_minute" );
         }
     }
 

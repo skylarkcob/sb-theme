@@ -121,6 +121,14 @@ class SB_WP {
         return $payment_page;
     }
 
+    public static function current_time_mysql() {
+        return current_time('mysql', 0);
+    }
+
+    public static function current_time_stamp() {
+        return current_time('timestamp', 0);
+    }
+
     public static function get_product_category_image($cat) {
         $thumbnail_id = get_woocommerce_term_meta( $cat->term_id, 'thumbnail_id', true );
         return wp_get_attachment_url( $thumbnail_id );
@@ -161,6 +169,152 @@ class SB_WP {
         return '<a class="cart-content" href="'.self::get_cart_uri().'" title="'.SB_WP::phrase('cart_content').'"><span class="product-number">'.sprintf(_n('%d '.SB_WP::phrase('product'), '%d '.SB_WP::phrase('products'), self::count_cart(), 'sbwp'), self::count_cart()).'</span><span class="sep"> - </span>'.self::cart_total().'</a>';
     }
 
+    public static function human_time_diff( $from, $to = '' ) {
+        $time_diff = self::get_human_time_diff($from, $to);
+        $type = $time_diff["type"];
+        $value = $time_diff["value"];
+        switch($type) {
+            case 'second':
+                $phrase = "second";
+                $phrase_many = "seconds";
+                break;
+            case 'minute':
+                $phrase = "minute";
+                $phrase_many = "minutes";
+                break;
+            case 'hour':
+                $phrase = "hour";
+                $phrase_many = "hours";
+                break;
+            case 'day':
+                $phrase = "day";
+                $phrase_many = "days";
+                break;
+            case 'week':
+                $phrase = "week";
+                $phrase_many = "weeks";
+                break;
+            case 'month':
+                $phrase = "month";
+                $phrase_many = "months";
+                break;
+            case 'year':
+                $phrase = "year";
+                $phrase_many = "years";
+                break;
+        }
+        $since = sprintf( _n( '%s '.SB_PHP::lowercase(SB_WP::phrase($phrase)), '%s '.SB_PHP::lowercase(SB_WP::phrase($phrase_many)), $value ), $value );
+        $since .= " ".SB_PHP::lowercase(SB_WP::phrase("ago"));
+        return $since;
+    }
+
+    public function get_human_minute_diff($from, $to = '') {
+        $diff = self::get_human_time_diff($from, $to);
+        $kq = 1;
+        $type = $diff["type"];
+        $value = $diff["value"];
+        switch($type) {
+            case 'second':
+                $kq = round($value/60, 1);
+                break;
+            case 'minute':
+                $kq = $value;
+                break;
+            case 'hour':
+                $kq = $value * 60;
+                break;
+            case 'day':
+                $kq = $value * 24 * 60;
+                break;
+            case 'week':
+                $kq = $value * 7 * 24 * 60;
+                break;
+            case 'month':
+                $kq = $value * 30 * 24 * 60;
+                break;
+            case 'year':
+                $kq = $value * 365 * 24 * 60;
+                break;
+        }
+        return $kq;
+    }
+
+    public static function admin_notices_message($args = array()) {
+        $id = "message";
+        $message = "";
+        $is_error = false;
+        extract($args, EXTR_OVERWRITE);
+        if ($is_error) {
+            echo '<div id="'.$id.'" class="error">';
+        }
+        else {
+            echo '<div id="message" class="updated fade">';
+        }
+
+        echo "<p><strong>$message</strong></p></div>";
+    }
+
+    public static function get_human_time_diff( $from, $to = '' ) {
+        if ( empty( $to ) ) {
+            $to = self::current_time_stamp();
+        }
+
+        $diff = (int) abs( $to - $from );
+
+        if($diff < MINUTE_IN_SECONDS) {
+            $seconds = round($diff);
+            if($seconds < 1) {
+                $seconds = 1;
+            }
+            $since["type"] = "second";
+            $since["value"] = $seconds;
+        } elseif ( $diff < HOUR_IN_SECONDS ) {
+            $mins = round( $diff / MINUTE_IN_SECONDS );
+            if ( $mins <= 1 ) {
+                $mins = 1;
+            }
+            $since["type"] = "minute";
+            $since["value"] = $mins;
+        } elseif ( $diff < DAY_IN_SECONDS && $diff >= HOUR_IN_SECONDS ) {
+            $hours = round( $diff / HOUR_IN_SECONDS );
+            if ( $hours <= 1 ) {
+                $hours = 1;
+            }
+            $since["type"] = "hour";
+            $since["value"] = $hours;
+        } elseif ( $diff < WEEK_IN_SECONDS && $diff >= DAY_IN_SECONDS ) {
+            $days = round( $diff / DAY_IN_SECONDS );
+            if ( $days <= 1 ) {
+                $days = 1;
+            }
+            $since["type"] = "day";
+            $since["value"] = $days;
+        } elseif ( $diff < 30 * DAY_IN_SECONDS && $diff >= WEEK_IN_SECONDS ) {
+            $weeks = round( $diff / WEEK_IN_SECONDS );
+            if ( $weeks <= 1 ) {
+                $weeks = 1;
+            }
+            $since["type"] = "week";
+            $since["value"] = $weeks;
+        } elseif ( $diff < YEAR_IN_SECONDS && $diff >= 30 * DAY_IN_SECONDS ) {
+            $months = round( $diff / ( 30 * DAY_IN_SECONDS ) );
+            if ( $months <= 1 ) {
+                $months = 1;
+            }
+            $since["type"] = "month";
+            $since["value"] = $months;
+        } elseif ( $diff >= YEAR_IN_SECONDS ) {
+            $years = round( $diff / YEAR_IN_SECONDS );
+            if ( $years <= 1 ) {
+                $years = 1;
+            }
+            $since["type"] = "year";
+            $since["value"] = $years;
+        }
+
+        return $since;
+    }
+
     public static function the_cart() {
         echo '<div class="cart-group sb-cart">';
         do_action('sbwp_cart_before');
@@ -194,6 +348,15 @@ class SB_WP {
             $point = $options["user_post_point"];
         }
         return $point;
+    }
+
+    public static function get_time_between_post() {
+        $options = self::option();
+        $value = SB_TIME_BETWEEN_POST;
+        if(isset($options["time_between_post"]) && 1 < $options["time_between_post"]) {
+            $value = $options["time_between_post"];
+        }
+        return $value;
     }
 
     public static function get_user_comment_point() {

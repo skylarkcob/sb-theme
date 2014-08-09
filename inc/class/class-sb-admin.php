@@ -327,6 +327,7 @@ class SB_Admin {
         $this->add_section("sbtheme_account_section", SB_WP::phrase("account_setting_page"));
         $this->add_account_field("user_post_point", SB_WP::phrase("user_post_point"), "user_post_point_callback");
         $this->add_account_field("user_comment_point", SB_WP::phrase("user_comment_point"), "user_comment_point_callback");
+        $this->add_account_field("time_between_post", SB_WP::phrase("time_between_posts"), "time_between_post_callback");
     }
 
     public function user_post_point_callback() {
@@ -335,6 +336,10 @@ class SB_Admin {
 
     public function user_comment_point_callback() {
         $this->set_number_field("user_comment_point", SB_PHP::add_dotted(SB_WP::phrase("user_comment_point_setting_description")));
+    }
+
+    public function time_between_post_callback() {
+        $this->set_number_field("time_between_post", SB_PHP::add_dotted(SB_WP::phrase("time_between_post_setting_description")));
     }
 
     private function add_account_field($id, $title, $callback) {
@@ -529,6 +534,7 @@ class SB_Admin {
 
         $new_input['user_post_point'] = $this->set_input_data($input, 'user_post_point', 'nummber');
         $new_input['user_comment_point'] = $this->set_input_data($input, 'user_comment_point', 'nummber');
+        $new_input['time_between_post'] = $this->set_input_data($input, 'time_between_post', 'nummber');
 		
         return $new_input;
     }
@@ -631,6 +637,9 @@ class SB_Admin {
         }
         if("user_comment_point" == $name && intval($value) < 1) {
             $value = SB_USER_COMMENT_POINT;
+        }
+        if("time_between_post" == $name && intval($value) < 1) {
+            $value = SB_TIME_BETWEEN_POST;
         }
         printf('<input type="number" id="%1$s" name="%2$s" value="%3$s" class=""><p class="description">%4$s</p>', $name, esc_attr($this->get_field_name($name)), $value, $description);
     }
