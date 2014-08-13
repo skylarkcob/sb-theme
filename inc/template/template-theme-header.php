@@ -2,20 +2,18 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
+global $sb_language;
 ?>
-<?php global $sb_language; ?>
 <!DOCTYPE html>
 <html lang="<?php echo $sb_language->get(); ?>">
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <title><?php SB_Theme::title(); ?></title>
-<?php $detect = new Mobile_Detect(); ?>
-<?php if($detect->isMobile()) : ?>
+<?php if(SB_WP::is_mobile()) : ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <?php endif; ?>
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
-<?php $options = SB_WP::option(); ?>
-<?php $favicon = isset($options['favicon']) ? $options['favicon'] : ''; ?>
+<?php $favicon = SB_WP::get_favicon_url(); ?>
 <?php if(!empty($favicon)) : ?>
 <link type="images/x-icon" href="<?php echo $favicon; ?>" rel="icon">
 <?php endif; ?>

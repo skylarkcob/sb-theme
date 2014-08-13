@@ -155,6 +155,41 @@ class SB_User extends WP_User {
         return 0;
     }
 
+    public function receive_mail($subject, $message) {
+        SB_WP::send_html_mail($this->get_email(), $subject, $message);
+    }
+
+    public function get_email() {
+        return $this->user->user_email;
+    }
+
+    public function get_display_name() {
+        return $this->user->display_name;
+    }
+
+    public function get_avatar($args = array()) {
+        $size = 96;
+        $default = '';
+        $alt = '';
+        extract($args, EXTR_OVERWRITE);
+        return get_avatar($this->user->ID, $size, $default, $alt);
+    }
+
+    public function get_author_url() {
+        return get_author_posts_url($this->user->ID);
+    }
+
+    public function receive_mail_post_have_comment($post) {
+        $current_datetime = SB_WP::get_current_datetime(true);
+        $subject = sprintf(__(SB_WP::phrase("your_post_name_has_a_new_comment"), SB_DOMAIN), $post->post_title);
+        $subject .= ' '.sprintf(SB_PHP::lowercase(SB_WP::phrase("on_date")), $current_datetime);
+        $message = sprintf(sprintf('<p>%s</p>', SB_PHP::add_commas(__(SB_WP::phrase("hi_user"), SB_DOMAIN))), $this->get_display_name());
+        $message .= sprintf(sprintf('<p>%s</p>', SB_PHP::add_dotted(__(SB_WP::phrase("your_post_name_on_blog_name_has_new_comment"), SB_DOMAIN))), $post->post_title, SB_WP::get_blog_name());
+        $message .= sprintf('<p><a href="%1$s">%1$s</a></p>', get_permalink($post->ID));
+        $message .= sprintf(sprintf('<p>%s</p>', SB_PHP::add_dotted(SB_WP::phrase("comment_insert_on_date"))), $current_datetime);
+        return self::receive_mail($subject, $message);
+    }
+
     public function count_comment_on_post($post) {
         $post_comment = $this->get_post_comment();
         foreach($post_comment as $value) {

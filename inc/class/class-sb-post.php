@@ -144,16 +144,22 @@ class SB_Post {
 			$this->get_author_name()
 		);
 	}
+
+    public function count_comment() {
+        return get_comments_number($this->post->ID);
+    }
 	
-	public function thumbnail($size = "") {
+	public function thumbnail($args = array()) {
+        /*
 		if('television' == $this->post->post_type) {
 			$title = trim(strip_tags($this->get_meta('wpcf-tivi-title')));
 		} else {
 			$title = trim(strip_tags($this->post->post_title));
 		}
+        */
 		?>
 		<div class="post-thumbnail">
-			<a href="<?php $this->permalink(); ?>" title="<?php echo $title; ?>"><?php echo $this->get_thumbnail($size); ?></a>
+			<a href="<?php $this->permalink(); ?>" title="<?php echo $title; ?>"><?php echo SB_WP::get_post_thumbnail($args); ?></a>
 		</div>
 		<?php
 	}

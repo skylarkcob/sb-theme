@@ -20,14 +20,19 @@ class SB_Hook {
 		$this->styles['superfish-style'] = SB_LIB_URI . '/superfish/css/superfish.min.css';
 		$this->styles['sb-style'] = SB_CSS_URI . '/sb-style.css';
 		$main_style = SB_THEME_PATH . "/main-style.css";
+
 		if(file_exists($main_style)) {
 			$this->styles['sbtheme-style'] = SB_THEME_URI . "/main-style.css";
 		}
-        $this->styles['sb-mobile-style'] = SB_CSS_URI . "/sb-mobile-style.css";
-        $main_mobile_style = SB_THEME_PATH . "/main-mobile-style.css";
-        if(file_exists($main_mobile_style)) {
-            $this->styles['sbtheme-mobile-style'] = SB_THEME_URI . "/main-mobile-style.css";
+
+        if(SB_WP::is_mobile()) {
+            $this->styles['sb-mobile-style'] = SB_CSS_URI . "/sb-mobile-style.css";
+            $main_mobile_style = SB_THEME_PATH . "/main-mobile-style.css";
+            if(file_exists($main_mobile_style)) {
+                $this->styles['sbtheme-mobile-style'] = SB_THEME_URI . "/main-mobile-style.css";
+            }
         }
+
 	}
 	
 	private function script_init() {
@@ -64,6 +69,7 @@ class SB_Hook {
 	
 	public function sbtheme_widget_init() {
 		$this->sidebar_init();
+        do_action("sb_widgets_init");
 	}
 	
 	public function sbtheme_sidebar_widget_hook() {
@@ -136,7 +142,7 @@ class SB_Hook {
 	}
 	
 	private function run() {
-		
+		$this->clear_head_meta();
 		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
 		$this->sbtheme_sidebar_widget_hook();
 		add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
@@ -177,8 +183,21 @@ class SB_Hook {
         $user->set_by_id($comment->user_id);
         if(SB_WP::is_user_point_enabled()) {
             if($comment && $user->is_valid()) {
+                SB_WP::approve_comment($comment);
+                if(!empty($comment->comment_type) || 1 != $comment->comment_approved) {
+                    return;
+                }
                 $user->update_post_comment($comment);
                 $user->update_point(SB_WP::get_user_comment_point());
+                $post = get_post($comment->comment_post_ID);
+
+                if($user->ID != $post->post_author) {
+                    $author = new SB_User();
+                    $author->set_by_id($post->post_author);
+                    $author->minus_point(SB_WP::get_user_comment_point());
+                    $author->receive_mail_post_have_comment($post);
+                }
+
             }
         }
     }
@@ -674,7 +693,16 @@ class SB_Hook {
 			echo '</style>';
 		}
 	}
-	
+
+    public function clear_head_meta() {
+        remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
+        remove_action('wp_head', 'feed_links');
+        remove_action('wp_head', 'feed_links_extra', 3);
+        remove_action('wp_head', 'wp_generator');
+        remove_action('wp_head', 'rsd_link');
+        remove_action('wp_head', 'wlwmanifest_link');
+    }
+
 	public function sbtheme_login_style_and_script() {
 		add_action( 'login_enqueue_scripts', array($this, 'sbtheme_login_style'));
 		add_action( 'login_enqueue_scripts', array($this, 'sbtheme_login_script'));
@@ -745,7 +773,7 @@ class SB_Hook {
             return;
         }
         $post = get_post($post_id);
-        if(empty($post->post_status) || "publish" != $post->post_status) {
+        if(empty($post->post_status) || "publish" != $post->post_status || "post" != $post->post_type) {
             delete_transient( "post_after_x_minute" );
             return;
         }

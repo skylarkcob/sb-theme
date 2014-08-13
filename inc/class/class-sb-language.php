@@ -127,6 +127,18 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "name", "Tên");
 		$this->overwrite_translator("en", "name", "Name");
+
+        $this->overwrite_translator("vi", "comment_insert_on_date", 'Bình luận được đăng vào ngày %s');
+        $this->overwrite_translator("en", "comment_insert_on_date", 'Comment was inserted on %s');
+
+        $this->overwrite_translator("vi", "your_post_name_has_a_new_comment", 'Bài viết "%s" của bạn vừa có bình luận mới');
+        $this->overwrite_translator("en", "your_post_name_has_a_new_comment", 'Your post "%s" has new comment');
+
+        $this->overwrite_translator("vi", "your_post_name_on_blog_name_has_new_comment", 'Bài viết "%1$s" của bạn trên %2$s vừa có bình luận mới');
+        $this->overwrite_translator("en", "your_post_name_on_blog_name_has_new_comment", 'Your post "%1$s" on %2$s has new comment');
+
+        $this->overwrite_translator("vi", "account_setting", "Cài đặt cho tài khoản");
+        $this->overwrite_translator("en", "account_setting", "Account settings");
 		
 		$this->overwrite_translator("vi", "your_name", "Tên của bạn");
 		$this->overwrite_translator("en", "your_name", "Your name");
@@ -198,7 +210,13 @@ class SB_Language {
         $this->overwrite_translator("en", "sub_slider", "Sub slider");
 
         $this->overwrite_translator("vi", "hello_user", 'Chào bạn %1$s');
-        $this->overwrite_translator("en", "hello_user", 'Welcome %1$s');
+        $this->overwrite_translator("en", "hello_user", 'Hello %1$s');
+
+        $this->overwrite_translator("vi", "welcome_user", 'Chào bạn %1$s');
+        $this->overwrite_translator("en", "welcome_user", 'Welcome %1$s');
+
+        $this->overwrite_translator("vi", "hi_user", 'Chào bạn %1$s');
+        $this->overwrite_translator("en", "hi_user", 'Hi %1$s');
 
         $this->overwrite_translator("vi", "main_slider_setting_description", "Nhập danh sách hình ảnh cho slider, mỗi nhóm là một dòng bao gồm tiêu đề, link bài viết và link hình ảnh");
         $this->overwrite_translator("en", "main_slider_setting_description", "Enter list images for slider, each line includes a text label, image link and image url separated by commas");
@@ -502,6 +520,9 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "at", "Lúc");
 		$this->overwrite_translator("en", "at", "At");
+
+        $this->overwrite_translator("vi", "on_date", "Vào ngày %s");
+        $this->overwrite_translator("en", "on_date", "On %s");
 		
 		$this->overwrite_translator("vi", "comment_awaiting_moderation", "Bình luận của bạn đang được chờ để xét duyệt");
 		$this->overwrite_translator("en", "comment_awaiting_moderation", "Your comment is awaiting moderation");

@@ -52,6 +52,9 @@ class SB_WP {
 		);
 		$args = wp_parse_args($args, $defaults);
 		extract($args, EXTR_OVERWRITE);
+        if($size && !is_array($size)) {
+            $size = array($size, $size);
+        }
 		$real_size = $size_name;
 
 		if(count($size) == 2) {
@@ -208,7 +211,22 @@ class SB_WP {
         return $since;
     }
 
-    public function get_human_minute_diff($from, $to = '') {
+    public static function get_blog_name() {
+        return get_bloginfo("name");
+    }
+
+    public static function get_favicon_url() {
+        $options = self::option();
+        $favicon = isset($options['favicon']) ? $options['favicon'] : '';
+        return $favicon;
+    }
+
+    public static function is_mobile() {
+        $detect = new Mobile_Detect();
+        return $detect->isMobile();
+    }
+
+    public static function get_human_minute_diff($from, $to = '') {
         $diff = self::get_human_time_diff($from, $to);
         $kq = 1;
         $type = $diff["type"];
@@ -357,6 +375,69 @@ class SB_WP {
             $value = $options["time_between_post"];
         }
         return $value;
+    }
+
+    public static function approve_comment($comment) {
+        $commentarr = array();
+        $commentarr['comment_ID'] = $comment->comment_ID;
+        $commentarr['comment_approved'] = 1;
+        wp_update_comment( $commentarr );
+    }
+
+    public static function get_post_by_recent_comment($args = array()) {
+        $posts_per_page = self::get_post_per_page();
+        extract($args, EXTR_OVERWRITE);
+        $comments = get_comments(array("status" => "approve", "number" => $posts_per_page));
+        $post_in = array();
+        foreach($comments as $comment) {
+            array_push($post_in, $comment->comment_post_ID);
+        }
+        $args["post__in"] = $post_in;
+        return new WP_Query($args);
+    }
+
+    public static function send_html_mail($to, $subject, $message, $headers = '', $attachments = '') {
+        add_filter( 'wp_mail_content_type', array('SB_WP', 'set_html_content_type') );
+        $result = self::send_mail($to, $subject, $message, $headers, $attachments);
+        remove_filter( 'wp_mail_content_type', array('SB_WP', 'set_html_content_type') );
+        return $result;
+    }
+
+    public static function send_mail($to, $subject, $message, $headers = '', $attachments = '') {
+        $done = wp_mail($to, $subject, $message, $headers, $attachments);
+        return $done;
+    }
+
+    public static function get_date_format() {
+        return get_option("date_format");
+    }
+
+    public static function get_time_fortmat() {
+        return get_option("time_format");
+    }
+
+    public static function get_timezone_string() {
+        return get_option("timezone_string");
+    }
+
+    public static function set_default_timezone() {
+        date_default_timezone_set(self::get_timezone_string());
+    }
+
+    public static function get_current_datetime($has_text = false) {
+        self::set_default_timezone();
+        $kq = date(self::get_date_format());
+        if($has_text) {
+            $kq .= ' '.SB_PHP::lowercase(self::phrase("at")).' ';
+        } else {
+            $kq .= ' ';
+        }
+        $kq .= date(self::get_time_fortmat());
+        return $kq;
+    }
+
+    public static function set_html_content_type() {
+        return 'text/html';
     }
 
     public static function get_user_comment_point() {
@@ -547,12 +628,37 @@ class SB_WP {
 		return get_option('permalink_structure');
 	}
 	
-	public static function send_mail($to, $subject, $body) {
-		//add_filter( 'wp_mail_content_type', array(self, 'set_html_content_type' ));
-		$done = wp_mail( $to, $subject, $body );
-		//remove_filter( 'wp_mail_content_type', array(self, 'set_html_content_type') );
-		return $done;
-	}
+    public static function get_footer_text() {
+        $options = self::option();
+        $text = "";
+        if(isset($options["footer_text"])) {
+            $text = $options["footer_text"];
+        }
+        return $text;
+    }
+
+    public static function get_all_user($args = array()) {
+        return get_users($args);
+    }
+
+    public static function get_most_user_by_point($args = array()) {
+        $users = self::get_all_user($args);
+        $tmp_users = array();
+        foreach($users as $user) {
+            $sb_user = new SB_User();
+            $sb_user->set($user);
+            array_push($tmp_users, array("user_id" => $user->ID, "user_point" => $sb_user->get_point()));
+        }
+        $users = SB_PHP::array_sort($tmp_users, "user_point", SORT_DESC);
+        unset($tmp_users);
+        $tmp_users = array();
+        foreach($users as $user) {
+            $sb_user = new SB_User();
+            $sb_user->set_by_id($user["user_id"]);
+            array_push($tmp_users, $sb_user);
+        }
+        return $tmp_users;
+    }
 
     public static function is_email_valid($email) {
         return is_email($email);
@@ -810,10 +916,6 @@ class SB_WP {
 			return true;
 		}
 		return false;
-	}
-	
-	public static function get_all_user() {
-		return get_users();
 	}
 	
 	public static function phrase($phrase) {

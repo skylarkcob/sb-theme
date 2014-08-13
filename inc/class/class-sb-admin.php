@@ -60,7 +60,7 @@ class SB_Admin {
 		$this->add_tab('social', SB_WP::phrase("social_network_settings"), 'sbtheme_social_section');
 		$this->add_tab('sbmodule', SB_WP::phrase("utility_management"), 'sbtheme_sbmodule_section');
 
-        $this->add_tab('account', SB_WP::phrase("account"), 'sbtheme_account_section');
+        $this->add_tab('account', SB_WP::phrase("account_setting"), 'sbtheme_account_section');
 
 		$this->add_tab('aboutsb', SB_WP::phrase("about_sb"), 'sbtheme_aboutsb_section');
 	}

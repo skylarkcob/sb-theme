@@ -1469,3 +1469,7 @@ input:focus:-ms-input-placeholder { color:transparent; }
 .woocommerce-tabs .panel > h2 {
     display: none;
 }
+
+.sb-footer .sb-widget-area .widget {
+
+}

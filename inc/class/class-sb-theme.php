@@ -32,6 +32,22 @@ class SB_Theme {
 			include $template;
 		}
 	}
+
+    public static function the_footer_text() {
+        printf('<div class="sb-copyright-text">%s</div>', SB_WP::get_footer_text());
+    }
+
+    public static function content_before() {
+        echo '<div class="sb-content sb-site-content">';
+        self::open_center();
+        do_action("sb_content_before");
+    }
+
+    public static function content_after() {
+        do_action("sb_content_after");
+        self::close_center();
+        echo '</div>';
+    }
 	
 	public static function sidebar($slug = "") {
 		if(empty($slug)) {
@@ -437,10 +453,10 @@ class SB_Theme {
 
         if ( $count > 0 ) : ?>
 
-            <div class="woocommerce-product-rating sb-product-rating" itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+            <div class="woocommerce-product-rating sb-product-rating">
                 <div class="star-rating" title="<?php printf( __( SB_WP::phrase("rated_x_out_of_5"), SB_DOMAIN ), $average ); ?>">
 			<span style="width:<?php echo ( ( $average / 5 ) * 100 ); ?>%">
-				<strong itemprop="ratingValue" class="rating"><?php echo esc_html( $average ); ?></strong> <?php _e( SB_PHP::lowercase(SB_WP::phrase("out_of_5")), SB_DOMAIN ); ?>
+				<strong class="rating"><?php echo esc_html( $average ); ?></strong> <?php _e( SB_PHP::lowercase(SB_WP::phrase("out_of_5")), SB_DOMAIN ); ?>
 			</span>
                 </div>
                 <a href="#reviews" class="woocommerce-review-link" rel="nofollow">(<?php printf( _n( '%s '.SB_WP::phrase("customer_review"), '%s '.SB_WP::phrase("customer_reviews"), $count, SB_DOMAIN ), '<span itemprop="ratingCount" class="count">' . $count . '</span>' ); ?>)</a>
@@ -578,7 +594,7 @@ class SB_Theme {
         extract($args, EXTR_OVERWRITE);
         $menu_class .= ' sf-menu '.$theme_location;
         $menu_class = trim($menu_class);
-        echo '<div class="wrap row sb-navigation '.$theme_location.'">';
+        echo '<div class="sb-navigation '.$theme_location.'">';
         wp_nav_menu(array('theme_location' => $theme_location, 'menu_class' => $menu_class));
         echo '</div>';
     }
