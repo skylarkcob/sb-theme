@@ -64,7 +64,9 @@ class SB_Hook {
 			SB_WP::register_sidebar( 'float-ads-left', "Float Ads Left", SB_PHP::add_dotted(SB_Theme::phrase("float_ads_left_description")));
 			SB_WP::register_sidebar( 'float-ads-right', "Float Ads Right", SB_PHP::add_dotted(SB_Theme::phrase("float_ads_right_description")));
 		}
-		
+		if(SB_WP::is_tab_widget_enabled()) {
+            SB_WP::register_sidebar("tab-sidebar", "Tab Sidebar", SB_PHP::add_dotted(SB_WP::phrase("tab_sidebar_description")));
+        }
 	}
 	
 	public function sbtheme_widget_init() {

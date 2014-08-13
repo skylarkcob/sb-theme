@@ -34,6 +34,18 @@ class SB_WP {
 	public static function login_uri() {
 		echo self::get_login_uri();
 	}
+
+    public static function get_register_url() {
+        return wp_registration_url();
+    }
+
+    public static function the_register_url() {
+        echo self::get_register_url();
+    }
+
+    public static function  get_create_post_url() {
+        return admin_url("post-new.php");
+    }
 	
 	public static function get_author_post_url() {
 		return get_author_posts_url( get_the_author_meta( 'ID' ) );
@@ -85,7 +97,7 @@ class SB_WP {
     }
 
 	public static function get_post_per_page() {
-		return get_option('posts_per_page');
+		return self::get_posts_per_page();
 	}
 
     public static function get_product_category($args = array()) {
@@ -384,16 +396,34 @@ class SB_WP {
         wp_update_comment( $commentarr );
     }
 
+    public static function get_all_comment($args = array()) {
+        $args["number"] = '';
+        $args["status"] = 'approve';
+        return get_comments($args);
+    }
+
     public static function get_post_by_recent_comment($args = array()) {
         $posts_per_page = self::get_post_per_page();
         extract($args, EXTR_OVERWRITE);
-        $comments = get_comments(array("status" => "approve", "number" => $posts_per_page));
-        $post_in = array();
+        $comments = self::get_all_comment();
+        $posts = array();
+        $count = 0;
         foreach($comments as $comment) {
-            array_push($post_in, $comment->comment_post_ID);
+            $post = get_post($comment->comment_post_ID);
+            if(in_array($post, $posts)) {
+                continue;
+            }
+            array_push($posts, $post);
+            $count++;
+            if($count >= $posts_per_page) {
+                break;
+            }
         }
-        $args["post__in"] = $post_in;
-        return new WP_Query($args);
+        if(0 == count($posts)) {
+            $args["posts_per_page"] = $posts_per_page;
+            $posts = get_posts($args);
+        }
+        return $posts;
     }
 
     public static function send_html_mail($to, $subject, $message, $headers = '', $attachments = '') {
@@ -638,6 +668,7 @@ class SB_WP {
     }
 
     public static function get_all_user($args = array()) {
+        $args["number"] = '';
         return get_users($args);
     }
 
@@ -657,6 +688,11 @@ class SB_WP {
             $sb_user->set_by_id($user["user_id"]);
             array_push($tmp_users, $sb_user);
         }
+
+        if(isset($args["number"]) && is_numeric($args["number"])) {
+            $tmp_users = array_slice($tmp_users, 0, $args["number"]);
+        }
+
         return $tmp_users;
     }
 
@@ -807,6 +843,19 @@ class SB_WP {
 		}
 	}
 
+    public static function get_posts_per_page() {
+        return get_option("posts_per_page");
+    }
+
+    public static function get_recent_post($args = array()) {
+        $defaults = array(
+            "posts_per_page"    => self::get_posts_per_page(),
+            "paged"             => SB_Paginate::get_paged()
+        );
+        $args = wp_parse_args($args, $defaults);
+        return new WP_Query($args);
+    }
+
     public static function is_widget_enabled($name) {
         $options = SB_WP::option();
         $name = str_replace("enable_", "", $name);
@@ -818,6 +867,10 @@ class SB_WP {
             return true;
         }
         return false;
+    }
+
+    public static function is_tab_widget_enabled() {
+        return self::is_widget_enabled("SB Tab");
     }
 	
 	public static function add_user_admin($args = array()) {

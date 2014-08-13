@@ -1473,3 +1473,11 @@ input:focus:-ms-input-placeholder { color:transparent; }
 .sb-footer .sb-widget-area .widget {
 
 }
+
+.page-title {
+    margin-top: 0;
+}
+
+.page-header {
+    margin-bottom: 20px;
+}

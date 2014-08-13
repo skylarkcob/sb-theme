@@ -136,6 +136,9 @@ class SB_User extends WP_User {
     public function minus_point($point) {
         $old_point = $this->get_point();
         $old_point -= $point;
+        if(0 > $old_point) {
+            $old_point = 0;
+        }
         $this->set_point($old_point);
     }
 
@@ -156,7 +159,7 @@ class SB_User extends WP_User {
     }
 
     public function receive_mail($subject, $message) {
-        SB_WP::send_html_mail($this->get_email(), $subject, $message);
+        return SB_WP::send_html_mail($this->get_email(), $subject, $message);
     }
 
     public function get_email() {

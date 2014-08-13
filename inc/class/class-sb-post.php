@@ -148,21 +148,24 @@ class SB_Post {
     public function count_comment() {
         return get_comments_number($this->post->ID);
     }
-	
+
+    public function get_author() {
+        $user = new SB_User();
+        $user->set_by_id($this->post->post_author);
+        return $user;
+    }
+
 	public function thumbnail($args = array()) {
-        /*
-		if('television' == $this->post->post_type) {
-			$title = trim(strip_tags($this->get_meta('wpcf-tivi-title')));
-		} else {
-			$title = trim(strip_tags($this->post->post_title));
-		}
-        */
 		?>
 		<div class="post-thumbnail">
 			<a href="<?php $this->permalink(); ?>" title="<?php echo $title; ?>"><?php echo SB_WP::get_post_thumbnail($args); ?></a>
 		</div>
 		<?php
 	}
+
+    public function the_human_time_diff() {
+        echo $this->human_time_diff();
+    }
 
     public function human_time_diff() {
         if(!$this->is_valid()) {
@@ -218,6 +221,57 @@ class SB_Post {
         }
         $output .= __(' '.SB_PHP::lowercase(SB_WP::phrase("ago")), SB_DOMAIN);
         return $output;
+    }
+
+    public function get_id() {
+        return $this->post->ID;
+    }
+
+    public function get_category() {
+        $cat_id = wp_get_post_categories($this->get_id());
+        $result = array();
+        foreach($cat_id as $id) {
+            array_push($result, get_category($id));
+        }
+        return $result;
+    }
+
+    public function the_category() {
+        $cats = $this->get_category();
+        $result = "";
+        foreach($cats as $cat) {
+            $result .= sprintf('<a href="%1$s" title="">%2$s</a>, ', get_category_link($cat), $cat->name);
+        }
+        $result = trim($result, ', ');
+        echo $result;
+    }
+
+    public function get_comment($args = array()) {
+        $args["post_id"] = $this->get_id();
+        $args["status"] = 'approve';
+        return get_comments($args);
+    }
+
+    public function has_comment() {
+        $comments = $this->get_comment();
+        if(count($comments) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function the_list_comment_author($args = array()) {
+        $comments = $this->get_comment($args);
+        $result = "";
+        foreach($comments as $comment) {
+            $result .= sprintf('<a href="%1$s" title="">%2$s</a>, ', get_comment_link($comment), $comment->comment_author);
+        }
+        $result = trim($result, ', ');
+        echo $result;
+    }
+
+    public function the_views() {
+        echo $this->get_views();
     }
 }
 ?>

@@ -128,6 +128,9 @@ class SB_Language {
 		$this->overwrite_translator("vi", "name", "Tên");
 		$this->overwrite_translator("en", "name", "Name");
 
+        $this->overwrite_translator("vi", "tab_sidebar_description", "Sidebar chứa các widget hiển thị trên tab");
+        $this->overwrite_translator("en", "tab_sidebar_description", "The widget area that contains widgets to display in tab");
+
         $this->overwrite_translator("vi", "comment_insert_on_date", 'Bình luận được đăng vào ngày %s');
         $this->overwrite_translator("en", "comment_insert_on_date", 'Comment was inserted on %s');
 
