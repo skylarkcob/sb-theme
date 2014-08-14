@@ -243,9 +243,6 @@ class SB_User extends WP_User {
                     array_push($post_comment, $item);
                     $this->update_meta("post_comment", $post_comment);
                 }
-                $author = new SB_User();
-                $author->set_by_id($post->post_author);
-                $author->minus_point(SB_WP::get_user_comment_point());
             }
         }
     }

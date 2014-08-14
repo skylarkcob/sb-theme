@@ -180,6 +180,44 @@ class SB_PHP {
 		return self::add_punctuation($text, ',');
 	}
 
+    public static function ip_details($ip) {
+        if(!self::is_ip_valid($ip)) {
+            return array();
+        }
+        $json = file_get_contents("http://ipinfo.io/{$ip}");
+        $details = json_decode($json);
+        return (array)$details;
+    }
+
+    public static function get_ip_detail($ip) {
+        return self::ip_details($ip);
+    }
+
+    public static function is_ip_valid($ip) {
+        if(filter_var($ip, FILTER_VALIDATE_IP)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function is_ip_vietnam($ip) {
+        $details = self::ip_details($ip);
+        if(isset($details["country"])) {
+            $country = $details["country"];
+            if("VN" == $country) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function is_email_valid($email) {
+        if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return true;
+        }
+        return false;
+    }
+
     public static function array_sort($array, $on, $order = SORT_ASC) {
         $new_array = array();
         $sortable_array = array();
@@ -326,10 +364,7 @@ class SB_PHP {
 	}
 	
 	public static function is_valid_url($url) {
-		if(filter_var($url, FILTER_VALIDATE_URL)) {
-			return true;
-		}
-		return false;
+		return self::is_url_valid($url);
 	}
 	
 	public static function is_url($url) {
@@ -337,7 +372,10 @@ class SB_PHP {
 	}
 	
 	public static function is_url_valid($url) {
-		return self::is_valid_url($url);
+		if(filter_var($url, FILTER_VALIDATE_URL)) {
+            return true;
+        }
+        return false;
 	}
 	
 	public static function get_checkbox_value($value) {

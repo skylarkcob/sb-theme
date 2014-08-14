@@ -78,6 +78,7 @@ class SB_Admin {
         $this->add_general_field('footer_logo', 'Footer logo', 'footer_logo_callback');
 		$this->add_general_field('favicon', 'Favicon', 'favicon_callback');
 		$this->add_general_field('banner', 'Banner', 'banner_callback');
+        $this->add_general_field('no_thumbnail', 'No thumbnail', 'no_thumbnail_callback');
         $this->add_general_field('hotline_image', 'Hotline', 'hotline_image_callback');
         $this->add_general_field('list_yahoo', SB_WP::phrase('list_yahoo'), 'list_yahoo_callback');
 		$this->add_general_field('footer_text', SB_WP::phrase('footer_text'), 'footer_text_callback');
@@ -99,6 +100,10 @@ class SB_Admin {
 
     public function hotline_image_callback() {
         $this->set_media_image_field('hotline_image', SB_PHP::add_dotted(SB_WP::phrase("input_url_or_upload_new_image")));
+    }
+
+    public function no_thumbnail_callback() {
+        $this->set_media_image_field('no_thumbnail', SB_PHP::add_dotted(SB_WP::phrase("input_url_or_upload_new_image")));
     }
 	
 	// Hàm hiển thị mục cài đặt favicon
@@ -147,26 +152,47 @@ class SB_Admin {
 		</div>
 		<?php
 	}
-
-
 	
 	private function set_select_field($name, $description) {
 		$this->set_field($name, $description, 'select');
 	}
+
+    private function the_language_field($name, $description) {
+        global $sb_language;
+        $langs = $sb_language->get_list();
+        $value = $this->get_option_value($name);
+        ?>
+        <label for="<?php echo $name; ?>"></label>
+        <select id="<?php echo $name; ?>" name="<?php echo esc_attr($this->get_field_name($name)); ?>">
+            <?php foreach($langs as $key => $title) : ?>
+                <option value="<?php echo $key; ?>"<?php selected( $value, $key ); ?>><?php echo $title; ?></option>
+            <?php endforeach; ?>
+        </select>
+        <p class="description"><?php echo $description; ?></p>
+        <?php
+    }
+
+    private function the_page_select_field($name, $description) {
+        $value = $this->get_option_value($name);
+        $pages = SB_WP::get_all_page();
+        ?>
+        <label for="<?php echo $name; ?>"></label>
+        <select id="<?php echo $name; ?>" name="<?php echo esc_attr($this->get_field_name($name)); ?>">
+            <option value="0"><?php echo SB_PHP::add_colon(SB_WP::phrase("choose_page")); ?></option>
+            <?php foreach($pages as $page) : ?>
+                <option value="<?php echo $page->ID; ?>"<?php selected( $value, $page->ID ); ?>><?php echo $page->post_title; ?></option>
+            <?php endforeach; ?>
+        </select>
+        <p class="description"><?php echo $description; ?></p>
+        <?php
+    }
 	
 	private function select_field($name, $description) {
-		global $sb_language;
-		$langs = $sb_language->get_list();
-		$value = $this->get_option_value($name);
-		?>
-        <label for="<?php echo $name; ?>"></label>
-		<select id="<?php echo $name; ?>" name="<?php echo esc_attr($this->get_field_name($name)); ?>">
-			<?php foreach($langs as $key => $title) : ?>
-			<option value="<?php echo $key; ?>"<?php selected( $value, $key ); ?>><?php echo $title; ?></option>
-			<?php endforeach; ?>
-		</select>
-		<p class="description"><?php echo $description; ?></p>
-		<?php
+		if("language" == $name) {
+            $this->the_language_field($name, $description);
+        } elseif("register_url" == $name || "login_url" == $name || "lost_password_url" == $name) {
+            $this->the_page_select_field($name, $description);
+        }
 	}
 	
 	/*
@@ -325,6 +351,9 @@ class SB_Admin {
 
     private function add_account_setting() {
         $this->add_section("sbtheme_account_section", SB_WP::phrase("account_setting_page"));
+        $this->add_account_field("register_url", SB_WP::phrase("register_url"), "register_url_callback");
+        $this->add_account_field("login_url", SB_WP::phrase("login_url"), "login_url_callback");
+        $this->add_account_field("lost_password_url", SB_WP::phrase("lost_password_url"), "lost_password_url_callback");
         $this->add_account_field("user_post_point", SB_WP::phrase("user_post_point"), "user_post_point_callback");
         $this->add_account_field("user_comment_point", SB_WP::phrase("user_comment_point"), "user_comment_point_callback");
         $this->add_account_field("time_between_post", SB_WP::phrase("time_between_posts"), "time_between_post_callback");
@@ -344,6 +373,18 @@ class SB_Admin {
 
     private function add_account_field($id, $title, $callback) {
         $this->add_field($id, $title, 'sbtheme_account_section', $callback);
+    }
+
+    public function register_url_callback() {
+        $this->set_select_field("register_url", SB_PHP::add_dotted(SB_WP::phrase("register_url_setting_description")));
+    }
+
+    public function login_url_callback() {
+        $this->set_select_field("login_url", SB_PHP::add_dotted(SB_WP::phrase("login_url_setting_description")));
+    }
+
+    public function lost_password_url_callback() {
+        $this->set_select_field("lost_password_url", SB_PHP::add_dotted(SB_WP::phrase("lost_password_url_setting_description")));
     }
 
 	/*
@@ -500,6 +541,7 @@ class SB_Admin {
         $new_input['footer_logo'] = $this->set_input_data($input, 'footer_logo', 'image');
         $new_input['favicon'] = $this->set_input_data($input, 'favicon', 'icon');
 		$new_input['banner'] = $this->set_input_data($input, 'banner', 'image');
+        $new_input['no_thumbnail'] = $this->set_input_data($input, 'no_thumbnail', 'image');
         $new_input['hotline_image'] = $this->set_input_data($input, 'hotline_image', 'image');
 		$new_input['footer_text'] = $this->set_input_data($input, 'footer_text', 'html');
         $new_input['list_yahoo'] = $this->set_input_data($input, 'list_yahoo', 'html');
@@ -532,6 +574,9 @@ class SB_Admin {
         $new_input['main_slider'] = $this->set_input_data($input, 'main_slider', 'html');
         $new_input['sub_slider'] = $this->set_input_data($input, 'sub_slider', 'html');
 
+        $new_input['register_url'] = $this->set_input_data($input, 'register_url', 'int-nummber');
+        $new_input['login_url'] = $this->set_input_data($input, 'login_url', 'int-nummber');
+        $new_input['lost_password_url'] = $this->set_input_data($input, 'lost_password_url', 'int-nummber');
         $new_input['user_post_point'] = $this->set_input_data($input, 'user_post_point', 'nummber');
         $new_input['user_comment_point'] = $this->set_input_data($input, 'user_comment_point', 'nummber');
         $new_input['time_between_post'] = $this->set_input_data($input, 'time_between_post', 'nummber');
@@ -609,6 +654,12 @@ class SB_Admin {
 	// Mục hiển thị và cho upload hình ảnh
 	private function media_image_upload_field($name, $value, $description) {
 		echo '<div class="sbtheme-media-image">';
+
+        if("no_thumbnail" == $name && empty($value)) {
+            $value = SB_WP::get_no_thumbnail_url();
+
+        }
+
 		$this->media_image_thumbnail($name, $value);
 		$this->media_upload_field($name, $value, $description);
 		echo '</div>';

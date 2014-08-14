@@ -26,17 +26,46 @@ class SB_WP {
 	public static function add_trailing_slash($string) {
 		return trailingslashit($string);
 	}
-	
+
+    public static function get_option_page_url($option_key) {
+        $kq = "";
+        $options = self::option();
+        if(isset($options[$option_key])) {
+            $page_id = $options[$option_key];
+            if(is_numeric($page_id) && 0 < $page_id) {
+                $kq = get_page_link($page_id);
+            }
+        }
+        return $kq;
+    }
+
 	public static function get_login_uri() {
-		return wp_login_url(self::get_redirect_uri());
+        $kq = self::get_option_page_url("login_url");
+        if(!empty($kq)) {
+            $kq = self::add_param_to_url(array("redirect_to" => self::get_redirect_uri()), $kq);
+        }
+        if(empty($kq)) {
+            $kq = wp_login_url(self::get_redirect_uri());
+        }
+
+        return apply_filters('sb_login_url', $kq);
 	}
+
+    public static function get_lost_password_url() {
+        $kq = self::get_option_page_url("lost_password_url");
+        if(empty($kq)) {
+            $kq = wp_lostpassword_url(self::get_redirect_uri());
+        }
+
+        return apply_filters('sb_lost_password_url', $kq);
+    }
 	
 	public static function login_uri() {
 		echo self::get_login_uri();
 	}
 
     public static function get_register_url() {
-        return wp_registration_url();
+        return self::get_signup_url();
     }
 
     public static function the_register_url() {
@@ -79,7 +108,7 @@ class SB_WP {
 			return get_the_post_thumbnail(get_the_ID(), $real_size);
 		}
 		
-		return '<img class="no-thumbnail wp-post-image" width="'.$width.'" height="'.$height.'" src="'.self::get_image_url('no-thumbnail.png').'"'.$style.'>';
+		return '<img class="no-thumbnail wp-post-image" width="'.$width.'" height="'.$height.'" src="'.self::get_no_thumbnail_url().'"'.$style.'>';
 	}
 	
 	public static function get_url_value($url) {
@@ -180,6 +209,18 @@ class SB_WP {
         return $woocommerce->cart->get_cart_url();
     }
 
+    public static function get_no_thumbnail_url() {
+        $options = self::option();
+        $result = '';
+        if(isset($options["no_thumbnail"])) {
+            $result = $options["no_thumbnail"];
+        }
+        if(empty($result)) {
+            $result = self::get_image_url("no-thumbnail.png");
+        }
+        return $result;
+    }
+
     public static function get_cart() {
         return '<a class="cart-content" href="'.self::get_cart_uri().'" title="'.SB_WP::phrase('cart_content').'"><span class="product-number">'.sprintf(_n('%d '.SB_WP::phrase('product'), '%d '.SB_WP::phrase('products'), self::count_cart(), 'sbwp'), self::count_cart()).'</span><span class="sep"> - </span>'.self::cart_total().'</a>';
     }
@@ -238,9 +279,17 @@ class SB_WP {
         return $detect->isMobile();
     }
 
+    public static function get_post_time_compare($post) {
+        return get_post_time("G", false, $post);
+    }
+
+    public static function get_post_human_minute_diff($post) {
+        return SB_WP::get_human_minute_diff(self::get_post_time_compare($post));
+    }
+
     public static function get_human_minute_diff($from, $to = '') {
         $diff = self::get_human_time_diff($from, $to);
-        $kq = 1;
+        $kq = 0;
         $type = $diff["type"];
         $value = $diff["value"];
         switch($type) {
@@ -402,6 +451,10 @@ class SB_WP {
         return get_comments($args);
     }
 
+    public static function get_all_page($args = array()) {
+        return get_pages($args);
+    }
+
     public static function get_post_by_recent_comment($args = array()) {
         $posts_per_page = self::get_post_per_page();
         extract($args, EXTR_OVERWRITE);
@@ -488,7 +541,15 @@ class SB_WP {
     }
 
 	public static function get_signup_url() {
-		return apply_filters('sb_register_url', wp_registration_url());
+        $kq = wp_registration_url();
+		$options = self::option();
+        if(isset($options["register_url"])) {
+            $page_id = $options["register_url"];
+            if(is_numeric($page_id) && 0 < $page_id) {
+                $kq = get_page_link($page_id);
+            }
+        }
+        return apply_filters('sb_register_url', $kq);
 	}
 	
 	public static function get_singup_uri() {

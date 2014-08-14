@@ -319,6 +319,18 @@ class SB_Hook {
         $str_text = SB_PHP::lowercase($translated_text);
         $str_text = SB_PHP::remove_punctuation($str_text);
 		switch($str_text) {
+            case 'registration complete. please check your e-mail':
+                $translated_text = SB_WP::phrase('registration_complete_check_email').$punctuation;
+                break;
+            case 'check your e-mail for your new password':
+                $translated_text = SB_WP::phrase('registration_complete_check_email').$punctuation;
+                break;
+            case 'check your e-mail for the confirmation link':
+                $translated_text = SB_WP::phrase('check_email_for_confirm_link').$punctuation;
+                break;
+            case 'user registration is currently not allowed':
+                $translated_text = SB_WP::phrase('registration_not_allowed').$punctuation;
+                break;
             case 'remove':
                 $translated_text = SB_WP::phrase('remove').$punctuation;
                 break;
@@ -775,7 +787,8 @@ class SB_Hook {
             return;
         }
         $post = get_post($post_id);
-        if(empty($post->post_status) || "publish" != $post->post_status || "post" != $post->post_type) {
+        $minute = SB_WP::get_post_human_minute_diff($post);
+        if(empty($post->post_status) || "publish" != $post->post_status || "post" != $post->post_type || 0.5 <= $minute) {
             delete_transient( "post_after_x_minute" );
             return;
         }

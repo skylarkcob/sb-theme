@@ -119,6 +119,39 @@ class SB_Language {
 		$this->overwrite_translator("vi", "hello", "Xin chào");
 		$this->overwrite_translator("en", "hello", "Hello");
 
+        $this->overwrite_translator("vi", "hello", "Xin chào");
+        $this->overwrite_translator("en", "hello", "Hello");
+
+        $this->overwrite_translator("vi", "registration_not_allowed", "Hiện tại bạn không được phép đăng ký tài khoản mới");
+        $this->overwrite_translator("en", "registration_not_allowed", "User registration is currently not allowed");
+
+        $this->overwrite_translator("vi", "check_email_for_confirm_link", "Kiểm tra địa chỉ email của bạn để lấy link xác thực");
+        $this->overwrite_translator("en", "check_email_for_confirm_link", "Check your e-mail for the confirmation link");
+
+        $this->overwrite_translator("vi", "check_email_for_new_password", "Kiểm tra địa chỉ email của bạn để lấy mật khẩu mới");
+        $this->overwrite_translator("en", "check_email_for_new_password", "Check your e-mail for your new password");
+
+        $this->overwrite_translator("vi", "registration_complete_check_email", "Đăng ký hoàn tất, xin vui lòng kiểm tra thông tin qua địa chỉ email");
+        $this->overwrite_translator("en", "registration_complete_check_email", "Registration complete. Please check your e-mail");
+
+        $this->overwrite_translator("vi", "register_url_setting_description", "Lựa chọn trang cho người dùng đăng ký tài khoản");
+        $this->overwrite_translator("en", "register_url_setting_description", "Choose the page for user to register");
+
+        $this->overwrite_translator("vi", "login_url", "Link đăng nhập");
+        $this->overwrite_translator("en", "login_url", "Login url");
+
+        $this->overwrite_translator("vi", "login_url_setting_description", "Lựa chọn trang cho người dùng đăng nhập vào hệ thống");
+        $this->overwrite_translator("en", "login_url_setting_description", "Choose the page for user to login");
+
+        $this->overwrite_translator("vi", "lost_password_url", "Link quên mật khẩu");
+        $this->overwrite_translator("en", "lost_password_url", "Lost password url");
+
+        $this->overwrite_translator("vi", "lost_password_url_setting_description", "Lựa chọn trang cho người dùng lấy lại mật khẩu");
+        $this->overwrite_translator("en", "lost_password_url_setting_description", "Choose the page for user to get new password");
+
+        $this->overwrite_translator("vi", "choose_page", "Lựa chọn trang");
+        $this->overwrite_translator("en", "choose_page", "Choose page");
+
         $this->overwrite_translator("vi", "user_point", "Tính điểm thành viên");
         $this->overwrite_translator("en", "user_point", "User point");
 

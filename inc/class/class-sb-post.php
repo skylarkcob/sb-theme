@@ -10,7 +10,7 @@ class SB_Post {
 	
 	public function __construct() {
 		$this->post = get_post();
-		$this->thumbnail_default = SB_IMAGES_URI.'/no-thumbnail.png';
+		$this->thumbnail_default = SB_WP::get_no_thumbnail_url();
 	}
 
     public function is_valid() {
@@ -107,6 +107,8 @@ class SB_Post {
 		}
 		return '<img class="no-thumbnail wp-post-image" src="'.$this->thumbnail_default.'">';
 	}
+
+
 	
 	public function comment_link() {
 		SB_Theme::post_comment_link();
@@ -236,13 +238,40 @@ class SB_Post {
         return $result;
     }
 
-    public function the_category() {
+    public function get_tag() {
+        $tag_id = wp_get_post_tags($this->get_id());
+        $result = array();
+        foreach($tag_id as $id) {
+            array_push($result, get_tag($id));
+        }
+        return $result;
+    }
+
+    public function has_tag() {
+        $tags = $this->get_tag();
+        if(count($tags) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function the_tag($separator = ', ') {
+        $tags = $this->get_tag();
+        $result = "";
+        foreach($tags as $tag) {
+            $result .= sprintf('<a href="%1$s" title="">%2$s</a>', get_tag_link($tag), $tag->name).$separator;
+        }
+        $result = trim($result, $separator);
+        echo $result;
+    }
+
+    public function the_category($separator = ', ') {
         $cats = $this->get_category();
         $result = "";
         foreach($cats as $cat) {
-            $result .= sprintf('<a href="%1$s" title="">%2$s</a>, ', get_category_link($cat), $cat->name);
+            $result .= sprintf('<a href="%1$s" title="">%2$s</a>', get_category_link($cat), $cat->name).$separator;
         }
-        $result = trim($result, ', ');
+        $result = trim($result, $separator);
         echo $result;
     }
 
