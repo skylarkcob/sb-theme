@@ -704,12 +704,17 @@ class SB_Hook {
 	public function sbtheme_login_style() {
 		echo '<link media="all" type="text/css" href="'.SB_CSS_URI.'/sb-login-style.css" id="sb-login-style-css" rel="stylesheet">';
 
-		$options = SB_WP::option();
-		if(isset($options['logo']) && !empty($options['logo'])) {
+		$logo_url = SB_WP::get_logo_url();
+		if(!empty($logo_url)) {
 			echo '<style>';
-			echo 'body.login div#login h1 a{background-image:url("'.$options['logo'].'");}';
+			echo 'body.login div#login h1 a{background-image:url("'.$logo_url.'");}';
 			echo '</style>';
 		}
+
+        $show_login_logo = apply_filters("sb_show_login_logo", true);
+        if(!$show_login_logo) {
+            printf('<style>body.login div#login h1 a{display:none;}</style>');
+        }
 	}
 
     public function clear_head_meta() {

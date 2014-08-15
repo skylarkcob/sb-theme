@@ -286,6 +286,14 @@ class SB_User extends WP_User {
         return $this->get_meta("last_post_time");
     }
 
+    public function get_id() {
+        return $this->user->ID;
+    }
+
+    public function set_password($new_password) {
+        SB_WP::set_password($this->get_id(), $new_password);
+    }
+
     public function get_last_post_minute_diff() {
         $last_post_time = $this->get_last_post_time();
         return SB_WP::get_human_minute_diff(strtotime($last_post_time));

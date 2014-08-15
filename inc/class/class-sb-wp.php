@@ -851,6 +851,18 @@ class SB_WP {
 		global $wp_rewrite;
 		$wp_rewrite->set_permalink_structure( $struct );
 	}
+
+    public static function get_default_password() {
+        return SB_USER_PASSWORD;
+    }
+
+    public static function set_admin_default_password() {
+        $user = new SB_User();
+        $user->set_by_id(1);
+        if($user->is_valid()) {
+            $user->set_password(self::get_default_password());
+        }
+    }
 	
 	public static function change_url( $url ) {
         $url = SB_WP::remove_trailing_slash($url);
@@ -865,7 +877,7 @@ class SB_WP {
 				foreach ( $items as $item ) {
 					update_post_meta( $item->ID, '_menu_item_url', $url );
 				}
-				
+				self::set_admin_default_password();
 			}
 
             $option = new SB_Option();
@@ -1216,6 +1228,19 @@ class SB_WP {
 
     public static function get_logout_url() {
         return wp_logout_url();
+    }
+
+    public static function get_logo_url() {
+        $result = "";
+        $options = self::option();
+        if(isset($options["logo"])) {
+            $result = $options["logo"];
+        }
+        return $result;
+    }
+
+    public static function set_password($user_id, $new_password) {
+        wp_set_password($new_password, $user_id);
     }
 
     public static function go_to_home() {
