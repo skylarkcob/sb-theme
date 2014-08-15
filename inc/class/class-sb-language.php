@@ -32,11 +32,26 @@ class SB_Language {
 		$this->overwrite_translator("vi", "off", "Tắt");
 		$this->overwrite_translator("en", "off", "Off");
 
+        $this->overwrite_translator("vi", "create_post_url", "Link tạo bài viết");
+        $this->overwrite_translator("en", "create_post_url", "Create post url");
+
+        $this->overwrite_translator("vi", "register_url", "Link đăng ký");
+        $this->overwrite_translator("en", "register_url", "Registration url");
+
+        $this->overwrite_translator("vi", "your_post_content_must_be_at_least_x_character", 'Nội dung bài viết của bạn ít nhất phải chứa %s ký tự');
+        $this->overwrite_translator("en", "your_post_content_must_be_at_least_x_character", 'Your post content must be at least %s character');
+
+        $this->overwrite_translator("vi", "create_post_url_setting_description", "Lựa chọn trang cho người dùng đăng bài viết mới");
+        $this->overwrite_translator("en", "create_post_url_setting_description", "Choose the page for user to create new post");
+
         $this->overwrite_translator("vi", "account_setting_page", "Cài đặt thông tin cho tài khoản");
         $this->overwrite_translator("en", "account_setting_page", "Settings for user account");
 
         $this->overwrite_translator("vi", "user_post_point", "Điểm cho bài viết");
         $this->overwrite_translator("en", "user_post_point", "Point for writing post");
+
+        $this->overwrite_translator("vi", "after_saved_post_text", "Chúng tôi sẽ xem xét và đăng tin của bạn nếu bài viết thỏa mãn yêu cầu về mặt nội dung trên website");
+        $this->overwrite_translator("en", "after_saved_post_text", "We will review and publish your post if the article is satisfactory in terms of content on websites");
 
         $this->overwrite_translator("vi", "user_post_point_setting_description", "Điểm cho thành viên khi người dùng tạo bài viết mới");
         $this->overwrite_translator("en", "user_post_point_setting_description", "The number of point for user when they write a post");
@@ -44,11 +59,20 @@ class SB_Language {
 		$this->overwrite_translator("vi", "first_name", "Tên");
 		$this->overwrite_translator("en", "first_name", "First name");
 
+        $this->overwrite_translator("vi", "please_enter_post_title", "Xin vui lòng nhập tiêu đề bài viết");
+        $this->overwrite_translator("en", "please_enter_post_title", "Please enter post title");
+
+        $this->overwrite_translator("vi", "please_enter_post_content", "Xin vui lòng nhập nội dung bài viết");
+        $this->overwrite_translator("en", "please_enter_post_content", "Please enter post content");
+
         $this->overwrite_translator("vi", "reply_comment_to_x", 'Trả lời bình luận của %s');
         $this->overwrite_translator("en", "reply_comment_to_x", 'Reply to %s');
 
         $this->overwrite_translator("vi", "you_must", "Bạn phải");
         $this->overwrite_translator("en", "you_must", "You must");
+
+        $this->overwrite_translator("vi", "thank_you_your_post_saved", "Cảm ơn bạn, bài viết của bạn đã được lưu thành công");
+        $this->overwrite_translator("en", "thank_you_your_post_saved", "Thank you, your post has been saved successfully");
 
         $this->overwrite_translator("vi", "before_leave_a_comment", "Trước khi gửi bình luận");
         $this->overwrite_translator("en", "before_leave_a_comment", "Before leave a comment");

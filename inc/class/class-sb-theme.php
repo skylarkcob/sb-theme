@@ -435,10 +435,137 @@ class SB_Theme {
             </dl>
             <div class="product-review">
                 <?php self::product_rate_result(); ?>
-                <a class="new-review" href="#comment"><?php _e(SB_WP::phrase("write_product_review"), SB_DOMAIN); ?></a>
+                <a class="new-review" href="<?php echo '#comment'; ?>"><?php _e(SB_WP::phrase("write_product_review"), SB_DOMAIN); ?></a>
                 <?php SB_Theme::addthis_share_button(); ?>
             </div>
         </div>
+        <?php
+    }
+
+    public static function create_post_form($content, $editor_id, $settings = array()) {
+        if(!is_user_logged_in()) {
+            wp_redirect(SB_WP::get_login_uri());
+            exit;
+        }
+        $user = new SB_User();
+        $last_post_minute = $user->get_last_post_minute_diff();
+        if($last_post_minute < SB_WP::get_time_between_post()) {
+            printf('<div class="messages">%1$s</div>', SB_WP::error_line(__(sprintf(SB_PHP::add_dotted(SB_WP::phrase("you_must_wait_x_minute_before_publish_next_post")), SB_PHP::date_minus_minute(SB_WP::current_time_mysql(), $user->get_next_post_time())), SB_DOMAIN)));
+            return;
+        }
+        if ( isset( $_POST['submitted'] ) && isset( $_POST['post_nonce_field'] ) && wp_verify_nonce( $_POST['post_nonce_field'], 'post_nonce' ) ) {
+            $msg_errors = array();
+            if ( isset($_POST["post_title"]) && empty($_POST["post_title"]) ) {
+                array_push($msg_errors, SB_PHP::add_dotted(SB_WP::phrase("please_enter_post_title")));
+                $has_error = true;
+            } else {
+                $post_title = wp_strip_all_tags($_POST["post_title"]);
+            }
+
+            if ( isset($_POST["content"]) && empty($_POST["content"]) ) {
+                array_push($msg_errors, SB_PHP::add_dotted(SB_WP::phrase("please_enter_post_content")));
+                $has_error = true;
+            } else {
+                $post_content = stripcslashes($_POST["content"]);
+                $post_character = SB_PHP::count_character($post_content);
+                $character_limit = SB_WP::get_post_character_limit();
+                if($post_character < $character_limit) {
+                    array_push($msg_errors, SB_PHP::add_dotted(sprintf(SB_WP::phrase("your_post_content_must_be_at_least_x_character"), $character_limit)));
+                    $has_error = true;
+                }
+            }
+
+            $post_category = array($_POST["post_category"]);
+            $post_tags = wp_strip_all_tags($_POST["post_tags"]);
+
+            $post_information = array(
+                'post_title' => $post_title,
+                'post_content' => $post_content,
+                'post_type' => 'post',
+                'post_status' => 'pending',
+                'post_author'   => $user->ID,
+                'post_category' => $post_category,
+                'tags_input'    => $post_tags
+            );
+
+            if($has_error) {
+                echo '<div class="messages">';
+                foreach($msg_errors as $error) {
+                    SB_WP::error_line($error);
+                }
+                do_action("sb_new_post_form_message");
+                echo '</div>';
+            } else {
+                $post_id = wp_insert_post( $post_information );
+                if($post_id) {
+                    $post_saved = true;
+                }
+            }
+        }
+        if(empty($editor_id)) {
+            $editor_id = "content";
+        }
+        ?>
+        <?php if(!$post_saved) : ?>
+        <div class="sb-create-post">
+            <?php do_action("sb_new_post_form_before"); ?>
+            <form class="new-post" method="post">
+                <p>
+                    <label for="title"><?php _e(apply_filters("sb_new_post_form_title", SB_PHP::add_colon(SB_WP::phrase("title"))), SB_DOMAIN) ?></label>
+                    <input type="text" name="post_title" id="title" class="required" value="<?php echo $post_title; ?>" autocomplete="off">
+                </p>
+                <div class="post-content-area">
+                    <?php SB_WP::the_editor($content, $editor_id, $settings); ?>
+                    <?php
+                    $content_description = apply_filters("sb_new_post_form_content_description", "");
+                    if(!empty($content_description)) {
+                        printf('<em>%1$s</em>', $content_description);
+                    }
+                    ?>
+                </div>
+
+                <p>
+                    <?php $cats = SB_WP::get_all_category(); ?>
+                    <?php
+                    if(is_array($post_category)) {
+                        $cat_id = array_shift($post_category);
+                    }
+
+                    ?>
+                    <label for="category"><?php _e(apply_filters("sb_new_post_form_category", SB_PHP::add_colon(SB_WP::phrase("category"))), SB_DOMAIN) ?></label>
+                    <select id="category" name="post_category">
+                        <?php foreach($cats as $cat) : ?>
+                            <option value="<?php echo $cat->term_id; ?>"<?php selected($cat_id, $cat->term_id); ?>><?php echo $cat->name; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </p>
+                <p>
+                    <label for="tags"><?php _e(apply_filters("sb_new_post_form_tags", SB_PHP::add_colon(SB_WP::phrase("tags"))), SB_DOMAIN) ?></label>
+                    <input type="text" name="post_tags" id="tags" class="required" value="<?php echo $post_tags; ?>" autocomplete="off">
+                    <?php
+                    $tags_description = apply_filters("sb_new_post_form_tags_description", "");
+                    if(!empty($tags_description)) {
+                        printf('<em>%1$s</em>', $tags_description);
+                    }
+                    ?>
+                </p>
+                <p>
+                    <?php wp_nonce_field( 'post_nonce', 'post_nonce_field' ); ?>
+                    <input type="hidden" name="submitted" id="submitted" value="true">
+                    <button type="submit" class="submit-new-post"><?php _e(apply_filters("sb_new_post_form_submit_text", SB_WP::phrase("submit")), SB_DOMAIN) ?></button>
+                </p>
+            </form>
+            <?php do_action("sb_new_post_form_after"); ?>
+        </div>
+        <?php else : ?>
+            <div class="messages">
+                <?php SB_WP::message_line(SB_PHP::add_dotted(SB_WP::phrase("thank_you_your_post_saved"))); ?>
+            </div>
+            <div class="after-save-post">
+                <p><?php echo SB_PHP::add_dotted(SB_WP::phrase("after_saved_post_text")); ?></p>
+                <?php do_action("sb_after_saved_post_text"); ?>
+            </div>
+        <?php endif; ?>
         <?php
     }
 
@@ -459,7 +586,7 @@ class SB_Theme {
 				<strong class="rating"><?php echo esc_html( $average ); ?></strong> <?php _e( SB_PHP::lowercase(SB_WP::phrase("out_of_5")), SB_DOMAIN ); ?>
 			</span>
                 </div>
-                <a href="#reviews" class="woocommerce-review-link" rel="nofollow">(<?php printf( _n( '%s '.SB_WP::phrase("customer_review"), '%s '.SB_WP::phrase("customer_reviews"), $count, SB_DOMAIN ), '<span itemprop="ratingCount" class="count">' . $count . '</span>' ); ?>)</a>
+                <a href="<?php echo '#reviews'; ?>" class="woocommerce-review-link" rel="nofollow">(<?php printf( _n( '%s '.SB_WP::phrase("customer_review"), '%s '.SB_WP::phrase("customer_reviews"), $count, SB_DOMAIN ), '<span itemprop="ratingCount" class="count">' . $count . '</span>' ); ?>)</a>
             </div>
 
         <?php endif;
@@ -801,7 +928,7 @@ class SB_Theme {
 	?>
 		<div class="author-wrap">
 			<div class="author-gravatar">
-				<?php echo $author->get_avatar( 100 ); ?>
+				<?php echo $author->get_avatar( '100' ); ?>
 			</div>
 			<div class="author-info">
 				<div class="vcard author author-title">

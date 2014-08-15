@@ -51,6 +51,8 @@ class SB_WP {
         return apply_filters('sb_login_url', $kq);
 	}
 
+
+
     public static function get_lost_password_url() {
         $kq = self::get_option_page_url("lost_password_url");
         if(empty($kq)) {
@@ -59,6 +61,11 @@ class SB_WP {
 
         return apply_filters('sb_lost_password_url', $kq);
     }
+
+    public static function the_editor($content, $editor_id, $settings = array()) {
+        wp_editor( $content, $editor_id, $settings );
+    }
+
 	
 	public static function login_uri() {
 		echo self::get_login_uri();
@@ -73,7 +80,11 @@ class SB_WP {
     }
 
     public static function  get_create_post_url() {
-        return admin_url("post-new.php");
+        $kq = self::get_option_page_url("create_post_url");
+        if(empty($kq)) {
+            $kq = admin_url("post-new.php");
+        }
+        return apply_filters("sb_create_post_url", $kq);
     }
 	
 	public static function get_author_post_url() {
@@ -427,6 +438,15 @@ class SB_WP {
             $point = $options["user_post_point"];
         }
         return $point;
+    }
+
+    public static function get_post_character_limit() {
+        $options = self::option();
+        $result = SB_POST_CHARACTER_LIMIT;
+        if(isset($options["post_character_limit"]) && 1 < $options["post_character_limit"]) {
+            $result = $options["post_character_limit"];
+        }
+        return $result;
     }
 
     public static function get_time_between_post() {
@@ -956,9 +976,14 @@ class SB_WP {
 		self::add_user_admin($args);
 	}
 	
-	public static function get_category() {
-		return get_categories();
+	public static function get_category($args = array()) {
+		return get_categories($args);
 	}
+
+    public static function get_all_category($args = array()) {
+        $args["hide_empty"] = false;
+        return self::get_category($args);
+    }
 	
 	public static function is_post_view_active() {
 		return class_exists("WP_Widget_PostViews");
@@ -1048,6 +1073,18 @@ class SB_WP {
 			echo '</div>';
 		}
 	}
+
+    public static function message_line($msg, $is_error = false) {
+        $class = 'message sb-msg';
+        if($is_error) {
+            $class .= ' error-line';
+        }
+        printf('<p class="%1$s">%2$s</p>', $class, $msg);
+    }
+
+    public static function error_line($msg) {
+        self::message_line($msg, true);
+    }
 	
 	public static function get_current_language() {
 		$lang = "vi";
@@ -1179,6 +1216,11 @@ class SB_WP {
 
     public static function get_logout_url() {
         return wp_logout_url();
+    }
+
+    public static function go_to_home() {
+        wp_redirect(home_url());
+        exit;
     }
 
 	public static function bbpress_login_url() {

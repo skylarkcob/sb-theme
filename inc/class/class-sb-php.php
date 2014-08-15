@@ -180,6 +180,11 @@ class SB_PHP {
 		return self::add_punctuation($text, ',');
 	}
 
+    public static function count_character($string) {
+        $new_string = strip_tags($string);
+        return str_word_count($new_string);
+    }
+
     public static function ip_details($ip) {
         if(!self::is_ip_valid($ip)) {
             return array();

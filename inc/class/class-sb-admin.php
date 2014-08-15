@@ -190,7 +190,7 @@ class SB_Admin {
 	private function select_field($name, $description) {
 		if("language" == $name) {
             $this->the_language_field($name, $description);
-        } elseif("register_url" == $name || "login_url" == $name || "lost_password_url" == $name) {
+        } elseif("register_url" == $name || "login_url" == $name || "lost_password_url" == $name || "create_post_url") {
             $this->the_page_select_field($name, $description);
         }
 	}
@@ -351,6 +351,7 @@ class SB_Admin {
 
     private function add_account_setting() {
         $this->add_section("sbtheme_account_section", SB_WP::phrase("account_setting_page"));
+        $this->add_account_field("create_post_url", SB_WP::phrase("create_post_url"), "create_post_url_callback");
         $this->add_account_field("register_url", SB_WP::phrase("register_url"), "register_url_callback");
         $this->add_account_field("login_url", SB_WP::phrase("login_url"), "login_url_callback");
         $this->add_account_field("lost_password_url", SB_WP::phrase("lost_password_url"), "lost_password_url_callback");
@@ -373,6 +374,10 @@ class SB_Admin {
 
     private function add_account_field($id, $title, $callback) {
         $this->add_field($id, $title, 'sbtheme_account_section', $callback);
+    }
+
+    public function create_post_url_callback() {
+        $this->set_select_field("create_post_url", SB_PHP::add_dotted(SB_WP::phrase("create_post_url_setting_description")));
     }
 
     public function register_url_callback() {
@@ -574,6 +579,7 @@ class SB_Admin {
         $new_input['main_slider'] = $this->set_input_data($input, 'main_slider', 'html');
         $new_input['sub_slider'] = $this->set_input_data($input, 'sub_slider', 'html');
 
+        $new_input['create_post_url'] = $this->set_input_data($input, 'create_post_url', 'int-nummber');
         $new_input['register_url'] = $this->set_input_data($input, 'register_url', 'int-nummber');
         $new_input['login_url'] = $this->set_input_data($input, 'login_url', 'int-nummber');
         $new_input['lost_password_url'] = $this->set_input_data($input, 'lost_password_url', 'int-nummber');

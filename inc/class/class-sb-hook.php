@@ -50,7 +50,11 @@ class SB_Hook {
 	public function allow_upload_stl_file($mimes) {
 		return array_merge($mimes, array('stl' => '3d/stl'));
 	}
-	
+
+    public function sb_new_post_status() {
+
+    }
+
 	private function sidebar_init() {
 		$options = SB_WP::option();
 		$widget = new SB_Widget();
@@ -1018,6 +1022,7 @@ class SB_Hook {
 				}
 			}
 		}
+        $this->sb_new_post_status();
 		$this->session_init();
         $this->sb_woocommerce_image_size();
 	}

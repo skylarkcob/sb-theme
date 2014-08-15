@@ -1481,3 +1481,92 @@ input:focus:-ms-input-placeholder { color:transparent; }
 .page-header {
     margin-bottom: 20px;
 }
+
+.sb-create-post .wp-editor-tabs {
+
+}
+
+.sb-create-post .wp-editor-tabs a {
+    height: 28px;
+}
+
+.sb-create-post .wp-editor-container {
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.sb-create-post div.mce-container-body.mce-stack-layout {
+
+}
+
+.sb-create-post .wp-editor-area {
+
+}
+
+.sb-create-post .mce-edit-area {
+
+}
+
+.sb-create-post .mce-statusbar {
+    background-color: #f7f7f7;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    min-height: 24px;
+    width: 100%;
+}
+
+.sb-create-post .mce-container-body .mce-resizehandle {
+    height: 13px;
+    width: 21px;
+}
+
+.sb-create-post i.mce-i-resize {
+    color: #bfbfbf;
+    font-size: 25px;
+    height: 31px;
+    width: 32px;
+}
+
+.sb-create-post .new-post p,
+.sb-create-post .post-content-area {
+    margin-bottom: 20px;
+}
+
+.sb-create-post .new-post label {
+    display: block;
+    margin-bottom: 0;
+}
+
+.sb-create-post .new-post input[type="text"] {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07) inset;
+    color: #333;
+    outline: 0 none;
+    padding: 3px 8px;
+    transition: border-color 0.05s ease-in-out 0s;
+    width: 100%;
+}
+
+.sb-create-post .new-post button[type="submit"] {
+    padding: 5px 25px;
+}
+
+.sb-create-post em {
+    color: #999;
+    display: block;
+    font-size: 12px;
+    font-style: normal;
+    margin-top: 5px;
+}
+
+p.sb-msg {
+    background-color: #f9f9f9;
+    border-left: 4px solid #7ad03a;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+    margin: 10px 0 15px;
+    padding: 8px 12px;
+}
+
+p.sb-msg.error-line {
+    border-left: 4px solid #dd3d36;
+}
