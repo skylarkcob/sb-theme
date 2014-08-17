@@ -450,7 +450,7 @@ class SB_Theme {
         $user = new SB_User();
         $last_post_minute = $user->get_last_post_minute_diff();
         if($last_post_minute < SB_WP::get_time_between_post()) {
-            printf('<div class="messages">%1$s</div>', SB_WP::error_line(__(sprintf(SB_PHP::add_dotted(SB_WP::phrase("you_must_wait_x_minute_before_publish_next_post")), SB_PHP::date_minus_minute(SB_WP::current_time_mysql(), $user->get_next_post_time())), SB_DOMAIN)));
+            printf('<div class="messages">%1$s</div>', SB_WP::get_error_line(__(sprintf(SB_PHP::add_dotted(SB_WP::phrase("you_must_wait_x_minute_before_publish_next_post")), SB_PHP::date_minus_minute(SB_WP::current_time_mysql(), $user->get_next_post_time())), SB_DOMAIN)));
             return;
         }
         if ( isset( $_POST['submitted'] ) && isset( $_POST['post_nonce_field'] ) && wp_verify_nonce( $_POST['post_nonce_field'], 'post_nonce' ) ) {
@@ -471,6 +471,12 @@ class SB_Theme {
                 $character_limit = SB_WP::get_post_character_limit();
                 if($post_character < $character_limit) {
                     array_push($msg_errors, SB_PHP::add_dotted(sprintf(SB_WP::phrase("your_post_content_must_be_at_least_x_character"), $character_limit)));
+                    $has_error = true;
+                }
+                $post_image = SB_PHP::count_image($post_content);
+                $image_limit = SB_WP::get_post_image_limit();
+                if($post_image > $image_limit) {
+                    array_push($msg_errors, SB_PHP::add_dotted(sprintf(SB_WP::phrase("you_can_only_use_x_image_in_post"), $image_limit)));
                     $has_error = true;
                 }
             }

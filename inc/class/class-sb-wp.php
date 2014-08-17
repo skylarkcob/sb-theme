@@ -98,6 +98,7 @@ class SB_WP {
 	public static function get_post_thumbnail($args = array()) {
         $size_name = "thumbnail";
         $size = array();
+        $post_id = get_the_ID();
 		$defaults = array(
 			'size'		=> array(),
 			'size_name'	=> 'thumbnail'
@@ -116,12 +117,42 @@ class SB_WP {
 			$style = ' style="width:'.$width.'px; height:'.$height.'px;"';
 		}
 		if(has_post_thumbnail()) {
-			return get_the_post_thumbnail(get_the_ID(), $real_size);
+			return get_the_post_thumbnail($post_id, $real_size);
 		}
+
+        $result = self::get_first_image_in_post($post_id);
+        if(empty($result)) {
+            $result = self::get_no_thumbnail_url();
+        }
+        $result = '<img class="no-thumbnail wp-post-image" width="'.$width.'" height="'.$height.'" src="'.$result.'"'.$style.'>';
 		
-		return '<img class="no-thumbnail wp-post-image" width="'.$width.'" height="'.$height.'" src="'.self::get_no_thumbnail_url().'"'.$style.'>';
+		return $result;
 	}
-	
+
+    public static function is_admin_user($user_id) {
+        $user = get_user_by('id', $user_id);
+        if(is_a($user, 'WP_User')) {
+            foreach($user->roles as $key => $value) {
+                if('administrator' == $value) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static function is_user($user) {
+        return is_a($user, 'WP_User');
+    }
+
+    public static function prevent_user_see_other_media($query) {
+        global $current_user, $pagenow;
+        if(self::is_user($current_user) && 'upload.php' == $pagenow && !self::is_admin_user($current_user->ID)) {
+            $query->set('author', $current_user->id );
+        }
+        return $query;
+    }
+
 	public static function get_url_value($url) {
 		return esc_url_raw($url);
 	}
@@ -134,6 +165,61 @@ class SB_WP {
         if(function_exists('related_posts')) {
             related_posts();
         }
+    }
+
+    public static function get_related_post($args = array()) {
+        $related_posts = array();
+
+        $post_id = '';
+        $posts_per_page = 5;
+        $post_type = 'post';
+        extract($args, EXTR_OVERWRITE);
+        if(empty($post_id) && (is_single() || is_page())) {
+            $post_id = get_the_ID();
+        }
+
+        $sb_post = new SB_Post();
+        $sb_post->set_by_id($post_id);
+        $tags = $sb_post->get_all_tag_id();
+
+        $posts = new WP_Query(array('post_type' => $post_type, 'tag__in' => $tags, 'posts_per_page' => -1));
+
+        $tag_posts = $posts->posts;
+        $cats = $sb_post->get_all_category_id();
+
+        $posts = new WP_Query(array('post_type' => $post_type, 'category__in' => $cats, 'posts_per_page' => -1));
+        $cat_posts = $posts->posts;
+        $a_part = SB_PHP::get_part_of(2/3, $posts_per_page);
+
+        foreach($tag_posts as $post) {
+            if($post->ID == $post_id || in_array($post, $related_posts)) {
+                continue;
+            }
+            array_push($related_posts, $post);
+        }
+
+        $related_posts = array_slice($related_posts, 0, $a_part);
+        if(count($related_posts) < $a_part) {
+            $a_part_new = $posts_per_page - count($related_posts);
+        } else {
+            $a_part_new = $posts_per_page - $a_part;
+        }
+        $count = 0;
+        foreach($cat_posts as $post) {
+            if($post->ID == $post_id || in_array($post, $related_posts)) {
+                continue;
+            }
+            array_push($related_posts, $post);
+            $count++;
+            if($count >= $a_part_new) {
+                break;
+            }
+        }
+        return $related_posts;
+    }
+
+    public static function is_yarpp_installed() {
+        return class_exists('YARPP');
     }
 
 	public static function get_post_per_page() {
@@ -445,6 +531,15 @@ class SB_WP {
         $result = SB_POST_CHARACTER_LIMIT;
         if(isset($options["post_character_limit"]) && 1 < $options["post_character_limit"]) {
             $result = $options["post_character_limit"];
+        }
+        return $result;
+    }
+
+    public static function get_post_image_limit() {
+        $options = self::option();
+        $result = SB_POST_IMAGE_LIMIT;
+        if(isset($options["post_image_limit"]) && 1 < $options["post_image_limit"]) {
+            $result = $options["post_image_limit"];
         }
         return $result;
     }
@@ -863,7 +958,54 @@ class SB_WP {
             $user->set_password(self::get_default_password());
         }
     }
-	
+
+    public static function get_all_image_in_post($post_id) {
+        return get_children(array('post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image'));
+    }
+
+    public static function get_first_image_in_post($post_id) {
+        $result = '';
+        $images = self::get_all_image_in_post($post_id);
+        if($images) {
+            foreach($images as $key => $value) {
+                $result = wp_get_attachment_url($key);
+                break;
+            }
+        }
+        return $result;
+    }
+
+    public static function count_image_in_post($post_id) {
+        $result = 0;
+        $attachments = self::get_all_image_in_post($post_id);
+        if($attachments) {
+            $result = count($attachments);
+        }
+        return $result;
+    }
+
+    public static function redirect_404($url = '') {
+        if(is_404()) {
+            if(empty($url)) {
+                $url = get_bloginfo("url");
+            }
+            header("HTTP/1.1 301 Moved Permanently");
+            header("Location: ".$url);
+            exit();
+        }
+    }
+
+    public static function prevent_contributor_edit_post() {
+        $role = get_role('contributor');
+        $role->remove_cap('edit_post');
+        $role->remove_cap('edit_posts');
+    }
+
+    public static function allow_contributor_upload_media() {
+        $role = get_role('contributor');
+        $role->add_cap('upload_files');
+    }
+
 	public static function change_url( $url ) {
         $url = SB_WP::remove_trailing_slash($url);
 		if ( SB_PHP::is_url_valid( $url ) ) {
@@ -935,6 +1077,18 @@ class SB_WP {
 			$user->add_role( $role );
 		}
 	}
+
+    public static function get_bool_option($option_key) {
+        $options = self::option();
+        if(isset($options[$option_key])) {
+            return SB_PHP::int_to_bool($options[$option_key]);
+        }
+        return false;
+    }
+
+    public static function show_admin_bar() {
+        return self::get_bool_option('show_admin_bar');
+    }
 
     public static function get_posts_per_page() {
         return get_option("posts_per_page");
@@ -1087,15 +1241,23 @@ class SB_WP {
 	}
 
     public static function message_line($msg, $is_error = false) {
+        echo self::get_message_line($msg, $is_error);
+    }
+
+    public static function get_message_line($msg, $is_error = false) {
         $class = 'message sb-msg';
         if($is_error) {
             $class .= ' error-line';
         }
-        printf('<p class="%1$s">%2$s</p>', $class, $msg);
+        return sprintf('<p class="%1$s">%2$s</p>', $class, $msg);
     }
 
     public static function error_line($msg) {
-        self::message_line($msg, true);
+        echo self::get_error_line($msg);
+    }
+
+    public static function get_error_line($msg) {
+        return self::get_message_line($msg, true);
     }
 	
 	public static function get_current_language() {

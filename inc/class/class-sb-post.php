@@ -27,6 +27,10 @@ class SB_Post {
 	public function set($post) {
 		$this->init($post);
 	}
+
+    public function set_by_id($post_id) {
+        $this->set(get_post($post_id));
+    }
 	
 	public function get_by_id($id) {
 		$this->post = get_post($id);
@@ -229,6 +233,35 @@ class SB_Post {
         return $this->post->ID;
     }
 
+    public function get_related_post($args = array()) {
+        $args['post_id'] = $this->get_id();
+        return SB_WP::get_related_post($args);
+    }
+
+    public function the_related_post($args = array()) {
+        $title = __(SB_WP::phrase('related_posts'), SB_DOMAIN);
+        echo '<div class="sb-related-post">';
+        if(SB_WP::is_yarpp_installed()) {
+            SB_WP::related_post();
+        } else {
+            $related_posts = $this->get_related_post($args);
+            if($related_posts) {
+                extract($args, EXTR_OVERWRITE);
+                printf('<h3 class="title">%s</h3>', $title);
+                echo '<ol class="sb-list-post">';
+                foreach($related_posts as $post) {
+                    printf('<li><a href="%1$s" title="">%2$s</a></li>', get_permalink($post->ID), $post->post_title);
+                }
+                echo '</ol>';
+            }
+        }
+        echo '</div>';
+    }
+
+    public function get_all_category_id() {
+        return wp_get_post_categories($this->get_id());
+    }
+
     public function get_category() {
         $cat_id = wp_get_post_categories($this->get_id());
         $result = array();
@@ -236,6 +269,11 @@ class SB_Post {
             array_push($result, get_category($id));
         }
         return $result;
+    }
+
+    public function get_all_tag_id() {
+        $tags = (array)wp_get_post_tags($this->get_id(), array('fields' => 'ids'));
+        return $tags;
     }
 
     public function get_tag() {
@@ -253,6 +291,10 @@ class SB_Post {
             return true;
         }
         return false;
+    }
+
+    public function count_image() {
+        return SB_WP::count_image_in_post($this->get_id());
     }
 
     public function the_tag($separator = ', ') {

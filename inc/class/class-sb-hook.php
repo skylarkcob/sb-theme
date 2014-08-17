@@ -34,6 +34,10 @@ class SB_Hook {
         }
 
 	}
+
+    public function allow_contributor_upload_media() {
+        SB_WP::allow_contributor_upload_media();
+    }
 	
 	private function script_init() {
 		global $sb_enable_3dfile;
@@ -53,6 +57,12 @@ class SB_Hook {
 
     public function sb_new_post_status() {
 
+    }
+
+    public function set_current_user() {
+        if(!SB_WP::show_admin_bar()) {
+            show_admin_bar(false);
+        }
     }
 
 	private function sidebar_init() {
@@ -146,9 +156,16 @@ class SB_Hook {
 		$customize = new SB_Customize();
 		$customize->init($wp_customize);
 	}
+
+    public function pre_get_posts($query) {
+        do_action("sb_pre_get_posts", $query);
+    }
 	
 	private function run() {
 		$this->clear_head_meta();
+        add_action('set_current_user', array($this, 'set_current_user'));
+        add_action("pre_get_posts", array($this, "pre_get_posts"));
+        add_filter('sanitize_file_name', array($this, 'fix_media_name'), 10);
 		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
 		$this->sbtheme_sidebar_widget_hook();
 		add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
@@ -717,6 +734,13 @@ class SB_Hook {
         }
 	}
 
+
+    public function default_image_upload_settings() {
+        update_option('image_default_align', 'center' );
+        update_option('image_default_link_type', 'none' );
+        update_option('image_default_size', 'large' );
+    }
+
     public function clear_head_meta() {
         remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
         remove_action('wp_head', 'feed_links');
@@ -724,6 +748,17 @@ class SB_Hook {
         remove_action('wp_head', 'wp_generator');
         remove_action('wp_head', 'rsd_link');
         remove_action('wp_head', 'wlwmanifest_link');
+    }
+
+    public function empty_value() {
+        return "";
+    }
+
+    public function fix_media_name($filename) {
+        $info = pathinfo($filename);
+        $ext  = empty($info['extension']) ? '' : '.' . $info['extension'];
+        $name = basename($filename, $ext);
+        return SB_PHP::remove_vietnamese($name) . $ext;
     }
 
 	public function sbtheme_login_style_and_script() {
@@ -931,6 +966,7 @@ class SB_Hook {
 			add_filter( 'bbp_get_single_forum_description', array($this, 'bbp_empty_description') );
 			add_filter( 'bbp_get_single_topic_description', array($this, 'bbp_empty_description') );
 		}
+        $this->default_image_upload_settings();
 	}
 	
 	public function bbp_enable_visual_editor( $args = array() ) {

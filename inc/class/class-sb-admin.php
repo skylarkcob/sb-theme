@@ -351,6 +351,7 @@ class SB_Admin {
 
     private function add_account_setting() {
         $this->add_section("sbtheme_account_section", SB_WP::phrase("account_setting_page"));
+        $this->add_account_field('show_admin_bar', SB_WP::phrase("show_admin_bar"), 'show_admin_bar_callback');
         $this->add_account_field("create_post_url", SB_WP::phrase("create_post_url"), "create_post_url_callback");
         $this->add_account_field("register_url", SB_WP::phrase("register_url"), "register_url_callback");
         $this->add_account_field("login_url", SB_WP::phrase("login_url"), "login_url_callback");
@@ -358,6 +359,10 @@ class SB_Admin {
         $this->add_account_field("user_post_point", SB_WP::phrase("user_post_point"), "user_post_point_callback");
         $this->add_account_field("user_comment_point", SB_WP::phrase("user_comment_point"), "user_comment_point_callback");
         $this->add_account_field("time_between_post", SB_WP::phrase("time_between_posts"), "time_between_post_callback");
+    }
+
+    public function show_admin_bar_callback() {
+        $this->set_switch_field('show_admin_bar', SB_PHP::add_dotted(SB_WP::phrase('show_admin_bar_setting_description')));
     }
 
     public function user_post_point_callback() {
@@ -495,6 +500,11 @@ class SB_Admin {
 	}
 	
 	private function switch_field($name, $value, $description) {
+        if(!is_numeric($value)) {
+            if('show_admin_bar' == $name) {
+                $value = 1;
+            }
+        }
 		$enable = (bool) $value;
 		$class = "switch-button";
 		$class_on = $class . ' on';
@@ -579,6 +589,7 @@ class SB_Admin {
         $new_input['main_slider'] = $this->set_input_data($input, 'main_slider', 'html');
         $new_input['sub_slider'] = $this->set_input_data($input, 'sub_slider', 'html');
 
+        $new_input['show_admin_bar'] = $this->set_input_data($input, 'show_admin_bar', 'bool-nummber');
         $new_input['create_post_url'] = $this->set_input_data($input, 'create_post_url', 'int-nummber');
         $new_input['register_url'] = $this->set_input_data($input, 'register_url', 'int-nummber');
         $new_input['login_url'] = $this->set_input_data($input, 'login_url', 'int-nummber');
@@ -621,7 +632,7 @@ class SB_Admin {
 					}
 					break;
 				case 'bool-nummber':
-					$kq = absint($input[$key]);
+					$kq = SB_PHP::bool_to_int($input[$key]);
 					break;
 				case 'int-number':
 					$kq = absint($input[$key]);

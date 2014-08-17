@@ -38,6 +38,12 @@ class SB_Language {
         $this->overwrite_translator("vi", "register_url", "Link đăng ký");
         $this->overwrite_translator("en", "register_url", "Registration url");
 
+        $this->overwrite_translator("vi", "related_posts", "Bài viết liên quan");
+        $this->overwrite_translator("en", "related_posts", "Related posts");
+
+        $this->overwrite_translator("vi", "you_can_only_use_x_image_in_post", 'Bạn chỉ có thể được phép chèn %s hình ảnh vào bài viết');
+        $this->overwrite_translator("en", "you_can_only_use_x_image_in_post", 'You can only be allowed to insert %s image in post');
+
         $this->overwrite_translator("vi", "your_post_content_must_be_at_least_x_character", 'Nội dung bài viết của bạn ít nhất phải chứa %s ký tự');
         $this->overwrite_translator("en", "your_post_content_must_be_at_least_x_character", 'Your post content must be at least %s character');
 
@@ -49,6 +55,12 @@ class SB_Language {
 
         $this->overwrite_translator("vi", "user_post_point", "Điểm cho bài viết");
         $this->overwrite_translator("en", "user_post_point", "Point for writing post");
+
+        $this->overwrite_translator("vi", "show_admin_bar", "Hiển thị thanh quản lý");
+        $this->overwrite_translator("en", "show_admin_bar", "Show admin bar");
+
+        $this->overwrite_translator("vi", "show_admin_bar_setting_description", "Hiển thị hoặc ẩn thanh quản lý bên ngoài giao diện của website");
+        $this->overwrite_translator("en", "show_admin_bar_setting_description", "Show or hide admin bar from front end");
 
         $this->overwrite_translator("vi", "after_saved_post_text", "Chúng tôi sẽ xem xét và đăng tin của bạn nếu bài viết thỏa mãn yêu cầu về mặt nội dung trên website");
         $this->overwrite_translator("en", "after_saved_post_text", "We will review and publish your post if the article is satisfactory in terms of content on websites");
