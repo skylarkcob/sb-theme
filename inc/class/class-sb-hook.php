@@ -820,10 +820,14 @@ class SB_Hook {
 	
 	public function sbtheme_admin_hook() {
 		if(is_admin()) {
+            global $pagenow;
 			add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
 			$this->rich_editor_init();
 			$this->media_upload_init();
-            wp_enqueue_media();
+            if('widgets.php' == $pagenow) {
+                wp_enqueue_media();
+            }
+
 			add_action('admin_menu', array($this, 'sbtheme_custom_menu_page'), 102);
 			//add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
 			add_action('admin_init', array($this, 'sbtheme_admin_init'), 99);

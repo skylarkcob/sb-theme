@@ -2,7 +2,10 @@ jQuery(document).ready(function($){
 	// Biến field chứa đường dẫn image từ media
 	var formField;
     var body = $("body");
-    var fileFrame = null;
+    var fileFrame = null, newPostID = 0, oldPostID = null;
+
+    oldPostID = wp.media.model.settings.post.id;
+
 	/*
 	 *	SB Post Widget
 	 */
@@ -93,7 +96,7 @@ jQuery(document).ready(function($){
                 formField = $(this).closest("div.sbtheme-upload").find("input");
 
                 if(fileFrame) {
-                    fileFrame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
+                    fileFrame.uploader.uploader.param( 'post_id', newPostID );
                     fileFrame.open();
                     return;
                 }
@@ -112,6 +115,7 @@ jQuery(document).ready(function($){
 
                         formField = '';
                     }
+                    wp.media.model.settings.post.id = oldPostID;
                 });
                 fileFrame.open();
 			});
@@ -191,7 +195,7 @@ jQuery(document).ready(function($){
 
 		formField = $(this).parent().find("input");
         if(fileFrame) {
-            fileFrame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
+            fileFrame.uploader.uploader.param( 'post_id', newPostID );
             fileFrame.open();
             return;
         }
@@ -210,6 +214,7 @@ jQuery(document).ready(function($){
 
                 formField = '';
             }
+            wp.media.model.settings.post.id = oldPostID;
         });
         fileFrame.open();
 	});
