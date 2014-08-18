@@ -2,13 +2,13 @@ jQuery(document).ready(function($){
 	// Biến field chứa đường dẫn image từ media
 	var formField;
     var body = $("body");
-	
+    var fileFrame = null;
 	/*
 	 *	SB Post Widget
 	 */
 	 
 	// Ẩn hoặc hiện danh sách chuyên mục cho SB Post Widget
-	$("body").delegate("select.sb-post-type", "change", function(){
+	body.delegate("select.sb-post-type", "change", function(){
 		var listCats = $(this).parent().parent().find("p.post-cat");
 		if("category" == $(this).val()) {
 			listCats.delay(10).fadeIn();
@@ -17,12 +17,12 @@ jQuery(document).ready(function($){
 		}
 	});
 	
-	$("body").delegate("select.sb-post-cat option", "click", function(){
+	body.delegate("select.sb-post-cat option", "click", function(){
 		var taxonomy = $(this).attr("data-taxonomy"), inputTaxonomy = $(this).closest("div.sb-post-widget").find("input.taxonomy");
 		inputTaxonomy.val(taxonomy);
 	});
 	
-	$("body").delegate("input.sb-checkbox", "click", function(e){
+	body.delegate("input.sb-checkbox", "click", function(){
 		var parentClass = $(this).parent().attr("class");
 		switch(parentClass) {
 			case 'only-thumbnail':
@@ -84,35 +84,38 @@ jQuery(document).ready(function($){
 	// Trang cài đặt, tùy chỉnh giao diện
 	var sbOption = $("div.sb-option");
 	if(sbOption.length) {
-		var uploadCaller = null, optionField;
-		sbOption.find("a.insert-media").each(function(){
+
+		sbOption.find("a.sb-insert-media").each(function(){
 			var insertMediaButton = $(this);
-			insertMediaButton.click(function(){
-				uploadCaller = $(this).closest("div.sbtheme-upload").find("input");
-                formField = uploadCaller;
-				optionField = uploadCaller.attr("name");
-				tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
-				return false;
+			insertMediaButton.click(function(event){
+                event.preventDefault();
+
+                formField = $(this).closest("div.sbtheme-upload").find("input");
+
+                if(fileFrame) {
+                    fileFrame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
+                    fileFrame.open();
+                    return;
+                }
+                fileFrame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
+                fileFrame.on("select", function(){
+                    var mediaData = fileFrame.state().get("selection").first().toJSON();
+                    if(formField) {
+                        var imageSource = mediaData.url;
+                        formField.val(imageSource);
+
+                        var mediaThumbnailBox = formField.closest("div.sbtheme-media-image").find("div.sbtheme.media.image");
+                        if(mediaThumbnailBox.length) {
+                            mediaThumbnailBox.addClass("uploaded");
+                            mediaThumbnailBox.html('<img src="' + imageSource + '">');
+                        }
+
+                        formField = '';
+                    }
+                });
+                fileFrame.open();
 			});
 		});
-
-        /*
-		window.original_send_to_editor = window.send_to_editor;
-		window.send_to_editor = function(html) {
-			if(optionField) {
-				var imageUrl = $('img',html).attr('src');
-				uploadCaller.val(imageUrl);
-
-				var mediaThumbnailBox = uploadCaller.closest("div.sbtheme-media-image").find("div.sbtheme.media.image");
-				mediaThumbnailBox.addClass("uploaded");
-				mediaThumbnailBox.html('<img src="' + imageUrl + '">');
-				optionField = '';
-			} else {
-				window.original_send_to_editor(html);
-			}
-            tb_remove();
-		}
-		*/
 		
 		sbOption.find("div.sbtheme-media-image").each(function(){
 			var mediaGroup = $(this);
@@ -129,7 +132,7 @@ jQuery(document).ready(function($){
 		sbOption.find("a.sbtheme-group-tab").each(function(){
 			var aSectionTab = $(this);
 			
-			aSectionTab.click(function(){
+			aSectionTab.click(function(e){
 				var currentSection = $(this).closest("li"), dataSection = $(this).attr("data-section");
 				if('sbtheme_aboutsb_section' == dataSection) {
 					sbOption.find("p.submit").css("display", "none");
@@ -137,7 +140,7 @@ jQuery(document).ready(function($){
 					sbOption.find("p.submit").css("display", "block");
 				}
 				if(currentSection.hasClass("active")) {
-					return false;
+                    e.preventDefault();
 				}
 				$(this).closest("ul.sbtheme-list-section").find("li").removeClass("active");
 				currentSection.addClass("active");
@@ -183,30 +186,32 @@ jQuery(document).ready(function($){
 	 */
 	
 	// Xử lý nút upload hình ảnh trong widget
-	$("body").delegate("div.sb-widget .insert-media", "click", function(e){
+	body.delegate("div.sb-widget .sb-insert-media", "click", function(event){
+        event.preventDefault();
+
 		formField = $(this).parent().find("input");
-		tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
-		return false;
-	});
-	
-	// Lấy đường dẫn từ thickbox cho vào field chứa url hình ảnh
-	window.original_send_to_editor = window.send_to_editor;
-	window.send_to_editor = function(html) {
-		if(formField) {
-			var imageUrl = $('img', html).attr('src');
-			formField.val(imageUrl);
+        if(fileFrame) {
+            fileFrame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
+            fileFrame.open();
+            return;
+        }
+        fileFrame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
+        fileFrame.on("select", function(){
+            var mediaData = fileFrame.state().get("selection").first().toJSON();
+            if(formField) {
+                var imageSource = mediaData.url;
+                formField.val(imageSource);
 
-            var mediaThumbnailBox = formField.closest("div.sbtheme-media-image").find("div.sbtheme.media.image");
-            if(mediaThumbnailBox.length) {
-                mediaThumbnailBox.addClass("uploaded");
-                mediaThumbnailBox.html('<img src="' + imageUrl + '">');
+                var mediaThumbnailBox = formField.closest("div.sbtheme-media-image").find("div.sbtheme.media.image");
+                if(mediaThumbnailBox.length) {
+                    mediaThumbnailBox.addClass("uploaded");
+                    mediaThumbnailBox.html('<img src="' + imageSource + '">');
+                }
+
+                formField = '';
             }
-
-			formField = '';
-		} else {
-			window.original_send_to_editor(html);
-		}
-		tb_remove();
-	}
+        });
+        fileFrame.open();
+	});
 
 });

@@ -584,6 +584,7 @@ class SB_Admin {
 		$new_input['enable_addthis'] = $this->set_input_data($input, 'enable_addthis', 'bool-nummber');
         $new_input['enable_user_point'] = $this->set_input_data($input, 'enable_user_point', 'bool-nummber');
         $new_input['enable_links_manager'] = $this->set_input_data($input, 'enable_links_manager', 'bool-nummber');
+        $new_input['enable_scroll_top'] = $this->set_input_data($input, 'enable_scroll_top', 'bool-nummber');
 		
 		$new_input['default_tivi'] = $this->set_input_data($input, 'default_tivi', 'int-nummber');
         $new_input['main_slider'] = $this->set_input_data($input, 'main_slider', 'html');
@@ -651,7 +652,7 @@ class SB_Admin {
 	 * Tạo mục upload hình ảnh
 	 */
 	private function media_upload_field($name, $value, $description) {
-		printf('<div class="sbtheme-upload media"><input type="text" id="%1s" name="%2s" value="%3s" /><a title="'.SB_WP::phrase("insert_image").'" data-editor="content" class="button insert-media add_media" id="insert-media-button" href="#">Upload</a></div><p class="description">%4s</p>', $name, esc_attr($this->get_field_name($name)), $value, $description);
+		printf('<div class="sbtheme-upload media"><input type="text" id="%1s" name="%2s" value="%3s" /><a title="'.SB_WP::phrase("insert_image").'" data-editor="sb-content" class="sb-button button sb-insert-media sb-add_media" id="'.'sb-'.$name.'" href="#">Upload</a></div><p class="description">%4s</p>', $name, esc_attr($this->get_field_name($name)), $value, $description);
 	}
 	
 	// Khung đăng hình ảnh đã cài đặt

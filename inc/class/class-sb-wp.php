@@ -79,6 +79,12 @@ class SB_WP {
         echo self::get_register_url();
     }
 
+    public static function insert_media_button() {
+        ?>
+        <a title="<?php echo SB_WP::phrase("insert_image"); ?>" data-editor="sb-content" class="sb-button button sb-insert-media sb-add-media" href="#">Upload</a>
+        <?php
+    }
+
     public static function  get_create_post_url() {
         $kq = self::get_option_page_url("create_post_url");
         if(empty($kq)) {
@@ -1083,7 +1089,7 @@ class SB_WP {
         if(isset($options[$option_key])) {
             return SB_PHP::int_to_bool($options[$option_key]);
         }
-        return false;
+        return true;
     }
 
     public static function show_admin_bar() {

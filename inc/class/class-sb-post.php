@@ -112,18 +112,20 @@ class SB_Post {
 		return '<img class="no-thumbnail wp-post-image" src="'.$this->thumbnail_default.'">';
 	}
 
-
+    public function the_comment() {
+        if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) {
+            ?>
+            <span class="comments-link"><?php comments_popup_link( __( 'Leave a comment', 'twentyfourteen' ), __( '1 Comment', 'twentyfourteen' ), __( '% Comments', 'twentyfourteen' ) ); ?></span>
+            <?php
+        }
+    }
 	
 	public function comment_link() {
 		SB_Theme::post_comment_link();
 	}
-	
+
 	public function title($head = "h2") {
-		if ( is_single() || is_page() ) {
-			the_title( "<$head class='entry-title'>", "</$head>");
-		} else {
-			the_title( '<'.$head.' class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></'.$head.'>' );
-		}
+        the_title( '<'.$head.' class="entry-title fancy post-title"><a href="' . esc_url( get_permalink($this->get_id()) ) . '">', '</a></'.$head.'>' );
 	}
 	
 	public function get_date($d = "") {
@@ -140,7 +142,18 @@ class SB_Post {
 	public function get_author_name() {
 		return get_the_author();
 	}
-	
+
+
+
+    public function the_meta_text() {
+        printf(
+            sprintf('<div class="meta sb-post-meta">%1$s</div>', __(SB_PHP::add_dotted(SB_WP::phrase('posted_on_date_by_author_filed_under_category')), SB_DOMAIN)),
+            $this->get_date(),
+            sprintf('<a href="%1$s" title="">%2$s</a>', $this->get_author_post_url(), $this->get_author_name()),
+            $this->get_the_category()
+        );
+    }
+
 	public function meta() {
 		printf( '<span class="entry-date"><a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s">%3$s</time></a></span> <span class="byline"><span class="author vcard"><a class="url fn n" href="%4$s" rel="author">%5$s</a></span></span>',
 			esc_url( $this->get_permalink() ),
@@ -308,13 +321,17 @@ class SB_Post {
     }
 
     public function the_category($separator = ', ') {
+        echo $this->get_the_category($separator);
+    }
+
+    public function get_the_category($separator = ', ') {
         $cats = $this->get_category();
         $result = "";
         foreach($cats as $cat) {
             $result .= sprintf('<a href="%1$s" title="">%2$s</a>', get_category_link($cat), $cat->name).$separator;
         }
         $result = trim($result, $separator);
-        echo $result;
+        return $result;
     }
 
     public function get_comment($args = array()) {

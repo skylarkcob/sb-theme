@@ -39,7 +39,7 @@ class SB_Paginate {
         if($totalPage <= 1) {
             return;
         }
-        $paginateResult = '<div id="sPaginate" class="spaginate paginate col-xs-12"><div class="spaginate-inner paginate-inner"><span class="spaginate-title paginate-title">'.$title.'</span>';
+        $paginateResult = '<div id="sPaginate" class="spaginate paginate col-xs-12 no-padding"><div class="spaginate-inner paginate-inner"><span class="spaginate-title paginate-title">'.$title.'</span>';
 
         if ($currentPage > 1) {
             $paginateResult .= '<a class="spaginate-prev prev page-item" href="'.get_pagenum_link($currentPage - 1).'">&laquo;</a>';

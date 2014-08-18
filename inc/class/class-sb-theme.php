@@ -190,6 +190,16 @@ class SB_Theme {
 		}
 	}
 
+    public static function widget_area($sidebar_id) {
+        if(is_active_sidebar($sidebar_id)) {
+            $class = "sb-widget-area";
+            $class .= ' '.$sidebar_id;
+            echo '<div class="'.$class.'">';
+            dynamic_sidebar($sidebar_id);
+            echo '</div>';
+        }
+    }
+
     public static function widget_field_select($args = array()) {
         $paragraph_class = "";
         $id = "";
@@ -387,9 +397,17 @@ class SB_Theme {
 		</p>
 		<?php
 	}
+
+    public static function the_poetry() {
+        ?>
+        <div class="sb-poetry text-center">
+            <h6 class="poetry">Code is Poetry</h6>
+        </div>
+        <?php
+    }
 	
 	public static function addthis_share_button() {
-		echo '<div class="sb-addthis"><div class="addthis_native_toolbox"></div></div>';
+		echo '<div class="sb-addthis sb-share"><div class="addthis_native_toolbox"></div></div>';
 	}
 
     public static function product_detail() {

@@ -62,6 +62,10 @@ class SB_Hook {
     public function set_current_user() {
         if(!SB_WP::show_admin_bar()) {
             show_admin_bar(false);
+        } else {
+            if(current_user_can("edit_posts")) {
+                show_admin_bar(true);
+            }
         }
     }
 
@@ -198,6 +202,7 @@ class SB_Hook {
         if(SB_WP::is_user_point_enabled()) {
             add_action('wp_insert_comment', array($this, 'on_comment_inserted'), 99, 2);
         }
+        $this->sb_front_end();
 	}
 
     public function on_comment_inserted($comment_id, $comment_object) {
@@ -818,6 +823,7 @@ class SB_Hook {
 			add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
 			$this->rich_editor_init();
 			$this->media_upload_init();
+            wp_enqueue_media();
 			add_action('admin_menu', array($this, 'sbtheme_custom_menu_page'), 102);
 			//add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
 			add_action('admin_init', array($this, 'sbtheme_admin_init'), 99);
@@ -898,6 +904,7 @@ class SB_Hook {
 	public function media_upload_init() {
 		add_thickbox();
 		wp_enqueue_script( 'media-upload' );
+
 	}
 	
 	public function rich_editor_init() {
@@ -1052,7 +1059,27 @@ class SB_Hook {
 		}
 		return $profile_fields;
 	}
-	
+
+    public function sb_front_end() {
+        if(!is_admin()) {
+            add_action( 'admin_bar_menu', array($this, 'sb_toolbar_front_end'), 999 );
+        }
+    }
+
+    public function sb_toolbar_front_end( $wp_admin_bar ) {
+        if(current_user_can("manage_options")) {
+            $args = array(
+                'id'        => 'sb-options',
+                'title'     => 'SB Options',
+                'href'      => admin_url('themes.php?page=sbtheme-option'),
+                'meta'      => array( 'class' => 'sb-options' ),
+                'parent'    => 'themes',
+                'tabindex'  => '10'
+            );
+            $wp_admin_bar->add_node( $args );
+        }
+    }
+
 	public function sbtheme_init() {
 		if(is_admin() && SB_WP::utility_enabled('enable_tivi')) {
 			global $wp_post_types;

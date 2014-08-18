@@ -56,7 +56,7 @@ class SB_Banner_Widget extends WP_Widget {
 			<p id="sbBannerImage" class="sb-media-upload">
 				<label for="<?php echo esc_attr( $this->get_field_id( 'banner_image' ) ); ?>"><?php _e( SB_PHP::add_colon(SB_WP::phrase("banner_image_url")), SB_DOMAIN ); ?></label>
 				<input id="<?php echo esc_attr( $this->get_field_id( 'banner_image' ) ); ?>" class="widefat" name="<?php echo esc_attr( $this->get_field_name( 'banner_image' ) ); ?>" type="text" value="<?php echo esc_attr( $banner_image ); ?>">
-				<a title="<?php echo SB_WP::phrase("insert_image"); ?>" data-editor="content" class="button insert-media add_media" id="insert-media-button" href="#">Upload</a>
+				<?php SB_WP::insert_media_button(); ?>
 			</p>
 			<p id="sbBannerUrl" class="sb-input-url">
 				<label for="<?php echo esc_attr( $this->get_field_id( 'banner_url' ) ); ?>"><?php _e( SB_PHP::add_colon(SB_WP::phrase("banner_url")), SB_DOMAIN ); ?></label>

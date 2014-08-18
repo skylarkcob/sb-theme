@@ -41,6 +41,9 @@ class SB_Language {
         $this->overwrite_translator("vi", "related_posts", "Bài viết liên quan");
         $this->overwrite_translator("en", "related_posts", "Related posts");
 
+        $this->overwrite_translator("vi", "posted_on_date_by_author_filed_under_category", 'Được đăng ngày %1$s bởi %2$s. Được đặt trong chuyên mục %3$s');
+        $this->overwrite_translator("en", "posted_on_date_by_author_filed_under_category", 'Posted %1$s by %2$s. Filed under %3$s');
+
         $this->overwrite_translator("vi", "you_can_only_use_x_image_in_post", 'Bạn chỉ có thể được phép chèn %s hình ảnh vào bài viết');
         $this->overwrite_translator("en", "you_can_only_use_x_image_in_post", 'You can only be allowed to insert %s image in post');
 

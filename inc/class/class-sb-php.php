@@ -266,7 +266,8 @@ class SB_PHP {
     }
 
     public static function int_to_bool($int_value) {
-        return (bool)$int_value;
+        $result = (bool)$int_value;
+        return $result;
     }
 
     public static function get_part_of($part, $total) {
