@@ -74,6 +74,7 @@ class SB_Admin {
 		global $sb_language;
 		$this->add_section('sbtheme_general_section', SB_WP::phrase("general_setting_description"));
 		$this->add_general_field('language', SB_WP::phrase("choose_language"), "language_callback");
+        $this->add_general_field('headline', SB_WP::phrase('headline'), 'headline_callback');
 		$this->add_general_field('logo', 'Logo', 'logo_callback');
         $this->add_general_field('footer_logo', 'Footer logo', 'footer_logo_callback');
 		$this->add_general_field('favicon', 'Favicon', 'favicon_callback');
@@ -92,6 +93,10 @@ class SB_Admin {
 	// Hàm hiển thị mục cài đặt logo
 	public function logo_callback() {
 		$this->set_media_image_field('logo', SB_PHP::add_dotted(SB_WP::phrase("input_url_or_upload_new_logo")));
+    }
+
+    public function headline_callback() {
+        $this->set_text_field('headline', SB_PHP::add_dotted(SB_WP::phrase("headline_setting_description")));
     }
 
     public function footer_logo_callback() {
@@ -552,6 +557,7 @@ class SB_Admin {
         $new_input = array();
 		
 		$new_input['language'] = $this->set_input_data($input, 'language');
+        $new_input['headline'] = $this->set_input_data($input, 'headline', 'text');
         $new_input['logo'] = $this->set_input_data($input, 'logo', 'image');
         $new_input['footer_logo'] = $this->set_input_data($input, 'footer_logo', 'image');
         $new_input['favicon'] = $this->set_input_data($input, 'favicon', 'icon');
@@ -696,7 +702,10 @@ class SB_Admin {
 	// Mục cho nhập dữ liệu chuỗi
 	private function text_field($name, $value, $description) {
 		$value = trim($value);
-		printf('<input type="text" id="%1$s" name="%2$s" value="%3$s" class=""><p class="description">%4$s</p>', $name, esc_attr($this->get_field_name($name)), $value, $description);
+        if('headline' == $name) {
+            $class = 'widefat';
+        }
+		printf('<input type="text" id="%1$s" name="%2$s" value="%3$s" class="'.$class.'"><p class="description">%4$s</p>', $name, esc_attr($this->get_field_name($name)), $value, $description);
 	}
 
     private function number_field($name, $value, $description) {
@@ -716,7 +725,11 @@ class SB_Admin {
     private function set_number_field($name, $description) {
         $this->set_field($name, $description, "number");
     }
-	
+
+    public function set_text_field($name, $description) {
+        $this->set_field($name, $description, 'text');
+    }
+
 	// Điều khiển gán giá trị cho mục nhất định
 	private function set_field($name, $description, $type) {
 		switch($type) {
@@ -735,6 +748,9 @@ class SB_Admin {
 			case 'select':
 				$this->select_field($name, $description);
 				break;
+            case 'text':
+                $this->text_field($name, $this->get_option_value($name), $description);
+                break;
 		}
 	}
 	

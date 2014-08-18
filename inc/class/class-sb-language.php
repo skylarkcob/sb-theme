@@ -35,6 +35,12 @@ class SB_Language {
         $this->overwrite_translator("vi", "create_post_url", "Link tạo bài viết");
         $this->overwrite_translator("en", "create_post_url", "Create post url");
 
+        $this->overwrite_translator("vi", "headline", "Mô tả website");
+        $this->overwrite_translator("en", "headline", "Headline");
+
+        $this->overwrite_translator("vi", "headline_setting_description", "Dòng mô tả ngắn gọn về nội dung trên trang web của bạn, không nên dài quá 75 ký tự");
+        $this->overwrite_translator("en", "headline_setting_description", "Short description about your website, should be less than 75 characters");
+
         $this->overwrite_translator("vi", "register_url", "Link đăng ký");
         $this->overwrite_translator("en", "register_url", "Registration url");
 

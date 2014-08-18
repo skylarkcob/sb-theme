@@ -97,7 +97,14 @@ class SB_Theme {
 		</form>
 		<?php endif;
 	}
-	
+
+    public static function the_headline() {
+        $headline = SB_WP::get_headline_option();
+        if(!empty($headline)) {
+            printf('<h2>%s</h2>', $headline);
+        }
+    }
+
 	public static function title() {
 		if(is_home()) {
 			echo get_bloginfo('name') . ' - ' . get_bloginfo('description');

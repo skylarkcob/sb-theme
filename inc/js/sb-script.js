@@ -1,25 +1,6 @@
 jQuery(document).ready(function($){
     var sl = jQuery;
     var body = sl("body");
-
-	var sfMenu = $('ul.sf-menu');
-	if(sfMenu.length) {
-		body.find(sfMenu).each(function(){
-			$(this).superfish();
-		});
-	}
-
-	var bootstrapCarousel = $('.carousel');
-	if(bootstrapCarousel.length) {
-		$("body").find(bootstrapCarousel).each(function(){
-            /*
-			$(this).carousel({
-                pause: true,
-                interval: 3000
-            });
-            */
-		});
-	}
 	
 	var wooProductImage = $(".wp-post-image");
 	if(wooProductImage.length) {

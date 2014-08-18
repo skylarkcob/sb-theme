@@ -475,3 +475,7 @@ a:focus {
     margin-top: 0;
     padding-bottom: 0;
 }
+
+.sb-option input[type="text"] {
+    line-height: 21px;
+}

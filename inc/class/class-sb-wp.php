@@ -51,7 +51,18 @@ class SB_WP {
         return apply_filters('sb_login_url', $kq);
 	}
 
+    public static function get_text_option($option_key) {
+        $options = self::option();
+        $result = "";
+        if(isset($options[$option_key])) {
+            $result = $options[$option_key];
+        }
+        return $result;
+    }
 
+    public static function get_headline_option() {
+        return self::get_text_option('headline');
+    }
 
     public static function get_lost_password_url() {
         $kq = self::get_option_page_url("lost_password_url");
