@@ -970,7 +970,7 @@ class SB_Theme {
 				<div class="author-description"><?php echo $description; ?></div>
 				<ul>
 					<li class="first">
-						<a href="<?php echo $author->get_post_url(); ?>">Xem tất cả bài viết của <?php echo $author->get_username(); ?> <span class="meta-nav">→</span></a>
+						<a href="<?php echo $author->get_post_url(); ?>">Bài được viết bởi <?php echo $author->get_username(); ?> <span class="meta-nav">→</span></a>
 					</li>
 					<?php $website_url = $author->get_url(); ?>
 					<?php if(!empty($website_url)) : ?>
