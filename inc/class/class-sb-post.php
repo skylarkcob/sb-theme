@@ -143,15 +143,21 @@ class SB_Post {
 		return get_the_author();
 	}
 
-
-
     public function the_meta_text() {
-        printf(
-            sprintf('<div class="meta sb-post-meta">%1$s</div>', __(SB_PHP::add_dotted(SB_WP::phrase('posted_on_date_by_author_filed_under_category')), SB_DOMAIN)),
-            $this->get_date(),
-            sprintf('<a href="%1$s" title="">%2$s</a>', $this->get_author_post_url(), $this->get_author_name()),
-            $this->get_the_category()
-        );
+        if(is_page()) {
+            printf(
+                sprintf('<div class="meta sb-post-meta">%1$s</div>', __(SB_PHP::add_dotted(SB_WP::phrase('posted_on_date_by_author')), SB_DOMAIN)),
+                $this->get_date(),
+                sprintf('<a href="%1$s" title="">%2$s</a>', $this->get_author_post_url(), $this->get_author_name())
+            );
+        } else {
+            printf(
+                sprintf('<div class="meta sb-post-meta">%1$s</div>', __(SB_PHP::add_dotted(SB_WP::phrase('posted_on_date_by_author_filed_under_category')), SB_DOMAIN)),
+                $this->get_date(),
+                sprintf('<a href="%1$s" title="">%2$s</a>', $this->get_author_post_url(), $this->get_author_name()),
+                $this->get_the_category()
+            );
+        }
     }
 
 	public function meta() {

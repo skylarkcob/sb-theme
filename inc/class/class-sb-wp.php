@@ -133,6 +133,7 @@ class SB_WP {
 			$height = $size[1];
 			$style = ' style="width:'.$width.'px; height:'.$height.'px;"';
 		}
+
 		if(has_post_thumbnail()) {
 			return get_the_post_thumbnail($post_id, $real_size);
 		}
@@ -1531,6 +1532,22 @@ class SB_WP {
                     'taxonomy'	=> 'product_cat',
                     'field'		=> 'id',
                     'terms'		=> $cat->term_id
+                )
+            )
+        );
+        $args = wp_parse_args($args, $defaults);
+        return new WP_Query($args);
+    }
+
+    public static function get_product_by_tag($tag, $args = array()) {
+        $defaults = array(
+            'post_type'         => 'product',
+            'posts_per_page'	=> 8,
+            'tax_query'		=> array(
+                array(
+                    'taxonomy'	=> 'product_tag',
+                    'field'		=> 'id',
+                    'terms'		=> $tag->term_id
                 )
             )
         );

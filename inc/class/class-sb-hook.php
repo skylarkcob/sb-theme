@@ -894,7 +894,7 @@ class SB_Hook {
 		return '...';
 	}
 	
-	function remove_default_image_sizes( $sizes ) {
+	public function remove_default_image_sizes( $sizes ) {
 		if(isset($sizes['thumbnail'])) unset( $sizes['thumbnail'] );
 		if(isset($sizes['medium'])) unset( $sizes['medium'] );
 		if(isset($sizes['large'])) unset( $sizes['large'] );     
@@ -946,8 +946,8 @@ class SB_Hook {
 		add_theme_support( 'automatic-feed-links' );
 		add_theme_support( 'post-thumbnails' );
 		set_post_thumbnail_size( 300, 300 );
-		add_image_size('thumbnail', 300, 300, false);
-		add_image_size('thumbnail_crop', 300, 300, true);
+		add_image_size('thumbnail', 180, 120, false);
+		add_image_size('thumbnail_crop', 180, 120, true);
 		add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption' ));
 		add_theme_support( 'post-formats', array( 'aside', 'image', 'video', 'audio', 'quote', 'link', 'gallery' ));
 		register_nav_menus( array(

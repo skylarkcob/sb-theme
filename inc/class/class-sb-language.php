@@ -47,6 +47,9 @@ class SB_Language {
         $this->overwrite_translator("vi", "related_posts", "Bài viết liên quan");
         $this->overwrite_translator("en", "related_posts", "Related posts");
 
+        $this->overwrite_translator("vi", "posted_on_date_by_author", 'Được đăng ngày %1$s bởi %2$s');
+        $this->overwrite_translator("en", "posted_on_date_by_author", 'Posted %1$s by %2$s');
+
         $this->overwrite_translator("vi", "posted_on_date_by_author_filed_under_category", 'Được đăng ngày %1$s bởi %2$s. Được đặt trong chuyên mục %3$s');
         $this->overwrite_translator("en", "posted_on_date_by_author_filed_under_category", 'Posted %1$s by %2$s. Filed under %3$s');
 
