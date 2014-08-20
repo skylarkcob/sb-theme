@@ -103,20 +103,31 @@ class SB_Hook {
 			$jquery = ABSPATH . WPINC . "/js/jquery/jquery.js";
 			$jquery_migrate = ABSPATH . WPINC . "/js/jquery/jquery-migrate.min.js";
 			if(file_exists($jquery) && file_exists($jquery_migrate)) {
-                add_action( 'wp_print_scripts', array($this, "dequeue_jquery_script"), 100 );
-                add_action('wp_enqueue_scripts', array($this, "enqueue_jqeury_script"));
+
+                add_action('wp_enqueue_scripts', array($this, "dequeue_jquery_script"), 100);
+                add_action('wp_enqueue_scripts', array($this, "enqueue_jquery_script"), 110);
 			}
 		}
 	}
 
     public function dequeue_jquery_script() {
-        wp_dequeue_script('jquery');
-        wp_deregister_script('jquery');
-        wp_dequeue_script('jquery-migrate');
-        wp_deregister_script('jquery-migrate');
+        $handle = 'jquery';
+        if(wp_script_is($handle)) {
+            wp_dequeue_script($handle);
+        }
+        if(wp_script_is($handle, 'registered')) {
+            wp_deregister_script($handle);
+        }
+        $handle = 'jquery-migrate';
+        if(wp_script_is($handle)) {
+            wp_dequeue_script($handle);
+        }
+        if(wp_script_is($handle, 'registered')) {
+            wp_deregister_script($handle);
+        }
     }
 
-    public function enqueue_jqeury_script() {
+    public function enqueue_jquery_script() {
         wp_register_script('jquery-migrate', includes_url("js/jquery/jquery-migrate.min.js"), array(), false, true);
         wp_register_script('jquery', includes_url("js/jquery/jquery.js"), array('jquery-migrate'), false, true);
         wp_enqueue_script('jquery');
@@ -892,9 +903,9 @@ class SB_Hook {
             SB_WP::admin_notices_message(array("message" => __(sprintf(SB_PHP::add_dotted(SB_WP::phrase("you_must_wait_x_minute_before_publish_next_post")), SB_PHP::date_minus_minute(SB_WP::current_time_mysql(), $user->get_next_post_time())), SB_DOMAIN), "is_error" => true, "id" => "sbPostLimit"));
             ?>
             <script>
-                jQuery(document).ready(function($){
+                (function($){
                    $("div.updated").css("display", "none");
-                });
+                })(jQuery);
             </script>
             <?php
             delete_transient( "post_after_x_minute" );
