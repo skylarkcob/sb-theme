@@ -36,7 +36,7 @@ class SB_Admin {
 	private function action_init() {
 		add_action("admin_menu", array($this, "sbtheme_add_options_menu"));
 		add_action("admin_init", array($this, "sbtheme_page_init"));
-		add_action( 'wp_ajax_my_action', array($this, 'sbtheme_admin_ajax_callback' ));
+		add_action( 'wp_ajax_sb_option_action', array($this, 'sbtheme_admin_ajax_callback' ));
 	}
 	
 	/*
@@ -702,6 +702,7 @@ class SB_Admin {
 	// Mục cho nhập dữ liệu chuỗi
 	private function text_field($name, $value, $description) {
 		$value = trim($value);
+        $class = '';
         if('headline' == $name) {
             $class = 'widefat';
         }

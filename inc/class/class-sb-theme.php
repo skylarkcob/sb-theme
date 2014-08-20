@@ -114,7 +114,7 @@ class SB_Theme {
 			echo SB_WP::phrase('forums').' '.get_bloginfo('name');
 		} elseif(is_singular('forum')) {
 			echo get_the_title().' - '.get_bloginfo('name');
-		} elseif(is_singular('topic')) {
+		} elseif(is_singular('topic') || is_single() || is_page()) {
 			echo get_the_title();
 		} elseif(SB_WP::is_user_page()) {
 			echo SB_WP::phrase('account_information');

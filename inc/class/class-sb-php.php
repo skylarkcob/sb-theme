@@ -13,6 +13,13 @@ class SB_PHP {
         return "Y-m-d H:i:s";
     }
 
+    public static function delete_file($file_path) {
+        $file_path = realpath($file_path);
+        if(is_readable($file_path)) {
+            unlink($file_path);
+        }
+    }
+
     public static function date_plus_minute($date, $minute) {
         $kq = new DateTime($date);
         $time_modify = "+".$minute;

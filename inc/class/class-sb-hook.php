@@ -103,18 +103,24 @@ class SB_Hook {
 			$jquery = ABSPATH . WPINC . "/js/jquery/jquery.js";
 			$jquery_migrate = ABSPATH . WPINC . "/js/jquery/jquery-migrate.min.js";
 			if(file_exists($jquery) && file_exists($jquery_migrate)) {
-				wp_dequeue_script('jquery');
-				wp_deregister_script('jquery');
-				wp_dequeue_script('jquery-migrate');
-				wp_deregister_script('jquery-migrate');
-				wp_register_script('jquery-migrate', includes_url("js/jquery/jquery-migrate.min.js"), array(), false, true);
-				wp_register_script('jquery', includes_url("js/jquery/jquery.js"), array('jquery-migrate'), false, true);
-				wp_enqueue_script('jquery');
+                add_action( 'wp_print_scripts', array($this, "dequeue_jquery_script"), 100 );
+                add_action('wp_enqueue_scripts', array($this, "enqueue_jqeury_script"));
 			}
 		}
 	}
 
+    public function dequeue_jquery_script() {
+        wp_dequeue_script('jquery');
+        wp_deregister_script('jquery');
+        wp_dequeue_script('jquery-migrate');
+        wp_deregister_script('jquery-migrate');
+    }
 
+    public function enqueue_jqeury_script() {
+        wp_register_script('jquery-migrate', includes_url("js/jquery/jquery-migrate.min.js"), array(), false, true);
+        wp_register_script('jquery', includes_url("js/jquery/jquery.js"), array('jquery-migrate'), false, true);
+        wp_enqueue_script('jquery');
+    }
 	
 	public function script_and_style() {
 		// Enqueue style
@@ -142,7 +148,7 @@ class SB_Hook {
 			wp_register_script($handle, $value[1], $value[2], false, true);
 			wp_enqueue_script($handle);
 			if("sbtheme" == $handle) {
-				wp_localize_script( $handle, 'sbAjax', array( 'url' => admin_url( 'admin-ajax.php' ) ) );
+				wp_localize_script( $handle, 'sbAjax', array( 'url' => SB_WP::get_ajax_url() ) );
 			}
 		}
 		
@@ -762,6 +768,7 @@ class SB_Hook {
     public function fix_media_name($filename) {
         $info = pathinfo($filename);
         $ext  = empty($info['extension']) ? '' : '.' . $info['extension'];
+        $ext = SB_PHP::lowercase($ext);
         $name = basename($filename, $ext);
         return SB_PHP::remove_vietnamese($name) . $ext;
     }
@@ -822,19 +829,28 @@ class SB_Hook {
 		if(is_admin()) {
             global $pagenow;
 			add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
-			$this->rich_editor_init();
-			$this->media_upload_init();
+
+			//add_action('admin_enqueue_scripts', array($this, 'enqueue_rich_editor_script'));
+
             if('widgets.php' == $pagenow) {
                 wp_enqueue_media();
             }
 
 			add_action('admin_menu', array($this, 'sbtheme_custom_menu_page'), 102);
-			//add_action( 'customize_register', array($this, 'sbtheme_customize_init' ));
+
 			add_action('admin_init', array($this, 'sbtheme_admin_init'), 99);
             add_action( 'save_post', array($this, 'on_post_published') );
             add_action('admin_notices', array($this, 'admin_notices'));
 		}
 	}
+
+    public function enqueue_rich_editor_script() {
+        wp_enqueue_script( 'word-count' );
+        wp_enqueue_script('post');
+        if ( user_can_richedit() ) {
+            wp_enqueue_script('editor');
+        }
+    }
 
     public function on_post_published($post_id) {
         if ( (defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE) || (defined( 'DOING_AJAX' ) && DOING_AJAX) || (! current_user_can( 'edit_post', $post_id )) || (false !== wp_is_post_revision( $post_id )) ) {
@@ -905,19 +921,7 @@ class SB_Hook {
 		SB_WP::register_sidebar( $id, $name, $description);
 	}
 	
-	public function media_upload_init() {
-		add_thickbox();
-		wp_enqueue_script( 'media-upload' );
 
-	}
-	
-	public function rich_editor_init() {
-		wp_enqueue_script( 'word-count' );
-		wp_enqueue_script('post');
-		if ( user_can_richedit() ) {
-			wp_enqueue_script('editor');
-		}
-	}
 	
 	public function float_ads_init() {
 		SB_Theme::float_ads_sidebar();
@@ -1020,7 +1024,7 @@ class SB_Hook {
 	
 	public function sbtheme_admin_script_and_style() {
 		wp_register_script('sbtheme-admin', SB_JS_URI . '/sb-admin-script.js', array('jquery'), false, true);
-		wp_localize_script( 'sbtheme-admin', 'sbAdminAjax', array( 'url' => admin_url( 'admin-ajax.php' ) ) );
+		wp_localize_script( 'sbtheme-admin', 'sbAdminAjax', array( 'url' => SB_WP::get_ajax_url() ) );
 		wp_enqueue_script('sbtheme-admin');
 		
 		

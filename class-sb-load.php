@@ -193,8 +193,18 @@ class SB_Load {
 		$this->enable_sb_widget();
         SB_WP::update_woocommerce();
 		include SB_PATH . "/sb-constant.php";
+        $this->check_security();
 	}
-	
+
+    public function check_security() {
+
+        $user = new SB_User();
+        if($user->is_valid() && $user->is_admin()) {
+            SB_WP::delete_readme_file();
+        }
+
+    }
+
 	public function enable_sb_widget() {
 		$options = SB_WP::option();
 		if(isset($options['enable_sb_post_widget']) && (bool)$options['enable_sb_post_widget']) {

@@ -1,7 +1,16 @@
-jQuery(document).ready(function($){
-	var username = $("#user_login"), useremail = $("#user_email"), firstname = $("#first_name"), lastname = $("#last_name"), password = $("#password"),
-	repeatPassword = $("#repeat_password"), inviteCode = $("#invitation_code"), captcha = $("#mc-input"), inputSubmit = $("#wp-submit"),
-	userPass = $("#user_pass"), rememberMe = $("#rememberme");
+(function($){
+	var username = $("#user_login"),
+        useremail = $("#user_email"),
+        firstname = $("#first_name"),
+        lastname = $("#last_name"),
+        password = $("#password"),
+	    repeatPassword = $("#repeat_password"),
+        inviteCode = $("#invitation_code"),
+        captcha = $("#mc-input"),
+        inputSubmit = $("#wp-submit"),
+	    userPass = $("#user_pass"),
+        rememberMe = $("#rememberme");
+
 	username.attr("tabindex", 1);
 	userPass.attr("tabindex", 2);
 	useremail.attr("tabindex", 2);
@@ -29,7 +38,7 @@ jQuery(document).ready(function($){
 	}
 	
 	var registerForm = $("#registerform");
-	registerForm.submit(function(e){
+	registerForm.submit(function(event){
 		var hasError = false;
 		if("" == username.val()) {
 			username.addClass("error");
@@ -56,11 +65,11 @@ jQuery(document).ready(function($){
 			hasError = true;
 		}
 		if(hasError) {
-			if(e.preventDefault) {
-				e.preventDefault();
+			if(event.preventDefault) {
+                event.preventDefault();
 			} else {
-				e.returnValue = false;
+                event.returnValue = false;
 			}
 		}
 	});
-});
+})(jQuery);

@@ -180,7 +180,12 @@ class SB_Post {
         return $user;
     }
 
+    public function get_title() {
+        return $this->post->post_title;
+    }
+
 	public function thumbnail($args = array()) {
+        $title = $this->get_title();
 		?>
 		<div class="post-thumbnail">
 			<a href="<?php $this->permalink(); ?>" title="<?php echo $title; ?>"><?php echo SB_WP::get_post_thumbnail($args); ?></a>

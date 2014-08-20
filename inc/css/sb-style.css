@@ -784,7 +784,7 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
     display: none;
     line-height: 1;
     opacity: 0.8;
-    padding: 8px 10px;
+    padding: 10px;
     position: fixed;
     right: 20px;
 }
@@ -1028,6 +1028,13 @@ div.bbp-breadcrumb {
 
 .sb-site-tree h3.tree-title {
 	font-size: 13px;
+}
+
+.attachment-preview .thumbnail,
+.attachment-info .thumbnail {
+    border: medium none;
+    border-radius: 0;
+    padding: 0;
 }
 
 .sb-site-tree .tagcloud a,

@@ -12,12 +12,12 @@ class SB_User extends WP_User {
 		}
 	}
 	
-	public function init($user) {
+	public function set_user($user) {
 		$this->user = $user;
 	}
 	
 	public function set($user) {
-		$this->init($user);
+		$this->set_user($user);
 	}
 
     public function set_by_id($id) {
@@ -29,7 +29,7 @@ class SB_User extends WP_User {
     }
 	
 	public function add($user) {
-		$this->init($user);
+		$this->set_user($user);
 	}
 	
 	public function remove_role($role) {
@@ -41,7 +41,7 @@ class SB_User extends WP_User {
 	}
 	
 	public function get_by($key, $value) {
-		$this->init(get_user_by($key, $value));
+		$this->set_user(get_user_by($key, $value));
 	}
 	
 	public function get_meta($key) {
@@ -248,10 +248,11 @@ class SB_User extends WP_User {
     }
 
     public function is_valid() {
-        if($this->user->ID > 0) {
-            return true;
-        }
-        return false;
+        return SB_WP::is_user($this->user);
+    }
+
+    public function is_admin() {
+        return SB_WP::is_admin_user($this->get_id());
     }
 
     public function is_own_post($id = 0) {

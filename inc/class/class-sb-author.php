@@ -13,7 +13,7 @@ class SB_Author extends SB_User {
 		$this->user = $user;
 	}
 	
-	public function init($user) {
+	public function set_user($user) {
 		$this->set($user);
 	}
 	
@@ -21,7 +21,13 @@ class SB_Author extends SB_User {
 		return get_the_author_meta($key);
 	}
 	
-	public function get_avatar($size) {
+	public function get_avatar($args = array()) {
+        $size = '32';
+
+        if(is_array($args)) {
+            extract($args, EXTR_OVERWRITE);
+        }
+
 		return get_avatar($this->user->ID, $size);
 	}
 	

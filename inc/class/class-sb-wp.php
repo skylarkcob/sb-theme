@@ -116,6 +116,9 @@ class SB_WP {
         $size_name = "thumbnail";
         $size = array();
         $post_id = get_the_ID();
+        $width = '';
+        $height = '';
+        $style = '';
 		$defaults = array(
 			'size'		=> array(),
 			'size_name'	=> 'thumbnail'
@@ -159,13 +162,22 @@ class SB_WP {
         return false;
     }
 
+    public static function get_ajax_url() {
+        return admin_url( 'admin-ajax.php' );
+    }
+
     public static function is_user($user) {
         return is_a($user, 'WP_User');
     }
 
+    public static function delete_readme_file() {
+        $read_me = trailingslashit(ABSPATH).'readme.html';
+        SB_PHP::delete_file($read_me);
+    }
+
     public static function prevent_user_see_other_media($query) {
         global $current_user, $pagenow;
-        if(self::is_user($current_user) && 'upload.php' == $pagenow && !self::is_admin_user($current_user->ID)) {
+        if(self::is_user($current_user) && !self::is_admin_user($current_user->ID)) {
             $query->set('author', $current_user->id );
         }
         return $query;
