@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
 class SB_Language {
@@ -31,6 +31,9 @@ class SB_Language {
 		
 		$this->overwrite_translator("vi", "off", "Tắt");
 		$this->overwrite_translator("en", "off", "Off");
+
+        $this->overwrite_translator("vi", "sb_framework_shortdescription", "Thông tin giới thiệu gói mã nguồn SB Framework");
+        $this->overwrite_translator("en", "sb_framework_shortdescription", "Short description about SB Framework");
 
         $this->overwrite_translator("vi", "create_post_url", "Link tạo bài viết");
         $this->overwrite_translator("en", "create_post_url", "Create post url");

@@ -956,7 +956,6 @@ class SB_Hook {
 	}
 	
 	public function sbtheme_setup() {
-		global $sb_language;
 		load_theme_textdomain( SB_DOMAIN, get_template_directory() . '/languages' );
 		add_theme_support( 'automatic-feed-links' );
 		add_theme_support( 'post-thumbnails' );
@@ -979,6 +978,7 @@ class SB_Hook {
 			add_image_size('product_small', 200, 200, false);
 			add_image_size('product_small_crop', 200, 200, true);			
 		}
+        $sb_language = new SB_Language(SB_WP::get_current_language());
 		if("vi" == $sb_language->get()) {
 			update_option("timezone_string", "Asia/Ho_Chi_Minh");
 			update_option("date_format", "d/m/Y");

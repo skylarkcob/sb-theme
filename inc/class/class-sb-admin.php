@@ -53,7 +53,7 @@ class SB_Admin {
 		$this->data_section = SB_PHP::get_session('data_section');
 		$this->add_tab('general', SB_WP::phrase("general_settings"), 'sbtheme_general_section');
 		$this->add_tab('home', SB_WP::phrase("home_page_settings"), 'sbtheme_home_section');
-		if(SB_WP::enable_tivi()) {
+		if(SB_WP::is_tivi_enabled()) {
 			$this->add_tab('tivi', SB_WP::phrase("tivi_settings"), 'sbtheme_tivi_section');
 		}
 		$this->add_tab('ads', SB_WP::phrase("ads_settings"), 'sbtheme_ads_section');
@@ -163,7 +163,7 @@ class SB_Admin {
 	}
 
     private function the_language_field($name, $description) {
-        global $sb_language;
+        $sb_language = new SB_Language(SB_WP::get_current_language());
         $langs = $sb_language->get_list();
         $value = $this->get_option_value($name);
         ?>
@@ -213,7 +213,7 @@ class SB_Admin {
 	private function add_home_field_setting() {
         $this->add_home_field("main_slider", SB_WP::phrase("main_slider"), "main_slider_callback");
         $this->add_home_field("sub_slider", SB_WP::phrase("sub_slider"), "sub_slider_callback");
-		if(SB_WP::enable_tivi()) {
+		if(SB_WP::is_tivi_enabled()) {
 			$this->add_home_field("default_tivi", SB_WP::phrase("default_tivi"), "default_tivi_callback");
 		}
 	}

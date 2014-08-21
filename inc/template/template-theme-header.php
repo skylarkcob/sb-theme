@@ -1,11 +1,10 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly
+    exit;
 }
-global $sb_language;
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $sb_language->get(); ?>">
+<html lang="<?php echo SB_WP::get_current_language(); ?>">
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <title><?php SB_Theme::title(); ?></title>

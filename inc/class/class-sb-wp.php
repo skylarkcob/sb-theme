@@ -10,7 +10,11 @@ class SB_WP {
 		}
 		return home_url('/');
 	}
-	
+
+    public static function get_redirect_url() {
+        return self::get_redirect_uri();
+    }
+
 	public static function get_logout_uri() {
 		return wp_logout_url(self::get_redirect_uri());
 	}
@@ -60,8 +64,17 @@ class SB_WP {
         return $result;
     }
 
+    public static function get_integer_option($option_key) {
+        $options = self::option();
+        $result = 0;
+        if(isset($options[$option_key])) {
+            $result = $options[$option_key];
+        }
+        return $result;
+    }
+
     public static function get_headline_option() {
-        return self::get_text_option('headline');
+        return apply_filters("sb_headline", self::get_text_option('headline'));
     }
 
     public static function get_lost_password_url() {
@@ -109,7 +122,7 @@ class SB_WP {
 	}
 	
 	public static function get_image_url($name) {
-		return SB_Theme::get_image($name);
+        return SB_IMAGES_URI . "/" . $name;
 	}
 	
 	public static function get_post_thumbnail($args = array()) {
@@ -176,7 +189,7 @@ class SB_WP {
     }
 
     public static function prevent_user_see_other_media($query) {
-        global $current_user, $pagenow;
+        global $current_user;
         if(self::is_user($current_user) && !self::is_admin_user($current_user->ID)) {
             $query->set('author', $current_user->id );
         }
@@ -337,15 +350,7 @@ class SB_WP {
     }
 
     public static function get_no_thumbnail_url() {
-        $options = self::option();
-        $result = '';
-        if(isset($options["no_thumbnail"])) {
-            $result = $options["no_thumbnail"];
-        }
-        if(empty($result)) {
-            $result = self::get_image_url("no-thumbnail.png");
-        }
-        return $result;
+        return apply_filters("sb_no_thumbnail_url", self::get_text_option("no_thumbnail"));
     }
 
     public static function get_cart() {
@@ -396,9 +401,7 @@ class SB_WP {
     }
 
     public static function get_favicon_url() {
-        $options = self::option();
-        $favicon = isset($options['favicon']) ? $options['favicon'] : '';
-        return $favicon;
+        return apply_filters("sb_favicon_url", self::get_text_option("favicon"));
     }
 
     public static function is_mobile() {
@@ -464,9 +467,7 @@ class SB_WP {
         if ( empty( $to ) ) {
             $to = self::current_time_stamp();
         }
-
         $diff = (int) abs( $to - $from );
-
         if($diff < MINUTE_IN_SECONDS) {
             $seconds = round($diff);
             if($seconds < 1) {
@@ -517,7 +518,6 @@ class SB_WP {
             $since["type"] = "year";
             $since["value"] = $years;
         }
-
         return $since;
     }
 
@@ -540,47 +540,39 @@ class SB_WP {
     }
 
     public static function is_user_point_enabled() {
-        $options = self::option();
-        if(isset($options["enable_user_point"]) && (bool)$options["enable_user_point"]) {
-            return true;
-        }
-        return false;
+        return apply_filters("sb_user_point_enabled", self::get_bool_option("enable_user_point"));
     }
 
     public static function get_user_post_point() {
-        $options = self::option();
-        $point = SB_USER_POST_POINT;
-        if(isset($options["user_post_point"]) && 1 < $options["user_post_point"]) {
-            $point = $options["user_post_point"];
+        $point = self::get_integer_option("user_post_point");
+        if(1 > $point) {
+            $point = SB_USER_POST_POINT;
         }
-        return $point;
+        return apply_filters("sb_user_post_point", $point);
     }
 
     public static function get_post_character_limit() {
-        $options = self::option();
-        $result = SB_POST_CHARACTER_LIMIT;
-        if(isset($options["post_character_limit"]) && 1 < $options["post_character_limit"]) {
-            $result = $options["post_character_limit"];
+        $result = self::get_integer_option("post_character_limit");
+        if(1 > $result) {
+            $result = SB_POST_CHARACTER_LIMIT;
         }
-        return $result;
+        return apply_filters("sb_post_character_limit", $result);
     }
 
     public static function get_post_image_limit() {
-        $options = self::option();
-        $result = SB_POST_IMAGE_LIMIT;
-        if(isset($options["post_image_limit"]) && 1 < $options["post_image_limit"]) {
-            $result = $options["post_image_limit"];
+        $result = self::get_integer_option("post_image_limit");
+        if(1 > $result) {
+            $result = SB_POST_IMAGE_LIMIT;
         }
-        return $result;
+        return apply_filters("sb_post_image_limit", $result);
     }
 
     public static function get_time_between_post() {
-        $options = self::option();
-        $value = SB_TIME_BETWEEN_POST;
-        if(isset($options["time_between_post"]) && 1 < $options["time_between_post"]) {
-            $value = $options["time_between_post"];
+        $value = self::get_integer_option("time_between_post");
+        if(1 > $value) {
+            $value = SB_TIME_BETWEEN_POST;
         }
-        return $value;
+        return apply_filters("sb_time_between_post", $value);
     }
 
     public static function approve_comment($comment) {
@@ -669,12 +661,11 @@ class SB_WP {
     }
 
     public static function get_user_comment_point() {
-        $options = self::option();
-        $point = SB_USER_COMMENT_POINT;
-        if(isset($options["user_comment_point"]) && 1 < $options["user_comment_point"]) {
-            $point = $options["user_comment_point"];
+        $point = self::get_integer_option("user_comment_point");
+        if(1 > $point) {
+            $point = SB_USER_COMMENT_POINT;
         }
-        return $point;
+        return apply_filters("sb_user_comment_point", $point);
     }
 	
 	public static function get_menus() {
@@ -687,12 +678,9 @@ class SB_WP {
 
 	public static function get_signup_url() {
         $kq = wp_registration_url();
-		$options = self::option();
-        if(isset($options["register_url"])) {
-            $page_id = $options["register_url"];
-            if(is_numeric($page_id) && 0 < $page_id) {
-                $kq = get_page_link($page_id);
-            }
+        $page_id = self::get_integer_option("register_url");
+        if(is_numeric($page_id) && 0 < $page_id) {
+            $kq = get_page_link($page_id);
         }
         return apply_filters('sb_register_url', $kq);
 	}
@@ -724,24 +712,21 @@ class SB_WP {
 	}
 
     public static function get_list_yahoo() {
-        $options = self::option();
         $kq = array();
-        if(isset($options['list_yahoo'])) {
-            $list_yahoo = $options['list_yahoo'];
-            $list_yahoo = SB_PHP::paragraph_to_array($list_yahoo);
-            foreach($list_yahoo as $yahoo) {
-                $item = explode(",", $yahoo);
-                $text = "";
-                $username = "";
-                if(count($item) > 0) {
-                    $text = trim($item[0]);
-                }
-                if(count($item) > 1) {
-                    $username = trim($item[1]);
-                }
-                $account = array("text" => $text, "username" => $username);
-                array_push($kq, $account);
+        $list_yahoo = self::get_text_option("list_yahoo");
+        $list_yahoo = SB_PHP::paragraph_to_array($list_yahoo);
+        foreach($list_yahoo as $yahoo) {
+            $item = explode(",", $yahoo);
+            $text = "";
+            $username = "";
+            if(count($item) > 0) {
+                $text = trim($item[0]);
             }
+            if(count($item) > 1) {
+                $username = trim($item[1]);
+            }
+            $account = array("text" => $text, "username" => $username);
+            array_push($kq, $account);
         }
         return $kq;
     }
@@ -851,8 +836,6 @@ class SB_WP {
 		return self::bbp_installed();
 	}
 	
-	
-	
 	public static function is_user_page() {
 		if(function_exists('bbp_is_single_user')) {
 			return bbp_is_single_user();
@@ -865,12 +848,7 @@ class SB_WP {
 	}
 	
     public static function get_footer_text() {
-        $options = self::option();
-        $text = "";
-        if(isset($options["footer_text"])) {
-            $text = $options["footer_text"];
-        }
-        return $text;
+        return apply_filters("sb_footer_text", self::get_text_option("footer_text"));
     }
 
     public static function get_all_user($args = array()) {
@@ -1134,20 +1112,36 @@ class SB_WP {
     }
 
     public static function is_widget_enabled($name) {
-        $options = SB_WP::option();
         $name = str_replace("enable_", "", $name);
         $name = str_replace("_widget", "", $name);
         $name = str_replace(" ", "_", $name);
         $name = strtolower($name);
         $name = "enable_".$name."_widget";
-        if(isset($options[$name]) && (bool)$options[$name]) {
-            return true;
-        }
-        return false;
+        return self::get_bool_option($name);
     }
 
     public static function is_tab_widget_enabled() {
-        return self::is_widget_enabled("SB Tab");
+        return apply_filters("sb_tab_widget_enabled", self::is_widget_enabled("SB Tab"));
+    }
+
+    public static function is_sb_tab_widget_enabled() {
+        return self::is_tab_widget_enabled();
+    }
+
+    public static function is_sb_post_widget_enabled() {
+        return apply_filters("sb_post_widget_enabled", self::is_widget_enabled("SB Post"));
+    }
+
+    public static function is_sb_banner_widget_enabled() {
+        return apply_filters("sb_banner_widget_enabled", self::is_widget_enabled("SB Banner"));
+    }
+
+    public static function is_sb_support_widget_enabled() {
+        return apply_filters("sb_support_widget_enabled", self::is_widget_enabled("SB Support"));
+    }
+
+    public static function is_sb_link_widget_enabled() {
+        return apply_filters("sb_link_widget_enabled", self::is_widget_enabled("SB Link"));
     }
 	
 	public static function add_user_admin($args = array()) {
@@ -1234,27 +1228,18 @@ class SB_WP {
 	}
 	
 	public static function utility_enabled($name) {
-		$options = self::option();
-		if(isset($options[ $name ]) && (bool)$options[ $name ]) {
-			return true;
-		}
-		return false;
+		return self::get_bool_option($name);
 	}
 	
 	public static function option() {
-		return SB_Theme::option();
+        $sb_options = new SB_Option();
+        $options = (array)$sb_options->get_all_option();
+        return $options;
 	}
-	
-	public static function enable_tivi() {
-		$options = SB_Theme::option();
-		if(isset($options['enable_tivi']) && (bool)$options['enable_tivi']) {
-			return true;
-		}
-		return false;
-	}
-	
+
 	public static function phrase($phrase) {
-		return SB_Theme::phrase($phrase);
+        $sb_language = new SB_Language(self::get_current_language());
+        return $sb_language->phrase($phrase);
 	}
 	
 	public static function bbpress_register_page() {
@@ -1291,12 +1276,11 @@ class SB_WP {
     }
 	
 	public static function get_current_language() {
-		$lang = "vi";
-		$option = SB_WP::option();
-		if(isset($option['language']) && !empty($option['language'])) {
-			$lang = $option['language'];
-		}
-		return $lang;
+        $lang = self::get_text_option("language");
+		if(empty($lang)) {
+            $lang = "vi";
+        }
+		return apply_filters("sb_language", $lang);
 	}
 
     public static function has_wishlist() {
@@ -1314,34 +1298,28 @@ class SB_WP {
             self::update_option("yith_wcwl_socials_title", $title);
             self::update_option("yith_wcwl_add_to_wishlist_text", SB_WP::phrase("wishlist"));
             self::update_option("yith_wcwl_add_to_cart_text", SB_WP::phrase("add_to_cart"));
-            $option = new SB_Option();
-            $option->update("wishlist_updated", 1);
+            self::update_option("wishlist_updated", 1);
         }
     }
 
     public static function update_woocommerce() {
-        self::update_wishlist();
-        self::update_compare_product();
+        if(self::is_woocommerce_installed()) {
+            self::update_wishlist();
+            self::update_compare_product();
+        }
     }
 
     public static function update_compare_product() {
         $lang = self::get_current_language();
         if(self::has_compare_product() && "en" != $lang && !self::compare_product_updated() && self::is_shop_enabled()) {
             self::update_option("yith_woocompare_button_text", SB_WP::phrase("compare"));
-
             self::update_option("yith_woocompare_table_text", SB_WP::phrase("compare_products"));
-
-            $option = new SB_Option();
-            $option->update("compare_product_updated", 1);
+            self::update_option("compare_product_updated", 1);
         }
     }
 
     public static function compare_product_updated() {
-        $options = self::option();
-        if(isset($options['compare_product_updated']) && (bool)$options['compare_product_updated']) {
-            return true;
-        }
-        return false;
+        return apply_filters("sb_compare_product_updated", self::get_bool_option("compare_product_updated"));
     }
 
     public static function has_compare_product() {
@@ -1352,11 +1330,7 @@ class SB_WP {
     }
 
     public static function wishlist_updated() {
-        $options = self::option();
-        if(isset($options['wishlist_updated']) && (bool)$options['wishlist_updated']) {
-            return true;
-        }
-        return false;
+        return apply_filters("sb_wishlist_updated", self::get_bool_option("wishlist_updated"));
     }
 
     public static function update_option($key, $value) {
@@ -1368,27 +1342,24 @@ class SB_WP {
 	}
 
     public static function get_slider($id) {
-        $options = self::option();
         $kq = array();
-        if(isset($options[$id])) {
-            $lines = $options[$id];
-            $lines = SB_PHP::paragraph_to_array($lines);
-            foreach($lines as $line) {
-                $items = explode(",", $line);
-                $text = "";
-                $link = "";
-                $url = "";
-                if(count($items) > 0) {
-                    $text = trim($items[0]);
-                }
-                if(count($items) > 1) {
-                    $link = trim($items[1]);
-                }
-                if(count($items) > 2) {
-                    $url = trim($items[2]);
-                }
-                array_push($kq, array("text" => $text, "link" => $link, "url" => $url));
+        $lines = self::get_text_option($id);
+        $lines = SB_PHP::paragraph_to_array($lines);
+        foreach($lines as $line) {
+            $items = explode(",", $line);
+            $text = "";
+            $link = "";
+            $url = "";
+            if(count($items) > 0) {
+                $text = trim($items[0]);
             }
+            if(count($items) > 1) {
+                $link = trim($items[1]);
+            }
+            if(count($items) > 2) {
+                $url = trim($items[2]);
+            }
+            array_push($kq, array("text" => $text, "link" => $link, "url" => $url));
         }
         return $kq;
     }
@@ -1423,12 +1394,7 @@ class SB_WP {
     }
 
     public static function get_logo_url() {
-        $result = "";
-        $options = self::option();
-        if(isset($options["logo"])) {
-            $result = $options["logo"];
-        }
-        return $result;
+        return apply_filters("sb_logo_url", self::get_text_option("logo"));
     }
 
     public static function set_password($user_id, $new_password) {
@@ -1514,8 +1480,7 @@ class SB_WP {
 	}
 	
 	public static function get_default_tivi() {
-		$options = self::option();
-		$tivi_id = isset($options["default_tivi"]) ? $options["default_tivi"] : 0;
+		$tivi_id = self::get_integer_option("default_tivi");
 		if($tivi_id > 0) {
 			$tivi = new SB_Tivi($tivi_id);
 		} else {
@@ -1652,11 +1617,11 @@ class SB_WP {
     }
 
     public static function is_shop_enabled() {
-        $options = self::option();
-        if(isset($options['enable_shop']) && (bool)$options['enable_shop']) {
-            return true;
-        }
-        return false;
+        return apply_filters("sb_shop_enabled", self::get_bool_option("enable_shop"));
+    }
+
+    public static function is_tivi_enabled() {
+        return apply_filters("sb_tivi_enabled", self::get_bool_option("enable_tivi"));
     }
 
     public static function wishlist_button() {

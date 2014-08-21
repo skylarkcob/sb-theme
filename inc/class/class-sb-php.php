@@ -136,7 +136,8 @@ class SB_PHP {
 	public static function is_image_url($url) {
 		$img_formats = array("png", "jpg", "jpeg", "gif", "tiff", "bmp");
 		$path_info = pathinfo($url);
-		if (in_array(strtolower($path_info['extension']), $img_formats)) {
+        $extension = isset($path_info['extension']) ? $path_info['extension'] : "";
+		if (in_array(strtolower($extension), $img_formats)) {
 			return true;
 		}
 		return false;
@@ -203,7 +204,8 @@ class SB_PHP {
 	public static function is_favicon_url($url) {
 		$favicon_formats = array("png", "ico");
 		$path_info = pathinfo($url);
-		if (in_array(strtolower($path_info['extension']), $favicon_formats)) {
+        $extension = isset($path_info['extension']) ? $path_info['extension'] : '';
+		if (in_array(strtolower($extension), $favicon_formats)) {
 			return true;
 		}
 		return false;

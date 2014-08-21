@@ -624,9 +624,7 @@ class SB_Theme {
     }
 
 	public static function option() {
-		global $sb_options;
-		$sb_options = new SB_Option();
-		return (array)$sb_options->get_all_option();
+		SB_WP::option();
 	}
 	
 	public static function options() {
@@ -672,16 +670,7 @@ class SB_Theme {
 	}
 	
 	public static function phrase($phrase) {
-		global $sb_language;
-		if(null == $sb_language || empty($sb_language)) {
-			$options = SB_WP::option();
-			$lang = 'vi';
-			if(isset($options['language'])) {
-				$lang = $options['language'];
-			}
-			$sb_language = new SB_Language($lang);
-		}
-		return $sb_language->phrase($phrase);
+		return SB_WP::phrase($phrase);
 	}
 	
 	public static function copyright() {
@@ -1033,7 +1022,7 @@ class SB_Theme {
 	}
 	
 	public static function get_image($name) {
-		return SB_IMAGES_URI . "/" . $name;
+		return SB_WP::get_image_url($name);
 	}
 	
 	public static function nothing_found() {
