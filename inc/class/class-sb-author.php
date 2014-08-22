@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
 class SB_Author extends SB_User {
@@ -23,11 +23,9 @@ class SB_Author extends SB_User {
 	
 	public function get_avatar($args = array()) {
         $size = '32';
-
         if(is_array($args)) {
             extract($args, EXTR_OVERWRITE);
         }
-
 		return get_avatar($this->user->ID, $size);
 	}
 	

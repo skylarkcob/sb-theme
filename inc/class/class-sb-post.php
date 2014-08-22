@@ -125,7 +125,7 @@ class SB_Post {
 	}
 
 	public function title($head = "h2") {
-        the_title( '<'.$head.' class="entry-title fancy post-title"><a href="' . esc_url( get_permalink($this->get_id()) ) . '">', '</a></'.$head.'>' );
+        the_title( '<'.$head.' class="sb-post-title fancy post-title"><a href="' . esc_url( get_permalink($this->get_id()) ) . '">', '</a></'.$head.'>' );
 	}
 	
 	public function get_date($d = "") {
@@ -147,21 +147,21 @@ class SB_Post {
         if(is_page()) {
             printf(
                 sprintf('<div class="meta sb-post-meta">%1$s</div>', __(SB_PHP::add_dotted(SB_WP::phrase('posted_on_date_by_author')), SB_DOMAIN)),
-                $this->get_date(),
-                sprintf('<a href="%1$s" title="">%2$s</a>', $this->get_author_post_url(), $this->get_author_name())
+                '<time datetime="'.$this->get_date("c").'" class="date updated">'.$this->get_date().'</time>',
+                sprintf('<span class="vcard author"><span class="fn"><a href="%1$s" title="">%2$s</a></span></span>', $this->get_author_post_url(), $this->get_author_name())
             );
         } else {
             printf(
                 sprintf('<div class="meta sb-post-meta">%1$s</div>', __(SB_PHP::add_dotted(SB_WP::phrase('posted_on_date_by_author_filed_under_category')), SB_DOMAIN)),
-                $this->get_date(),
-                sprintf('<a href="%1$s" title="">%2$s</a>', $this->get_author_post_url(), $this->get_author_name()),
+                '<time datetime="'.$this->get_date("c").'" class="date updated">'.$this->get_date().'</time>',
+                sprintf('<span class="vcard author"><span class="fn"><a rel="author" href="%1$s" title="" class="">%2$s</a></span></span>', $this->get_author_post_url(), $this->get_author_name()),
                 $this->get_the_category()
             );
         }
     }
 
 	public function meta() {
-		printf( '<span class="entry-date"><a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s">%3$s</time></a></span> <span class="byline"><span class="author vcard"><a class="url fn n" href="%4$s" rel="author">%5$s</a></span></span>',
+		printf( '<span class="post-date"><a href="%1$s" rel="bookmark"><time class="post-date date updated" datetime="%2$s">%3$s</time></a></span> <span class="byline"><span class="author vcard"><a class="url fn n" href="%4$s" rel="author">%5$s</a></span></span>',
 			esc_url( $this->get_permalink() ),
 			esc_attr( $this->get_date( 'c' ) ),
 			esc_html( $this->get_date() ),

@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
 class SB_Theme {
@@ -421,7 +421,7 @@ class SB_Theme {
         $sb_product = new SB_Product();
         ?>
         <div class="sb-product-details">
-            <h2 class="product-name entry-title"><?php the_title(); ?></h2>
+            <h2 class="product-name post-title"><?php the_title(); ?></h2>
             <dl>
                 <?php
                 $price = $sb_product->get_price();
@@ -624,7 +624,7 @@ class SB_Theme {
     }
 
 	public static function option() {
-		SB_WP::option();
+		return SB_WP::option();
 	}
 	
 	public static function options() {
@@ -690,7 +690,7 @@ class SB_Theme {
 	}
 	
 	public static function post_date() {
-		printf( '<span class="entry-date post-date"><i class="fa fa-clock-o"></i> <a href="%1$s" rel="bookmark"><time class="entry-date updated" datetime="%2$s">%3$s</time></a></span>',
+		printf( '<span class="sb-post-date post-date"><i class="fa fa-clock-o"></i> <a href="%1$s" rel="bookmark"><time class="sb-post-time date updated" datetime="%2$s">%3$s</time></a></span>',
 			esc_url( get_permalink() ),
 			esc_attr( get_the_date( 'c' ) ),
 			esc_html( get_the_date() )
@@ -1013,7 +1013,7 @@ class SB_Theme {
 			'comment_notes_after'	=> '<p class="form-allowed-tags comment-notes after">' . sprintf( __( sprintf(SB_PHP::add_colon(SB_WP::phrase('allow_html_tags')), '<abbr title="'.__(SB_WP::phrase('html_intro')).'">HTML</abbr>').' %s' ), ' <code>' . allowed_tags() . '</code>' ) . '</p>',
 			'must_log_in'			=> '<p class="must-log-in">' . sprintf(__( SB_WP::phrase("you_must").' <a href="%s">'.SB_PHP::lowercase(SB_WP::phrase("login")).'</a> '.SB_PHP::lowercase(SB_PHP::add_dotted(SB_WP::phrase("before_leave_a_comment"))) ), wp_login_url( apply_filters( 'the_permalink', get_permalink() ) ) ) . '</p>',
 			'logged_in_as'			=> '<p class="logged-in-as">' . sprintf(__( __(SB_WP::phrase('you_are_login_as'), SB_DOMAIN).' <a href="%1$s">%2$s</a>. <a href="%3$s" title="'.__(SB_WP::phrase("logout"), SB_DOMAIN).'">'.__(SB_WP::phrase("logout"), SB_DOMAIN).'?</a>' ), admin_url( 'profile.php' ), esc_attr( $user_identity ), wp_logout_url( apply_filters( 'the_permalink', get_permalink( ) ) )) . '</p>',
-			'title_reply'			=> '<a name="leaveyourcomment"></a><div class="comment-title">'.__(SB_WP::phrase('leave_reply'), SB_DOMAIN).'</div>',
+			'title_reply'			=> '<a id="leaveyourcomment"></a><span class="comment-title">'.__(SB_WP::phrase('leave_reply'), SB_DOMAIN).'</span>',
 			'label_submit'			=> __(SB_WP::phrase("post_comment"), SB_DOMAIN),
 			'title_reply_to'		=>  __( SB_WP::phrase("reply_comment_to_x") ),
 			'cancel_reply_link'		=> __(SB_WP::phrase('cancel_reply'), SB_DOMAIN)

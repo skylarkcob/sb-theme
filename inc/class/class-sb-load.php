@@ -1,5 +1,4 @@
 <?php
-// Prevent direct access
 if(!defined("ABSPATH")) {
 	exit;
 }
@@ -30,6 +29,7 @@ class SB_Load {
         $this->add_class_name_to_list("class-sb-icon");
         $this->add_class_name_to_list("class-sb-tivi");
         $this->add_class_name_to_list("class-sb-hook");
+        $this->add_class_name_to_list("class-sb-html");
     }
 
     private function add_class_name_to_list($class_name) {

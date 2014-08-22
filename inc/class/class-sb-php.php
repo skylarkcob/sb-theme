@@ -259,6 +259,31 @@ class SB_PHP {
         return self::ip_details($ip);
     }
 
+    public static function get_domain_name($url) {
+        $parse = parse_url($url);
+        return isset($parse['host']) ? $parse['host'] : '';
+    }
+
+    public static function get_one_in_many_if_empty($current_value, $array_value) {
+        if(empty($current_value)) {
+            $current_value = self::get_one_in_many($array_value);
+        }
+        return $current_value;
+    }
+
+    public static function get_one_in_many($array_value) {
+        $result = '';
+        if(is_array($array_value)) {
+            foreach($array_value as $value) {
+                $result = $value;
+                if(!empty($result)) {
+                    break;
+                }
+            }
+        }
+        return $result;
+    }
+
     public static function is_ip_valid($ip) {
         if(filter_var($ip, FILTER_VALIDATE_IP)) {
             return true;

@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
 class SB_Hook {
@@ -40,7 +40,6 @@ class SB_Hook {
     }
 	
 	private function script_init() {
-		global $sb_enable_3dfile;
 		array_push($this->scripts, array('bootstrap', SB_LIB_URI . '/bootstrap/js/bootstrap.min.js', array()));
 		array_push($this->scripts, array('superfish', SB_LIB_URI . '/superfish/js/superfish.min.js', array('jquery', 'hoverIntent')));
 		array_push($this->scripts, array('sbtheme', SB_JS_URI . '/sb-script.js', array('jquery')));
@@ -94,8 +93,6 @@ class SB_Hook {
 	
 	public function sbtheme_sidebar_widget_hook() {
 		add_action("widgets_init", array($this, 'sbtheme_widget_init'));
-		//add_filter('dynamic_sidebar_params', array($this, 'sbtheme_widget_param'));
-		//add_filter('widget_title', array($this, 'default_widget_title'), 10, 3);
 	}
 	
 	private function move_jquery_to_footer() {
@@ -103,7 +100,6 @@ class SB_Hook {
 			$jquery = ABSPATH . WPINC . "/js/jquery/jquery.js";
 			$jquery_migrate = ABSPATH . WPINC . "/js/jquery/jquery-migrate.min.js";
 			if(file_exists($jquery) && file_exists($jquery_migrate)) {
-
                 add_action('wp_enqueue_scripts', array($this, "dequeue_jquery_script"), 100);
                 add_action('wp_enqueue_scripts', array($this, "enqueue_jquery_script"), 110);
 			}
@@ -141,13 +137,10 @@ class SB_Hook {
             } else {
                 wp_register_style($key, $url);
             }
-
 			wp_enqueue_style($key);
 		}
-		
 		// Enqueue script
 		foreach($this->scripts as $value) {
-			$options = SB_WP::option();
 			$handle = $value[0];
             if("sbtheme-script" == $handle) {
                 $file = SB_THEME_PATH . "/js/sbtheme-script.js";
@@ -162,11 +155,9 @@ class SB_Hook {
 				wp_localize_script( $handle, 'sbAjax', array( 'url' => SB_WP::get_ajax_url() ) );
 			}
 		}
-		
 		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 			wp_enqueue_script( 'comment-reply' );
 		}
-		
 	}
 	
 	public function sbtheme_set_html_mail(){
@@ -181,33 +172,47 @@ class SB_Hook {
     public function pre_get_posts($query) {
         do_action("sb_pre_get_posts", $query);
     }
-	
-	private function run() {
-		$this->clear_head_meta();
-        add_action('set_current_user', array($this, 'set_current_user'));
-        add_action("pre_get_posts", array($this, "pre_get_posts"));
+
+    private function hook_front_end() {
+        if(!is_admin()) {
+            $this->clear_head_meta();
+            add_action('set_current_user', array($this, 'set_current_user'));
+            add_action("pre_get_posts", array($this, "pre_get_posts"));
+            add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
+            add_filter('excerpt_more', array($this, 'change_excerpt_more'));
+            add_action('wp_footer', array($this, 'sbtheme_footer_element'));
+            add_action( 'admin_bar_menu', array($this, 'sb_toolbar_front_end'), 999 );
+            $this->sbtheme_translation();
+            $this->sbtheme_custom_login_page();
+        }
+    }
+
+    private function hook_back_end() {
+        if(is_admin()) {
+            add_action( 'customize_preview_init', array($this, 'sbtheme_customize_script') );
+            $this->sbtheme_admin_hook();
+            if(SB_WP::utility_enabled('enable_links_manager')) {
+                add_filter( 'pre_option_link_manager_enabled', '__return_true' );
+            }
+        }
+    }
+
+    private function disable_autop_in_shortcode() {
+        remove_filter( 'the_content', 'wpautop' );
+        add_filter( 'the_content', 'wpautop' , 99);
+        add_filter( 'the_content', 'shortcode_unautop',100 );
+    }
+
+    private function hook_global() {
         add_filter('sanitize_file_name', array($this, 'fix_media_name'), 10);
-		add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
-		$this->sbtheme_sidebar_widget_hook();
-		add_action('wp_enqueue_scripts', array($this, 'script_and_style'));
-		add_action('after_setup_theme', array($this, 'sbtheme_setup'));
-		add_action( 'customize_preview_init', array($this, 'sbtheme_customize_script') );
-		add_filter('excerpt_more', array($this, 'change_excerpt_more'));
-		add_filter( 'wp_mail_content_type', array($this, 'sbtheme_set_html_mail' ));
-		if(SB_WP::utility_enabled('enable_3dfile')) {
-			add_filter('upload_mimes', array($this, 'allow_upload_stl_file'));
-		}
-		
-		if(SB_WP::utility_enabled('enable_links_manager')) {
-			add_filter( 'pre_option_link_manager_enabled', '__return_true' );
-		}
-		
-		add_action('wp_footer', array($this, 'sbtheme_footer_element'));
-		
-		$this->sbtheme_admin_hook();
-		add_action('init', array($this, 'sbtheme_init'));
-		$this->sbtheme_custom_login_page();
-		$this->sbtheme_translation();
+        add_filter('intermediate_image_sizes_advanced', array($this, 'remove_default_image_sizes'));
+        $this->sbtheme_sidebar_widget_hook();
+        add_action('after_setup_theme', array($this, 'sbtheme_setup'));
+        add_filter( 'wp_mail_content_type', array($this, 'sbtheme_set_html_mail' ));
+        if(SB_WP::utility_enabled('enable_3dfile')) {
+            add_filter('upload_mimes', array($this, 'allow_upload_stl_file'));
+        }
+        add_action('init', array($this, 'sbtheme_init'));
         if(SB_WP::is_shop_enabled()) {
             add_filter( 'woocommerce_product_tabs', array($this, 'sbtheme_product_tab') );
             add_filter('woocommerce_cart_shipping_method_full_label', array($this, 'sbtheme_shipping_label'));
@@ -219,7 +224,13 @@ class SB_Hook {
         if(SB_WP::is_user_point_enabled()) {
             add_action('wp_insert_comment', array($this, 'on_comment_inserted'), 99, 2);
         }
-        $this->sb_front_end();
+        $this->disable_autop_in_shortcode();
+    }
+	
+	private function run() {
+        $this->hook_global();
+        $this->hook_front_end();
+        $this->hook_back_end();
 	}
 
     public function on_comment_inserted($comment_id, $comment_object) {
@@ -252,13 +263,11 @@ class SB_Hook {
     }
 
 	public function sbtheme_translation() {
-		if(!is_admin()) {
-			$lang = SB_WP::get_current_language();
-			if("en" != $lang) {
-				add_filter('gettext', array($this, 'sbtheme_translation_all'), 20, 3);
-                add_filter( 'gettext_with_context', array($this, "sbtheme_translate_text_with_context") );
-			}
-		}
+        $lang = SB_WP::get_current_language();
+        if("en" != $lang) {
+            add_filter('gettext', array($this, 'sbtheme_translation_all'), 20, 3);
+            add_filter( 'gettext_with_context', array($this, "sbtheme_translate_text_with_context") );
+        }
 	}
 
     public function sbtheme_translate_text_with_context($translated) {
@@ -731,7 +740,7 @@ class SB_Hook {
     }
 
 	public function sbtheme_custom_login_page() {
-		if(!is_admin() && SB_WP::is_login_page()) {
+		if(SB_WP::is_login_page()) {
 			$this->sbtheme_login_style_and_script();
 			add_filter( 'login_headerurl', array($this, 'sbtheme_login_form_logo_url'));
 			add_filter('login_headertitle', array($this, 'sbtheme_login_form_logo_description'));
@@ -837,22 +846,11 @@ class SB_Hook {
 	}
 	
 	public function sbtheme_admin_hook() {
-		if(is_admin()) {
-            global $pagenow;
-			add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
-
-			//add_action('admin_enqueue_scripts', array($this, 'enqueue_rich_editor_script'));
-
-            if('widgets.php' == $pagenow) {
-                wp_enqueue_media();
-            }
-
-			add_action('admin_menu', array($this, 'sbtheme_custom_menu_page'), 102);
-
-			add_action('admin_init', array($this, 'sbtheme_admin_init'), 99);
-            add_action( 'save_post', array($this, 'on_post_published') );
-            add_action('admin_notices', array($this, 'admin_notices'));
-		}
+        add_action('admin_enqueue_scripts', array($this, 'sbtheme_admin_script_and_style'));
+        add_action('admin_menu', array($this, 'sbtheme_custom_menu_page'), 102);
+        add_action('admin_init', array($this, 'sbtheme_admin_init'), 99);
+        add_action( 'save_post', array($this, 'on_post_published') );
+        add_action('admin_notices', array($this, 'admin_notices'));
 	}
 
     public function enqueue_rich_editor_script() {
@@ -1034,14 +1032,15 @@ class SB_Hook {
 	}
 	
 	public function sbtheme_admin_script_and_style() {
+        global $pagenow;
 		wp_register_script('sbtheme-admin', SB_JS_URI . '/sb-admin-script.js', array('jquery'), false, true);
 		wp_localize_script( 'sbtheme-admin', 'sbAdminAjax', array( 'url' => SB_WP::get_ajax_url() ) );
 		wp_enqueue_script('sbtheme-admin');
-		
-		
 		wp_register_style('sbtheme-admin-style', SB_CSS_URI . '/sb-admin-style.css');
 		wp_enqueue_style('sbtheme-admin-style');
-		
+        if('widgets.php' == $pagenow) {
+            wp_enqueue_media();
+        }
 	}
 	
 	public function sbtheme_customize_script() {
@@ -1079,12 +1078,6 @@ class SB_Hook {
 		return $profile_fields;
 	}
 
-    public function sb_front_end() {
-        if(!is_admin()) {
-            add_action( 'admin_bar_menu', array($this, 'sb_toolbar_front_end'), 999 );
-        }
-    }
-
     public function sb_toolbar_front_end( $wp_admin_bar ) {
         if(current_user_can("manage_options")) {
             $args = array(
@@ -1099,16 +1092,20 @@ class SB_Hook {
         }
     }
 
+    private function change_tivi_menu_icon() {
+        if(SB_WP::utility_enabled('enable_tivi')) {
+            global $wp_post_types;
+            if(post_type_exists("television")) {
+                $television = $wp_post_types['television'];
+                if($television) {
+                    $wp_post_types['television']->menu_icon = SB_Icon::post_type_icon("tivi");
+                }
+            }
+        }
+    }
+
 	public function sbtheme_init() {
-		if(is_admin() && SB_WP::utility_enabled('enable_tivi')) {
-			global $wp_post_types;
-			if(post_type_exists("television")) {
-				$television = $wp_post_types['television'];
-				if($television) {
-					$wp_post_types['television']->menu_icon = SB_Icon::post_type_icon("tivi");
-				}
-			}
-		}
+        $this->change_tivi_menu_icon();
         $this->sb_new_post_status();
 		$this->session_init();
         $this->sb_woocommerce_image_size();

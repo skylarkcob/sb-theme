@@ -153,12 +153,16 @@ class SB_WP {
 		if(has_post_thumbnail()) {
 			return get_the_post_thumbnail($post_id, $real_size);
 		}
-
-        $result = self::get_first_image_in_post($post_id);
+        if(self::is_hocwp_blog()) {
+            $result = self::get_hocwp_blog_post_thumbnail_url($post_id);
+        }
+        if(empty($result)) {
+            $result = self::get_first_image_in_post($post_id);
+        }
         if(empty($result)) {
             $result = self::get_no_thumbnail_url();
         }
-        $result = '<img class="no-thumbnail wp-post-image" width="'.$width.'" height="'.$height.'" src="'.$result.'"'.$style.'>';
+        $result = '<img class="no-thumbnail wp-post-image" alt="'.get_the_title($post_id).'" width="'.$width.'" height="'.$height.'" src="'.$result.'"'.$style.'>';
 		
 		return $result;
 	}
@@ -208,6 +212,31 @@ class SB_WP {
         if(function_exists('related_posts')) {
             related_posts();
         }
+    }
+
+    public static function get_all_term($taxonomy, $args = array()) {
+        $args['hide_empty'] = 0;
+        return get_terms($taxonomy, $args);
+    }
+
+    public static function get_all_term_link($taxonomy, $args = array()) {
+        $separator = ', ';
+        $terms = self::get_all_term($taxonomy, $args);
+        $result = '';
+        extract($args, EXTR_OVERWRITE);
+        foreach($terms as $term) {
+            $result .= sprintf('<a href="%1$s" title="%2$s">%3$s</a>', get_term_link($term), $term->name, $term->name).$separator;
+        }
+        $result = trim($result, $separator);
+        return $result;
+    }
+
+    public static function get_all_tag($args = array()) {
+        return self::get_all_term('post_tag', $args);
+    }
+
+    public static function get_all_tag_link($args = array()) {
+        return self::get_all_term_link('post_tag', $args);
     }
 
     public static function get_related_post($args = array()) {
@@ -575,6 +604,10 @@ class SB_WP {
         return apply_filters("sb_time_between_post", $value);
     }
 
+    public static function is_hocwp_blog() {
+        return apply_filters('sb_for_hocwp_blog', false);
+    }
+
     public static function approve_comment($comment) {
         $commentarr = array();
         $commentarr['comment_ID'] = $comment->comment_ID;
@@ -590,6 +623,17 @@ class SB_WP {
 
     public static function get_all_page($args = array()) {
         return get_pages($args);
+    }
+
+    public static function delete_revision() {
+        global $wpdb;
+        $query = $wpdb->prepare("DELETE FROM $wpdb->posts WHERE post_type = %s", 'revision');
+        self::query($query);
+    }
+
+    public static function query($query_string) {
+        global $wpdb;
+        $wpdb->query($query_string);
     }
 
     public static function get_post_by_recent_comment($args = array()) {
@@ -1171,8 +1215,59 @@ class SB_WP {
 	}
 
     public static function get_all_category($args = array()) {
-        $args["hide_empty"] = false;
-        return self::get_category($args);
+        return self::get_all_term('category', $args);
+    }
+
+    public static function get_all_category_link($args = array()) {
+        return self::get_all_term_link('category', $args);
+    }
+
+    public static function get_all_term_list_item($taxonomy, $args = array()) {
+        $terms = self::get_all_term($taxonomy, $args);
+        $result = '';
+        foreach($terms as $term) {
+            $result .= sprintf('<li><a href="%1$s" title="%2$s">%3$s</a></li>', get_term_link($term), $term->name, $term->name);
+        }
+        return $result;
+    }
+
+    public static function get_site_url() {
+        return get_bloginfo("url");
+    }
+
+    public static function get_site_domain() {
+        return SB_PHP::get_domain_name(self::get_site_url());
+    }
+
+    public static function get_hocwp_blog_post_thumbnail_url($post_id) {
+        $result = get_post_meta($post_id, 'thumbnail_image_full', true);
+        if(empty($result)) {
+            $result = get_post_meta($post_id, 'thumbnail_image', true);
+        }
+        return $result;
+    }
+
+    public static function is_my_domain_url($url) {
+        $home_domain = self::get_site_domain();
+        $url_domain = SB_PHP::get_domain_name($url);
+        if($home_domain == $url_domain) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function allow_author_post_shortcode_on_comment() {
+        if(current_user_can("edit_posts")) {
+            add_filter( 'comment_text', 'do_shortcode' );
+        }
+    }
+
+    public static function get_all_category_list_item($args = array()) {
+        return self::get_all_term_list_item("category", $args);
+    }
+
+    public static function get_all_tag_list_item($args = array()) {
+        return self::get_all_term_list_item("post_tag", $args);
     }
 	
 	public static function is_post_view_active() {
@@ -1193,14 +1288,14 @@ class SB_WP {
 		return $kq;
 	}
 	
-	public static function query($string) {
+	public static function query_result($string) {
 		global $wpdb;
 		return $wpdb->get_results( $string, OBJECT );
 	}
 	
 	public static function is_support_post_views() {
 		global $wpdb;
-		$views = self::query("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'views'");
+		$views = self::query_result("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'views'");
 		if(self::is_post_view_active() || count($views) > 0) {
 			return true;
 		}
@@ -1209,7 +1304,7 @@ class SB_WP {
 	
 	public static function is_support_post_likes() {
 		global $wpdb;
-		$likes = self::query("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'likes'");
+		$likes = self::query_result("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'likes'");
 		if(count($likes) > 0) {
 			return true;
 		}

@@ -61,5 +61,6 @@ define("SB_PAYPAL_DONATE_BUTTON_CARD_URL", "https://www.paypalobjects.com/en_US/
 define("SB_SUPPORT_EMAIL", "laidinhcuongvn@gmail.com");
 
 include SB_CLASS_PATH . "/class-sb-load.php";
+do_action("sb_before");
 $load = new SB_Load();
 $load->run();

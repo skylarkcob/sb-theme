@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
 class SB_Banner_Widget extends WP_Widget {
@@ -39,7 +39,7 @@ class SB_Banner_Widget extends WP_Widget {
 			$show_title = (isset($instance['use_title'])) ? $instance['use_title'] : 0;
 			$title = SB_PHP::get_single_line_value($instance['title']);
 			$banner_image = SB_WP::get_url_value($instance['banner_image']);
-			$banner_url = SB_WP::get_url_value($instance['banner_url']);			
+			$banner_url = SB_WP::get_url_value($instance['banner_url']);
 		} else {
 			$show_title = 0;
 			$title = '';
@@ -67,7 +67,7 @@ class SB_Banner_Widget extends WP_Widget {
 			$args = array(
 				'id'			=> $this->get_field_id('use_title'),
 				'name'			=> $this->get_field_name('use_title'),
-				'value'			=> $use_title,
+				'value'			=> $show_title,
 				'description'	=> SB_PHP::add_dotted(SB_WP::phrase("show_title")),
 				'paragraph_id'	=> 'useTitle'
 			);
