@@ -18,6 +18,24 @@
     })();
 
     (function(){
+        var mobileSidebar = $("div.sb-mobile-sidebar");
+        mobileSidebar.css({"height": body.height()});
+        $(".button-control i").on("click", function(){
+            var that = $(this),
+                mobileSidebar = that.closest("div.sb-mobile-sidebar"),
+                dataCollapse = mobileSidebar.attr("data-collapse");
+
+            if("collapse" == dataCollapse) {
+                mobileSidebar.css({"left": "-240px"});
+                mobileSidebar.attr("data-collapse", "collapsed");
+            } else {
+                mobileSidebar.css({"left": "0"});
+                mobileSidebar.attr("data-collapse", "collapse");
+            }
+        });
+    })();
+
+    (function(){
         body.delegate("a.upload-dismiss-errors", "click", function(event){
             event.preventDefault();
             var that = $(this);

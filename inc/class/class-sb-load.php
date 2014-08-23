@@ -30,6 +30,7 @@ class SB_Load {
         $this->add_class_name_to_list("class-sb-tivi");
         $this->add_class_name_to_list("class-sb-hook");
         $this->add_class_name_to_list("class-sb-html");
+        $this->add_class_name_to_list("class-sb-data");
     }
 
     private function add_class_name_to_list($class_name) {

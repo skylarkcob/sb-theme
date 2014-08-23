@@ -271,6 +271,34 @@ class SB_PHP {
         return $current_value;
     }
 
+    public static function get_file_extension($file_name) {
+        return pathinfo($file_name, PATHINFO_EXTENSION);
+    }
+
+    public static function remove_file_extension($file_name) {
+        return self::get_file_name_without_extension($file_name);
+    }
+
+    public static function remove_min_css_extension($file_name) {
+        return self::remove_file_extension($file_name);
+    }
+
+    public static function add_file_extension($file_name, $extension) {
+        return $file_name.'.'.$extension;
+    }
+
+    public static function change_file_extension($file_name, $extension) {
+        $file_name = self::remove_file_extension($file_name);
+        return $file_name.'.'.$extension;
+    }
+
+    public static function get_file_name_without_extension($file_name) {
+        $extension = self::get_file_extension($file_name);
+        $file_name = basename($file_name);
+        $file_name = basename($file_name, '.'.$extension);
+        return $file_name;
+    }
+
     public static function get_one_in_many($array_value) {
         $result = '';
         if(is_array($array_value)) {

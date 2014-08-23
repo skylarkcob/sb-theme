@@ -21,3 +21,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 <body <?php body_class('sbtheme'); ?>>
 <!-- // Theme is created by SB Team - laidinhcuongvn@gmail.com - ladiuvn@gmail.com - http://sauhi.com - http://hocwp.net -->
 <div class="site-container sb-site">
+    <?php SB_Theme::mobile_sidebar(); ?>

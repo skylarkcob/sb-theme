@@ -18,21 +18,18 @@ class SB_Hook {
 		$this->styles['bootstrap-style'] = SB_LIB_URI . '/bootstrap/css/bootstrap.min.css';
 		$this->styles['font-awesome-style'] = SB_LIB_URI . '/font-awesome/css/font-awesome.min.css';
 		$this->styles['superfish-style'] = SB_LIB_URI . '/superfish/css/superfish.min.css';
-		$this->styles['sb-style'] = SB_CSS_URI . '/sb-style.css';
-		$main_style = SB_THEME_PATH . "/main-style.css";
-
-		if(file_exists($main_style)) {
-			$this->styles['sbtheme-style'] = SB_THEME_URI . "/main-style.css";
+		$this->styles['sb-style'] = SB_WP::get_sb_style_file_url("sb-style");
+		$main_style = SB_WP::get_theme_style_url("main-style");
+		if(!empty($main_style)) {
+			$this->styles['sbtheme-style'] = $main_style;
 		}
-
-        if(SB_WP::is_mobile()) {
-            $this->styles['sb-mobile-style'] = SB_CSS_URI . "/sb-mobile-style.css";
-            $main_mobile_style = SB_THEME_PATH . "/main-mobile-style.css";
-            if(file_exists($main_mobile_style)) {
-                $this->styles['sbtheme-mobile-style'] = SB_THEME_URI . "/main-mobile-style.css";
-            }
+        if(SB_WP::is_mobile() || SB_WP::is_testing()) {
+            $this->styles['sb-mobile-style'] = SB_WP::get_sb_style_file_url("sb-mobile-style");
         }
-
+        $main_mobile_style = SB_WP::get_theme_style_url("main-mobile-style");
+        if(!empty($main_mobile_style) && (SB_WP::is_mobile() || SB_WP::is_testing())) {
+            $this->styles['sbtheme-mobile-style'] = $main_mobile_style;
+        }
 	}
 
     public function allow_contributor_upload_media() {
@@ -42,11 +39,11 @@ class SB_Hook {
 	private function script_init() {
 		array_push($this->scripts, array('bootstrap', SB_LIB_URI . '/bootstrap/js/bootstrap.min.js', array()));
 		array_push($this->scripts, array('superfish', SB_LIB_URI . '/superfish/js/superfish.min.js', array('jquery', 'hoverIntent')));
-		array_push($this->scripts, array('sbtheme', SB_JS_URI . '/sb-script.js', array('jquery')));
+		array_push($this->scripts, array('sbtheme', SB_WP::get_sb_script_file_url("sb-script"), array('jquery')));
 		array_push($this->scripts, array('addthis', SB_JS_URI . '/addthis_widget.js#pubid=ra-4e8109ea4780ac8d', array()));
-		$main_script = SB_THEME_PATH . "/js/sbtheme-script.js";
-		if(file_exists($main_script)) {
-			array_push($this->scripts, array('sbtheme-script', SB_THEME_URI . '/js/sbtheme-script.js', array('sbtheme')));
+		$main_script = SB_WP::get_theme_script_file_url("sbtheme-script");
+		if(!empty($main_script)) {
+			array_push($this->scripts, array('sbtheme-script', $main_script, array('sbtheme')));
 		}
 	}
 	
@@ -133,7 +130,7 @@ class SB_Hook {
 		// Enqueue style
 		foreach($this->styles as $key => $url) {
             if("sbtheme-mobile-style" == $key || "sb-mobile-style" == $key) {
-                wp_register_style($key, $url, array(), false, "only screen and (min-width: 320px) and (max-width: 1024px)");
+                wp_register_style($key, $url, array(), false, "only screen and (max-width: 1024px)");
             } else {
                 wp_register_style($key, $url);
             }

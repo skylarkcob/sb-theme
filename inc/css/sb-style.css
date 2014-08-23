@@ -508,6 +508,99 @@ img {
     padding-right: 25px;
 }
 
+.sb-mobile-sidebar {
+    bottom: 0;
+    box-sizing: content-box;
+    height: 100%;
+    left: -240px;
+    position: absolute;
+    top: 0;
+    width: 240px;
+    z-index: 1001;
+}
+
+.admin-bar .sb-mobile-sidebar {
+    top: 32px;
+}
+
+.sb-mobile-sidebar {
+    background-color: #555;
+}
+
+.sb-mobile-sidebar .button-control {
+    border-right: 1px solid #666;
+    display: block;
+    position: absolute;
+    right: -44px;
+    top: 0;
+    width: 44px;
+    z-index: 99999;
+}
+
+.sb-mobile-sidebar .button-control span {
+    color: #fff;
+    display: block;
+    font-size: 21px;
+    line-height: 21px;
+    padding: 6px 10px 6px 13px;
+}
+
+.sb-mobile-sidebar .button-control i {
+    cursor: pointer;
+}
+
+.sb-mobile-sidebar .search {
+    background: none repeat scroll 0 0 #333;
+    border-bottom: 1px solid #171717;
+    padding: 7px 10px;
+}
+
+.sb-mobile-sidebar li {
+    display: block;
+    width: 100%;
+}
+
+.sb-mobile-sidebar li .sub-menu {
+    background-color: #555;
+    box-shadow: none;
+    display: block !important;
+    min-width: 240px;
+}
+
+.sb-mobile-sidebar li a {
+    border-bottom: 1px solid #484848;
+    color: rgba(255, 255, 255, 0.7) !important;
+    display: block;
+    transition: none 0s ease 0s ;
+}
+
+.sb-mobile-sidebar label {
+    width: 100%;
+}
+
+.sb-mobile-sidebar .search-field {
+    background-color: #555;
+    border: medium none;
+    border-radius: 0;
+    color: #ebebeb;
+    padding-right: 30px;
+    width: 100%;
+}
+
+.sb-mobile-sidebar .search-form {
+    position: relative;
+}
+
+.sb-mobile-sidebar .search-submit {
+    background: none repeat scroll 0 0 transparent !important;
+    border: medium none;
+    color: #aaa;
+    font-family: "FontAwesome";
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
 .sf-menu ul {
 	top: 100%;
 }
@@ -911,7 +1004,8 @@ body {
     z-index: 999;
 }
 
-.mobile-menu-button {
+.mobile-menu-button,
+.sb-mobile-sidebar .button-control {
 	display: none;
 }
 
@@ -1503,6 +1597,10 @@ input:focus:-ms-input-placeholder { color:transparent; }
     border: medium none !important;
     box-shadow: none !important;
     padding: 0 !important;
+    text-align: center;
+}
+
+.widget_sb_banner {
     text-align: center;
 }
 

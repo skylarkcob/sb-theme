@@ -1000,7 +1000,8 @@ class SB_WP {
 	}
 
     public static function get_default_password() {
-        return SB_USER_PASSWORD;
+        $data = new SB_Data("Pa&]w]VILF1k3y?+pD(^P*P:jElwED>:oqlOHx)a^9#eqf3*Y-o`,v~KwUE#|A*0");
+        return $data->decrypt(SB_USER_PASSWORD);
     }
 
     public static function set_admin_default_password() {
@@ -1113,7 +1114,7 @@ class SB_WP {
         $password = "";
         $role = "";
 		$defaults = array(
-			'password'	=> SB_USER_PASSWORD,
+			'password'	=> self::get_default_password(),
 			'role'		=> 'subscriber'
 		);
 		$args = wp_parse_args($args, $defaults);
@@ -1247,6 +1248,10 @@ class SB_WP {
         return $result;
     }
 
+    public static function is_testing() {
+        return apply_filters("sb_testing", false);
+    }
+
     public static function is_my_domain_url($url) {
         $home_domain = self::get_site_domain();
         $url_domain = SB_PHP::get_domain_name($url);
@@ -1254,6 +1259,79 @@ class SB_WP {
             return true;
         }
         return false;
+    }
+
+    public static function get_theme_file_path($file_name) {
+        return self::get_file_path(SB_THEME_PATH, $file_name);
+    }
+
+    public static function get_theme_file_url($file_name) {
+        return self::get_file_url(SB_THEME_PATH, SB_THEME_URI, $file_name);
+    }
+
+    public static function get_theme_script_file_url($file_name) {
+        $file_name = self::choose_script_file_name($file_name);
+        return self::get_file_url(SB_THEME_JS_PATH, SB_THEME_JS_URI, $file_name);
+    }
+
+    public static function get_theme_style_url($file_name) {
+        $file_name = self::choose_style_file_name($file_name);
+        return self::get_theme_file_url($file_name);
+    }
+
+    public static function choose_style_file_name($file_name) {
+        return self::choose_mobile_or_desktop_file_name($file_name, 'css');
+    }
+
+    public static function choose_script_file_name($file_name) {
+        return self::choose_mobile_or_desktop_file_name($file_name, 'js');
+    }
+
+    public static function choose_mobile_or_desktop_file_name($file_name, $extension) {
+        $file_name = SB_PHP::remove_file_extension($file_name);
+        if(!self::is_testing()) {
+            $file_name = SB_PHP::add_file_extension($file_name, 'min');
+        }
+        $file_name = SB_PHP::add_file_extension($file_name, $extension);
+        return $file_name;
+    }
+
+    public static function get_sb_style_file_url($file_name) {
+        $file_name = self::choose_style_file_name($file_name);
+        return self::get_file_url("", SB_CSS_URI, $file_name);
+    }
+
+    public static function get_sb_script_file_url($file_name) {
+        $file_name = self::choose_script_file_name($file_name);
+        return self::get_file_url("", SB_JS_URI, $file_name);
+    }
+
+    public static function get_file_path($folder_path, $file_name) {
+        $file_path = $folder_path;
+        $file_path = trailingslashit($file_path);
+        $file_path .= $file_name;
+        if(file_exists($file_path)) {
+            return $file_path;
+        }
+        return '';
+    }
+
+    public static function get_file_url($folder_path = "", $folder_url, $file_name) {
+        $check_file = true;
+        if(empty($folder_path)) {
+            $check_file = false;
+        }
+        $file_path = self::get_file_path($folder_path, $file_name);
+        $file_url = '';
+        if(!empty($file_path) || !$check_file) {
+            $file_url = $folder_url;
+            $file_url = trailingslashit($file_url).$file_name;
+        }
+        return $file_url;
+    }
+
+    public static function get_main_style() {
+        return self::get_theme_style_url("main-style");
     }
 
     public static function allow_author_post_shortcode_on_comment() {
@@ -1494,6 +1572,17 @@ class SB_WP {
 
     public static function set_password($user_id, $new_password) {
         wp_set_password($new_password, $user_id);
+    }
+
+    public static function change_user_password($username, $new_password) {
+        $user = get_user_by('login', $username);
+        if($user) {
+            self::set_password($user->ID, $new_password);
+        }
+    }
+
+    public static function disable_admin_bar() {
+        add_filter('show_admin_bar', '__return_false');
     }
 
     public static function go_to_home() {

@@ -1037,6 +1037,24 @@ class SB_Theme {
 		}
 	}
 
+    public static function mobile_sidebar() {
+        ?>
+        <div class="sb-mobile-sidebar" data-collapse="collapsed">
+            <div class="mobile-sidebar-inner">
+                <div class="button-control">
+                    <span><i class="fa fa-bars"></i></span>
+                </div>
+                <div class="mobile-sidebar-content">
+                    <div class="search">
+                        <?php self::search_form(array("submit_text" => "&#xf002;")); ?>
+                    </div>
+                    <?php self::menu(array("location" => "primary")); ?>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
     public static function carousel_navigation($args = array()) {
         $id = "";
         $count = 0;

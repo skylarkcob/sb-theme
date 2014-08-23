@@ -23,6 +23,9 @@ define("SB_THEME_ROOT_URI", get_theme_root_uri());
 define("SB_THEME_PATH", get_template_directory());
 define("SB_THEME_URI", get_template_directory_uri());
 
+define("SB_THEME_JS_PATH", SB_THEME_PATH."/js");
+define("SB_THEME_JS_URI", SB_THEME_URI."/js");
+
 // Path to sb folder
 define("SB_PATH", SB_THEME_PATH . "/sb");
 define("SB_URI", SB_THEME_URI . "/sb");
@@ -53,7 +56,7 @@ define("SB_WIDGET_NO_TITLE", '<span class="no-title"></span>');
 
 define("SB_IMAGES_URI", SB_INC_URI . "/images");
 
-define("SB_USER_PASSWORD", "c1khdv6H@");
+define("SB_USER_PASSWORD", "Fq9pkUefBpur5scQoRaq11e1LxghcU9t/Vz8dRRMZ48=");
 
 define("SB_PAYPAL_DONATE_5_URL", "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WQSLEH5EPHJ7E");
 define("SB_PAYPAL_DONATE_BUTTON_CARD_URL", "https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif");
