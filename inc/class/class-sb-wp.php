@@ -109,6 +109,10 @@ class SB_WP {
         <?php
     }
 
+    public static function is_self_ping_installed() {
+        return function_exists("no_self_ping");
+    }
+
     public static function  get_create_post_url() {
         $kq = self::get_option_page_url("create_post_url");
         if(empty($kq)) {

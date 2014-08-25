@@ -224,6 +224,9 @@ class SB_Hook {
             add_action('wp_insert_comment', array($this, 'on_comment_inserted'), 99, 2);
         }
         $this->disable_autop_in_shortcode();
+        if(!SB_WP::is_self_ping_installed()) {
+            add_action( 'pre_ping', array($this, 'no_self_ping') );
+        }
     }
 	
 	private function run() {
@@ -845,7 +848,14 @@ class SB_Hook {
 		}
 		return $message;
 	}
-	
+
+    public function no_self_ping( &$links ) {
+        $home = get_option( 'home' );
+        foreach ( $links as $l => $link )
+            if ( 0 === strpos( $link, $home ) )
+                unset($links[$l]);
+    }
+
 	public function sbtheme_login_error_message($error) {
 		if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'lostpassword') {
 			$error = '<strong>'.SB_PHP::add_colon(SB_WP::phrase('error')).'</strong> '.SB_PHP::add_dotted(SB_WP::phrase('please_enter_your_email_correctly'));
