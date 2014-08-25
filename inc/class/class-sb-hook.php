@@ -23,11 +23,12 @@ class SB_Hook {
 		if(!empty($main_style)) {
 			$this->styles['sbtheme-style'] = $main_style;
 		}
-        if(SB_WP::is_mobile() || SB_WP::is_testing()) {
+        $can_load_mobile_file = SB_WP::can_load_mobile_file();
+        if($can_load_mobile_file) {
             $this->styles['sb-mobile-style'] = SB_WP::get_sb_style_file_url("sb-mobile-style");
         }
         $main_mobile_style = SB_WP::get_theme_style_url("main-mobile-style");
-        if(!empty($main_mobile_style) && (SB_WP::is_mobile() || SB_WP::is_testing())) {
+        if(!empty($main_mobile_style) && $can_load_mobile_file) {
             $this->styles['sbtheme-mobile-style'] = $main_mobile_style;
         }
 	}
@@ -181,6 +182,7 @@ class SB_Hook {
             add_action( 'admin_bar_menu', array($this, 'sb_toolbar_front_end'), 999 );
             $this->sbtheme_translation();
             $this->sbtheme_custom_login_page();
+            $this->check_comment();
         }
     }
 
@@ -230,7 +232,33 @@ class SB_Hook {
         $this->hook_back_end();
 	}
 
+    private function check_comment() {
+        add_filter( 'preprocess_comment' , array($this, 'preprocess_comment') );
+        add_action('wp_insert_comment', array($this, 'on_comment_inserted'), 99, 2);
+    }
+
+    public function preprocess_comment( $commentdata ) {
+        if(SB_WP::is_spam_comment($commentdata)) {
+            $commentdata['comment_content'] = '';
+            return $commentdata;
+        }
+        $comment_author_url = isset($commentdata['comment_author_url']) ? $commentdata['comment_author_url'] : '';
+        if(isset($commentdata['comment_author_url']) && !SB_PHP::is_url($comment_author_url) ) {
+            unset( $commentdata['comment_author_url'] );
+        } else {
+            $commentdata['comment_author_url'] = SB_PHP::get_domain_name_with_http($comment_author_url);
+        }
+        if( $commentdata['comment_content'] == SB_PHP::strtoupper( $commentdata['comment_content'] )) {
+            $commentdata['comment_content'] = SB_PHP::strtolower( $commentdata['comment_content'] );
+        }
+        return $commentdata;
+    }
+
     public function on_comment_inserted($comment_id, $comment_object) {
+        if (empty($comment_object->comment_content)) {
+            SB_WP::delete_comment($comment_id);
+            SB_WP::go_to_home();
+        }
         $comment = get_comment($comment_id);
         $user = new SB_User();
         $user->set_by_id($comment->user_id);
@@ -809,7 +837,7 @@ class SB_Hook {
 	}
 	
 	public function sbtheme_login_message($message) {
-		$action = $_REQUEST['action'];
+		$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 		if($action == 'register') {
 			$message = '<p class="message register">'.SB_PHP::add_dotted(SB_WP::phrase('register_for_this_site')).'</p>';
 		} elseif($action == 'lostpassword') {
@@ -949,7 +977,18 @@ class SB_Hook {
 		}
 		return $title;
 	}
-	
+
+    public function register_menus() {
+        register_nav_menus( array(
+            'top'		    => __( 'Top menu', SB_DOMAIN ),
+            'footer'	    => __( 'Footer menu', SB_DOMAIN ),
+            'primary'	    => __('Primary menu', SB_DOMAIN),
+            'mobile-left'   => __('Mobile left menu', SB_DOMAIN),
+            'mobile-right'   => __('Mobile right menu', SB_DOMAIN)
+        ));
+        do_action("sb_menus_init");
+    }
+
 	public function sbtheme_setup() {
 		load_theme_textdomain( SB_DOMAIN, get_template_directory() . '/languages' );
 		add_theme_support( 'automatic-feed-links' );
@@ -959,11 +998,7 @@ class SB_Hook {
 		add_image_size('thumbnail_crop', 180, 120, true);
 		add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption' ));
 		add_theme_support( 'post-formats', array( 'aside', 'image', 'video', 'audio', 'quote', 'link', 'gallery' ));
-		register_nav_menus( array(
-			'top'		=> __( 'Top menu', 'sbtheme' ),
-			'footer'	=> __( 'Footer menu', 'sbtheme' ),
-			'primary'	=> __('Primary menu', 'sbtheme')
-		));
+		$this->register_menus();
 		if(SB_WP::is_shop_enabled()) {
 			add_theme_support( 'woocommerce' );
 			add_image_size('product_large', 600, 600, false);
@@ -989,7 +1024,7 @@ class SB_Hook {
 		}
         $this->default_image_upload_settings();
 	}
-	
+
 	public function bbp_enable_visual_editor( $args = array() ) {
 		$args['tinymce'] = true;
 		$args['media_buttons'] = true;

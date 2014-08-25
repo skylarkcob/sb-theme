@@ -102,6 +102,14 @@ class SB_PHP {
 	public static function lowercase($str, $charset = 'UTF-8') {
 		return mb_strtolower($str, $charset);
 	}
+
+    public static function strtolower($string) {
+        return mb_strtolower($string);
+    }
+
+    public static function strtoupper($string) {
+        return mb_strtoupper($string);
+    }
 	
 	public static function uppercase($str, $charset = 'UTF-8') {
 		return mb_strtoupper($str, $charset);
@@ -153,6 +161,14 @@ class SB_PHP {
         return preg_replace($pattern, $replace, $string);
     }
 
+    public static function get_value_by_key($array_value, $key) {
+        return isset($array_value[$key]) ? $array_value[$key] : '';
+    }
+
+    public static function strlen($string) {
+        return mb_strlen(($string));
+    }
+
     public static function get_first_image($content) {
         $doc = new DOMDocument();
         @$doc->loadHTML($content);
@@ -162,10 +178,14 @@ class SB_PHP {
     }
 
     public static function count_image($content) {
+        return self::count_html_tag($content, 'img');
+    }
+
+    public static function count_html_tag($content, $tag_name) {
         $doc = new DOMDocument();
         @$doc->loadHTML($content);
-        $images = $doc->getElementsByTagName('img');
-        return $images->length;
+        $tags = $doc->getElementsByTagName($tag_name);
+        return $tags->length;
     }
 
     public static function remove_vietnamese($string) {
@@ -262,6 +282,20 @@ class SB_PHP {
     public static function get_domain_name($url) {
         $parse = parse_url($url);
         return isset($parse['host']) ? $parse['host'] : '';
+    }
+
+    public static function get_domain_name_with_http($url) {
+        $url = self::strtolower($url);
+        $domain_name = self::get_domain_name($url);
+        return self::add_http_to_url($domain_name);
+    }
+
+    public static function add_http_to_url($url) {
+        $url = self::strtolower($url);
+        if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
+            $url = "http://" . $url;
+        }
+        return $url;
     }
 
     public static function get_one_in_many_if_empty($current_value, $array_value) {

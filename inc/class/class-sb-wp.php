@@ -434,8 +434,18 @@ class SB_WP {
     }
 
     public static function is_mobile() {
+        if(!class_exists("Mobile_Detect")) {
+            return false;
+        }
         $detect = new Mobile_Detect();
         return $detect->isMobile();
+    }
+
+    public static function can_load_mobile_file() {
+        if(self::is_mobile() || self::is_testing()) {
+            return true;
+        }
+        return false;
     }
 
     public static function get_post_time_compare($post) {
@@ -617,8 +627,12 @@ class SB_WP {
 
     public static function get_all_comment($args = array()) {
         $args["number"] = '';
-        $args["status"] = 'approve';
         return get_comments($args);
+    }
+
+    public static function get_all_approved_comment($args = array()) {
+        $args["status"] = 'approve';
+        return self::get_all_comment($args);
     }
 
     public static function get_all_page($args = array()) {
@@ -629,6 +643,47 @@ class SB_WP {
         global $wpdb;
         $query = $wpdb->prepare("DELETE FROM $wpdb->posts WHERE post_type = %s", 'revision');
         self::query($query);
+    }
+
+    public static function delete_comment($comment_id) {
+        return wp_delete_comment($comment_id, true);
+    }
+
+    public static function delete_spam_comment() {
+        $comments = self::get_all_comment();
+        foreach($comments as $comment) {
+            if(SB_PHP::lowercase($comment->comment_approved) == 'spam') {
+                self::delete_comment($comment->comment_ID);
+            }
+        }
+    }
+
+    public static function get_all_trash_comment($args = array()) {
+        $args['status'] = 'trash';
+        return self::get_all_comment($args);
+    }
+
+    public static function get_all_spam_comment($args = array()) {
+        $args['status'] = 'spam';
+        return self::get_all_comment($args);
+    }
+
+    public static function delete_all_spam_comment($args = array()) {
+        $comments = self::get_all_spam_comment($args);
+        foreach($comments as $comment) {
+            self::delete_comment($comment->comment_ID);
+        }
+    }
+
+    public static function delete_all_comment() {
+        $comments = self::get_all_comment();
+        foreach($comments as $comment) {
+            self::delete_comment($comment->comment_ID);
+        }
+        $comments = self::get_all_trash_comment();
+        foreach($comments as $comment) {
+            self::delete_comment($comment->comment_ID);
+        }
     }
 
     public static function query($query_string) {
@@ -718,6 +773,40 @@ class SB_WP {
 
     public static function register_uri() {
         return wp_registration_url();
+    }
+
+    public static function get_post_meta($post_id, $key) {
+        return get_post_meta($post_id, $key, true);
+    }
+
+    public static function get_hocwp_blog_single_image() {
+        $result = '';
+        if(is_single() && self::is_hocwp_blog()) {
+            $result = self::get_post_meta(get_the_ID(), "thumbnail_image_full");
+        }
+        return $result;
+    }
+
+    public static function is_spam_comment($comment_data) {
+        $comment_user_id = isset($comment_data['user_ID']) ? $comment_data['user_ID'] : 0;
+        if(is_numeric($comment_user_id) && $comment_user_id > 0) {
+            return false;
+        }
+        $spam_link_number = 6;
+        $spam_url_length = 40;
+        $content = isset($comment_data['comment_content']) ? $comment_data['comment_content'] : '';
+        if(SB_PHP::count_html_tag($content, 'a') > $spam_link_number) {
+            return true;
+        }
+        $count_url = mb_substr_count($content, "[url");
+        if($count_url > $spam_link_number) {
+            return true;
+        }
+        $author_url_length = SB_PHP::strlen(SB_PHP::get_value_by_key($comment_data, 'comment_author_url'));
+        if($author_url_length > 40) {
+            return true;
+        }
+        return false;
     }
 
 	public static function get_signup_url() {

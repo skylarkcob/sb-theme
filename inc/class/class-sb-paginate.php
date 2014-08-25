@@ -59,7 +59,7 @@ class SB_Paginate {
 
 
     public static function build_list_item($intStart, $totalPage, $currentPage) {
-        $pageHidden = '<span class="spaginate-hidden hidden">...</span>';
+        $pageHidden = '<span class="spaginate-hidden sb-hidden-button">...</span>';
         $linkResult = "";
         $hiddenBefore = false;
         $hiddenAfter = false;

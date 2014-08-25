@@ -16,6 +16,14 @@ class SB_Theme {
 	public static function comment() {
 		self::load_template( 'theme-comment' );
 	}
+
+    public static function hocwp_blog_single_image() {
+        $image = SB_WP::get_hocwp_blog_single_image();
+        $sb_post = new SB_Post();
+        if(!empty($image)) {
+            printf('<p><img src="%1$s" alt="%2$s"></p>', $image, $sb_post->get_title());
+        }
+    }
 	
 	public static function footer() {
 		include SB_TEMPLATE_PATH . "/template-theme-footer.php";
@@ -1048,7 +1056,7 @@ class SB_Theme {
                     <div class="search">
                         <?php self::search_form(array("submit_text" => "&#xf002;")); ?>
                     </div>
-                    <?php self::menu(array("location" => "primary")); ?>
+                    <?php self::menu(array("location" => "mobile-left")); ?>
                 </div>
             </div>
         </div>

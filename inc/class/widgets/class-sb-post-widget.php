@@ -171,7 +171,7 @@ class SB_Post_Widget extends WP_Widget {
 									<?php if(1 != $only_thumbnail) : ?>
 										<div class="post-content">
 											<div class="post-header">
-												<h3 class="post-title"><a rel="bookmark" href="<?php the_permalink(); ?>"><?php echo SB_PHP::substr(get_the_title(), $title_length); ?></a></h3>
+												<h3 class="post-title sb-post-title entry-title"><a rel="bookmark" href="<?php the_permalink(); ?>"><?php echo SB_PHP::substr(get_the_title(), $title_length); ?></a></h3>
 											</div>
 											<?php if((bool)$show_excerpt) : ?>
                                                 <div class="excerpt">

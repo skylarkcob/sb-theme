@@ -43,7 +43,11 @@ class SB_Post {
 	public function update_meta($key, $value) {
 		update_post_meta($this->post->ID, $key, $value);
 	}
-	
+
+    public function get_content() {
+        return $this->post->post_content;
+    }
+
 	public function get_views() {
 		$views = 0;
 		if($this->get_meta('views')) {
@@ -125,7 +129,7 @@ class SB_Post {
 	}
 
 	public function title($head = "h2") {
-        the_title( '<'.$head.' class="sb-post-title fancy post-title"><a href="' . esc_url( get_permalink($this->get_id()) ) . '">', '</a></'.$head.'>' );
+        the_title( '<'.$head.' class="sb-post-title fancy post-title entry-title"><a href="' . esc_url( get_permalink($this->get_id()) ) . '">', '</a></'.$head.'>' );
 	}
 	
 	public function get_date($d = "") {
@@ -148,13 +152,13 @@ class SB_Post {
             printf(
                 sprintf('<div class="meta sb-post-meta">%1$s</div>', __(SB_PHP::add_dotted(SB_WP::phrase('posted_on_date_by_author')), SB_DOMAIN)),
                 '<time datetime="'.$this->get_date("c").'" class="date updated">'.$this->get_date().'</time>',
-                sprintf('<span class="vcard author"><span class="fn"><a href="%1$s" title="">%2$s</a></span></span>', $this->get_author_post_url(), $this->get_author_name())
+                sprintf('<span class="vcard author"><span class="fn"><a href="%1$s">%2$s</a></span></span>', $this->get_author_post_url(), $this->get_author_name())
             );
         } else {
             printf(
                 sprintf('<div class="meta sb-post-meta">%1$s</div>', __(SB_PHP::add_dotted(SB_WP::phrase('posted_on_date_by_author_filed_under_category')), SB_DOMAIN)),
                 '<time datetime="'.$this->get_date("c").'" class="date updated">'.$this->get_date().'</time>',
-                sprintf('<span class="vcard author"><span class="fn"><a rel="author" href="%1$s" title="" class="">%2$s</a></span></span>', $this->get_author_post_url(), $this->get_author_name()),
+                sprintf('<span class="vcard author"><span class="fn"><a href="%1$s">%2$s</a></span></span>', $this->get_author_post_url(), $this->get_author_name()),
                 $this->get_the_category()
             );
         }
