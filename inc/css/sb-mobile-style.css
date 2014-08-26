@@ -47,6 +47,10 @@ body {
     }
 }
 
+@media only screen and (max-width: 720px) {
+
+}
+
 @media only screen and (max-width: 640px) {
     .author-wrap ul li {
         border: medium none;
@@ -66,7 +70,19 @@ body {
 
 }
 
-@media only screen and (max-width: 533px) {
+@media only screen and (max-width: 568px) {
+
+}
+
+@media only screen and (max-width: 563px) {
+
+}
+
+@media only screen and (max-width: 549px) {
+
+}
+
+@media only screen and (max-width: 534px) {
 
 }
 
@@ -99,6 +115,14 @@ body {
     .subscribe .sub-icon {
         top: 40px;
     }
+}
+
+@media only screen and (max-width: 338px) {
+
+}
+
+@media only screen and (max-width: 330px) {
+
 }
 
 @media only screen and (max-width: 320px) {

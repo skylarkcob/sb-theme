@@ -49,11 +49,6 @@ class SB_Spam {
     }
 
     public function check_comment($comment_data) {
-        $comment_content = isset($comment_data['comment_content']) ? $comment_data['comment_content'] : "";
-        if($this->check($comment_content)) {
-            return true;
-        }
-        $comment_author_url = isset($comment_data['comment_author_url']) ? $comment_data['comment_author_url'] : '';
-        return $this->check($comment_author_url);
+        return SB_WP::is_spam_comment($comment_data);
     }
 }

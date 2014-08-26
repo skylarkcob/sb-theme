@@ -298,6 +298,30 @@ class SB_PHP {
         return $url;
     }
 
+    public static function ping_domain($domain_name) {
+        $start_time = microtime(true);
+        $file = @fsockopen ($domain_name, 80, $errno, $errstr, 10);
+        $stop_time = microtime(true);
+        $status = 0;
+        if (!$file) {
+            $status = -1;
+        }
+        else {
+            fclose($file);
+            $status = ($stoptime - $starttime) * 1000;
+            $status = floor($status);
+        }
+        return $status;
+    }
+
+    public static function is_domain_alive($domain_name) {
+        $status = self::ping_domain($domain_name);
+        if(-1 != $status) {
+            return true;
+        }
+        return false;
+    }
+
     public static function get_one_in_many_if_empty($current_value, $array_value) {
         if(empty($current_value)) {
             $current_value = self::get_one_in_many($array_value);
@@ -386,6 +410,14 @@ class SB_PHP {
             return true;
         }
         return false;
+    }
+
+    public static function get_domain_from_email($email) {
+        $result = '';
+        if(self::is_email_valid($email)) {
+            $result = array_pop(explode('@', $email));
+        }
+        return $result;
     }
 
     public static function array_sort($array, $on, $order = SORT_ASC) {
