@@ -67,3 +67,6 @@ include SB_CLASS_PATH . "/class-sb-load.php";
 do_action("sb_before");
 $load = new SB_Load();
 $load->run();
+if(is_admin()) {
+    SB_WP::delete_spam_comment_with_check();
+}

@@ -96,6 +96,10 @@ class SB_Load {
 				}
 			}
 		}
+        if(class_exists("SB_Spam")) {
+            global $sb_spam;
+            $sb_spam = new SB_Spam();
+        }
 		if(class_exists("SB_Shortcode")) {
 			$shortcode = new SB_Shortcode();
 		}

@@ -653,10 +653,16 @@ class SB_WP {
         return wp_delete_comment($comment_id, true);
     }
 
-    public static function delete_spam_comment() {
-        $comments = self::get_all_comment();
+    public static function delete_spam_comment($args = array()) {
+        self::delete_all_spam_comment($args);
+    }
+
+    public static function delete_spam_comment_with_check($args = array()) {
+        $comments = self::get_all_spam_comment($args);
         foreach($comments as $comment) {
-            if(SB_PHP::lowercase($comment->comment_approved) == 'spam') {
+            $comment_content = $comment->comment_content;
+            $comment_author_url = $comment->comment_author_url;
+            if(self::is_spam($comment_content) || self::is_spam($comment_author_url)) {
                 self::delete_comment($comment->comment_ID);
             }
         }
@@ -791,6 +797,14 @@ class SB_WP {
         return $result;
     }
 
+    public static function is_spam($text) {
+        global $sb_spam;
+        if(is_object($sb_spam)) {
+            return $sb_spam->check($text);
+        }
+        return false;
+    }
+
     public static function is_spam_comment($comment_data) {
         $comment_user_id = isset($comment_data['user_ID']) ? $comment_data['user_ID'] : 0;
         if(is_numeric($comment_user_id) && $comment_user_id > 0) {
@@ -799,15 +813,16 @@ class SB_WP {
         $spam_link_number = 6;
         $spam_url_length = 40;
         $content = isset($comment_data['comment_content']) ? $comment_data['comment_content'] : '';
-        if(SB_PHP::count_html_tag($content, 'a') > $spam_link_number) {
+        if(SB_PHP::count_html_tag($content, 'a') > $spam_link_number || self::is_spam($content)) {
             return true;
         }
         $count_url = mb_substr_count($content, "[url");
         if($count_url > $spam_link_number) {
             return true;
         }
-        $author_url_length = SB_PHP::strlen(SB_PHP::get_value_by_key($comment_data, 'comment_author_url'));
-        if($author_url_length > 40) {
+        $comment_author_url = SB_PHP::get_value_by_key($comment_data, 'comment_author_url');
+        $author_url_length = SB_PHP::strlen($comment_author_url);
+        if($author_url_length > $spam_url_length || self::is_spam($comment_author_url)) {
             return true;
         }
         return false;
