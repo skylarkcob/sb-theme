@@ -3,13 +3,14 @@ if(!defined("ABSPATH")) exit;
 class SB_Spam {
     var $comments;
     var $spam_texts;
+    var $spam;
 
     public function __construct() {
         global $sb_spam;
         if(empty($sb_spam) || !is_object($sb_spam)) {
             $this->init();
         } else {
-            return $sb_spam;
+            $this->spam = $sb_spam;
         }
     }
 
@@ -28,6 +29,9 @@ class SB_Spam {
         $this->add_comment("sivictxixxgn");
         $this->add_comment("ealwibidnwfc");
         $this->add_comment("Canvas Art Cheap");
+        $this->add_comment("Canvas Art Cheap");
+        $this->add_comment("gucci outlet");
+        $this->add_comment("Louis Vuitton");
     }
 
     public function add_comment($string) {

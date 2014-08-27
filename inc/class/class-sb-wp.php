@@ -875,6 +875,23 @@ class SB_WP {
         return false;
     }
 
+    public static function can_user_post_comment() {
+        $can_post_comment = self::is_spam_session();
+        return apply_filters("sb_can_user_post_comment", !$can_post_comment);
+    }
+
+    public static function set_spam_session($value) {
+        $_SESSION['sb_spam_user'] = $value;
+    }
+
+    public static function is_spam_session() {
+        $spam_session = SB_PHP::get_session('sb_spam_user');
+        if(!empty($spam_session)) {
+            return true;
+        }
+        return false;
+    }
+
 	public static function get_signup_url() {
         $kq = wp_registration_url();
         $page_id = self::get_integer_option("register_url");

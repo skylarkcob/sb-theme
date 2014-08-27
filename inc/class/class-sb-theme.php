@@ -999,7 +999,7 @@ class SB_Theme {
 	}
 	
 	public static function comments_template() {
-		if ( comments_open() || get_comments_number() ) {
+		if (comments_open() || get_comments_number()) {
 			comments_template();
 		}
 	}

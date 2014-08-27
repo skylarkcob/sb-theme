@@ -243,6 +243,8 @@ class SB_Hook {
     public function preprocess_comment( $commentdata ) {
         if(SB_WP::is_spam_comment($commentdata)) {
             $commentdata['comment_content'] = '';
+            SB_WP::set_spam_session('1');
+            SB_WP::go_to_home();
             return $commentdata;
         }
         $comment_author_url = isset($commentdata['comment_author_url']) ? $commentdata['comment_author_url'] : '';

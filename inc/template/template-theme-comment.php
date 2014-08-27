@@ -37,7 +37,7 @@ $sb_post = new SB_Post();
         <p class="no-comments"><?php _e( SB_PHP::add_dotted(SB_WP::phrase('comment_closed')), SB_DOMAIN ); ?></p>
     <?php else : ?>
         <?php
-        $user_can_post_comment = apply_filters("sb_user_can_post_comment", true);
+        $user_can_post_comment = SB_WP::can_user_post_comment();
         if($user_can_post_comment) {
             comment_form( SB_Theme::comment_form_args() );
         }
