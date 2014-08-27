@@ -178,21 +178,29 @@ class SB_Post_Widget extends WP_Widget {
                                                     <?php echo SB_PHP::substr(get_the_excerpt(), $excerpt_length); ?>
                                                 </div>
 											<?php endif; // Check show_excerpt ?>
-											<?php if((bool)$show_author || (bool)$show_date || (bool)$show_comment_count) : ?>
-											<div class="post-meta">
+                                            <?php
+                                            $style = '';
+                                            if(!(bool)$show_author && !(bool)$show_date && !(bool)$show_comment_count) {
+                                                $style = 'margin:0;';
+                                            }
+                                            ?>
+											<div class="post-meta" style="<?php echo $style; ?>">
 												<?php
 													if((bool)$show_author) {
 														SB_Theme::post_author();
-													}
+													} else {
+                                                        printf('<span class="vcard author"><span class="fn"><a href="%1$s" style="text-indent: -999px; display: block; line-height: 1;">%2$s</a></span></span>', esc_url( SB_WP::get_author_post_url() ), get_the_author_meta('user_nicename'));
+                                                    }
 													if((bool)$show_date) {
 														SB_Theme::post_date();
-													}
+													} else {
+                                                        printf('<time class="date updated" style="text-indent: -999px; display: block; line-height: 1;" datetime="%1$s">%2$s</time>', esc_attr(get_the_date( 'c' )), esc_html(get_the_date()));
+                                                    }
 													if((bool)$show_comment_count) {
 														SB_Theme::post_comment_link();
 													}
 												?>
 											</div>
-											<?php endif; // Check if show post meta ?>
 										</div>
 									<?php endif; // Check only_thumbnail ?>
 								</div>

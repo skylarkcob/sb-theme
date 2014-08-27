@@ -27,10 +27,12 @@ class SB_Spam {
         $this->comments = array();
         $this->add_comment("sivictxixxgn");
         $this->add_comment("ealwibidnwfc");
+        $this->add_comment("Canvas Art Cheap");
     }
 
     public function add_comment($string) {
         if(is_array($this->comments) && !in_array($string, $this->comments)) {
+            $string = SB_PHP::strtolower($string);
             array_push($this->comments, $string);
         }
     }
@@ -40,6 +42,7 @@ class SB_Spam {
     }
 
     public function check($text) {
+        $text = SB_PHP::strtolower($text);
         foreach($this->spam_texts as $value) {
             if(SB_PHP::is_string_contain($text, $value)) {
                 return true;

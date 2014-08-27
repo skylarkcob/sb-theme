@@ -811,7 +811,9 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
 
 .widget .post-thumbnail {
     float: left;
+    height: 90px;
     margin-right: 10px;
+    width: 100px;
 }
 
 .widget .sb-post-widget .post-content {

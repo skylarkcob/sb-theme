@@ -16,6 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php if(!empty($favicon)) : ?>
 <link type="images/x-icon" href="<?php echo $favicon; ?>" rel="icon">
 <?php endif; ?>
+    <?php
+    if(is_single() || is_page()) {
+        printf('<meta content="%s" property="article:published_time">', get_the_date('c'));
+        printf('<meta content="%s" property="article:modified_time">', get_the_modified_time('c'));
+    }
+    ?>
 <?php wp_head(); ?>
 </head>
 <body <?php body_class('sbtheme'); ?>>

@@ -129,7 +129,19 @@ class SB_Post {
 	}
 
 	public function title($head = "h2") {
-        the_title( '<'.$head.' class="sb-post-title fancy post-title entry-title"><a href="' . esc_url( get_permalink($this->get_id()) ) . '">', '</a></'.$head.'>' );
+        if(is_page()) {
+            $html = new SB_HTML($head);
+            $html->set_attribute("class", "sb-post-title fancy post-title entry-title");
+
+            $url = new SB_HTML("a");
+            $url->set_attribute("href", esc_url( get_permalink($this->get_id()) ));
+            $url->set_attribute("text", $this->get_title());
+
+            $html->set_attribute("text", $url->build());
+            $html->output();
+        } else {
+            the_title( '<'.$head.' class="sb-post-title fancy post-title entry-title"><a href="' . esc_url( get_permalink($this->get_id()) ) . '">', '</a></'.$head.'>' );
+        }
 	}
 	
 	public function get_date($d = "") {

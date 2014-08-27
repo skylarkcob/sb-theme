@@ -1033,6 +1033,7 @@ class SB_Hook {
 			add_filter( 'bbp_get_single_topic_description', array($this, 'bbp_empty_description') );
 		}
         $this->default_image_upload_settings();
+        do_action("sb_theme_setup");
 	}
 
 	public function bbp_enable_visual_editor( $args = array() ) {

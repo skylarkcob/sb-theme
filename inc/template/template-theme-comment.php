@@ -63,6 +63,8 @@ function sbtheme_comment_callback( $comment, $args, $depth ) {
 	<div class="comment-author vcard">
 		<?php if ( $args['avatar_size'] != 0 ) echo get_avatar( $comment, $args['avatar_size'] ); ?>
 		<?php printf( __( '<cite class="fn"><strong>%s</strong></cite> <span class="says">'.SB_PHP::lowercase(SB_WP::phrase('says')).':</span>' ), get_comment_author_link() ); ?>
+        <span class="org"><?php echo SB_WP::get_blog_name(); ?></span>
+        <span class="role">Blogger</span>
 	</div>
 	<div class="comment-meta comment-metadata">
 		<a href="<?php echo htmlspecialchars( get_comment_link( $comment->comment_ID ) ); ?>">
