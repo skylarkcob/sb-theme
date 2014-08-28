@@ -820,6 +820,18 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
     width: auto;
 }
 
+.hide-text {
+     display: inline-block;
+     text-indent: -9999px;
+ }
+
+.inline-block {
+    display: inline-block;
+}
+.comments-area .comment-list {
+    padding: 0;
+}
+
 .widget .sb-post-widget,
 .comment-list li,
 #respond,

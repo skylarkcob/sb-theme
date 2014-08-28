@@ -227,6 +227,7 @@ class SB_Hook {
         if(!SB_WP::is_self_ping_installed()) {
             add_action( 'pre_ping', array($this, 'no_self_ping') );
         }
+        add_action('transition_comment_status', array($this, 'transition_comment_status'), 10, 3);
     }
 	
 	private function run() {
@@ -284,6 +285,14 @@ class SB_Hook {
                     $author->receive_mail_post_have_comment($post);
                 }
 
+            }
+        }
+    }
+
+    public function transition_comment_status($new_status, $old_status, $comment) {
+        if($new_status != $old_status) {
+            if('approved' == $new_status) {
+                SB_WP::notify_user_for_comment_approved($comment);
             }
         }
     }

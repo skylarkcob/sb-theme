@@ -954,6 +954,40 @@ class SB_WP {
 		}
 		return false;
 	}
+
+    public static function html_mail_before() {
+        $result = '<div style="background-color: rgb(245, 245, 245); padding: 20px;">';
+        $result .= '<div style="background-color: rgb(255, 255, 255); padding: 10px 20px;">';
+        return $result;
+    }
+
+    public static function html_mail_after() {
+        $result = '</div>';
+        $result .= '</div>';
+        return $result;
+    }
+
+    public static function build_mail_body($message) {
+        $result = self::html_mail_before();
+        $result .= $message;
+        $result .= self::html_mail_after();
+        return $result;
+    }
+
+    public static function notify_user_for_comment_approved($comment) {
+        if($comment) {
+            $post = get_post($comment->comment_post_ID);
+            if($post) {
+                $subject = 'Bình luận của bạn tại bài viết '.$post->post_title.' đã được duyệt';
+                $body .= sprintf('<p>Chào bạn %s,</p>', $comment->comment_author);
+                $body .= sprintf('<p>Bình luận của bạn tại bài viết %s đã được xét duyệt. Bạn có thể nhấn vào đường link bên dưới để xem thông tin chi tiết.</p>', $post->post_title);
+                $body .= sprintf('<p>Link bài viết: %s</p>', get_permalink($post));
+                $body .= sprintf('<p>Link bình luận: %s</p>', get_comment_link($comment));
+                $body = self::build_mail_body($body);
+                self::send_html_mail($comment->comment_author_email, $subject, $body);
+            }
+        }
+    }
 	
 	public static function list_sub_category($cat_id) {
 		$cats = get_categories(array("parent" => $cat_id, "depth" => 1, "hide_empty" => 0));

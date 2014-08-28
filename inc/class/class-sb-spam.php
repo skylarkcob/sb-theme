@@ -32,6 +32,11 @@ class SB_Spam {
         $this->add_comment("Canvas Art Cheap");
         $this->add_comment("gucci outlet");
         $this->add_comment("Louis Vuitton");
+		$this->add_comment("smgtv.co.uk");
+		$this->add_comment("dancebrazil.org");
+		$this->add_comment("massive demand for this product");
+		$this->add_comment("outlet");
+		$this->add_comment("cheap");
     }
 
     public function add_comment($string) {
