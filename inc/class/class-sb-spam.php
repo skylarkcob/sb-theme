@@ -26,8 +26,6 @@ class SB_Spam {
 
     private function init_comment_spam_data() {
         $this->comments = array();
-        $this->add_comment("sivictxixxgn");
-        $this->add_comment("ealwibidnwfc");
         $this->add_comment("Canvas Art Cheap");
         $this->add_comment("Canvas Art Cheap");
         $this->add_comment("gucci outlet");
@@ -35,8 +33,15 @@ class SB_Spam {
 		$this->add_comment("smgtv.co.uk");
 		$this->add_comment("dancebrazil.org");
 		$this->add_comment("massive demand for this product");
-		$this->add_comment("outlet");
-		$this->add_comment("cheap");
+		$this->add_comment('дневной заработок');
+        $this->add_comment('lettersvsnumbers');
+        $this->add_comment("sivictxixxgn");
+        $this->add_comment("ealwibidnwfc");
+        if(!SB_WP::is_vietnamese_site()) {
+            $this->add_comment("cheap");
+            $this->add_comment('ordered');
+            $this->add_comment("outlet");
+        }
     }
 
     public function add_comment($string) {

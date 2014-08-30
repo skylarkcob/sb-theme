@@ -1218,6 +1218,13 @@ class SB_WP {
         }
     }
 
+    public static function is_vietnamese_site() {
+        if('vi' == self::get_current_language()) {
+            return true;
+        }
+        return false;
+    }
+
     public static function get_all_image_in_post($post_id) {
         return get_children(array('post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image'));
     }

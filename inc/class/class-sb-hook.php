@@ -825,11 +825,8 @@ class SB_Hook {
     }
 
     public function fix_media_name($filename) {
-        $info = pathinfo($filename);
-        $ext  = empty($info['extension']) ? '' : '.' . $info['extension'];
-        $ext = SB_PHP::lowercase($ext);
-        $name = basename($filename, $ext);
-        return SB_PHP::remove_vietnamese($name) . $ext;
+        $filename = SB_PHP::lowercase(SB_PHP::remove_vietnamese($filename));
+        return $filename;
     }
 
 	public function sbtheme_login_style_and_script() {
