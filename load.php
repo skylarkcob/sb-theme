@@ -14,6 +14,5 @@ if(!defined("SB_THEME_VERSION")) {
 
 add_filter("sb_admin_test", "__return_true");
 
-require SB_PATH . "/admin/sb-admin.php";
 require SB_PATH . "/inc/sb-theme-admin.php";
 require SB_PATH . "/inc/sb-theme.php";
