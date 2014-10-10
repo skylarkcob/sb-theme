@@ -41,7 +41,7 @@ sb_theme_check_core();
 
 function sb_theme_after_switch() {
 	if(!sb_theme_check_core()) {
-		wp_die(sprintf(__('You must install and active the plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
+		wp_die(sprintf(__('You must install and activate the plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
 	}
 }
 add_action('after_switch_theme', 'sb_theme_after_switch');
