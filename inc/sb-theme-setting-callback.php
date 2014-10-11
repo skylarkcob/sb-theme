@@ -35,3 +35,12 @@ function sb_theme_front_page_widget_callback() {
     <p class="description"><?php _e('Drag and drop the widget into right box to active it.', 'sb-theme'); ?></p>
     <?php
 }
+
+function sb_theme_scroll_top_callback() {
+    $name = 'sb_options[theme][scroll_top]';
+    $options = SB_Option::get();
+    $value = isset($options['theme']['scroll_top']) ? $options['theme']['scroll_top'] : 1;
+    $description = __('You can turn on or turn off the scroll to top button on your site.', 'sb-theme');
+    $id = 'sb_theme_scroll_top';
+    SB_Field::switch_button($id, $name, $value, $description);
+}

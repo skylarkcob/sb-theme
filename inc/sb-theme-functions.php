@@ -102,4 +102,13 @@ function sb_theme_the_logo() {
     sb_get_template_part('sb-theme-logo');
 }
 
+function sb_theme_scroll_top() {
+    $options = SB_Option::get();
+    $scroll_top = isset($options['theme']['scroll_top']) ? $options['theme']['scroll_top'] : 0;
+    if((bool)$scroll_top) {
+        echo '<a id="sb-scroll-top" href="javascript:;" class="go-top-button"><i class="fa fa-chevron-up"></i></a>';
+    }
+}
+add_action('wp_footer', 'sb_theme_scroll_top');
+
 require SB_THEME_INC_PATH . '/sb-theme-load.php';
