@@ -32,7 +32,7 @@ function sb_theme_front_page_widget_callback() {
 
         <input type="hidden" name="sb_options[theme][front_page_widget]" value="<?php echo $cats; ?>">
     </div>
-    <p class="description"><?php _e('Drag and drop the widget into right box to active it.', 'sb-theme'); ?></p>
+    <p class="description" style="clear: both"><?php _e('Drag and drop the widget into right box to active it.', 'sb-theme'); ?></p>
     <?php
 }
 

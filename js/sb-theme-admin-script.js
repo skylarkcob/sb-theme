@@ -1,8 +1,12 @@
 (function($){
     (function(){
-        $( '#sortable-list-cat, #sortable-list-cat-active' ).sortable({
+        $('#sortable-list-cat, #sortable-list-cat-active').sortable({
             connectWith: '.connectedSortable',
             placeholder: 'ui-state-highlight',
+            sort: function(event, ui) {
+                var that = $(this);
+                that.find('.ui-state-highlight').css({'height': ui.item.height()});
+            },
             stop: function(event, ui) {
                 var data = '';
 

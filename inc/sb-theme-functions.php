@@ -22,29 +22,26 @@ function sb_theme_get_default_theme() {
 }
 
 function sb_theme_check_core() {
-	$activated_plugins = get_option('active_plugins');
-	$sb_core_installed = in_array('sb-core/sb-core.php', $activated_plugins);
+	$sb_core_installed = class_exists('SB_Core');
 	if(!$sb_core_installed) {
-		$theme = wp_get_theme();
-		$text_domain = $theme->get('TextDomain');
-		if('sb-theme' == $text_domain) {
-			$theme = sb_theme_get_default_theme();
-			if(!empty($theme)) {
-				switch_theme($theme->get('TextDomain'));
-			}
-		}
+        $theme = sb_theme_get_default_theme();
+        if(!empty($theme)) {
+            switch_theme($theme->get('TextDomain'));
+        }
 	}
 	return $sb_core_installed;
 }
 
-sb_theme_check_core();
-
 function sb_theme_after_switch() {
 	if(!sb_theme_check_core()) {
-		wp_die(sprintf(__('You must install and activate the plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
+		wp_die(sprintf(__('You must install and activate plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
 	}
 }
 add_action('after_switch_theme', 'sb_theme_after_switch');
+
+if(!sb_theme_check_core()) {
+    return;
+}
 
 function sb_theme_after_setup() {
 	load_theme_textdomain( 'sb-theme', get_template_directory() . '/languages' );
@@ -61,9 +58,9 @@ function sb_theme_register_sidebar($sidebar_id, $sidebar_name, $sidebar_descript
 }
 
 function sb_theme_widgets_init() {
-    sb_theme_register_sidebar('primary', 'Primary Sidebar', 'Main sidebar on your site.');
-    sb_theme_register_sidebar('secondary', 'Secondary Sidebar', 'Secondary sidebar on your site.');
-    sb_theme_register_sidebar('footer', 'Footer Widget Area', 'Appears in the footer section of the site.');
+    sb_theme_register_sidebar('primary', 'Primary Sidebar', __('Main sidebar on your site.', 'sb-theme'));
+    sb_theme_register_sidebar('secondary', 'Secondary Sidebar', __('Secondary sidebar on your site.', 'sb-theme'));
+    sb_theme_register_sidebar('footer', 'Footer Widget Area', __('Appears in the footer section of the site.', 'sb-theme'));
 }
 add_action( 'widgets_init', 'sb_theme_widgets_init' );
 

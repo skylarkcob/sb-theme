@@ -495,7 +495,6 @@ a:focus {
     color: #555;
     cursor: pointer;
     padding: 5px;
-    height: 18px;
 }
 
 .sb-sortable-list .ui-state-highlight {
