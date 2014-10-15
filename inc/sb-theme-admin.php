@@ -21,11 +21,23 @@ add_action('sb_admin_init', 'sb_theme_setting_field');
 function sb_theme_logo_callback() {
     $options = SB_Option::get();
     $value = isset($options['theme']['logo']) ? $options['theme']['logo'] : '';
-    SB_Field::media_image('sb_theme_logo', 'sb_options[theme][logo]', $value, __('You can enter url or upload new logo image file.', 'sb-theme'));
+    $args = array(
+        'id' => 'sb_theme_logo',
+        'name' => 'sb_options[theme][logo]',
+        'value' => $value,
+        'description' => __('You can enter url or upload new logo image file.', 'sb-theme')
+    );
+    SB_Field::media_image($args);
 }
 
 function sb_theme_favicon_callback() {
     $options = SB_Option::get();
     $value = isset($options['theme']['favicon']) ? $options['theme']['favicon'] : '';
-    SB_Field::media_image('sb_theme_favicon', 'sb_options[theme][favicon]', $value, __('You can enter url or upload new favicon image file.', 'sb-theme'));
+    $args = array(
+        'id' => 'sb_theme_favicon',
+        'name' => 'sb_options[theme][favicon]',
+        'value' => $value,
+        'description' => __('You can enter url or upload new favicon image file.', 'sb-theme')
+    );
+    SB_Field::media_image($args);
 }
