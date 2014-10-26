@@ -51,7 +51,7 @@ class SB_Theme {
 
     public static function the_breadcrumb() {
         if ( function_exists('yoast_breadcrumb') ) {
-            yoast_breadcrumb('<div class="sb-breadcrumb">','</div>');
+            yoast_breadcrumb('<div class="sb-breadcrumb breadcrumb">','</div>');
         }
     }
 
@@ -60,11 +60,18 @@ class SB_Theme {
     }
 
     public static function the_menu($args = array()) {
-        $args['menu_class'] = trim((isset($args['menu_class']) ? $args['menu_class'] : '') . ' sf-menu');
+        $superfish = isset($args['superfish']) ? (bool)$args['superfish'] : true;
+        if($superfish) {
+            $args['menu_class'] = trim((isset($args['menu_class']) ? $args['menu_class'] : '') . ' sf-menu');
+        }
         wp_nav_menu($args);
     }
 
     public static function register_sidebar($sidebar_id, $sidebar_name, $sidebar_description) {
         SB_Core::register_sidebar($sidebar_id, $sidebar_name, $sidebar_description);
+    }
+
+    public static function the_loading_dotted() {
+        sb_get_template_part('loading-dotted');
     }
 }

@@ -2346,10 +2346,76 @@ ol.guides li a:hover{
     margin: 0;
 }
 
+.sb-theme-logo img {
+    vertical-align: 2px;
+}
+
 a:focus {
     outline: 0 none;
 }
 
 blockquote {
     font-size: 100%;
+}
+
+/* =============== LOADING =============== */
+
+.loading-container {
+    height: 10px;
+    margin-top: 15px;
+    width: 100%;
+}
+.loading-container .loading {
+    height: 10px;
+    margin: 0 auto;
+    position: relative;
+    width: 50px;
+}
+.loading-container .loading.show {
+    display: block;
+}
+.loading-container .loading.noshow {
+    display: none;
+}
+@keyframes reveal {
+    0% {
+        transform: scale(0.001);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+@keyframes slide {
+    100% {
+        transform: translateX(20px);
+    }
+}
+.loading-container .loading .dot {
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease;
+    background: none repeat scroll 0 0 #999;
+    border-radius: 1000px;
+    height: 8px;
+    position: absolute;
+    width: 8px;
+}
+.loading-container .loading .dot.dot1 {
+    animation-name: reveal;
+}
+.loading-container .loading .dot.dot1, .loading-container .loading .dot.dot2 {
+    left: 0;
+}
+.loading-container .loading .dot.dot3 {
+    left: 20px;
+}
+.loading-container .loading .dot.dot4 {
+    left: 40px;
+}
+.loading-container .loading .dot.dot2, .loading-container .loading .dot.dot3 {
+    animation-name: slide;
+}
+.loading-container .loading .dot.dot4 {
+    animation-direction: reverse;
+    animation-name: reveal;
 }

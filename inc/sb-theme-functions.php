@@ -49,7 +49,10 @@ function sb_theme_after_setup() {
         'primary'   => __( 'Primary menu', 'sb-theme' ),
         'secondary' => __( 'Secondary menu', 'sb-theme' ),
     ));
-    add_theme_support( 'post-thumbnails' );
+    add_theme_support('post-thumbnails');
+    add_theme_support( 'html5', array(
+        'search-form', 'comment-form', 'comment-list', 'gallery', 'caption'
+    ) );
 }
 add_action('after_setup_theme', 'sb_theme_after_setup');
 
@@ -74,6 +77,7 @@ function sb_get_template_part($slug, $name = null) {
 
 function sb_theme_style_and_script() {
     wp_enqueue_style('sb-theme-style', SB_THEME_URL . '/css/sb-theme-style.css');
+    wp_enqueue_script('sb-theme', SB_THEME_URL . '/js/sb-theme-script.js', array('jquery'), false, true);
 }
 add_action('wp_enqueue_scripts', 'sb_theme_style_and_script');
 
@@ -100,9 +104,8 @@ function sb_theme_the_logo() {
 }
 
 function sb_theme_scroll_top() {
-    $options = SB_Option::get();
-    $scroll_top = isset($options['theme']['scroll_top']) ? $options['theme']['scroll_top'] : 0;
-    if((bool)$scroll_top) {
+    $scroll_top = SB_Option::get_scroll_top();
+    if($scroll_top) {
         echo '<a id="sb-scroll-top" href="javascript:;" class="go-top-button"><i class="fa fa-chevron-up"></i></a>';
     }
 }

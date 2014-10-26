@@ -13,6 +13,10 @@ function sb_theme_footer_text_callback() {
     SB_Field::rich_editor_field($args);
 }
 
+function sb_theme_setting_field_footer_text() {
+    sb_theme_add_setting_field('sb_theme_footer_text', __('Footer text', 'sb-theme'), 'sb_theme_footer_text_callback');
+}
+
 function sb_theme_front_page_widget_callback() {
     $options = SB_Option::get();
     $active_cats = isset($options['theme']['front_page_widget']) ? $options['theme']['front_page_widget'] : '';
@@ -42,6 +46,10 @@ function sb_theme_front_page_widget_callback() {
     <?php
 }
 
+function sb_theme_setting_field_front_page_widget() {
+    sb_theme_add_setting_field('sb_theme_front_page_widget', __('Front page widget', 'sb-theme'), 'sb_theme_front_page_widget_callback');
+}
+
 function sb_theme_scroll_top_callback() {
     $name = 'sb_options[theme][scroll_top]';
     $options = SB_Option::get();
@@ -55,6 +63,10 @@ function sb_theme_scroll_top_callback() {
         'description' => $description
     );
     SB_Field::switch_button($args);
+}
+
+function sb_theme_setting_field_scroll_top() {
+    sb_theme_add_setting_field('sb_theme_scroll_to_top', __('Scroll to top', 'sb-theme'), 'sb_theme_scroll_top_callback');
 }
 
 function sb_theme_social_callback() {
@@ -120,6 +132,10 @@ function sb_theme_social_callback() {
     SB_Field::social_field($args);
 }
 
+function sb_theme_setting_field_social() {
+    sb_theme_add_setting_field('sb_theme_social', __('Social settings', 'sb-theme'), 'sb_theme_social_callback');
+}
+
 function sb_theme_no_thumbnail_callback() {
     $options = SB_Option::get();
     $value = isset($options['theme']['thumbnail']) ? $options['theme']['thumbnail'] : '';
@@ -130,4 +146,8 @@ function sb_theme_no_thumbnail_callback() {
         'description' => __('You can enter url or upload new thumbnail image file.', 'sb-theme')
     );
     SB_Field::media_image($args);
+}
+
+function sb_theme_setting_field_no_thumbnail() {
+    sb_theme_add_setting_field('sb_theme_no_thumbnail', __('Thumbnail image', 'sb-theme'), 'sb_theme_no_thumbnail_callback');
 }

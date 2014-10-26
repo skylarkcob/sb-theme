@@ -14,6 +14,7 @@ function sb_theme_setting_field() {
     SB_Admin_Custom::add_section('sb_theme_setting_section', __('SB Theme options page', 'sbteam'), 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_logo', 'Logo', 'sb_theme_setting_section', 'sb_theme_logo_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_favicon', 'Favicon', 'sb_theme_setting_section', 'sb_theme_favicon_callback', 'sb_theme');
+    sb_theme_setting_field_no_thumbnail();
     do_action('sb_theme_setting_field');
 }
 add_action('sb_admin_init', 'sb_theme_setting_field');
