@@ -18,6 +18,42 @@ h6.poetry {
     margin: 5px auto;
 }
 
+.site-logo {
+    margin: 0;
+}
+
+.white-bg {
+    background-color: #fff;
+}
+
+.gray-bg {
+    background-color: #f4f4f4;
+}
+
+.padding-section {
+    padding: 40px 0;
+}
+
+.min-height {
+    min-height: 400px;
+}
+
+.site-logo a {
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    display: inline-block;
+    min-width: 215px;
+}
+
+.site-logo.image a {
+    text-indent: -9999px;
+}
+
+.site-logo.image a.image-link {
+    text-indent: 0;
+}
+
 .wpcf7-textarea {
     min-width: 80%;
 }
@@ -1001,6 +1037,7 @@ input[type="submit"]:hover {
     right: 50%;
 }
 
+html,
 body {
     min-width: 320px;
 }

@@ -50,6 +50,32 @@ function sb_theme_setting_field_front_page_widget() {
     sb_theme_add_setting_field('sb_theme_front_page_widget', __('Front page widget', 'sb-theme'), 'sb_theme_front_page_widget_callback');
 }
 
+function sb_theme_rss_feed_callback() {
+    $id = 'sb_theme_rss_feed';
+    $name = 'sb_options[theme][rss_feed]';
+    $description = __('You can remove or add new feed data.', 'sb-theme');
+    $list_feeds = SB_Option::get_theme_rss_feed();
+    $order = SB_Option::get_theme_option(array('keys' => array('rss_feed', 'order')));
+    if(empty($order)) {
+        foreach($list_feeds as $feed) {
+            $order .= $feed['id'] . ',';
+        }
+        $order = trim($order, ',');
+    }
+    $args = array(
+        'id' => $id,
+        'name' => $name,
+        'description' => $description,
+        'list_feeds' => $list_feeds,
+        'order' => $order
+    );
+    SB_Field::rss_feed($args);
+}
+
+function sb_theme_setting_field_rss_feed() {
+    sb_theme_add_setting_field('sb_theme_rss_feed', __('RSS Feed', 'sb-theme'), 'sb_theme_rss_feed_callback');
+}
+
 function sb_theme_scroll_top_callback() {
     $name = 'sb_options[theme][scroll_top]';
     $options = SB_Option::get();

@@ -74,4 +74,8 @@ class SB_Theme {
     public static function the_loading_dotted() {
         sb_get_template_part('loading-dotted');
     }
+
+    public static function get_page_not_found_image_url() {
+        return SB_CORE_URL . '/images/page-not-found.png';
+    }
 }

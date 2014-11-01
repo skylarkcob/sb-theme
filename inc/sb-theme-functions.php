@@ -44,15 +44,19 @@ if(!sb_theme_check_core()) {
 }
 
 function sb_theme_after_setup() {
-	load_theme_textdomain( 'sb-theme', get_template_directory() . '/languages' );
+    load_theme_textdomain('sb-theme', get_template_directory() . '/languages');
+
     register_nav_menus(array(
-        'primary'   => __( 'Primary menu', 'sb-theme' ),
-        'secondary' => __( 'Secondary menu', 'sb-theme' ),
+        'primary'   => __('Primary menu', 'sb-theme'),
+        'secondary' => __('Secondary menu', 'sb-theme'),
+        'footer' => __('Footer menu', 'sb-theme')
     ));
+
     add_theme_support('post-thumbnails');
-    add_theme_support( 'html5', array(
+
+    add_theme_support('html5', array(
         'search-form', 'comment-form', 'comment-list', 'gallery', 'caption'
-    ) );
+    ));
 }
 add_action('after_setup_theme', 'sb_theme_after_setup');
 
