@@ -26,7 +26,7 @@ function sb_theme_check_core() {
     $sb_core_activated = intval(get_option('sb_core_activated'));
     if($sb_core_activated == 0) {
         $caller = get_option('sb_core_deactivated_caller');
-        if('user' == $caller) {
+        if('user' == $caller || empty($caller) || 'wp' != $caller) {
             $user_deactivate_sb_core = true;
         }
     }
@@ -88,6 +88,22 @@ function sb_get_custom_template_part($slug, $name = null) {
 
 function sb_get_template_part($slug, $name = null) {
     get_template_part('sb-theme/inc/' . $slug, $name);
+}
+
+function sb_get_custom_loop($slug, $name = null) {
+    sb_get_custom_template_part('loop/' . $slug, $name);
+}
+
+function sb_get_custom_content($slug, $name = null) {
+    sb_get_custom_template_part('content/' . $slug, $name);
+}
+
+function sb_get_custom_ajax($slug, $name = null) {
+    sb_get_custom_template_part('ajax/' . $slug, $name);
+}
+
+function sb_get_custom_carousel($slug, $name = null) {
+    sb_get_custom_template_part('carousel/' . $slug, $name);
 }
 
 function sb_theme_style_and_script() {
