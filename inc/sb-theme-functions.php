@@ -22,6 +22,17 @@ function sb_theme_get_default_theme() {
 }
 
 function sb_theme_check_core() {
+    $user_deactivate_sb_core = false;
+    $sb_core_activated = intval(get_option('sb_core_activated'));
+    if($sb_core_activated == 0) {
+        $caller = get_option('sb_core_deactivated_caller');
+        if('user' == $caller) {
+            $user_deactivate_sb_core = true;
+        }
+    }
+    if(is_admin() && !$user_deactivate_sb_core) {
+        return true;
+    }
 	$sb_core_installed = class_exists('SB_Core');
 	if(!$sb_core_installed) {
         $theme = sb_theme_get_default_theme();

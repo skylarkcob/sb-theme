@@ -32,16 +32,33 @@ function sb_theme_logo_callback() {
     $value = SB_Option::get_logo_type();
     $list_options = array(
         'background' => __('Background image', 'sb-theme'),
-        'image' => __('Image', 'sb-theme')
+        'image' => __('Image', 'sb-theme'),
+        'text' => __('Text', 'sb-theme')
     );
     $args = array(
         'id' => 'sb_theme_logo_type',
         'name' => 'sb_options[theme][logo_type]',
         'value' => $value,
         'list_options' => $list_options,
-        'description' => __('Choose the way you want logo to display.', 'sb-theme')
+        'container_class' => 'margin-bottom',
+        'field_class' => 'logo-type',
+        'description' => __('Choose the way you want logo to be displayed.', 'sb-theme')
     );
     SB_Field::select($args);
+    $container_class = 'hidden';
+    if($value == 'text') {
+        $container_class = 'visible';
+    }
+    $container_class .= ' logo-text';
+    $value = SB_Option::get_logo_text();
+    $args = array(
+        'id' => 'sb_theme_logo_text',
+        'name' => 'sb_options[theme][logo_text]',
+        'value' => $value,
+        'container_class' => $container_class,
+        'description' => __('Enter the text you want to display as logo.', 'sb-theme')
+    );
+    SB_Field::text_field($args);
 }
 
 function sb_theme_favicon_callback() {

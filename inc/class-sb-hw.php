@@ -39,4 +39,22 @@ class SB_HW {
         $price = number_format($price, 0, ',', '.') . ' đ';
         echo $price;
     }
+
+    public static function set_go_url($url) {
+        global $sb_go_url;
+        $sb_go_url = esc_url($url);
+    }
+
+    public static function get_go_url() {
+        global $sb_go_url;
+        return $sb_go_url;
+    }
+
+    public static function get_aff_url($post_id) {
+        return SB_Post::get_meta($post_id, 'wpcf-affiliate-url');
+    }
+
+    public static function get_aff_by_slug($slug) {
+        return SB_Post::get_by_slug($slug, 'aff');
+    }
 }

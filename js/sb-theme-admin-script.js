@@ -19,4 +19,26 @@
             }
         }).disableSelection();
     })();
+
+    (function(){
+        $('select.logo-type').on('change', function(e){
+            var that = $(this),
+                container = that.closest('td'),
+                logo_text = container.find('div.logo-text');
+            if(that.val() == 'text') {
+                logo_text.fadeIn();
+            } else {
+                logo_text.fadeOut();
+            }
+        });
+    })();
+
+    (function(){
+        $('.wp-post-image').on('click', function(){
+            setTimeout(function(){
+                $('.pp_pic_holder.pp_woocommerce').find('.ppt').removeAttr('style');
+            }, 500);
+        });
+    })();
+
 })(jQuery);

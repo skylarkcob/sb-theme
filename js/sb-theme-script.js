@@ -20,6 +20,24 @@
         return true;
     };
 
+    window.sb_is_email = function(email) {
+        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return regex.test(email);
+    };
+
+    window.sb_switch_button_ajax_loading = function(button, show) {
+        var ajax_loading = button.find('img.ajax-loading');
+        if(show) {
+            ajax_loading.removeClass('hidden');
+            ajax_loading.addClass('visible');
+            ajax_loading.fadeIn();
+        } else {
+            ajax_loading.removeClass('visible');
+            ajax_loading.addClass('hidden');
+            ajax_loading.fadeOut();
+        }
+    };
+
     (function(){
         // Nút trở về đầu trang
         var scrollToTop = $( '#sb-scroll-top'),

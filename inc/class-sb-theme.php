@@ -68,6 +68,9 @@ class SB_Theme {
     }
 
     public static function register_sidebar($sidebar_id, $sidebar_name, $sidebar_description) {
+        if(!class_exists('SB_Core')) {
+            return;
+        }
         SB_Core::register_sidebar($sidebar_id, $sidebar_name, $sidebar_description);
     }
 
@@ -76,6 +79,37 @@ class SB_Theme {
     }
 
     public static function get_page_not_found_image_url() {
+        if(!class_exists('SB_Core')) {
+            return;
+        }
         return SB_CORE_URL . '/images/page-not-found.png';
+    }
+
+    public static function set_modal_argument($args = array()) {
+        global $sb_modal_argument;
+        $sb_modal_argument = $args;
+    }
+
+    public static function get_modal_argument() {
+        global $sb_modal_argument;
+        if(!is_array($sb_modal_argument)) {
+            $sb_modal_argument = array();
+        }
+        return $sb_modal_argument;
+    }
+
+    public static function modal($args = array()) {
+        self::set_modal_argument($args);
+        sb_get_template_part('modal');
+    }
+
+    public static function get_loading_image($url = '') {
+        if(!class_exists('SB_Core')) {
+            return;
+        }
+        if(empty($url)) {
+            $url = SB_CORE_URL . '/images/ajax-loader.gif';
+        }
+        return sprintf('<img src="%s" class="ajax-loading loading-image hidden">', $url);
     }
 }
