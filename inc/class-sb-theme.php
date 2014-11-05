@@ -33,11 +33,11 @@ class SB_Theme {
     }
 
     public static function the_header() {
-        sb_get_template_part('sb-theme-header');
+        sb_theme_get_content('sb-theme-header');
     }
 
     public static function the_footer() {
-        sb_get_template_part('sb-theme-footer');
+        sb_theme_get_content('sb-theme-footer');
     }
 
     public static function the_logo_image_html() {
@@ -75,7 +75,7 @@ class SB_Theme {
     }
 
     public static function the_loading_dotted() {
-        sb_get_template_part('loading-dotted');
+        sb_theme_get_content('loading-dotted');
     }
 
     public static function get_page_not_found_image_url() {

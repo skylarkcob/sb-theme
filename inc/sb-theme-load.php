@@ -9,6 +9,10 @@ require SB_THEME_INC_PATH . '/sb-theme-setting-callback.php';
 
 require SB_THEME_INC_PATH . '/sb-theme-lib.php';
 
+if(sb_theme_support_shop()) {
+    require SB_THEME_INC_PATH . '/class-sb-product.php';
+}
+
 if(file_exists(SB_THEME_CUSTOM_PATH . '/sb-theme-custom.php')) {
     require SB_THEME_CUSTOM_PATH . '/sb-theme-custom.php';
 }
