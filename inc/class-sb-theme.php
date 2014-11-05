@@ -100,7 +100,7 @@ class SB_Theme {
 
     public static function modal($args = array()) {
         self::set_modal_argument($args);
-        sb_get_template_part('modal');
+        sb_theme_get_content('modal');
     }
 
     public static function get_loading_image($url = '') {
