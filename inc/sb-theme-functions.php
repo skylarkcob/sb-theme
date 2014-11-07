@@ -83,7 +83,8 @@ function sb_theme_widgets_init() {
 add_action( 'widgets_init', 'sb_theme_widgets_init' );
 
 function sb_get_template_part($slug, $name = null) {
-    get_template_part('sb-theme/inc/' . $slug, $name);
+    $slug = 'sb-theme/inc/' . $slug;
+    get_template_part($slug, $name);
 }
 
 function sb_theme_get_content($slug, $name = null) {
@@ -91,7 +92,8 @@ function sb_theme_get_content($slug, $name = null) {
 }
 
 function sb_get_custom_template_part($slug, $name = null) {
-    get_template_part('sb-theme-custom/inc/' . $slug, $name);
+    $slug = 'sb-theme-custom/inc/' . $slug;
+    get_template_part($slug, $name);
 }
 
 function sb_get_custom_loop($slug, $name = null) {
@@ -164,9 +166,20 @@ function sb_theme_support($args = null) {
     return apply_filters('sb_theme_supports', $sb_theme_supports);
 }
 
+function sb_get_theme_support() {
+    global $sb_theme_supports;
+    if(!is_array($sb_theme_supports)) {
+        $sb_theme_supports = array();
+    }
+    return $sb_theme_supports;
+}
+
 function sb_theme_support_shop() {
-    $supports = sb_theme_support();
-    return in_array('shop', $supports);
+    $supports = sb_get_theme_support();
+    if(in_array('shop', $supports)) {
+        return true;
+    }
+    return false;
 }
 
 require SB_THEME_INC_PATH . '/sb-theme-load.php';
