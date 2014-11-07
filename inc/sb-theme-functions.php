@@ -157,13 +157,18 @@ function sb_theme_support($args = null) {
             }
             $sb_theme_supports = $args;
         } else {
-            array_push($sb_theme_supports, $args);
+            if(!is_array($args)) {
+                array_push($sb_theme_supports, $args);
+            } else {
+                $sb_theme_supports = array_merge($sb_theme_supports, $args);
+            }
         }
     }
     if(!is_array($sb_theme_supports)) {
         $sb_theme_supports = array();
     }
-    return apply_filters('sb_theme_supports', $sb_theme_supports);
+    $sb_theme_supports = array_unique($sb_theme_supports);
+    return $sb_theme_supports;
 }
 
 function sb_get_theme_support() {
@@ -171,12 +176,21 @@ function sb_get_theme_support() {
     if(!is_array($sb_theme_supports)) {
         $sb_theme_supports = array();
     }
+    //$sb_theme_supports = apply_filters('sb_theme_supports', $sb_theme_supports);
     return $sb_theme_supports;
 }
 
 function sb_theme_support_shop() {
+    return sb_theme_check_support('shop');
+}
+
+function sb_theme_support_addthis() {
+    return sb_theme_check_support('addthis');
+}
+
+function sb_theme_check_support($name) {
     $supports = sb_get_theme_support();
-    if(in_array('shop', $supports)) {
+    if(in_array($name, $supports)) {
         return true;
     }
     return false;

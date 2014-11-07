@@ -112,4 +112,8 @@ class SB_Theme {
         }
         return sprintf('<img src="%s" class="ajax-loading loading-image hidden">', $url);
     }
+
+    public static function addthis() {
+        echo '<div class="addthis_native_toolbox addthis_toolbox"></div>';
+    }
 }

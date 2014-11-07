@@ -76,6 +76,21 @@ function sb_theme_setting_field_rss_feed() {
     sb_theme_add_setting_field('sb_theme_rss_feed', __('RSS Feed', 'sb-theme'), 'sb_theme_rss_feed_callback');
 }
 
+function sb_theme_addthis_callback() {
+    $value = SB_Option::get_theme_option(array('keys' => array('addthis_profile_id')));
+    $args = array(
+        'id' => 'sb_theme_addthis_profile_id',
+        'name' => 'sb_options[theme][addthis_profile_id]',
+        'description' => __('Your profile ID at AddThis.', 'sb-theme'),
+        'value' => $value
+    );
+    SB_Field::text_field($args);
+}
+
+function sb_theme_setting_field_addthis() {
+    sb_theme_add_setting_field('sb_theme_addthis_profile_id', __('AddThis Profile ID', 'sb-theme'), 'sb_theme_addthis_callback');
+}
+
 function sb_theme_scroll_top_callback() {
     $name = 'sb_options[theme][scroll_top]';
     $options = SB_Option::get();
