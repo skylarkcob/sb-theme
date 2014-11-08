@@ -25,7 +25,7 @@ function sb_theme_front_page_widget_callback() {
     );
     $cats = SB_Term::get_categories($args);
     ?>
-    <div class="sb-sortable-list">
+    <div class="sb-sortable-list front-page-widget">
         <div class="sb-sortable-list-container">
             <ul id="sortable-list-cat" class="connectedSortable">
                 <?php foreach($cats as $cat) : ?>

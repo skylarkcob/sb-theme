@@ -168,6 +168,7 @@ function sb_theme_support($args = null) {
         $sb_theme_supports = array();
     }
     $sb_theme_supports = array_unique($sb_theme_supports);
+    $sb_theme_supports = apply_filters('sb_theme_supports', $sb_theme_supports);
     return $sb_theme_supports;
 }
 
@@ -176,7 +177,7 @@ function sb_get_theme_support() {
     if(!is_array($sb_theme_supports)) {
         $sb_theme_supports = array();
     }
-    //$sb_theme_supports = apply_filters('sb_theme_supports', $sb_theme_supports);
+    $sb_theme_supports = apply_filters('sb_theme_supports', $sb_theme_supports);
     return $sb_theme_supports;
 }
 
@@ -186,6 +187,10 @@ function sb_theme_support_shop() {
 
 function sb_theme_support_addthis() {
     return sb_theme_check_support('addthis');
+}
+
+function sb_theme_support_term_meta() {
+    return sb_theme_check_support('term_meta');
 }
 
 function sb_theme_check_support($name) {

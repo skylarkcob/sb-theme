@@ -71,6 +71,7 @@ function sb_theme_favicon_callback() {
         'id' => 'sb_theme_favicon',
         'name' => 'sb_options[theme][favicon]',
         'value' => $value,
+        'container_class' => 'small',
         'description' => __('You can enter url or upload new favicon image file.', 'sb-theme')
     );
     SB_Field::media_image($args);
