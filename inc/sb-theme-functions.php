@@ -47,12 +47,27 @@ function sb_theme_after_switch() {
 	if(!sb_theme_check_core()) {
 		wp_die(sprintf(__('You must install and activate plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
 	}
+    sb_theme_change_default_image_setting();
 }
 add_action('after_switch_theme', 'sb_theme_after_switch');
 
 if(!sb_theme_check_core()) {
     return;
 }
+
+if(!isset($content_width)) {
+    $content_width = 800;
+}
+
+function sb_theme_body_class($classes) {
+    $name = 'browser-' . SB_Browser::get_name();
+    $classes[] = $name;
+    if(SB_Detect::is_mobile()) {
+        $classes[] = 'mobile';
+    }
+    return $classes;
+}
+add_filter('body_class', 'sb_theme_body_class');
 
 function sb_theme_after_setup() {
     load_theme_textdomain('sb-theme', get_template_directory() . '/languages');
@@ -70,6 +85,14 @@ function sb_theme_after_setup() {
     ));
 }
 add_action('after_setup_theme', 'sb_theme_after_setup');
+
+function sb_theme_remove_default_image_size($sizes) {
+    unset($sizes['thumbnail']);
+    unset($sizes['medium']);
+    unset($sizes['large']);
+    return $sizes;
+}
+add_filter('intermediate_image_sizes_advanced', 'sb_theme_remove_default_image_size');
 
 function sb_theme_register_sidebar($sidebar_id, $sidebar_name, $sidebar_description) {
     SB_Theme::register_sidebar($sidebar_id, $sidebar_name, $sidebar_description);
@@ -106,6 +129,10 @@ function sb_get_custom_content($slug, $name = null) {
 
 function sb_get_custom_ajax($slug, $name = null) {
     sb_get_custom_template_part('ajax/' . $slug, $name);
+}
+
+function sb_get_custom_module($slug, $name = null) {
+    sb_get_custom_template_part('module/' . $slug, $name);
 }
 
 function sb_get_custom_carousel($slug, $name = null) {
@@ -199,6 +226,39 @@ function sb_theme_check_support($name) {
         return true;
     }
     return false;
+}
+
+function sb_theme_the_post_thumbnail($args = array()) {
+    $thumbnail_url = SB_Post::get_thumbnail_url($args);
+    $width = isset($args['width']) ? intval($args['width']) : 0;
+    $height = isset($args['height']) ? intval($args['height']) : 0;
+    if($width < 16) {
+        $width = $height;
+    }
+    if($height < 16) {
+        $height = $width;
+    }
+    if($width > 15) {
+        $crop = isset($args['crop']) ? $args['crop'] : false;
+        $crop = (bool)$crop;
+        $defaults = array(
+            'width' => $width,
+            'height' => $height,
+            'crop' => $crop
+        );
+        $params = isset($args['params']) ? $args['params'] : array();
+        $params = (array)$params;
+        $params = wp_parse_args($params, $defaults);
+        $thumbnail_url = bfi_thumb($thumbnail_url, $params);
+    }
+    $args['thumbnail_url'] = $thumbnail_url;
+    SB_Post::the_thumbnail_html($args);
+}
+
+function sb_theme_change_default_image_setting() {
+    update_option('image_default_align', 'center');
+    update_option('image_default_link_type', 'none');
+    update_option('image_default_size', 'large');
 }
 
 require SB_THEME_INC_PATH . '/sb-theme-load.php';
