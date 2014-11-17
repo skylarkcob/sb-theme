@@ -17,6 +17,6 @@
     <?php SB_Theme::the_date_meta_html(); ?>
     <?php wp_head(); ?>
 </head>
-<body <?php body_class('sb-theme'); ?>>
+<body <?php body_class(); ?>>
 <!-- // Theme is created by SB Team - laidinhcuongvn@gmail.com - ladiuvn@gmail.com - http://sauhi.com - http://hocwp.net -->
 <div class="site-container sb-site">

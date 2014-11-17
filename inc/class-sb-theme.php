@@ -32,6 +32,44 @@ class SB_Theme {
         }
     }
 
+    public static function the_paginate($args = array()) {
+        if(function_exists('sb_paginate')) {
+            sb_paginate($args);
+        }
+    }
+
+    public static function the_archive_title() {
+        if(is_category()) {
+            single_cat_title();
+        } elseif(is_tag()) {
+            single_tag_title();
+        } elseif(is_author()) {
+            the_author();
+        } elseif(is_day()) {
+            printf( __( 'Lưu trữ ngày %s' ), get_the_date() );
+        } elseif(is_month()) {
+            printf( __( 'Lưu trữ tháng %s' ), get_the_date('F Y') );
+        } elseif(is_year()) {
+            printf( __( 'Lưu trữ năm %s' ), get_the_date('Y') );
+        } else {
+            _e('Lưu trữ', 'sb-theme');
+        }
+    }
+
+    public static function the_comment_template() {
+        if(function_exists('sb_comment_template')) {
+            sb_comment_template();
+        }
+    }
+
+    public static function get_text($en, $vi) {
+        return sprintf(__('<!--:en-->%1$s<!--:--><!--:vi-->%2$s<!--:-->'), $en, $vi);
+    }
+
+    public static function the_text($en, $vi) {
+        echo self::get_text($en, $vi);
+    }
+
     public static function the_header() {
         sb_theme_get_content('sb-theme-header');
     }
@@ -85,6 +123,19 @@ class SB_Theme {
         return SB_CORE_URL . '/images/page-not-found.png';
     }
 
+    public static function set_carousel_argument($args = array()) {
+        global $sb_carousel_argument;
+        $sb_carousel_argument = $args;
+    }
+
+    public static function get_carousel_argument() {
+        global $sb_carousel_argument;
+        if(!is_array($sb_carousel_argument)) {
+            $sb_carousel_argument = array();
+        }
+        return $sb_carousel_argument;
+    }
+
     public static function set_modal_argument($args = array()) {
         global $sb_modal_argument;
         $sb_modal_argument = $args;
@@ -101,6 +152,11 @@ class SB_Theme {
     public static function modal($args = array()) {
         self::set_modal_argument($args);
         sb_theme_get_content('modal');
+    }
+
+    public static function carousel($args = array()) {
+        self::set_carousel_argument($args);
+        sb_theme_get_content('carousel');
     }
 
     public static function get_loading_image($url = '') {

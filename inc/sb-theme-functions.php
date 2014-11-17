@@ -64,7 +64,10 @@ function sb_theme_body_class($classes) {
     $classes[] = $name;
     if(SB_Detect::is_mobile()) {
         $classes[] = 'mobile';
+    } else {
+        $classes[] = 'pc';
     }
+    $classes[] = 'sb-theme sb-team';
     return $classes;
 }
 add_filter('body_class', 'sb_theme_body_class');
@@ -137,6 +140,20 @@ function sb_get_custom_module($slug, $name = null) {
 
 function sb_get_custom_carousel($slug, $name = null) {
     sb_get_custom_template_part('carousel/' . $slug, $name);
+}
+
+function sb_theme_add_term_meta($args = array()) {
+    if(!class_exists('SB_Term_Meta')) {
+        require SB_CORE_INC_PATH . '/class-sb-term-meta.php';
+    }
+    $term_meta = new SB_Term_Meta($args);
+}
+
+function sb_theme_term_meta_field_term_select($args = array()) {
+    if(!class_exists('SB_Term_Field')) {
+        require SB_CORE_INC_PATH . '/class-sb-term-field.php';
+    }
+    SB_Term_Field::term_select($args);
 }
 
 function sb_theme_style_and_script() {
@@ -259,6 +276,18 @@ function sb_theme_change_default_image_setting() {
     update_option('image_default_align', 'center');
     update_option('image_default_link_type', 'none');
     update_option('image_default_size', 'large');
+}
+
+function sb_theme_get_custom_image_url($name) {
+    return SB_THEME_CUSTOM_URL . '/images/' . $name;
+}
+
+function sb_theme_paginate($args = array()) {
+    SB_Theme::the_paginate($args);
+}
+
+function sb_theme_comment_template() {
+    SB_Theme::the_comment_template();
 }
 
 require SB_THEME_INC_PATH . '/sb-theme-load.php';

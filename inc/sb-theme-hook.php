@@ -13,6 +13,13 @@ if(sb_theme_support_addthis()) {
 }
 
 if(sb_theme_support_term_meta()) {
+    if(!class_exists('SB_Term_Meta')) {
+        require SB_CORE_INC_PATH . '/class-sb-term-meta.php';
+    }
+    if(!class_exists('SB_Term_Field')) {
+        require SB_CORE_INC_PATH . '/class-sb-term-field.php';
+    }
+    require SB_THEME_INC_PATH . '/sb-theme-meta.php';
     function sb_theme_custom_term_meta() {
         wp_enqueue_media();
     }

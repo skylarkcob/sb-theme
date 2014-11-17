@@ -11,7 +11,7 @@ extract($args, EXTR_OVERWRITE);
 
 $container_class .= ' modal fade';
 $container_class = trim($container_class);
-if(empty($id) || empty($title) || empty($callback)) {
+if(empty($id) || empty($title) || empty($callback) || !function_exists($callback)) {
     return;
 }
 ?>

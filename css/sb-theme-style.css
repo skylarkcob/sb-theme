@@ -847,7 +847,7 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
 
 .widget .post-thumbnail {
     float: left;
-    height: 90px;
+    height: auto;
     margin-right: 10px;
     width: 100px;
 }
@@ -900,6 +900,11 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
     border-bottom: 1px dotted #ddd;
     margin-bottom: 10px;
     padding-bottom: 10px;
+}
+
+.widget .sb-post-widget li:last-child {
+    border-bottom: medium none;
+    margin-bottom: 0;
 }
 
 .widget .sb-post-widget .post-info span {
