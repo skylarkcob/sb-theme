@@ -19,6 +19,7 @@ h6.poetry {
 }
 
 .site-logo {
+    line-height: 17px;
     margin: 0;
 }
 
@@ -27,13 +28,19 @@ h6.poetry {
 }
 
 .gray-bg {
-    background-color: #f4f4f4;
+    background-color: #f6f6f6;
 }
 
 .padding-section {
     padding: 40px 0;
 }
 
+.padding-bottom {
+    padding-bottom: 40px;
+}
+.padding-bottom-40 {
+    padding-bottom: 40px;
+}
 .min-height {
     min-height: 400px;
 }
@@ -110,6 +117,7 @@ a:hover {
     text-decoration: none;
 }
 
+a:active,
 a:focus {
     outline: 0 none;
 }
@@ -117,6 +125,14 @@ a:focus {
 .actions #coupon_code {
     min-width: 150px;
     height: 28px;
+}
+
+.icon-right {
+    margin-left: 8px;
+}
+
+.icon-left {
+    margin-right: 5px;
 }
 
 .cart .actions .button,
@@ -649,7 +665,21 @@ img {
     padding: 11px 22px;
     margin-bottom: 24px;
 }
-
+.margin-bottom-10 {
+    margin-bottom: 10px;
+}
+.margin-bottom-20 {
+    margin-bottom: 20px;
+}
+.margin-bottom-40 {
+    margin-bottom: 40px;
+}
+.margin-top-20 {
+    margin-top: 20px;
+}
+.margin-top-30 {
+    margin-top: 30px;
+}
 .msg-box.warning {
     border-left: 6px solid rgba(255, 149, 0, 0.5);
     background-color: rgba(255, 149, 0, 0.1);
@@ -1692,8 +1722,13 @@ input:focus:-ms-input-placeholder { color:transparent; }
     font-weight: 700;
 }
 
+.widget ul {
+    list-style: outside none square;
+    margin: 0 0 0 17px;
+}
+
 .widget li {
-    list-style: none outside none;
+    margin-bottom: 5px;
 }
 
 .widget ul,
@@ -2404,7 +2439,6 @@ blockquote {
 
 .loading-container {
     height: 10px;
-    margin-top: 15px;
     width: 100%;
 }
 .loading-container .loading {
@@ -2413,12 +2447,7 @@ blockquote {
     position: relative;
     width: 50px;
 }
-.loading-container .loading.show {
-    display: block;
-}
-.loading-container .loading.noshow {
-    display: none;
-}
+
 @keyframes reveal {
     0% {
         transform: scale(0.001);

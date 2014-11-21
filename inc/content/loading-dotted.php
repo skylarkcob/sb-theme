@@ -1,5 +1,5 @@
 <div class="loading-container text-center">
-    <div class="loading noshow">
+    <div class="loading hidden">
         <div class="dot dot1"></div>
         <div class="dot dot2"></div>
         <div class="dot dot3"></div>

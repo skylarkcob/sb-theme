@@ -36,7 +36,7 @@ class SB_HW {
 
     public static function the_project_price($project_id) {
         $price = self::get_project_price($project_id);
-        $price = number_format($price, 0, ',', '.') . ' đ';
+        $price = number_format($price, 0, ',', '.') . '₫';
         echo $price;
     }
 
@@ -56,5 +56,31 @@ class SB_HW {
 
     public static function get_aff_by_slug($slug) {
         return SB_Post::get_by_slug($slug, 'aff');
+    }
+
+    public static function get_project_full_image_url($post_id) {
+        $meta = SB_Post::get_meta($post_id, 'wpcf-full-thumbnail');
+        $result = SB_PHP::get_first_image($meta);
+        $result = str_replace('project/wp-content', 'wp-content', $result);
+        return $result;
+    }
+
+    public static function get_project_id($post_id) {
+        return SB_Post::get_meta($post_id, 'wpcf-project-id');
+    }
+
+    public static function get_project_short_description($post_id) {
+        return SB_Post::get_meta($post_id, 'wpcf-short-description');
+    }
+
+    public static function get_post_taxonomy_name() {
+        $taxonomy_name = 'category';
+        if(is_post_type_archive('blog') || is_singular('blog')) {
+            $taxonomy_name = 'bcat';
+        }
+        if(is_post_type_archive('home') || is_singular('home')) {
+            $taxonomy_name = 'hcat';
+        }
+        return $taxonomy_name;
     }
 }

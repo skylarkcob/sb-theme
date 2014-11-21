@@ -48,6 +48,7 @@ function sb_theme_after_switch() {
 		wp_die(sprintf(__('You must install and activate plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
 	}
     sb_theme_change_default_image_setting();
+    SB_Core::regenerate_htaccess_file();
 }
 add_action('after_switch_theme', 'sb_theme_after_switch');
 
@@ -72,20 +73,32 @@ function sb_theme_body_class($classes) {
 }
 add_filter('body_class', 'sb_theme_body_class');
 
+function sb_theme_post_class($classes) {
+    $classes[] = 'sb-post';
+    return $classes;
+}
+add_filter('post_class', 'sb_theme_post_class');
+
 function sb_theme_after_setup() {
     load_theme_textdomain('sb-theme', get_template_directory() . '/languages');
-
-    register_nav_menus(array(
-        'primary'   => __('Primary menu', 'sb-theme'),
-        'secondary' => __('Secondary menu', 'sb-theme'),
-        'footer' => __('Footer menu', 'sb-theme')
-    ));
-
+    register_nav_menus(
+        array(
+            'primary'   => __('Primary menu', 'sb-theme'),
+            'secondary' => __('Secondary menu', 'sb-theme'),
+            'footer' => __('Footer menu', 'sb-theme')
+        )
+    );
     add_theme_support('post-thumbnails');
-
-    add_theme_support('html5', array(
-        'search-form', 'comment-form', 'comment-list', 'gallery', 'caption'
-    ));
+    add_theme_support(
+        'html5',
+        array(
+            'search-form',
+            'comment-form',
+            'comment-list',
+            'gallery',
+            'caption'
+        )
+    );
 }
 add_action('after_setup_theme', 'sb_theme_after_setup');
 
@@ -128,6 +141,13 @@ function sb_get_custom_loop($slug, $name = null) {
 
 function sb_get_custom_content($slug, $name = null) {
     sb_get_custom_template_part('content/' . $slug, $name);
+}
+
+function sb_get_custom_content_default_query($slug, $name = null) {
+    while(have_posts()) {
+        the_post();
+        sb_get_custom_content($slug);
+    }
 }
 
 function sb_get_custom_ajax($slug, $name = null) {
@@ -289,5 +309,13 @@ function sb_theme_paginate($args = array()) {
 function sb_theme_comment_template() {
     SB_Theme::the_comment_template();
 }
+
+function sb_theme_frontend_language($locale) {
+    if(!is_admin()) {
+        $locale = SB_Option::get_default_language();
+        return $locale;
+    }
+}
+add_filter('locale', 'sb_theme_frontend_language', 1, 1);
 
 require SB_THEME_INC_PATH . '/sb-theme-load.php';

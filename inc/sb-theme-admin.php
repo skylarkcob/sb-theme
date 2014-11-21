@@ -12,6 +12,7 @@ add_filter('sb_admin_tabs', 'sb_theme_setting_tab');
 
 function sb_theme_setting_field() {
     SB_Admin_Custom::add_section('sb_theme_setting_section', __('SB Theme options page', 'sbteam'), 'sb_theme');
+    SB_Admin_Custom::add_setting_field('sb_theme_default_language', __('Language', 'sb-core'), 'sb_theme_setting_section', 'sb_theme_default_language_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_logo', 'Logo', 'sb_theme_setting_section', 'sb_theme_logo_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_favicon', 'Favicon', 'sb_theme_setting_section', 'sb_theme_favicon_callback', 'sb_theme');
     sb_theme_setting_field_no_thumbnail();
@@ -21,6 +22,22 @@ function sb_theme_setting_field() {
     do_action('sb_theme_setting_field');
 }
 add_action('sb_admin_init', 'sb_theme_setting_field');
+
+function sb_theme_default_language_callback() {
+    $lang = SB_Option::get_default_language();
+    $options = array(
+        'vi' => __('Vietnamese', 'sb-theme'),
+        'en' => __('English', 'sb-theme')
+    );
+    $args = array(
+        'id' => 'sb_theme_default_language',
+        'name' => 'sb_options[theme][default_language]',
+        'value' => $lang,
+        'options' => $options,
+        'description' => __('Choose language to use on front-end.', 'sb-theme')
+    );
+    SB_Field::select($args);
+}
 
 function sb_theme_logo_callback() {
     $value = SB_Option::get_logo_url();

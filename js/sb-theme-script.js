@@ -5,11 +5,11 @@
     window.sb_switch_loading = function (value) {
         var loading = $('div.loading');
         if(value) {
-            loading.removeClass('noShow');
-            loading.addClass('show');
+            loading.removeClass('hidden');
+            loading.addClass('visible');
         } else {
-            loading.addClass('noShow');
-            loading.removeClass('show');
+            loading.addClass('hidden');
+            loading.removeClass('visible');
         }
     };
 

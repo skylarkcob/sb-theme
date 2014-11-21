@@ -18,6 +18,12 @@ class SB_Theme {
         }
     }
 
+    public static function sidebar($name) {
+        if(!dynamic_sidebar($name)) {
+            dynamic_sidebar('primary');
+        }
+    }
+
     public static function the_favicon_html() {
         $favicon_url = SB_Option::get_favicon_url();
         if(!empty($favicon_url)) {
@@ -100,9 +106,39 @@ class SB_Theme {
     public static function the_menu($args = array()) {
         $superfish = isset($args['superfish']) ? (bool)$args['superfish'] : true;
         if($superfish) {
-            $args['menu_class'] = trim((isset($args['menu_class']) ? $args['menu_class'] : '') . ' sf-menu');
+            $menu_class = isset($args['menu_class']) ? $args['menu_class'] : '';
+            $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sf-menu');
+            $args['menu_class'] = $menu_class;
         }
-        wp_nav_menu($args);
+        $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
+        $locations = SB_Core::get_menu_location();
+        if(empty($theme_location) || !array_key_exists($theme_location, $locations)) {
+            return;
+        }
+        $menu = wp_get_nav_menu_object($locations[$theme_location]);
+        if($menu && !is_wp_error($menu)) {
+            wp_nav_menu($args);
+        } else { ?>
+            <div class="sb-menu-container">
+                <ul class="<?php echo $args['menu_class']; ?>">
+                    <?php $default = isset($args['default']) ? $args['default'] : 'page';
+                    $posts_per_page = 8;
+                    if('page' == $default) {
+                        $posts_per_page -= 2;
+                        $pages = SB_Query::get_pages(array('number' => $posts_per_page));
+                        foreach($pages as $page) : ?>
+                            <li class="menu-item"><a href="<?php echo get_permalink($page->ID); ?>"><?php echo $page->post_title; ?></a></li>
+                        <?php endforeach;
+                    } else {
+                        $taxonomy = isset($args['taxonomy']) ? $args['taxonomy'] : 'category';
+                        $terms = SB_Term::get($taxonomy, array('number' => $posts_per_page));
+                        foreach($terms as $term) : ?>
+                            <li class="menu-item"><a href="<?php echo get_term_link($term); ?>"><?php echo $term->name; ?></a></li>
+                        <?php endforeach;
+                    } ?>
+                </ul>
+            </div>
+        <?php }
     }
 
     public static function register_sidebar($sidebar_id, $sidebar_name, $sidebar_description) {
@@ -114,6 +150,65 @@ class SB_Theme {
 
     public static function the_loading_dotted() {
         sb_theme_get_content('loading-dotted');
+    }
+
+    public static function get_social_share_url($args = array()) {
+        $result = '';
+        $title = '';
+        $permalink = '';
+        $url = '';
+        $social_name = '';
+        $thumbnail = '';
+        $excerpt = '';
+        $language = SB_Option::get_default_language();
+        $twitter_account = '';
+        extract($args, EXTR_OVERWRITE);
+        if(empty($permalink)) {
+            $permalink = $url;
+        }
+        if(empty($twitter_account)) {
+            $twitter_account = SB_Option::get_theme_social('twitter');
+            $twitter_account = basename($twitter_account);
+        }
+        if(empty($twitter_account)) {
+            $twitter_account = 'skylarkcob';
+        }
+        switch($social_name) {
+            case 'facebook':
+                $url = 'https://www.facebook.com/sharer/sharer.php';
+                $url = add_query_arg('u', $permalink, $url);
+                $url = add_query_arg('t', $title, $url);
+                $result = $url;
+                break;
+            case 'googleplus':
+                $url = 'http://plusone.google.com/_/+1/confirm';
+                $url = add_query_arg('hl', $language, $url);
+                $url = add_query_arg('url', $permalink, $url);
+                $result = $url;
+                break;
+            case 'twitter':
+                $url = 'http://twitter.com/share';
+                $url = add_query_arg('url', $permalink, $url);
+                $url = add_query_arg('text', $title, $url);
+                $url = add_query_arg('via', $twitter_account, $url);
+                $result = $url;
+                break;
+            case 'pinterest':
+                $url = 'http://www.pinterest.com/pin/create/button';
+                $url = add_query_arg('media', $thumbnail, $url);
+                $url = add_query_arg('url', $permalink, $url);
+                $url = add_query_arg('description', $title . ' ' . $permalink, $url);
+                $result = $url;
+                break;
+            case 'zingme':
+                $url = 'http://link.apps.zing.vn/share';
+                $url = add_query_arg('t', $title, $url);
+                $url = add_query_arg('u', $permalink, $url);
+                $url = add_query_arg('desc', $excerpt, $url);
+                $result = $url;
+                break;
+        }
+        return $result;
     }
 
     public static function get_page_not_found_image_url() {
@@ -134,6 +229,21 @@ class SB_Theme {
             $sb_carousel_argument = array();
         }
         return $sb_carousel_argument;
+    }
+
+    public static function set_nav_pills_argument($args = array()) {
+        global $sb_nav_pills_argument;
+        $sb_nav_pills_argument = $args;
+    }
+
+    public static function get_nav_pills_argument() {
+        global $sb_nav_pills_argument;
+        return $sb_nav_pills_argument;
+    }
+
+    public static function nav_pills($args = array()) {
+        self::set_nav_pills_argument($args);
+        sb_theme_get_content('nav-pills');
     }
 
     public static function set_modal_argument($args = array()) {
