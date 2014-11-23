@@ -1,27 +1,49 @@
 <?php
 function sb_theme_menu() {
     SB_Admin_Custom::add_submenu_page(__('Theme Settings', 'sb-theme'), 'sb_theme', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page('SB Utilities', 'sb_utilities', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_theme_menu');
 
 function sb_theme_setting_tab($tabs) {
     $tabs['sb_theme'] = array('title' => __('Theme Settings', 'sb-theme'), 'section_id' => 'sb_theme_setting_section', 'type' => 'theme');
+    $tabs['sb_utilities'] = array('title' => 'SB Utilities', 'section_id' => 'sb_utilities_section', 'type' => 'theme');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_theme_setting_tab');
 
 function sb_theme_setting_field() {
-    SB_Admin_Custom::add_section('sb_theme_setting_section', __('SB Theme options page', 'sbteam'), 'sb_theme');
+    SB_Admin_Custom::add_section('sb_theme_setting_section', __('SB Theme options page', 'sb-theme'), 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_default_language', __('Language', 'sb-core'), 'sb_theme_setting_section', 'sb_theme_default_language_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_logo', 'Logo', 'sb_theme_setting_section', 'sb_theme_logo_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_favicon', 'Favicon', 'sb_theme_setting_section', 'sb_theme_favicon_callback', 'sb_theme');
-    sb_theme_setting_field_no_thumbnail();
-    if(sb_theme_support_addthis()) {
+    if(SB_Option::utility_enabled('default_thumbnail')) {
+        sb_theme_setting_field_no_thumbnail();
+    }
+    if(SB_Option::utility_enabled('category_widget')) {
+        sb_theme_setting_field_category_widget();
+    }
+    if(SB_Option::utility_enabled('addthis') || sb_theme_support_addthis()) {
         sb_theme_setting_field_addthis();
     }
+    if(SB_Option::utility_enabled('facebook_fanpage')) {
+        sb_theme_setting_field_facebook_fanpage();
+    }
     do_action('sb_theme_setting_field');
+    if(SB_Option::utility_enabled('social')) {
+        sb_theme_setting_field_social();
+    }
+    if(SB_Option::utility_enabled('footer_text')) {
+        sb_theme_setting_field_footer_text();
+    }
 }
 add_action('sb_admin_init', 'sb_theme_setting_field');
+
+function sb_utilities_setting_field() {
+    SB_Admin_Custom::add_section('sb_utilities_section', __('SB Utilities options page', 'sb-theme'), 'sb_utilities');
+    do_action('sb_utilities_setting_field');
+}
+add_action('sb_admin_init', 'sb_utilities_setting_field');
 
 function sb_theme_default_language_callback() {
     $lang = SB_Option::get_default_language();
@@ -95,8 +117,7 @@ function sb_theme_favicon_callback() {
 }
 
 function sb_theme_sanitize($input) {
-    $data = $input;
-    $data['theme']['logo_type'] = isset($input['theme']['logo_type']) ? $input['theme']['logo_type'] : 'background';
-    return $data;
+    //$data['theme']['logo_type'] = isset($input['theme']['logo_type']) ? $input['theme']['logo_type'] : 'background';
+    return $input;
 }
 add_filter('sb_options_sanitize', 'sb_theme_sanitize');

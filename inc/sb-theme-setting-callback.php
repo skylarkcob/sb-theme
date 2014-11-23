@@ -18,37 +18,29 @@ function sb_theme_setting_field_footer_text() {
 }
 
 function sb_theme_front_page_widget_callback() {
-    $options = SB_Option::get();
-    $active_cats = isset($options['theme']['front_page_widget']) ? $options['theme']['front_page_widget'] : '';
     $args = array(
-        'exclude' => $active_cats
+        'option_name' => 'front_page_widget',
+        'taxonomy' => 'category'
     );
-    $cats = SB_Term::get_categories($args);
-    ?>
-    <div class="sb-sortable-list front-page-widget">
-        <div class="sb-sortable-list-container">
-            <ul id="sortable-list-cat" class="connectedSortable">
-                <?php foreach($cats as $cat) : ?>
-                    <li data-category="<?php echo $cat->term_id; ?>" class="ui-state-default"><?php echo $cat->name; ?></li>
-                <?php endforeach; ?>
-            </ul>
-            <ul id="sortable-list-cat-active" class="connectedSortable sb-front-page-widget">
-                <?php $cats = $active_cats; $active_cats = explode(',', $active_cats); ?>
-                <?php foreach($active_cats as $cat_id) : if($cat_id < 1) continue; $cat = get_category($cat_id); ?>
-                    <li data-category="<?php echo $cat->term_id; ?>" class="ui-state-default"><?php echo $cat->name; ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-
-        <input type="hidden" name="sb_options[theme][front_page_widget]" value="<?php echo $cats; ?>">
-    </div>
-    <p class="description" style="clear: both"><?php _e('Drag and drop the widget into right box to active it.', 'sb-theme'); ?></p>
-    <?php
+    SB_Field::sortble_term($args);
 }
 
 function sb_theme_setting_field_front_page_widget() {
     sb_theme_add_setting_field('sb_theme_front_page_widget', __('Front page widget', 'sb-theme'), 'sb_theme_front_page_widget_callback');
 }
+
+function sb_theme_category_widget_callback() {
+    $args = array(
+        'option_name' => 'category_widget',
+        'taxonomy' => 'category'
+    );
+    SB_Field::sortble_term($args);
+}
+
+function sb_theme_setting_field_category_widget() {
+    sb_theme_add_setting_field('sb_theme_category_widget', __('Category widget', 'sb-theme'), 'sb_theme_category_widget_callback');
+}
+
 
 function sb_theme_rss_feed_callback() {
     $id = 'sb_theme_rss_feed';
@@ -89,6 +81,21 @@ function sb_theme_addthis_callback() {
 
 function sb_theme_setting_field_addthis() {
     sb_theme_add_setting_field('sb_theme_addthis_profile_id', __('AddThis Profile ID', 'sb-theme'), 'sb_theme_addthis_callback');
+}
+
+function sb_theme_facebook_fanpage_id_callback() {
+    $value = SB_Option::get_theme_option_single_key('facebook_fanpage');
+    $args = array(
+        'id' => 'sb_theme_facebook_fanpage_id',
+        'name' => 'sb_options[theme][facebook_fanpage]',
+        'description' => __('Your fanpage ID at Facebook.', 'sb-theme'),
+        'value' => $value
+    );
+    SB_Field::text_field($args);
+}
+
+function sb_theme_setting_field_facebook_fanpage() {
+    sb_theme_add_setting_field('sb_theme_facebook_fanpage_id', __('Facebook Fanpage ID', 'sb-theme'), 'sb_theme_facebook_fanpage_id_callback');
 }
 
 function sb_theme_scroll_top_callback() {

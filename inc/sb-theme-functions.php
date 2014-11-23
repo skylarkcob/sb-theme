@@ -179,6 +179,9 @@ function sb_theme_term_meta_field_term_select($args = array()) {
 function sb_theme_style_and_script() {
     wp_enqueue_style('sb-theme-style', SB_THEME_URL . '/css/sb-theme-style.css');
     wp_enqueue_script('sb-theme', SB_THEME_URL . '/js/sb-theme-script.js', array('jquery'), false, true);
+    if(SB_Option::utility_enabled('jquery_marquee')) {
+        wp_enqueue_script('jquery-marquee', SB_THEME_LIB_URL . '/jquery-marquee/jquery.marquee.min.js', array('jquery'), false, true);
+    }
 }
 add_action('wp_enqueue_scripts', 'sb_theme_style_and_script');
 
@@ -198,6 +201,10 @@ add_filter('excerpt_more', 'sb_theme_excerpt_more');
 
 function sb_theme_add_setting_field($field_id, $field_title, $callback) {
     SB_Admin_Custom::add_setting_field($field_id, $field_title, 'sb_theme_setting_section', $callback, 'sb_theme');
+}
+
+function sb_theme_add_utilities_setting_field($field_id, $field_title, $callback) {
+    SB_Admin_Custom::add_setting_field($field_id, $field_title, 'sb_utilities_section', $callback, 'sb_utilities');
 }
 
 function sb_theme_the_logo() {
@@ -317,5 +324,12 @@ function sb_theme_frontend_language($locale) {
     }
 }
 add_filter('locale', 'sb_theme_frontend_language', 1, 1);
+
+function sb_theme_backend_language($locale) {
+    if(is_admin()) {
+        return 'en';
+    }
+}
+add_filter('locale', 'sb_theme_backend_language');
 
 require SB_THEME_INC_PATH . '/sb-theme-load.php';

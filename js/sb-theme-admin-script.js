@@ -1,4 +1,5 @@
 (function($){
+    /*
     (function(){
         $('#sortable-list-cat, #sortable-list-cat-active').sortable({
             connectWith: '.connectedSortable',
@@ -19,6 +20,7 @@
             }
         }).disableSelection();
     })();
+    */
 
     (function(){
         $('select.logo-type').on('change', function(e){
@@ -30,14 +32,6 @@
             } else {
                 logo_text.fadeOut();
             }
-        });
-    })();
-
-    (function(){
-        $('.wp-post-image').on('click', function(){
-            setTimeout(function(){
-                $('.pp_pic_holder.pp_woocommerce').find('.ppt').removeAttr('style');
-            }, 500);
         });
     })();
 

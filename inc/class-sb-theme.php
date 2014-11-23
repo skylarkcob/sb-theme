@@ -68,6 +68,12 @@ class SB_Theme {
         }
     }
 
+    public static function the_comments() {
+        if(function_exists('sb_comments')) {
+            sb_comments();
+        }
+    }
+
     public static function get_text($en, $vi) {
         return sprintf(__('<!--:en-->%1$s<!--:--><!--:vi-->%2$s<!--:-->'), $en, $vi);
     }
@@ -115,7 +121,19 @@ class SB_Theme {
         if(empty($theme_location) || !array_key_exists($theme_location, $locations)) {
             return;
         }
-        $menu = wp_get_nav_menu_object($locations[$theme_location]);
+        $location_name = $locations[$theme_location];
+        switch($theme_location) {
+            case 'primary':
+                $location_name = 'Primary menu';
+                break;
+            case 'secondary':
+                $location_name = 'Secondary menu';
+                break;
+            case 'footer':
+                $location_name = 'Footer menu';
+                break;
+        }
+        $menu = wp_get_nav_menu_object($location_name);
         if($menu && !is_wp_error($menu)) {
             wp_nav_menu($args);
         } else { ?>
@@ -123,6 +141,9 @@ class SB_Theme {
                 <ul class="<?php echo $args['menu_class']; ?>">
                     <?php $default = isset($args['default']) ? $args['default'] : 'page';
                     $posts_per_page = 8;
+                    if(isset($args['posts_per_page'])) {
+                        $posts_per_page = $args['posts_per_page'];
+                    }
                     if('page' == $default) {
                         $posts_per_page -= 2;
                         $pages = SB_Query::get_pages(array('number' => $posts_per_page));
@@ -267,6 +288,21 @@ class SB_Theme {
     public static function carousel($args = array()) {
         self::set_carousel_argument($args);
         sb_theme_get_content('carousel');
+    }
+
+    public static function set_search_form_args($args = array()) {
+        global $sb_search_form_args;
+        $sb_search_form_args = $args;
+    }
+
+    public static function get_search_form_args() {
+        global $sb_search_form_args;
+        return $sb_search_form_args;
+    }
+
+    public static function the_search_form($args = array()) {
+        self::set_search_form_args($args);
+        sb_theme_get_content('search-form');
     }
 
     public static function get_loading_image($url = '') {

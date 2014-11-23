@@ -44,7 +44,9 @@ h6.poetry {
 .min-height {
     min-height: 400px;
 }
-
+.overflow-hidden {
+    overflow: hidden;
+}
 .site-logo a {
     background-position: left center;
     background-repeat: no-repeat;
@@ -235,6 +237,10 @@ a:focus {
 .sb-site-tree .has-sub .arrow:before,
 .sb-site-tree .no-sub .arrow:before {
     font-family: "FontAwesome";
+}
+
+.font-awesome {
+    font-family: FontAwesome;
 }
 
 .woocommerce #content .product .cart > .button.single_add_to_cart_button:after,
@@ -679,6 +685,9 @@ img {
 }
 .margin-top-30 {
     margin-top: 30px;
+}
+.no-margin {
+    margin: 0;
 }
 .msg-box.warning {
     border-left: 6px solid rgba(255, 149, 0, 0.5);
@@ -1188,7 +1197,6 @@ div.bbp-breadcrumb {
 
 }
 .sb-site-tree .sub-tree li {
-    background-image: url("../images/tree-bg.gif");
     background-position: 0 4px;
     background-repeat: no-repeat;
     padding-left: 25px;
@@ -1197,7 +1205,6 @@ div.bbp-breadcrumb {
 .sb-site-tree .sub-tree,
 .sb-site-tree .tree-node-empty,
 .sb-site-tree .sub-tree .tree-node-empty {
-    background-image: url("../images/tree-empty-bg.gif");
     background-repeat: repeat-y;
 }
 
@@ -1928,7 +1935,6 @@ p.sb-msg.error-line {
 }
 
 .thanh-toan .row.logo-row .doi-tac, .thanh-toan .row.card-row .doi-tac {
-    background: url("../images/doi-tac.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
     clear: both;
     display: block;
     height: 30px;
@@ -1944,7 +1950,6 @@ p.sb-msg.error-line {
 }
 
 .bank-icon {
-    background-image: url("../images/logo-bank.png");
     display: block;
     height: 40px;
     text-indent: -9999px;
@@ -2038,7 +2043,6 @@ p.sb-msg.error-line {
 
 
 .thanh-toan .card-icon {
-    background-image: url("../images/logo-phone-card.png");
     background-size: auto 200px;
     display: inline-block;
     height: 100px;
@@ -2065,7 +2069,6 @@ p.sb-msg.error-line {
 
 
 .thanh-toan .small-card {
-    background-image: url("../images/cards.png");
     background-repeat: no-repeat;
     display: inline-block;
     height: 28px;
