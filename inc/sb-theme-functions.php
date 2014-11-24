@@ -47,8 +47,7 @@ function sb_theme_after_switch() {
 	if(!sb_theme_check_core()) {
 		wp_die(sprintf(__('You must install and activate plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
 	}
-    sb_theme_change_default_image_setting();
-    SB_Core::regenerate_htaccess_file();
+    sb_theme_update_default_options();
 }
 add_action('after_switch_theme', 'sb_theme_after_switch');
 
@@ -67,6 +66,12 @@ function sb_theme_body_class($classes) {
         $classes[] = 'mobile';
     } else {
         $classes[] = 'pc';
+    }
+    if(is_singular()) {
+        $classes[] = 'sb-singular';
+    }
+    if(is_404()) {
+        $classes[] = 'sb-not-found';
     }
     $classes[] = 'sb-theme sb-team';
     return $classes;
@@ -272,6 +277,10 @@ function sb_theme_check_support($name) {
     return false;
 }
 
+function sb_theme_the_post_thumbnail_crop($width, $height) {
+    SB_Post::the_thumbnail_crop_html($width, $height);
+}
+
 function sb_theme_the_post_thumbnail($args = array()) {
     $thumbnail_url = SB_Post::get_thumbnail_url($args);
     $width = isset($args['width']) ? intval($args['width']) : 0;
@@ -331,5 +340,16 @@ function sb_theme_backend_language($locale) {
     }
 }
 add_filter('locale', 'sb_theme_backend_language');
+
+function sb_theme_update_default_options() {
+    sb_theme_change_default_image_setting();
+    SB_Core::regenerate_htaccess_file();
+    SB_Option::edit_breadcrumb_sep();
+}
+
+function sb_theme_wordpress_seo_activation() {
+    SB_Option::edit_breadcrumb_sep();
+}
+register_activation_hook(WP_PLUGIN_DIR . '/wordpress-seo/wp-seo.php', 'sb_theme_wordpress_seo_activation');
 
 require SB_THEME_INC_PATH . '/sb-theme-load.php';
