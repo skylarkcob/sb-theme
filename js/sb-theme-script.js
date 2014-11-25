@@ -69,4 +69,13 @@
         }
     })();
 
+    (function(){
+        $('div.sb-mobile-menu').css({'min-height': window.innerHeight});
+        $('.mobile-menu-button').on('click', function(e){
+            var that = $(this),
+                mobile_menu_container = that.closest('div.sb-mobile-menu');
+            mobile_menu_container.toggleClass('active');
+        });
+    })();
+
 })(jQuery);

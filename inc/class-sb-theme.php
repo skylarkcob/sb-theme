@@ -100,8 +100,12 @@ class SB_Theme {
     }
 
     public static function the_breadcrumb() {
-        if ( function_exists('yoast_breadcrumb') ) {
-            yoast_breadcrumb('<div class="sb-breadcrumb breadcrumb">','</div>');
+        if(function_exists('yoast_breadcrumb') && SB_Option::yoast_breadcrumb_enabled()) {
+            yoast_breadcrumb('<div class="sb-breadcrumb breadcrumb yoast">', '</div>');
+        } elseif(function_exists('bcn_display')) {
+            echo '<div class="sb-breadcrumb breadcrumb bcn">';
+            bcn_display();
+            echo '</div>';
         }
     }
 
@@ -134,8 +138,17 @@ class SB_Theme {
                 break;
         }
         $menu = wp_get_nav_menu_object($location_name);
+        $mobile = isset($args['mobile']) ? $args['mobile'] : false;
         if($menu && !is_wp_error($menu)) {
             wp_nav_menu($args);
+            if($mobile) {
+                $position = isset($args['position']) ? $args['position'] : 'left';
+                $class = 'sb-mobile-menu';
+                $class = SB_PHP::add_string_with_space_before($class, $position);
+                echo '<div class="' . $class . '"><span class="mobile-menu-button"><i class="fa fa fa-bars"></i></span>';
+                wp_nav_menu($args);
+                echo '</div>';
+            }
         } else { ?>
             <div class="sb-menu-container">
                 <ul class="<?php echo $args['menu_class']; ?>">
