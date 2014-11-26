@@ -115,31 +115,17 @@ class SB_Theme {
 
     public static function the_menu($args = array()) {
         $superfish = isset($args['superfish']) ? (bool)$args['superfish'] : true;
+        $menu_class = isset($args['menu_class']) ? $args['menu_class'] : '';
         if($superfish) {
-            $menu_class = isset($args['menu_class']) ? $args['menu_class'] : '';
             $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sf-menu');
-            $args['menu_class'] = $menu_class;
         }
+        $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sb-menu');
+        $args['menu_class'] = $menu_class;
         $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
         $locations = SB_Core::get_menu_location();
-        if(empty($theme_location) || !array_key_exists($theme_location, $locations)) {
-            return;
-        }
-        $location_name = $locations[$theme_location];
-        switch($theme_location) {
-            case 'primary':
-                $location_name = 'Primary menu';
-                break;
-            case 'secondary':
-                $location_name = 'Secondary menu';
-                break;
-            case 'footer':
-                $location_name = 'Footer menu';
-                break;
-        }
-        $menu = wp_get_nav_menu_object($location_name);
+        $menu = wp_get_nav_menu_object($locations[$theme_location]);
         $mobile = isset($args['mobile']) ? $args['mobile'] : false;
-        if($menu && !is_wp_error($menu)) {
+        if(!SB_Core::is_error($menu)) {
             wp_nav_menu($args);
             if($mobile) {
                 $position = isset($args['position']) ? $args['position'] : 'left';
