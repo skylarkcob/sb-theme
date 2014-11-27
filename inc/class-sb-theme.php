@@ -18,6 +18,21 @@ class SB_Theme {
         }
     }
 
+	public static function enqueue_custom_script($handle, $name) {
+		$file_path = SB_THEME_CUSTOM_URL . '/js/' . $name . '.js';
+		SB_Core::enqueue_script($handle, $file_path);
+	}
+
+	public static function enqueue_custom_style($handle, $name) {
+		$file_path = SB_THEME_CUSTOM_URL . '/css/' . $name . '.css';
+		wp_enqueue_style($handle, $file_path);
+	}
+
+	public static function enqueue_custom_responsive_style($handle, $name) {
+		$file_path = SB_THEME_CUSTOM_URL . '/css/' . $name . '.css';
+		wp_enqueue_style($handle, $file_path, array(), false, 'screen and (max-width: 1024px)');
+	}
+
     public static function sidebar($name) {
         if(!dynamic_sidebar($name)) {
             dynamic_sidebar('primary');
@@ -120,45 +135,60 @@ class SB_Theme {
             $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sf-menu');
         }
         $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sb-menu');
-        $args['menu_class'] = $menu_class;
         $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
+        if(!empty($theme_location)) {
+            $menu_class = SB_PHP::add_string_with_space_before($menu_class, $theme_location);
+        }
         $locations = SB_Core::get_menu_location();
-        $menu = wp_get_nav_menu_object($locations[$theme_location]);
+	    $menu_id = isset($locations[$theme_location]) ? $locations[$theme_location] : 0;
+        $menu = wp_get_nav_menu_object($menu_id);
         $mobile = isset($args['mobile']) ? $args['mobile'] : false;
+        $position = isset($args['position']) ? $args['position'] : 'left';
+        $class = 'sb-mobile-menu';
+        $class = SB_PHP::add_string_with_space_before($class, $position);
+        $args['menu_class'] = $menu_class;
         if(!SB_Core::is_error($menu)) {
             wp_nav_menu($args);
             if($mobile) {
-                $position = isset($args['position']) ? $args['position'] : 'left';
-                $class = 'sb-mobile-menu';
-                $class = SB_PHP::add_string_with_space_before($class, $position);
                 echo '<div class="' . $class . '"><span class="mobile-menu-button"><i class="fa fa fa-bars"></i></span>';
                 wp_nav_menu($args);
                 echo '</div>';
             }
-        } else { ?>
-            <div class="sb-menu-container">
-                <ul class="<?php echo $args['menu_class']; ?>">
-                    <?php $default = isset($args['default']) ? $args['default'] : 'page';
-                    $posts_per_page = 8;
-                    if(isset($args['posts_per_page'])) {
-                        $posts_per_page = $args['posts_per_page'];
-                    }
-                    if('page' == $default) {
-                        $posts_per_page -= 2;
-                        $pages = SB_Query::get_pages(array('number' => $posts_per_page));
-                        foreach($pages as $page) : ?>
-                            <li class="menu-item"><a href="<?php echo get_permalink($page->ID); ?>"><?php echo $page->post_title; ?></a></li>
-                        <?php endforeach;
-                    } else {
-                        $taxonomy = isset($args['taxonomy']) ? $args['taxonomy'] : 'category';
-                        $terms = SB_Term::get($taxonomy, array('number' => $posts_per_page));
-                        foreach($terms as $term) : ?>
-                            <li class="menu-item"><a href="<?php echo get_term_link($term); ?>"><?php echo $term->name; ?></a></li>
-                        <?php endforeach;
-                    } ?>
-                </ul>
-            </div>
-        <?php }
+        } else {
+            self::the_menu_default($args);
+            if($mobile) {
+                echo '<div class="' . $class . '"><span class="mobile-menu-button"><i class="fa fa fa-bars"></i></span>';
+                self::the_menu_default($args);
+                echo '</div>';
+            }
+        }
+    }
+
+    private static function the_menu_default($args = array()) {
+        ?>
+        <div class="sb-menu-container">
+            <ul class="<?php echo $args['menu_class']; ?>">
+                <?php $default = isset($args['default']) ? $args['default'] : 'page';
+                $posts_per_page = 8;
+                if(isset($args['posts_per_page'])) {
+                    $posts_per_page = $args['posts_per_page'];
+                }
+                if('page' == $default) {
+                    $posts_per_page -= 2;
+                    $pages = SB_Query::get_pages(array('number' => $posts_per_page));
+                    foreach($pages as $page) : ?>
+                        <li class="menu-item"><a href="<?php echo get_permalink($page->ID); ?>"><?php echo $page->post_title; ?></a></li>
+                    <?php endforeach;
+                } else {
+                    $taxonomy = isset($args['taxonomy']) ? $args['taxonomy'] : 'category';
+                    $terms = SB_Term::get($taxonomy, array('number' => $posts_per_page));
+                    foreach($terms as $term) : ?>
+                        <li class="menu-item"><a href="<?php echo get_term_link($term); ?>"><?php echo $term->name; ?></a></li>
+                    <?php endforeach;
+                } ?>
+            </ul>
+        </div>
+        <?php
     }
 
     public static function register_sidebar($sidebar_id, $sidebar_name, $sidebar_description) {

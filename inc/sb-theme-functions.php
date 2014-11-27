@@ -1,57 +1,60 @@
 <?php
-function sb_theme_get_default_theme() {
-	$themes = wp_get_themes();
-	$wp_theme = '';
-	foreach($themes as $theme) {
-		$author_uri = $theme->get('AuthorURI');
-		if(strrpos($author_uri, 'wordpress.org') !== false) {
-			$wp_theme = $theme;
-			break;
-		}
-	}
-	if(empty($wp_theme)) {
-		foreach($themes as $theme) {
-			$text_domain = $theme->get('TextDomain');
-			if(strrpos($text_domain, 'sb-theme') === false) {
-				$wp_theme = $theme;
-				break;
-			}
-		}
-	}
-	return $wp_theme;
+function sb_theme_init() {
+    do_action('sb_theme_init');
 }
 
-function sb_theme_check_core() {
-    $user_deactivate_sb_core = false;
-    $sb_core_activated = intval(get_option('sb_core_activated'));
-    if($sb_core_activated == 0) {
-        $caller = get_option('sb_core_deactivated_caller');
-        if('user' == $caller || empty($caller) || 'wp' != $caller) {
-            $user_deactivate_sb_core = true;
+function sb_theme_error_checking() {
+    if(!is_admin()) {
+        if(!defined('SB_CORE_VERSION')) {
+            wp_die(sprintf(__('You must install and activate plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
+        } elseif(!defined('SB_THEME_VERSION') || !class_exists('SB_Theme')) {
+            wp_die(sprintf(__('It looks like you\'re using incorrect <strong>SB Theme Core</strong> pack! Click here to %s.', 'sb-theme'), sprintf('<a href="%1$s">%2$s</a>', 'https://github.com/skylarkcob/sb-theme', __('re-download', 'sb-theme'))));
         }
     }
-    if(is_admin() && !$user_deactivate_sb_core) {
-        return true;
+}
+
+function sb_theme_get_default_theme() {
+    $themes = wp_get_themes();
+    $wp_theme = '';
+    foreach($themes as $theme) {
+        $author_uri = $theme->get('AuthorURI');
+        if(strrpos($author_uri, 'wordpress.org') !== false) {
+            $wp_theme = $theme;
+            break;
+        }
     }
-	$sb_core_installed = class_exists('SB_Core');
-	if(!$sb_core_installed) {
+    if(empty($wp_theme)) {
+        foreach($themes as $theme) {
+            $text_domain = $theme->get('TextDomain');
+            if(strrpos($text_domain, 'sb-theme') === false) {
+                $wp_theme = $theme;
+                break;
+            }
+        }
+    }
+    return $wp_theme;
+}
+
+function sb_theme_after_switch() {
+    if(!defined('SB_CORE_VERSION')) {
         $theme = sb_theme_get_default_theme();
         if(!empty($theme)) {
             switch_theme($theme->get('TextDomain'));
         }
-	}
-	return $sb_core_installed;
-}
-
-function sb_theme_after_switch() {
-	if(!sb_theme_check_core()) {
-		wp_die(sprintf(__('You must install and activate plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
-	}
-    sb_theme_update_default_options();
+    }
+    sb_theme_error_checking();
+    if(is_admin() && defined('SB_CORE_VERSION')) {
+        sb_theme_update_default_options();
+    }
 }
 add_action('after_switch_theme', 'sb_theme_after_switch');
 
-if(!sb_theme_check_core()) {
+function sb_theme_init_before_running() {
+    sb_theme_error_checking();
+}
+add_action('sb_theme_init', 'sb_theme_init_before_running');
+
+if(!defined('SB_CORE_VERSION')) {
     return;
 }
 
@@ -88,6 +91,7 @@ function sb_theme_after_setup() {
     load_theme_textdomain('sb-theme', get_template_directory() . '/languages');
     register_nav_menus(
         array(
+	        'top' => __('Top menu', 'sb-theme'),
             'primary'   => __('Primary menu', 'sb-theme'),
             'secondary' => __('Secondary menu', 'sb-theme'),
             'footer' => __('Footer menu', 'sb-theme')
@@ -279,6 +283,10 @@ function sb_theme_check_support($name) {
 
 function sb_theme_the_post_thumbnail_crop($width, $height) {
     SB_Post::the_thumbnail_crop_html($width, $height);
+}
+
+function sb_theme_the_post_thumbnail_crop_by_id($post_id, $width, $height) {
+    SB_Post::the_thumbnail_crop_html_by_id($post_id, $width, $height);
 }
 
 function sb_theme_the_post_thumbnail($args = array()) {

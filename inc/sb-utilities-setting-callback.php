@@ -134,7 +134,23 @@ function sb_utilities_term_meta_callback() {
     SB_Field::switch_button($args);
 }
 
+function sb_utilities_setting_field_responsive() {
+	sb_theme_add_utilities_setting_field('sb_utilities_responsive', __('Responsive', 'sb-theme'), 'sb_utilities_responsive_callback');
+}
+
+function sb_utilities_responsive_callback() {
+	$value = SB_Option::get_utility('responsive');
+	$args = array(
+		'id' => 'sb_utilities_responsive',
+		'name' => 'sb_options[utilities][responsive]',
+		'value' => $value,
+		'description' => __('Turn on or turn off the function to load responsive style on your site.', 'sb-theme')
+	);
+	SB_Field::switch_button($args);
+}
+
 function sb_utilities_setting_field_callback() {
+	sb_utilities_setting_field_responsive();
     sb_utilities_setting_field_default_thumbnail();
     sb_utilities_setting_field_term_meta();
     sb_utilities_setting_field_shop();

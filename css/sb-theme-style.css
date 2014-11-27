@@ -23,6 +23,15 @@ h6.poetry {
     margin: 0;
 }
 
+.site-logo,
+.site-logo a,
+.site-logo a img {
+    max-height: 100%;
+}
+.site-logo,
+.site-logo a {
+    height: 100%;
+}
 .white-bg {
     background-color: #fff;
 }
@@ -52,7 +61,7 @@ h6.poetry {
     background-repeat: no-repeat;
     background-size: 100% auto;
     display: inline-block;
-    min-width: 215px;
+    min-width: 50px;
 }
 
 .site-logo.image a {
