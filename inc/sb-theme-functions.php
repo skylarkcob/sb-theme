@@ -6,9 +6,9 @@ function sb_theme_init() {
 function sb_theme_error_checking() {
     if(!is_admin()) {
         if(!defined('SB_CORE_VERSION')) {
-            wp_die(sprintf(__('You must install and activate plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
+            wp_die(sprintf(__('You must install and activate plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a target="_blank" href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
         } elseif(!defined('SB_THEME_VERSION') || !class_exists('SB_Theme')) {
-            wp_die(sprintf(__('It looks like you\'re using incorrect <strong>SB Theme Core</strong> pack! Click here to %s.', 'sb-theme'), sprintf('<a href="%1$s">%2$s</a>', 'https://github.com/skylarkcob/sb-theme', __('re-download', 'sb-theme'))));
+            wp_die(sprintf(__('It looks like you\'re using incorrect %1$s pack! Click here to %2$s.', 'sb-theme'), '<strong>SB Theme Core</strong>', sprintf('<a target="_blank" href="%1$s">%2$s</a>', 'https://github.com/skylarkcob/sb-theme/', __('re-download', 'sb-theme'))));
         }
     }
 }
@@ -35,12 +35,31 @@ function sb_theme_get_default_theme() {
     return $wp_theme;
 }
 
+function sb_theme_check_admin_notices () {
+    if(!defined('SB_CORE_VERSION') && defined('SB_THEME_VERSION')) {
+        unset($_GET['activated']);
+        $my_theme = wp_get_theme();
+        $theme_name = $my_theme->get('Name');
+        printf('<div class="error"><p><strong>' . __('Error', 'sb-theme') . ':</strong> ' . __('The theme with name %1$s will be deactivated because of missing %2$s plugin', 'sb-theme') . '.</p></div>', '<strong>' . $theme_name . '</strong>', sprintf('<a target="_blank" href="%s" style="text-decoration: none">SB Core</a>', 'https://wordpress.org/plugins/sb-core/'));
+        sb_theme_switch_to_default_theme();
+    } elseif(!class_exists('SB_Theme') && defined('SB_THEME_VERSION')) {
+        printf('<div class="error"><p><strong>' . __('Error', 'sb-theme') . ':</strong> ' . __('It looks like you\'re using incorrect %1$s pack! Click here to %2$s.', 'sb-theme') . '</p></div>', '<strong>SB Theme Core</strong>', sprintf('<a target="_blank" href="%1$s" style="text-decoration: none">%2$s</a>', 'https://github.com/skylarkcob/sb-theme/', __('re-download', 'sb-theme')));
+    }
+}
+if(!empty($GLOBALS['pagenow']) && 'themes.php' === $GLOBALS['pagenow']) {
+    add_action('admin_notices', 'sb_theme_check_admin_notices', 0);
+}
+
+function sb_theme_switch_to_default_theme() {
+    $theme = sb_theme_get_default_theme();
+    if(!empty($theme)) {
+        switch_theme($theme->get('TextDomain'));
+    }
+}
+
 function sb_theme_after_switch() {
-    if(!defined('SB_CORE_VERSION')) {
-        $theme = sb_theme_get_default_theme();
-        if(!empty($theme)) {
-            switch_theme($theme->get('TextDomain'));
-        }
+    if(!current_user_can('switch_themes')) {
+        return;
     }
     sb_theme_error_checking();
     if(is_admin() && defined('SB_CORE_VERSION')) {
