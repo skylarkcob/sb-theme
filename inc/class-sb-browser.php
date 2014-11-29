@@ -65,7 +65,7 @@ class SB_Browser {
         } elseif(self::is_firefox()) {
             $name = 'firefox';
         } elseif(self::is_chrome()) {
-            $name = 'crhome';
+            $name = 'chrome';
         } elseif(self::is_opera()) {
             $name = 'opera';
         } elseif(self::is_netscape_4()) {

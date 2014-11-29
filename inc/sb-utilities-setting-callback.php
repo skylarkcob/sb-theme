@@ -149,8 +149,24 @@ function sb_utilities_responsive_callback() {
 	SB_Field::switch_button($args);
 }
 
+function sb_utilities_setting_field_statistics() {
+    sb_theme_add_utilities_setting_field('sb_utilities_statistics', __('Statistics', 'sb-theme'), 'sb_utilities_statistics_callback');
+}
+
+function sb_utilities_statistics_callback() {
+    $value = SB_Option::get_utility('statistics');
+    $args = array(
+        'id' => 'sb_utilities_statistics',
+        'name' => 'sb_options[utilities][statistics]',
+        'value' => $value,
+        'description' => __('Turn on or turn off the function to add statistics on your site.', 'sb-theme')
+    );
+    SB_Field::switch_button($args);
+}
+
 function sb_utilities_setting_field_callback() {
 	sb_utilities_setting_field_responsive();
+    sb_utilities_setting_field_statistics();
     sb_utilities_setting_field_default_thumbnail();
     sb_utilities_setting_field_term_meta();
     sb_utilities_setting_field_shop();

@@ -21,8 +21,8 @@ require SB_THEME_INC_PATH . '/sb-theme-setting-callback.php';
 
 require SB_THEME_INC_PATH . '/sb-theme-lib.php';
 
+require SB_THEME_INC_PATH . '/sb-theme-hook.php';
+
 if(file_exists(SB_THEME_CUSTOM_PATH . '/sb-theme-custom.php')) {
     require SB_THEME_CUSTOM_PATH . '/sb-theme-custom.php';
 }
-
-require SB_THEME_INC_PATH . '/sb-theme-hook.php';

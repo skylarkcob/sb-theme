@@ -203,62 +203,7 @@ class SB_Theme {
     }
 
     public static function get_social_share_url($args = array()) {
-        $result = '';
-        $title = '';
-        $permalink = '';
-        $url = '';
-        $social_name = '';
-        $thumbnail = '';
-        $excerpt = '';
-        $language = SB_Option::get_default_language();
-        $twitter_account = '';
-        extract($args, EXTR_OVERWRITE);
-        if(empty($permalink)) {
-            $permalink = $url;
-        }
-        if(empty($twitter_account)) {
-            $twitter_account = SB_Option::get_theme_social('twitter');
-            $twitter_account = basename($twitter_account);
-        }
-        if(empty($twitter_account)) {
-            $twitter_account = 'skylarkcob';
-        }
-        switch($social_name) {
-            case 'facebook':
-                $url = 'https://www.facebook.com/sharer/sharer.php';
-                $url = add_query_arg('u', $permalink, $url);
-                $url = add_query_arg('t', $title, $url);
-                $result = $url;
-                break;
-            case 'googleplus':
-                $url = 'http://plusone.google.com/_/+1/confirm';
-                $url = add_query_arg('hl', $language, $url);
-                $url = add_query_arg('url', $permalink, $url);
-                $result = $url;
-                break;
-            case 'twitter':
-                $url = 'http://twitter.com/share';
-                $url = add_query_arg('url', $permalink, $url);
-                $url = add_query_arg('text', $title, $url);
-                $url = add_query_arg('via', $twitter_account, $url);
-                $result = $url;
-                break;
-            case 'pinterest':
-                $url = 'http://www.pinterest.com/pin/create/button';
-                $url = add_query_arg('media', $thumbnail, $url);
-                $url = add_query_arg('url', $permalink, $url);
-                $url = add_query_arg('description', $title . ' ' . $permalink, $url);
-                $result = $url;
-                break;
-            case 'zingme':
-                $url = 'http://link.apps.zing.vn/share';
-                $url = add_query_arg('t', $title, $url);
-                $url = add_query_arg('u', $permalink, $url);
-                $url = add_query_arg('desc', $excerpt, $url);
-                $result = $url;
-                break;
-        }
-        return $result;
+        return SB_Core::get_social_share_url($args);
     }
 
     public static function get_page_not_found_image_url() {
@@ -266,6 +211,10 @@ class SB_Theme {
             return;
         }
         return SB_CORE_URL . '/images/page-not-found.png';
+    }
+
+    public static function get_custom_image_url($name) {
+        return SB_THEME_CUSTOM_URL . '/images/' . $name;
     }
 
     public static function set_carousel_argument($args = array()) {

@@ -68,6 +68,133 @@ h6.poetry {
     text-indent: -9999px;
 }
 
+/* ======================= SOCIAL SHARE ======================= */
+
+.btn-social {
+    color: #fff;
+}
+
+.btn-facebook {
+    background-color: #3b5998;
+    border: 1px solid #344e86;
+}
+.btn-facebook:hover, .btn-facebook:focus, .btn-facebook:active, .btn-facebook.active, .open > .btn-facebook.dropdown-toggle {
+    background-color: #2d4373;
+    border: 1px solid #23345a;
+    color: #fff;
+}
+.btn-facebook:active, .btn-facebook.active, .open > .btn-facebook.dropdown-toggle {
+    background-image: none;
+}
+.btn-facebook.disabled, .btn-facebook.disabled:hover, .btn-facebook.disabled:focus, .btn-facebook.disabled:active, .btn-facebook.disabled.active, .btn-facebook[disabled], .btn-facebook[disabled]:hover, .btn-facebook[disabled]:focus, .btn-facebook[disabled]:active, .btn-facebook.active[disabled], fieldset[disabled] .btn-facebook, fieldset[disabled] .btn-facebook:hover, fieldset[disabled] .btn-facebook:focus, fieldset[disabled] .btn-facebook:active, fieldset[disabled] .btn-facebook.active {
+    background-color: #3b5998;
+    border: 1px solid #344e86;
+}
+.btn-facebook .badge {
+    background-color: #fff;
+    color: #3b5998;
+}
+.btn-twitter {
+    background-color: #26c4f1;
+    border: 1px solid #0fbdee;
+}
+.btn-twitter:hover, .btn-twitter:focus, .btn-twitter:active, .btn-twitter.active, .open > .btn-twitter.dropdown-toggle {
+    background-color: #0eaad6;
+    border: 1px solid #0c8fb5;
+    color: #fff;
+}
+.btn-twitter:active, .btn-twitter.active, .open > .btn-twitter.dropdown-toggle {
+    background-image: none;
+}
+.btn-twitter.disabled, .btn-twitter.disabled:hover, .btn-twitter.disabled:focus, .btn-twitter.disabled:active, .btn-twitter.disabled.active, .btn-twitter[disabled], .btn-twitter[disabled]:hover, .btn-twitter[disabled]:focus, .btn-twitter[disabled]:active, .btn-twitter.active[disabled], fieldset[disabled] .btn-twitter, fieldset[disabled] .btn-twitter:hover, fieldset[disabled] .btn-twitter:focus, fieldset[disabled] .btn-twitter:active, fieldset[disabled] .btn-twitter.active {
+    background-color: #26c4f1;
+    border: 1px solid #0fbdee;
+}
+.btn-twitter .badge {
+    background-color: #fff;
+    color: #26c4f1;
+}
+.btn-googleplus {
+    background-color: #e93f2e;
+    border: 1px solid #e52b18;
+}
+.btn-googleplus:hover, .btn-googleplus:focus, .btn-googleplus:active, .btn-googleplus.active, .open > .btn-googleplus.dropdown-toggle {
+    background-color: #ce2616;
+    border: 1px solid #ae2012;
+    color: #fff;
+}
+.btn-googleplus:active, .btn-googleplus.active, .open > .btn-googleplus.dropdown-toggle {
+    background-image: none;
+}
+.btn-googleplus.disabled, .btn-googleplus.disabled:hover, .btn-googleplus.disabled:focus, .btn-googleplus.disabled:active, .btn-googleplus.disabled.active, .btn-googleplus[disabled], .btn-googleplus[disabled]:hover, .btn-googleplus[disabled]:focus, .btn-googleplus[disabled]:active, .btn-googleplus.active[disabled], fieldset[disabled] .btn-googleplus, fieldset[disabled] .btn-googleplus:hover, fieldset[disabled] .btn-googleplus:focus, fieldset[disabled] .btn-googleplus:active, fieldset[disabled] .btn-googleplus.active {
+    background-color: #e93f2e;
+    border: 1px solid #e52b18;
+}
+.btn-googleplus .badge {
+    background-color: #fff;
+    color: #e93f2e;
+}
+.btn-pinterest {
+    background-color: #b81621;
+    border: 1px solid #a1131d;
+}
+.btn-pinterest:hover, .btn-pinterest:focus, .btn-pinterest:active, .btn-pinterest.active, .open > .btn-pinterest.dropdown-toggle {
+    background-color: #8a1119;
+    border: 1px solid #6b0d13;
+    color: #fff;
+}
+.btn-pinterest:active, .btn-pinterest.active, .open > .btn-pinterest.dropdown-toggle {
+    background-image: none;
+}
+.btn-pinterest.disabled, .btn-pinterest.disabled:hover, .btn-pinterest.disabled:focus, .btn-pinterest.disabled:active, .btn-pinterest.disabled.active, .btn-pinterest[disabled], .btn-pinterest[disabled]:hover, .btn-pinterest[disabled]:focus, .btn-pinterest[disabled]:active, .btn-pinterest.active[disabled], fieldset[disabled] .btn-pinterest, fieldset[disabled] .btn-pinterest:hover, fieldset[disabled] .btn-pinterest:focus, fieldset[disabled] .btn-pinterest:active, fieldset[disabled] .btn-pinterest.active {
+    background-color: #b81621;
+    border: 1px solid #a1131d;
+}
+.btn-pinterest .badge {
+    background-color: #fff;
+    color: #b81621;
+}
+.btn-linkedin {
+    background-color: #007bb6;
+    border: 1px solid #006a9d;
+}
+.btn-linkedin:hover, .btn-linkedin:focus, .btn-linkedin:active, .btn-linkedin.active, .open > .btn-linkedin.dropdown-toggle {
+    background-color: #005983;
+    border: 1px solid #00405f;
+    color: #fff;
+}
+.btn-linkedin:active, .btn-linkedin.active, .open > .btn-linkedin.dropdown-toggle {
+    background-image: none;
+}
+.btn-linkedin.disabled, .btn-linkedin.disabled:hover, .btn-linkedin.disabled:focus, .btn-linkedin.disabled:active, .btn-linkedin.disabled.active, .btn-linkedin[disabled], .btn-linkedin[disabled]:hover, .btn-linkedin[disabled]:focus, .btn-linkedin[disabled]:active, .btn-linkedin.active[disabled], fieldset[disabled] .btn-linkedin, fieldset[disabled] .btn-linkedin:hover, fieldset[disabled] .btn-linkedin:focus, fieldset[disabled] .btn-linkedin:active, fieldset[disabled] .btn-linkedin.active {
+    background-color: #007bb6;
+    border: 1px solid #006a9d;
+}
+.btn-linkedin .badge {
+    background-color: #fff;
+    color: #007bb6;
+}
+.btn-email {
+    background-color: #0a88ff;
+    border: 1px solid #007bf0;
+}
+.btn-email:hover, .btn-email:focus, .btn-email:active, .btn-email.active, .open > .btn-email.dropdown-toggle {
+    background-color: #006ed6;
+    border: 1px solid #005cb2;
+    color: #fff;
+}
+.btn-email:active, .btn-email.active, .open > .btn-email.dropdown-toggle {
+    background-image: none;
+}
+.btn-email.disabled, .btn-email.disabled:hover, .btn-email.disabled:focus, .btn-email.disabled:active, .btn-email.disabled.active, .btn-email[disabled], .btn-email[disabled]:hover, .btn-email[disabled]:focus, .btn-email[disabled]:active, .btn-email.active[disabled], fieldset[disabled] .btn-email, fieldset[disabled] .btn-email:hover, fieldset[disabled] .btn-email:focus, fieldset[disabled] .btn-email:active, fieldset[disabled] .btn-email.active {
+    background-color: #0a88ff;
+    border: 1px solid #007bf0;
+}
+.btn-email .badge {
+    background-color: #fff;
+    color: #0a88ff;
+}
+
 .site-logo.image a.image-link {
     text-indent: 0;
 }
@@ -689,6 +816,9 @@ img {
 .margin-bottom-40 {
     margin-bottom: 40px;
 }
+.margin-top-10 {
+    margin-top: 10px;
+}
 .margin-top-20 {
     margin-top: 20px;
 }
@@ -917,8 +1047,6 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
 }
 
 .widget .sb-post-widget,
-.comment-list li,
-#respond,
 .sb-post-widget ol {
     overflow: hidden;
 }
@@ -1372,10 +1500,6 @@ h3.sitemap-node-title {
 .search-form .search-field {
     max-width: 100%;
 }
-.sb-not-found .search-submit,
-.sb-no-post .search-submit {
-    height: 34px;
-}
 
 .sb-no-post .search-field {
     margin-right: 10px;
@@ -1453,198 +1577,7 @@ h3.sitemap-node-title {
     margin-bottom: 10px;
 }
 
-.comment-respond .math-captcha-form span {
-    display: block;
-    margin-top: 5px;
-}
 
-.comment-respond input.mc-input {
-    margin-top: -2px;
-}
-
-.sb-comment-area {
-    background-color: #fff;
-    color: #757575;
-    padding: 15px 30px;
-}
-
-.comments-area .comments-title {
-    border-bottom: 1px solid #ececec;
-    letter-spacing: -0.2px;
-    padding: 20px 0 10px;
-    text-transform: uppercase;
-}
-
-.sb-comment-area .yours {
-    float: right;
-}
-
-.sb-comment-area .comment-author .avatar {
-    border: 1px solid #c8c8c8;
-    float: left;
-    height: 45px;
-    margin-right: 10px;
-    padding: 2px;
-    width: 45px;
-}
-
-.sb-comment-area .comment-content {
-    font: 13px 'Open Sans',sans-serif;
-    margin-left: 60px;
-}
-
-.sb-comment-area .says {
-    display: none;
-}
-
-.sb-comment-area .fn a {
-    color: #000;
-    display: block;
-    font-size: 14px;
-    font-style: normal;
-    line-height: 17px;
-}
-
-.sb-comment-area .comment-meta a {
-    color: #c5c5c5;
-    font-size: 13px;
-    line-height: 17px;
-}
-
-.sb-comment-area .comment-meta a:hover {
-    color: #000;
-}
-
-.sb-comment-area .comment-body p {
-    line-height: 20px;
-    margin-bottom: 20px;
-    margin-top: 10px;
-}
-
-.comments-area li {
-    border-bottom: 1px solid #ececec;
-    margin-top: 10px;
-    padding-bottom: 15px;
-}
-
-.comments-area li .comment-respond {
-    margin-top: 20px;
-}
-
-.comments-area li .comment-respond textarea {
-    max-width: 100%;
-    width: 100%;
-}
-
-.comment-list li .comment-reply-title {
-    margin: 0;
-}
-
-.comment-respond #cancel-comment-reply-link {
-    display: inline-block;
-    position: relative;
-    text-indent: -9999px;
-}
-
-.comment-respond #cancel-comment-reply-link:before {
-    content: "x";
-    display: block;
-    line-height: 2em;
-    position: absolute;
-    right: 9px;
-    text-indent: 1px;
-    top: 0;
-}
-
-.comment-respond .comment-reply-title > small {
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-
-.sb-comment-area .children li {
-    margin-left: 0;
-}
-
-.sb-comment-area .children {
-    border-top: 1px solid #ececec;
-    margin-top: 15px;
-}
-
-.sb-comment-area .comment.parent {
-    border-bottom: medium none;
-}
-
-.sb-comment-area .comment-edit-link {
-    bottom: 0;
-    left: 0;
-    position: absolute;
-}
-
-.sb-comment-area .comment-body .reply {
-    bottom: 0;
-    position: absolute;
-    right: 10px;
-}
-
-.sb-comment-area .comment-body .reply a {
-    background-color: #464646;
-    color: #fff;
-    display: block;
-    font-size: 11px;
-    min-width: 50px;
-    padding: 5px 10px;
-    text-align: center;
-}
-
-.sb-comment-area .comment-body .reply a:hover {
-    background-color: #5e5e5e;
-}
-
-.sb-comment-area .comment-respond input.sb-author-info {
-    display: block;
-    height: 30px;
-    min-width: 300px;
-    padding: 5px;
-}
-
-.sb-comment-area .comment-respond textarea,
-.sb-comment-area .comment-respond input.sb-author-info {
-    font: 13px/1.4em "Helvetica Neue",Helvetica,Arial,sans-serif;
-}
-
-.sb-comment-area .comment-respond input.sb-author-info,
-.sb-comment-area .comment-respond input.mc-input,
-.sb-comment-area .comment-respond textarea {
-    background-color: #f1f0f0;
-    border: 1px solid #dedede;
-    border-radius: 0;
-    color: #5d5c5c;
-}
-
-.sb-comment-area .comment-respond label,
-.sb-comment-area .comment-respond .required {
-    display: none;
-}
-
-.sb-comment-area .comment-respond input.sb-author-info:focus,
-.sb-comment-area .comment-respond input.mc-input:focus,
-.sb-comment-area .comment-respond textarea:focus {
-    background-color: #fafafa;
-}
-
-.sb-comment-area .comment-respond textarea {
-    width: 600px;
-}
-
-.comments-area .comment-body {
-    padding-bottom: 28px;
-    position: relative;
-}
-
-.sb-comment-area .comment-notes.before {
-    font-size: 13px;
-}
 
 input:focus::-webkit-input-placeholder { color:transparent; }
 input:focus:-moz-placeholder { color:transparent; }

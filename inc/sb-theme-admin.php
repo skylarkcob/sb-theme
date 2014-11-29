@@ -2,12 +2,18 @@
 function sb_theme_menu() {
     SB_Admin_Custom::add_submenu_page(__('Theme Settings', 'sb-theme'), 'sb_theme', array('SB_Admin_Custom', 'setting_page_callback'));
     SB_Admin_Custom::add_submenu_page('SB Utilities', 'sb_utilities', array('SB_Admin_Custom', 'setting_page_callback'));
+    if(SB_Option::statistics_enabled()) {
+        SB_Admin_Custom::add_submenu_page('SB Statistics', 'sb_statistics', array('SB_Admin_Custom', 'setting_page_callback'));
+    }
 }
 add_action('sb_admin_menu', 'sb_theme_menu');
 
 function sb_theme_setting_tab($tabs) {
     $tabs['sb_theme'] = array('title' => __('Theme Settings', 'sb-theme'), 'section_id' => 'sb_theme_setting_section', 'type' => 'theme');
     $tabs['sb_utilities'] = array('title' => 'SB Utilities', 'section_id' => 'sb_utilities_section', 'type' => 'theme');
+    if(SB_Option::statistics_enabled()) {
+        $tabs['sb_statistics'] = array('title' => 'SB Statistics', 'section_id' => 'sb_statistics_section', 'type' => 'statistics');
+    }
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_theme_setting_tab');
@@ -44,6 +50,12 @@ function sb_utilities_setting_field() {
     do_action('sb_utilities_setting_field');
 }
 add_action('sb_admin_init', 'sb_utilities_setting_field');
+
+function sb_statistics_setting_field() {
+    SB_Admin_Custom::add_section('sb_statistics_section', __('SB Statistics options page', 'sb-theme'), 'sb_statistics');
+    do_action('sb_statistics_setting_field');
+}
+add_action('sb_admin_init', 'sb_statistics_setting_field');
 
 function sb_theme_default_language_callback() {
     $lang = SB_Option::get_default_language();

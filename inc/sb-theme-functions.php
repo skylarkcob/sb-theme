@@ -57,6 +57,10 @@ function sb_theme_switch_to_default_theme() {
     }
 }
 
+function sb_theme_check_core() {
+    return defined('SB_CORE_VERSION');
+}
+
 function sb_theme_after_switch() {
     if(!current_user_can('switch_themes')) {
         return;
@@ -83,6 +87,7 @@ if(!isset($content_width)) {
 
 function sb_theme_body_class($classes) {
     $name = 'browser-' . SB_Browser::get_name();
+    $name = trim($name, '-');
     $classes[] = $name;
     if(SB_Detect::is_mobile()) {
         $classes[] = 'mobile';

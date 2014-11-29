@@ -41,6 +41,20 @@ function sb_theme_setting_field_category_widget() {
     sb_theme_add_setting_field('sb_theme_category_widget', __('Category widget', 'sb-theme'), 'sb_theme_category_widget_callback');
 }
 
+function sb_theme_taxonomy_channel_ui_connect_callback() {
+    $args = array(
+        'option_name' => 'channel_ui_connect',
+        'taxonomy' => 'channel'
+    );
+    SB_Field::sortble_term($args);
+}
+
+function sb_theme_taxonomy_channel_ui_connect($title = '') {
+    if(empty($title)) {
+        $title = __('Channel widget', 'sb-theme');
+    }
+    sb_theme_add_setting_field('sb_theme_taxonomy_channel_ui_connect', $title, 'sb_theme_taxonomy_channel_ui_connect_callback');
+}
 
 function sb_theme_rss_feed_callback() {
     $id = 'sb_theme_rss_feed';
