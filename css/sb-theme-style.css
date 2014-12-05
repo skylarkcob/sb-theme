@@ -1105,6 +1105,7 @@ button,input,select,textarea{border:1px solid #CCC;border-radius:3px;padding:.42
     padding: 10px;
     position: fixed;
     right: 20px;
+    z-index: 499;
 }
 
 .go-top-button:hover {
@@ -1185,6 +1186,7 @@ input[type="submit"]:hover {
     top: 5px;
     visibility: visible;
     width: 160px;
+    z-index: 498;
 }
 .sb-float-ads.left {
     left: 0;
