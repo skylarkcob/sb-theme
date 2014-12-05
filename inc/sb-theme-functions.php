@@ -150,9 +150,16 @@ function sb_theme_register_sidebar($sidebar_id, $sidebar_name, $sidebar_descript
 function sb_theme_widgets_init() {
     sb_theme_register_sidebar('primary', 'Primary Sidebar', __('Main sidebar on your site.', 'sb-theme'));
     sb_theme_register_sidebar('secondary', 'Secondary Sidebar', __('Secondary sidebar on your site.', 'sb-theme'));
+    if(SB_Option::utility_enabled('leaderboard_ads')) {
+        sb_theme_register_sidebar('leaderboard-ads', 'Leaderboard ads', __('The avertising on top of site.', 'sb-theme'));
+    }
+    if(SB_Option::utility_enabled('float_ads')) {
+        sb_theme_register_sidebar('float-ads-left', 'Float ads left', __('The avertising on the left of site.', 'sb-theme'));
+        sb_theme_register_sidebar('float-ads-right', 'Float ads right', __('The avertising on the right of site.', 'sb-theme'));
+    }
     sb_theme_register_sidebar('footer', 'Footer Widget Area', __('Appears in the footer section of the site.', 'sb-theme'));
 }
-add_action( 'widgets_init', 'sb_theme_widgets_init' );
+add_action('widgets_init', 'sb_theme_widgets_init');
 
 function sb_get_template_part($slug, $name = null) {
     $slug = 'sb-theme/inc/' . $slug;
@@ -248,6 +255,9 @@ function sb_theme_scroll_top() {
     $scroll_top = SB_Option::get_scroll_top();
     if($scroll_top) {
         echo '<a id="sb-scroll-top" href="javascript:;" class="go-top-button"><i class="fa fa-chevron-up"></i></a>';
+    }
+    if(SB_Option::utility_enabled('float_ads')) {
+        sb_theme_get_content('content-float-ads');
     }
 }
 add_action('wp_footer', 'sb_theme_scroll_top');

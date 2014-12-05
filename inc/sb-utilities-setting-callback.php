@@ -164,6 +164,36 @@ function sb_utilities_statistics_callback() {
     SB_Field::switch_button($args);
 }
 
+function sb_utilities_setting_field_float_ads() {
+    sb_theme_add_utilities_setting_field('sb_utilities_float_ads', __('Float ads', 'sb-theme'), 'sb_utilities_float_ads_callback');
+}
+
+function sb_utilities_float_ads_callback() {
+    $value = SB_Option::get_utility('float_ads');
+    $args = array(
+        'id' => 'sb_utilities_float_ads',
+        'name' => SB_Option::build_sb_utility_option_name(array('float_ads')),
+        'value' => $value,
+        'description' => __('Turn on or turn off the float ads on your site.', 'sb-theme')
+    );
+    SB_Field::switch_button($args);
+}
+
+function sb_utilities_setting_field_leaderboard_ads() {
+    sb_theme_add_utilities_setting_field('sb_utilities_leaderboard_ads', __('Leaderboard ads', 'sb-theme'), 'sb_utilities_leaderboard_ads_callback');
+}
+
+function sb_utilities_leaderboard_ads_callback() {
+    $value = SB_Option::get_utility('leaderboard_ads');
+    $args = array(
+        'id' => 'sb_utilities_leaderboard_ads',
+        'name' => SB_Option::build_sb_utility_option_name(array('leaderboard_ads')),
+        'value' => $value,
+        'description' => __('Turn on or turn off the leaderboard ads on your site.', 'sb-theme')
+    );
+    SB_Field::switch_button($args);
+}
+
 function sb_utilities_setting_field_callback() {
 	sb_utilities_setting_field_responsive();
     sb_utilities_setting_field_statistics();
@@ -174,6 +204,8 @@ function sb_utilities_setting_field_callback() {
     sb_utilities_setting_field_jquery_marquee();
     sb_utilities_setting_field_facebook_fanpage();
     sb_utilities_setting_field_category_widget();
+    sb_utilities_setting_field_leaderboard_ads();
+    sb_utilities_setting_field_float_ads();
     sb_utilities_setting_field_social();
     sb_utilities_setting_field_footer_text();
 }

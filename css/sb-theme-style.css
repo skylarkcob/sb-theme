@@ -1183,31 +1183,45 @@ input[type="submit"]:hover {
     overflow: hidden;
     position: fixed;
     top: 5px;
-    visibility: hidden;
-    width: 100%;
+    visibility: visible;
+    width: 160px;
 }
-
+.sb-float-ads.left {
+    left: 0;
+}
 .admin-bar .sb-float-ads {
     top: 38px;
 }
-
+.sb-float-ads.right {
+    right: 0;
+}
 .sb-post-widget ol {
 
 }
-
+.sb-ads.leaderboard-ads > *,
+.sb-float-ads > * {
+    display: none;
+}
 .sb-float-ads-left {
     left: 0;
 }
-
+.sb-ads.leaderboard-ads > *:first-child,
+.sb-float-ads > *:first-child {
+    display: block;
+}
 .sb-float-ads-right {
     right: 0;
 }
-
+.sb-float-ads.left img {
+    float: right;
+}
 .sb-float-ads .float-ads-inner {
     position: absolute;
     visibility: visible;
 }
-
+.sb-float-ads.right img {
+    float: left;
+}
 .sb-float-ads-left .float-ads-inner {
     left: 50%;
     margin-left: -625px;
@@ -1378,7 +1392,6 @@ div.bbp-breadcrumb {
 .widget i {
     color: #999;
 }
-
 .widget .post-meta {
     margin-top: 10px;
 }
@@ -1690,16 +1703,13 @@ input:focus:-ms-input-placeholder { color:transparent; }
     padding: 0;
 }
 
-.sb-ads.leaderboard,
-.sb-ads.leaderboard .widget {
+.sb-ads.leaderboard-ads,
+.sb-ads.leaderboard-ads .widget {
     height: 90px;
     width: 728px;
 }
-
-.sb-ads.leaderboard {
+.sb-ads.leaderboard-ads {
     float: right;
-    margin-bottom: 15px;
-    margin-top: 15px;
 }
 
 .site-branding {

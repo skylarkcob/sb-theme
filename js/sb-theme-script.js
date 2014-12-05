@@ -78,4 +78,22 @@
         });
     })();
 
+    // Float ads
+    (function(){
+        var content_container = $('.sb-site'),
+            container_width = content_container.width(),
+            window_width = window.innerWidth,
+            float_ads_left = $('.sb-float-ads.left'),
+            float_ads_right = $('.sb-float-ads.right'),
+            margin_number = 0,
+            padding_number = 0;
+        if((window_width - 20) <= container_width) {
+            content_container = $('.sb-wrap.container');
+            container_width = content_container.width();
+        }
+        margin_number = (container_width/2) + (float_ads_left.width() + parseInt(content_container.css('padding-left')) + parseInt(content_container.css('padding-right')));
+        float_ads_left.css({'left': '50%', 'margin-left': '-' + margin_number + 'px'});
+        float_ads_right.css({'right': '50%', 'margin-right': '-' + margin_number + 'px'});
+    })();
+
 })(jQuery);

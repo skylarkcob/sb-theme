@@ -89,6 +89,18 @@ class SB_Theme {
         }
     }
 
+    public static function the_leaderboard_ads() {
+        self::the_ads_widget_area('leaderboard-ads');
+    }
+
+    public static function the_ads_widget_area($name) {
+        $class = 'sb-ads';
+        $class = SB_PHP::add_string_with_space_before($class, $name);
+        echo '<div class="' . $class . '">';
+        dynamic_sidebar($name);
+        echo '</div>';
+    }
+
     public static function get_text($en, $vi) {
         return sprintf(__('<!--:en-->%1$s<!--:--><!--:vi-->%2$s<!--:-->'), $en, $vi);
     }
