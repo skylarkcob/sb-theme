@@ -96,6 +96,9 @@ function sb_theme_body_class($classes) {
     }
     if(is_singular()) {
         $classes[] = 'sb-singular';
+        if(!is_page()) {
+            $classes[] = 'sb-singular-post';
+        }
     }
     if(is_404()) {
         $classes[] = 'sb-not-found';
@@ -177,6 +180,10 @@ function sb_get_custom_template_part($slug, $name = null) {
 
 function sb_get_custom_loop($slug, $name = null) {
     sb_get_custom_template_part('loop/' . $slug, $name);
+}
+
+function sb_get_custom_meta_box($slug, $name = null) {
+    sb_get_custom_template_part('meta-box/' . $slug, $name);
 }
 
 function sb_get_custom_content($slug, $name = null) {

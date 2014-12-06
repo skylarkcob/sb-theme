@@ -38,8 +38,8 @@
         }
     };
 
+    // Scroll top button
     (function(){
-        // Nút trở về đầu trang
         var scrollToTop = $( '#sb-scroll-top'),
             scrollPositionShown = 100,
             currentPosition = _window.scrollTop();
@@ -69,6 +69,7 @@
         }
     })();
 
+    // Mobile menu
     (function(){
         $('div.sb-mobile-menu').css({'min-height': window.innerHeight});
         $('.mobile-menu-button').on('click', function(e){

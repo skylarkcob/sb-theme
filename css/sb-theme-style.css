@@ -73,10 +73,13 @@ h6.poetry {
 .btn-social {
     color: #fff;
 }
-
+.sb-social-share li:first-child {
+    padding-left: 0;
+}
 .btn-facebook {
     background-color: #3b5998;
     border: 1px solid #344e86;
+    color: #fff;
 }
 .btn-facebook:hover, .btn-facebook:focus, .btn-facebook:active, .btn-facebook.active, .open > .btn-facebook.dropdown-toggle {
     background-color: #2d4373;
@@ -194,10 +197,16 @@ h6.poetry {
     background-color: #fff;
     color: #0a88ff;
 }
-
-.site-logo.image a.image-link {
-    text-indent: 0;
+.sb-social-share li:last-child {
+    padding-right: 0;
 }
+.sb-social-share li {
+    padding-left: 0;
+}
+.sb-social-share {
+    padding: 10px 0;
+}
+
 
 .wpcf7-textarea {
     min-width: 80%;
@@ -268,7 +277,9 @@ a:focus {
 .icon-right {
     margin-left: 8px;
 }
-
+.icon-grey {
+    color: #999;
+}
 .icon-left {
     margin-right: 5px;
 }
@@ -711,6 +722,19 @@ img {
     top: 0;
     width: 240px;
     z-index: 1001;
+}
+
+/* ========== LIST ========== */
+
+.list-square {
+    list-style: outside none square;
+}
+.list-no-padding {
+    padding: 0 0 0 15px;
+}
+
+.no-margin {
+    margin: 0;
 }
 
 .admin-bar .sb-mobile-sidebar {
@@ -1721,7 +1745,9 @@ input:focus:-ms-input-placeholder { color:transparent; }
 .logo-ads {
     overflow: hidden;
 }
-
+.site-logo.image a.image-link {
+    text-indent: 0;
+}
 .widget-area .widget_sb_banner {
     background: none repeat scroll 0 0 transparent !important;
     border: medium none !important;

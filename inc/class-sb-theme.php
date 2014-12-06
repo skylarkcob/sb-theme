@@ -53,10 +53,18 @@ class SB_Theme {
         }
     }
 
+    public static function add_meta_box($args = array()) {
+        $meta_box = new SB_Meta_Box($args);
+    }
+
     public static function the_paginate($args = array()) {
         if(function_exists('sb_paginate')) {
             sb_paginate($args);
         }
+    }
+
+    public static function the_social_share_button() {
+        sb_theme_get_content('content-social-share');
     }
 
     public static function the_archive_title() {

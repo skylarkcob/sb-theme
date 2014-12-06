@@ -36,6 +36,7 @@ class SB_HW {
 
     public static function the_project_price($project_id) {
         $price = self::get_project_price($project_id);
+        $price = floatval($price);
         $price = number_format($price, 0, ',', '.') . '₫';
         echo $price;
     }

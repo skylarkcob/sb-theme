@@ -194,6 +194,21 @@ function sb_utilities_leaderboard_ads_callback() {
     SB_Field::switch_button($args);
 }
 
+function sb_utilities_setting_field_scroll_top() {
+    sb_theme_add_utilities_setting_field('sb_utilities_scroll_top', __('Scroll top', 'sb-theme'), 'sb_utilities_scroll_top_callback');
+}
+
+function sb_utilities_scroll_top_callback() {
+    $value = SB_Option::get_utility('scroll_top');
+    $args = array(
+        'id' => 'sb_utilities_scroll_top',
+        'name' => SB_Option::build_sb_utility_option_name(array('scroll_top')),
+        'value' => $value,
+        'description' => __('Turn on or turn off the scroll top button on your site.', 'sb-theme')
+    );
+    SB_Field::switch_button($args);
+}
+
 function sb_utilities_setting_field_callback() {
 	sb_utilities_setting_field_responsive();
     sb_utilities_setting_field_statistics();
@@ -207,6 +222,7 @@ function sb_utilities_setting_field_callback() {
     sb_utilities_setting_field_leaderboard_ads();
     sb_utilities_setting_field_float_ads();
     sb_utilities_setting_field_social();
+    sb_utilities_setting_field_scroll_top();
     sb_utilities_setting_field_footer_text();
 }
 add_action('sb_utilities_setting_field', 'sb_utilities_setting_field_callback');
