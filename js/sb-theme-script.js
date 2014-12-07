@@ -2,8 +2,8 @@
     var body = $('body'),
         _window = $(window);
 
-    window.sb_switch_loading = function (value) {
-        var loading = $('div.loading');
+    window.sb_switch_loading = function (value, selector) {
+        var loading = selector || $('div.loading');
         if(value) {
             loading.removeClass('hidden');
             loading.addClass('visible');
