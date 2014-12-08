@@ -31,7 +31,11 @@ class SB_HW {
     }
 
     public static function get_project_price($project_id) {
-        return SB_Post::get_meta($project_id, 'wpcf-project-price');
+        $price = SB_Post::get_meta($project_id, 'wpcf-project-price');
+        if(empty($price)) {
+            $price = SB_Post::get_sb_meta($project_id, 'project_price');
+        }
+        return $price;
     }
 
     public static function the_project_price($project_id) {
@@ -63,15 +67,26 @@ class SB_HW {
         $meta = SB_Post::get_meta($post_id, 'wpcf-full-thumbnail');
         $result = SB_PHP::get_first_image($meta);
         $result = str_replace('project/wp-content', 'wp-content', $result);
+        if(empty($result)) {
+            $result = SB_Post::get_sb_meta($post_id, 'project_full_image');
+        }
         return $result;
     }
 
     public static function get_project_id($post_id) {
-        return SB_Post::get_meta($post_id, 'wpcf-project-id');
+        $id = SB_Post::get_meta($post_id, 'wpcf-project-id');
+        if(empty($id)) {
+            $id = SB_Post::get_sb_meta($post_id, 'project_id');
+        }
+        return $id;
     }
 
     public static function get_project_short_description($post_id) {
-        return SB_Post::get_meta($post_id, 'wpcf-short-description');
+        $description = SB_Post::get_meta($post_id, 'wpcf-short-description');
+        if(empty($description)) {
+            $description = SB_Post::get_sb_meta($post_id, 'project_description');
+        }
+        return $description;
     }
 
     public static function get_post_taxonomy_name() {

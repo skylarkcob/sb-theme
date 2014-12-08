@@ -2501,6 +2501,16 @@ blockquote {
     font-size: 100%;
 }
 
+/* =============== META SLIDER =============== */
+
+.metaslider .slides img {
+
+}
+
+.metaslider .flexslider {
+    margin: 0 !important;
+}
+
 /* =============== LOADING =============== */
 
 .loading-container {
