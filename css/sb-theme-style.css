@@ -68,6 +68,39 @@ h6.poetry {
     text-indent: -9999px;
 }
 
+/* ======================= SINGLE ======================= */
+
+.sb-codes {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.arg-type {
+    color: #cd2f23;;
+}
+
+.arg-name {
+    color: #0f55c8;
+}
+
+.arg-default {
+    color: #000;
+}
+
+.reference-function {
+    margin-bottom: 24px !important;
+}
+
+.reference-function a {
+    color: #24831d;
+    font-family: monospace;
+    font-size: 20px;
+}
+
+.reference-function a:hover {
+    border-bottom: 1px dotted #21759b;
+}
+
 /* ======================= SOCIAL SHARE ======================= */
 
 .btn-social {

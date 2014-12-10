@@ -30,6 +30,198 @@ class SB_HW {
         return self::get_projects($args);
     }
 
+    public static function get_reference_function($post_id) {
+        $function = SB_Post::get_sb_meta($post_id, 'reference_function');
+        return $function;
+    }
+
+    public static function the_reference_function($post_id) {
+        $value = do_shortcode(self::get_reference_function($post_id));
+        if(empty($value)) {
+            return;
+        }
+        ?>
+        <h2 class="reference-function">
+            <a href="<?php echo get_permalink($post_id); ?>"><?php echo $value; ?></a>
+        </h2>
+        <?php
+    }
+
+    public static function get_reference_description($post_id) {
+        $desc = SB_Post::get_sb_meta($post_id, 'reference_description');
+        return $desc;
+    }
+
+    public static function the_reference_description($post_id) {
+        $value = self::get_reference_description($post_id);
+        if(empty($value)) {
+            return;
+        }
+        ?>
+        <section class="description">
+            <p><?php echo $value; ?></p>
+        </section>
+        <?php
+    }
+
+    public static function get_reference_long_description($post_id) {
+        $desc = SB_Post::get_sb_meta($post_id, 'reference_long_description');
+        $desc = wpautop($desc);
+        return $desc;
+    }
+
+    public static function the_reference_long_description($post_id) {
+        $value = self::get_reference_long_description($post_id);
+        if(empty($value)) {
+            return;
+        }
+        ?>
+        <section class="long-description">
+            <?php echo $value; ?>
+        </section>
+    <?php
+    }
+
+    public static function get_reference_return($post_id) {
+        $value = SB_Post::get_sb_meta($post_id, 'reference_return');
+        return $value;
+    }
+
+    public static function the_reference_return($post_id) {
+        $value = self::get_reference_return($post_id);
+        if(empty($value)) {
+            return;
+        }
+        ?>
+        <section class="return">
+            <p><strong><?php _e('Giá trị trả về', 'sb-theme'); ?>:</strong> <?php echo $value; ?></p>
+        </section>
+    <?php
+    }
+
+    public static function get_reference_parameters($post_id) {
+        $value = SB_Post::get_sb_meta($post_id, 'reference_parameters');
+        $value = do_shortcode($value);
+        return $value;
+    }
+
+    public static function the_reference_parameters($post_id) {
+        $value = self::get_reference_parameters($post_id);
+        if(empty($value)) {
+            return;
+        }
+        ?>
+        <hr>
+        <section class="parameters">
+            <h2><?php _e('Tham số đầu vào', 'sb-theme'); ?></h2>
+            <?php echo $value; ?>
+        </section>
+        <?php
+    }
+
+    public static function get_reference_explanation($post_id) {
+        $value = SB_Post::get_sb_meta($post_id, 'reference_explanation');
+        $value = apply_filters('the_content', $value);
+        return $value;
+    }
+
+    public static function the_reference_explanation($post_id) {
+        $value = self::get_reference_explanation($post_id);
+        if(empty($value)) {
+            return;
+        }
+        ?>
+        <section class="explanation">
+            <?php echo $value; ?>
+        </section>
+    <?php
+    }
+
+    public static function get_reference_source($post_id) {
+        $value = SB_Post::get_sb_meta($post_id, 'reference_source');
+        $value = apply_filters('the_content', $value);
+        return $value;
+    }
+
+    public static function the_reference_source($post_id) {
+        $value = self::get_reference_source($post_id);
+        if(empty($value)) {
+            return;
+        }
+        ?>
+        <hr>
+        <section class="source-content">
+            <h2><?php _e('Nguồn', 'sb-theme'); ?></h2>
+            <?php echo $value; ?>
+        </section>
+    <?php
+    }
+
+    public static function get_reference_example($post_id) {
+        $value = SB_Post::get_sb_meta($post_id, 'reference_example');
+        $value = apply_filters('the_content', $value);
+        return $value;
+    }
+
+    public static function the_reference_example($post_id) {
+        $value = self::get_reference_example($post_id);
+        if(empty($value)) {
+            return;
+        }
+        ?>
+        <hr>
+        <section class="example">
+            <h2><?php _e('Ví dụ', 'sb-theme'); ?></h2>
+            <?php echo $value; ?>
+        </section>
+    <?php
+    }
+
+    public static function get_reference_loop_description($post_id) {
+        $desc = self::get_reference_description($post_id);
+        if(empty($desc)) {
+            $desc = get_the_excerpt();
+        }
+        return $desc;
+    }
+
+    public static function get_reference_first_category($post_id) {
+        $cat = SB_Post::get_first_term($post_id, 'rcat');
+        return $cat;
+    }
+
+    public static function the_reference_loop_description($post_id) {
+        $desc = self::get_reference_description($post_id);
+        $first_cat = self::get_reference_first_category($post_id);
+        $cat_name = '';
+        if(!SB_Core::is_error($first_cat)) {
+            $cat_name = SB_PHP::lowercase($first_cat->name);
+        }
+        $prefix = '';
+        if('functions' == $cat_name) {
+            $prefix = __('Hàm', 'sb-theme');
+        } elseif('classes' == $cat_name) {
+            $prefix = __('Lớp', 'sb-theme');
+        } elseif('hooks' == $cat_name) {
+            $prefix = __('Hook', 'sb-theme');
+        } elseif('methods' == $cat_name) {
+            $prefix = __('Phương thức', 'sb-theme');
+        } elseif('codex' == $cat_name) {
+            //$prefix = __('Hướng dẫn', 'sb-theme');
+        }
+        if(empty($desc)) {
+            $desc = get_the_excerpt();
+        }
+        ?>
+        <p>
+            <?php if(!empty($prefix)) : ?>
+                <strong><?php echo $prefix; ?>: </strong>
+            <?php endif; ?>
+            <?php echo $desc; ?>
+        </p>
+        <?php
+    }
+
     public static function get_project_price($project_id) {
         $price = SB_Post::get_meta($project_id, 'wpcf-project-price');
         if(empty($price)) {
