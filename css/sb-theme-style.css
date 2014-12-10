@@ -1301,10 +1301,10 @@ body {
     color: #ffffff;
     cursor: pointer;
     font-size: 3rem;
-    margin: 0 1rem;
+    margin: 0;
     text-align: center;
     visibility: visible;
-    width: 45px;
+    width: auto;
     z-index: 999;
 }
 .sb-mobile-menu {
@@ -1312,6 +1312,7 @@ body {
     display: block;
     height: 100%;
     margin-top: 0 !important;
+    max-width: 250px;
     position: absolute;
     top: 0;
     width: 250px;
@@ -1336,10 +1337,10 @@ body {
     top: 0;
 }
 .sb-mobile-menu.left .mobile-menu-button {
-    right: -65px;
+    right: -40px;
 }
 .sb-mobile-menu.right .mobile-menu-button {
-    left: -65px;
+    left: -40px;
 }
 .sb-mobile-menu ul.sf-menu {
     width: 100%;
@@ -1349,6 +1350,15 @@ body {
     display: block;
     float: none;
     width: 100%;
+}
+.sb-mobile-menu ul.sf-menu > li {
+    border: medium none;
+    padding-left: 0;
+    padding-right: 0;
+}
+.sb-mobile-menu ul.sf-menu > li a {
+    border-left: medium none;
+    border-right: medium none;
 }
 .sb-mobile-menu {
     transition: transform 500ms ease 0s;
@@ -1363,6 +1373,7 @@ body {
 .sb-mobile-menu .sub-menu li a,
 .sb-mobile-menu .sf-menu > li > a {
     border-bottom: 1px solid #262626;
+    border-top: medium none;
     color: rgba(255, 255, 255, 0.7);
     display: block;
     margin: 0;
@@ -1378,9 +1389,7 @@ body {
 .sb-mobile-menu .sf-menu > li.current-menu-item {
     background: none repeat scroll 0 0 transparent;
 }
-.sb-mobile-menu .sf-menu > li:hover > a {
-    border: medium none;
-}
+
 .sb-mobile-menu .sub-menu .sub-menu,
 .sb-mobile-menu .sub-menu {
     background: none repeat scroll 0 0 transparent;
