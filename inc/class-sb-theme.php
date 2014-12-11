@@ -134,6 +134,15 @@ class SB_Theme {
         }
     }
 
+    public static function meta_box_before($class = '') {
+        $class = SB_PHP::add_string_with_space_before($class, 'sbmb-container sb-meta-box-container');
+        echo '<div class="' . $class . '">';
+    }
+
+    public static function meta_box_after() {
+        echo '</div>';
+    }
+
     public static function the_breadcrumb() {
         if(function_exists('yoast_breadcrumb') && SB_Option::yoast_breadcrumb_enabled()) {
             yoast_breadcrumb('<div class="sb-breadcrumb breadcrumb yoast">', '</div>');

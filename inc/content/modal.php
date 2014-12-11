@@ -5,7 +5,7 @@ $container_class = '';
 $args = SB_Theme::get_modal_argument();
 $callback = '';
 $buttons = array();
-$close_text = __('Close', 'sb-theme');
+$close_text = __('Đóng', 'sb-theme');
 
 extract($args, EXTR_OVERWRITE);
 
