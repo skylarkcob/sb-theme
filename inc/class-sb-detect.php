@@ -18,6 +18,10 @@ class SB_Detect {
         return $result;
     }
 
+    public static function get_visitor_ip() {
+        return SB_Core::get_visitor_ip();
+    }
+
     public static function get_bots() {
         $result = '';
         $bots_list = array(
