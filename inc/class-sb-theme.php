@@ -143,6 +143,26 @@ class SB_Theme {
         echo '</div>';
     }
 
+    public static function object_embed($args = array()) {
+        $url = isset($args['url']) ? $args['url'] : '';
+        $flash_var = isset($args['flash_var']) ? $args['flash_var'] : '';
+        $id = isset($args['id']) ? $args['id'] : '';
+        $name = isset($args['name']) ? $args['name'] : '';
+        $classid = isset($args['classid']) ? $args['classid'] : 'clsid:d27cdb6e-ae6d-11cf-96b8-444553540000';
+        $version = isset($args['version']) ? $args['version'] : '9,0,0,0';
+        ?>
+        <object width="100%" height="100%" align="middle" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=<?php echo $version; ?>" classid="<?php echo $classid; ?>" id="<?php echo $id; ?>">
+            <param value="transparent" name="wmode">
+            <param value="high" name="quality">
+            <param value="always" name="allowscriptaccess">
+            <param value="internal" name="allowNetworking">
+            <param value="<?php echo $flash_var; ?>" name="FlashVars">
+            <param value="<?php echo $url; ?>" name="movie">
+            <embed width="100%" height="100%" align="middle" src="<?php echo $url; ?>" quality="high" allowscriptaccess="always" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" allownetworking="internal" name="<?php echo $name; ?>" wmode="transparent" flashvars="<?php echo $flash_var; ?>">
+        </object>
+        <?php
+    }
+
     public static function the_breadcrumb() {
         if(function_exists('yoast_breadcrumb') && SB_Option::yoast_breadcrumb_enabled()) {
             yoast_breadcrumb('<div class="sb-breadcrumb breadcrumb yoast">', '</div>');

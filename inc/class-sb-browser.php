@@ -73,6 +73,10 @@ class SB_Browser {
         } elseif(self::is_lynx()) {
             $name = 'lynx';
         }
+        if('unknown' == $name) {
+            $name = SB_PHP::get_browser();
+            $name = strtolower($name);
+        }
         return $name;
     }
 }

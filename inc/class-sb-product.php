@@ -74,6 +74,14 @@ class SB_Product {
         echo '</div>';
     }
 
+    public function the_price() {
+        echo SB_PHP::currency_format_vietnamese($this->get_price());
+    }
+
+    public function get_attribute($name) {
+        return $this->product->get_attribute($name);
+    }
+
     public static function count_cart() {
         global $woocommerce;
         return $woocommerce->cart->cart_contents_count;
@@ -260,20 +268,18 @@ class SB_Product {
 
     public static function get_by_category($cat, $args = array()) {
         $defaults = array(
-            'posts_per_page'	=> 8,
-            'params'			=> array(
-                'tax_query'		=> array(
-                    array(
-                        'taxonomy'	=> 'product_cat',
-                        'field'		=> 'id',
-                        'terms'		=> $cat->term_id
-                    )
+            'post_type' => 'product',
+            'posts_per_page' => 8,
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'product_cat',
+                    'field' => 'id',
+                    'terms' => $cat->term_id
                 )
             )
         );
         $args = wp_parse_args($args, $defaults);
-        $product = new WP_Query($args);
-        return $product;
+        return new WP_Query($args);
     }
 
     public function get_bulk_discount() {
