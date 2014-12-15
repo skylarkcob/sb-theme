@@ -55,7 +55,7 @@ function sb_statistics_setting_field() {
     SB_Admin_Custom::add_section('sb_statistics_section', __('SB Statistics options page', 'sb-theme'), 'sb_statistics');
     do_action('sb_statistics_setting_field');
 }
-add_action('sb_admin_init', 'sb_statistics_setting_field');
+if(SB_Option::statistics_enabled()) add_action('sb_admin_init', 'sb_statistics_setting_field');
 
 function sb_theme_default_language_callback() {
     $lang = SB_Option::get_default_language();

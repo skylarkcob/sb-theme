@@ -2613,6 +2613,26 @@ blockquote {
     margin-top: 50px;
 }
 
+/* ============================= STATISTICS ============================= */
+
+.sb-statistics-widget {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 17px;
+}
+
+.sb-statistics-widget dt {
+    float: left;
+    line-height: 21px;
+    width: 150px;
+}
+.sb-statistics-widget dd {
+    line-height: 17px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    text-align: right;
+}
+
 @media screen and (max-width: 782px) {
     .admin-bar .sb-mobile-menu {
 

@@ -17,7 +17,15 @@ require SB_THEME_INC_PATH . '/class-sb-theme.php';
 
 require SB_THEME_INC_PATH . '/sb-utilities-setting-callback.php';
 
+if(SB_Option::statistics_enabled()) {
+    require SB_THEME_INC_PATH . '/sb-statistics-setting-callback.php';
+}
+
 require SB_THEME_INC_PATH . '/sb-theme-setting-callback.php';
+
+if(SB_Option::statistics_enabled()) {
+    require SB_THEME_INC_PATH . '/widgets/class-sb-statistics-widget.php';
+}
 
 require SB_THEME_INC_PATH . '/sb-theme-lib.php';
 

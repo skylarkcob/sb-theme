@@ -151,6 +151,9 @@ function sb_theme_register_sidebar($sidebar_id, $sidebar_name, $sidebar_descript
 }
 
 function sb_theme_widgets_init() {
+    if(SB_Option::statistics_enabled() && class_exists('SB_Statistics_Widget')) {
+        register_widget('SB_Statistics_Widget');
+    }
     sb_theme_register_sidebar('primary', 'Primary Sidebar', __('Main sidebar on your site.', 'sb-theme'));
     sb_theme_register_sidebar('secondary', 'Secondary Sidebar', __('Secondary sidebar on your site.', 'sb-theme'));
     if(SB_Option::utility_enabled('leaderboard_ads')) {
@@ -252,6 +255,10 @@ function sb_theme_add_setting_field($field_id, $field_title, $callback) {
 
 function sb_theme_add_utilities_setting_field($field_id, $field_title, $callback) {
     SB_Admin_Custom::add_setting_field($field_id, $field_title, 'sb_utilities_section', $callback, 'sb_utilities');
+}
+
+function sb_theme_add_statistics_setting_field($field_id, $field_title, $callback) {
+    SB_Admin_Custom::add_setting_field($field_id, $field_title, 'sb_statistics_section', $callback, 'sb_statistics');
 }
 
 function sb_theme_the_logo() {
