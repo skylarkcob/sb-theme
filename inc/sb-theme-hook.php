@@ -45,13 +45,15 @@ function sb_theme_track_post_views() {
 
 function sb_theme_visits_counter() {
     $support_bot_count = SB_Option::get_statistics_switch('bots_statistics');
-    if(!(bool)$support_bot_count) {
+    if(!(bool)$support_bot_count && SB_Detect::is_bots()) {
         return;
     }
     $visits_session = intval(SB_PHP::get_session('sb_visits'));
+    $visits_cookie = intval(SB_PHP::get_cookie('sb_visits'));
     $current_date_time = SB_Core::get_current_date_time();
-    if($visits_session != 1) {
+    if($visits_session != 1 && $visits_cookie != 1) {
         SB_PHP::set_session('sb_visits', 1);
+        SB_PHP::set_cookie_minute('sb_visits', 1, 15);
 
         $daily_stats = SB_Option::get_statistics_switch('daily_statistics');
         if((bool)$daily_stats) {
@@ -95,7 +97,6 @@ function sb_theme_visits_counter() {
 }
 
 function sb_theme_visitor_online_counter() {
-    $user_online_counted = SB_PHP::get_session('sb_count_online');
     $user_id = 0;
     if(SB_User::is_logged_in()) {
         $user_id = SB_User::get_current()->ID;
@@ -106,55 +107,48 @@ function sb_theme_visitor_online_counter() {
     if($user_id < 0 && !(bool)$support_bot_count) {
         return;
     }
+    $user_online_counted = SB_PHP::get_session('sb_count_online');
     $current_ip = SB_Detect::get_visitor_ip();
+    $uname = php_uname();
+    $local_ip = SB_PHP::get_pc_ip();
+    $user_agent = SB_PHP::get_user_agent();
     $current_date_time = SB_Core::get_current_date_time();
     $sb_user_online_option = get_option('sb_user_online');
     $sb_user_online_option = (array)$sb_user_online_option;
     $new_sb_user_online_option = array();
-    $user_in_array = false;
-    $count_user_online = 0;
-    $count_bot_online = 0;
-    $count_guest_online = 0;
-    $ip_in_array = false;
+    $same_user = false;
     foreach($sb_user_online_option as $item) {
+        $ip = isset($item['ip']) ? $item['ip'] : '';
         $last = isset($item['last']) ? $item['last'] : 0;
+        $id = isset($item['id']) ? $item['id'] : 0;
+        $pc_info = isset($item['uname']) ? $item['uname'] : '';
+        $pc_ip = isset($item['local_ip']) ? $item['local_ip'] : '';
+        $agent = isset($item['user_agent']) ? $item['user_agent'] : '';
         $minutes = (strtotime($current_date_time) - $last)/60;
         $minutes = absint($minutes);
         if($minutes < 15) {
             array_push($new_sb_user_online_option, $item);
         }
-        $id = isset($item['id']) ? $item['id'] : 0;
-        if($id > 0 && $user_id > 0 && $id == $user_id) {
-            $user_in_array = true;
-        }
-        if($id > 0) {
-            $count_user_online++;
-        } elseif($id < 0) {
-            $count_bot_online++;
-        } else {
-            $count_guest_online++;
-        }
-        $ip = isset($item['ip']) ? $item['ip'] : '';
-        if($ip == $current_ip && $id == 0) {
-            $ip_in_array = true;
+        if($ip == $current_ip && $id == $user_id && $pc_info == $uname && $pc_ip == $local_ip && $user_agent == $agent) {
+            $same_user = true;
         }
     }
-    if(!$user_in_array) {
-        if(!(bool)$user_online_counted || $user_id > 0 || !$ip_in_array) {
-            $user_online_item = array(
-                'ip' => $current_ip,
-                'last' => strtotime($current_date_time),
-                'id' => $user_id
-            );
-            array_push($new_sb_user_online_option, $user_online_item);
-        }
+    if(!$same_user) {
+        $user_online_item = array(
+            'ip' => $current_ip,
+            'last' => strtotime($current_date_time),
+            'id' => $user_id,
+            'uname' => $uname,
+            'local_ip' => $local_ip,
+            'user_agent' => $user_agent
+        );
+        array_push($new_sb_user_online_option, $user_online_item);
     }
     update_option('sb_user_online', $new_sb_user_online_option);
     update_option('visitor_online', count($new_sb_user_online_option));
     update_option('user_online', $count_user_online);
     update_option('bot_online', $count_bot_online);
     update_option('guest_online', $count_guest_online);
-    SB_PHP::set_session('sb_count_online', 1);
 }
 
 function sb_theme_counter() {
