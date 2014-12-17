@@ -109,6 +109,12 @@ function sb_theme_body_class($classes) {
 add_filter('body_class', 'sb_theme_body_class');
 
 function sb_theme_post_class($classes) {
+    global $post;
+    if(!SB_Core::is_error($post)) {
+        if(is_sticky($post->ID)) {
+            $classes[] = 'sb-post-sticky';
+        }
+    }
     $classes[] = 'sb-post';
     return $classes;
 }

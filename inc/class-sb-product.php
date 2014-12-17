@@ -254,6 +254,10 @@ class SB_Product {
         return wp_get_attachment_url( $thumbnail_id );
     }
 
+    public function is_in_stock() {
+        return $this->product->is_in_stock();
+    }
+
     public static function get_category($args = array()) {
         return get_terms('product_cat', $args);
     }
@@ -267,6 +271,11 @@ class SB_Product {
     }
 
     public static function get_by_category($cat, $args = array()) {
+        if(is_numeric($cat)) {
+            $term_id = $cat;
+        } else {
+            $term_id = $cat->term_id;
+        }
         $defaults = array(
             'post_type' => 'product',
             'posts_per_page' => 8,
@@ -274,7 +283,7 @@ class SB_Product {
                 array(
                     'taxonomy' => 'product_cat',
                     'field' => 'id',
-                    'terms' => $cat->term_id
+                    'terms' => $term_id
                 )
             )
         );

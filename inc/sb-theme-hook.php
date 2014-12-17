@@ -57,20 +57,24 @@ function sb_theme_visits_counter() {
 
         $daily_stats = SB_Option::get_statistics_switch('daily_statistics');
         if((bool)$daily_stats) {
-            $today_date = date('Y-m-d', strtotime($current_date_time));
+            $today_date = strtotime(date('Y-m-d', strtotime($current_date_time)));
             update_option('sb_today', $today_date);
 
             $key = 'visits_today';
             $count = intval(get_option($key));
-            if(SB_Option::get_tomorrow() == '' || SB_Option::get_yesterday() == '') {
-                update_option('sb_tomorrow', date('Y-m-d', strtotime('+1 day', strtotime($current_date_time))));
-                update_option('sb_yesterday', date('Y-m-d', strtotime('-1 day', strtotime($current_date_time))));
+            $tomorrow_date = strtotime('+1 day', $today_date);
+            $yesterday_date = strtotime('-1 day', $today_date);
+            $tomorrow_option = SB_Option::get_tomorrow();
+            $yesterday_option = SB_Option::get_yesterday();
+            if(SB_Option::get_tomorrow() == '' || SB_Option::get_yesterday() == '' || ($tomorrow_option - $today_date) < 0  || $tomorrow_date != $tomorrow_option || $yesterday_date != $yesterday_option) {
+                update_option('sb_tomorrow', $tomorrow_date);
+                update_option('sb_yesterday', $yesterday_date);
             }
-            if($today_date == SB_Option::get_tomorrow()) {
+            if($today_date == $tomorrow_option) {
                 update_option('visits_yesterday', $count);
                 $count = 0;
-                update_option('sb_tomorrow', date('Y-m-d', strtotime('+1 day', strtotime($current_date_time))));
-                update_option('sb_yesterday', date('Y-m-d', strtotime('-1 day', strtotime($current_date_time))));
+                update_option('sb_tomorrow', $tomorrow_date);
+                update_option('sb_yesterday', $yesterday_date);
             }
             $count++;
             update_option($key, $count);
@@ -117,6 +121,9 @@ function sb_theme_visitor_online_counter() {
     $sb_user_online_option = (array)$sb_user_online_option;
     $new_sb_user_online_option = array();
     $same_user = false;
+    $count_user_online = 0;
+    $count_bot_online = 0;
+    $count_guest_online = 0;
     foreach($sb_user_online_option as $item) {
         $ip = isset($item['ip']) ? $item['ip'] : '';
         $last = isset($item['last']) ? $item['last'] : 0;
@@ -128,9 +135,18 @@ function sb_theme_visitor_online_counter() {
         $minutes = absint($minutes);
         if($minutes < 15) {
             array_push($new_sb_user_online_option, $item);
-        }
-        if($ip == $current_ip && $id == $user_id && $pc_info == $uname && $pc_ip == $local_ip && $user_agent == $agent) {
-            $same_user = true;
+            if($id > 0) {
+                $count_user_online++;
+            }
+            if($ip == $current_ip && $id == $user_id && $pc_info == $uname && $pc_ip == $local_ip && $user_agent == $agent) {
+                $same_user = true;
+            }
+            if(SB_Detect::is_bots()) {
+                $count_bot_online++;
+            }
+            if($id == 0) {
+                $count_guest_online++;
+            }
         }
     }
     if(!$same_user) {

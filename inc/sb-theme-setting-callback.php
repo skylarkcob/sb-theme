@@ -97,6 +97,40 @@ function sb_theme_setting_field_addthis() {
     sb_theme_add_setting_field('sb_theme_addthis_profile_id', __('AddThis Profile ID', 'sb-theme'), 'sb_theme_addthis_callback');
 }
 
+function sb_theme_facebook_api_callback() {
+    $value = SB_Option::get_theme_option(array('keys' => array('facebook_api', 'app_id')));
+    $keys = array('facebook_api', 'app_id');
+    $args = array(
+        'id' => 'sb_theme_facebook_api_app_id_profile_id',
+        'name' => SB_Option::build_sb_theme_option_name($keys),
+        'description' => __('Facebook APP ID.', 'sb-theme'),
+        'value' => $value,
+        'container_class' => 'margin-bottom'
+    );
+    SB_Field::text_field($args);
+    $value = SB_Option::get_theme_option(array('keys' => array('facebook_api', 'app_secret')));
+    $args = array(
+        'id' => 'sb_theme_facebook_api_app_secret_profile_id',
+        'name' => SB_Option::build_sb_theme_option_name(array('facebook_api', 'app_secret')),
+        'description' => __('Facebook APP secrect.', 'sb-theme'),
+        'value' => $value,
+        'container_class' => 'margin-bottom'
+    );
+    SB_Field::text_field($args);
+    $value = SB_Option::get_theme_option(array('keys' => array('facebook_api', 'callback_url')));
+    $args = array(
+        'id' => 'sb_theme_facebook_api_callback_url_profile_id',
+        'name' => SB_Option::build_sb_theme_option_name(array('facebook_api', 'callback_url')),
+        'description' => __('Facebook callback url.', 'sb-theme'),
+        'value' => $value
+    );
+    SB_Field::text_field($args);
+}
+
+function sb_theme_setting_field_facebook_api() {
+    sb_theme_add_setting_field('sb_theme_facebook_api', __('Facebook API', 'sb-theme'), 'sb_theme_facebook_api_callback');
+}
+
 function sb_theme_facebook_fanpage_id_callback() {
     $value = SB_Option::get_theme_option_single_key('facebook_fanpage');
     $args = array(

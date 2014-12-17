@@ -10,3 +10,7 @@ function sb_theme_lib_style_and_script() {
     wp_enqueue_style('superfish-navbar-style');
 }
 add_action('wp_enqueue_scripts', 'sb_theme_lib_style_and_script');
+
+if(SB_Option::utility_enabled('facebook_php_sdk') && !class_exists('Facebook')) {
+    require SB_THEME_LIB_PATH . '/facebook-php-sdk/facebook.php';
+}

@@ -209,6 +209,21 @@ function sb_utilities_scroll_top_callback() {
     SB_Field::switch_button($args);
 }
 
+function sb_utilities_setting_field_facebook_php_sdk() {
+    sb_theme_add_utilities_setting_field('sb_utilities_facebook_php_sdk', __('Facebook PHP SDK', 'sb-theme'), 'sb_utilities_facebook_php_sdk_callback');
+}
+
+function sb_utilities_facebook_php_sdk_callback() {
+    $value = SB_Option::get_utility('facebook_php_sdk');
+    $args = array(
+        'id' => 'sb_utilities_facebook_php_sdk',
+        'name' => SB_Option::build_sb_utility_option_name(array('facebook_php_sdk')),
+        'value' => $value,
+        'description' => __('Turn on or turn off the scroll top button on your site.', 'sb-theme')
+    );
+    SB_Field::switch_button($args);
+}
+
 function sb_utilities_setting_field_callback() {
 	sb_utilities_setting_field_responsive();
     sb_utilities_setting_field_statistics();
@@ -217,6 +232,7 @@ function sb_utilities_setting_field_callback() {
     sb_utilities_setting_field_shop();
     sb_utilities_setting_field_addthis();
     sb_utilities_setting_field_jquery_marquee();
+    sb_utilities_setting_field_facebook_php_sdk();
     sb_utilities_setting_field_facebook_fanpage();
     sb_utilities_setting_field_category_widget();
     sb_utilities_setting_field_leaderboard_ads();
