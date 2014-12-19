@@ -1,5 +1,5 @@
 <?php
-define('SB_THEME_VERSION', '1.2.9');
+define('SB_THEME_VERSION', '1.3.0');
 
 define('SB_THEME_PATH', untrailingslashit(get_template_directory()) . '/sb-theme');
 

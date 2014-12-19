@@ -122,14 +122,8 @@ add_filter('post_class', 'sb_theme_post_class');
 
 function sb_theme_after_setup() {
     load_theme_textdomain('sb-theme', get_template_directory() . '/languages');
-    register_nav_menus(
-        array(
-	        'top' => __('Top menu', 'sb-theme'),
-            'primary'   => __('Primary menu', 'sb-theme'),
-            'secondary' => __('Secondary menu', 'sb-theme'),
-            'footer' => __('Footer menu', 'sb-theme')
-        )
-    );
+    add_theme_support( 'automatic-feed-links' );
+    add_theme_support('title-tag');
     add_theme_support('post-thumbnails');
     add_theme_support(
         'html5',
@@ -139,6 +133,14 @@ function sb_theme_after_setup() {
             'comment-list',
             'gallery',
             'caption'
+        )
+    );
+    register_nav_menus(
+        array(
+            'top' => __('Top menu', 'sb-theme'),
+            'primary'   => __('Primary menu', 'sb-theme'),
+            'secondary' => __('Secondary menu', 'sb-theme'),
+            'footer' => __('Footer menu', 'sb-theme')
         )
     );
 }
