@@ -412,6 +412,12 @@ function sb_theme_update_default_options() {
     SB_Option::edit_bcn_breadcrumb_sep();
 }
 
+function sb_theme_wp_head() {
+    SB_Theme::the_favicon_html();
+    SB_Theme::the_date_meta_html();
+}
+add_action('wp_head', 'sb_theme_wp_head');
+
 function sb_theme_wordpress_seo_activation() {
     SB_Option::edit_breadcrumb_sep();
 }

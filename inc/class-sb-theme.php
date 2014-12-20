@@ -18,6 +18,14 @@ class SB_Theme {
         }
     }
 
+    public static function init() {
+        sb_theme_init();
+    }
+
+    public static function created_by() {
+        printf('Giao diện được tạo bởi <a href="http://hocwp.net">%s</a>', 'SB Team');
+    }
+
 	public static function enqueue_custom_script($handle, $name) {
 		$file_path = SB_THEME_CUSTOM_URL . '/js/' . $name . '.js';
 		SB_Core::enqueue_script($handle, $file_path);
