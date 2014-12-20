@@ -29,7 +29,7 @@ function sb_theme_setting_field() {
     if(SB_Option::utility_enabled('category_widget')) {
         sb_theme_setting_field_category_widget();
     }
-    if(SB_Option::statistics_enabled()) {
+    if(SB_Option::utility_enabled('facebook_php_sdk')) {
         sb_theme_setting_field_facebook_api();
     }
     if(SB_Option::utility_enabled('addthis') || sb_theme_support_addthis()) {

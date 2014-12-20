@@ -26,6 +26,7 @@ h6.poetry {
 .site-logo,
 .site-logo a,
 .site-logo a img {
+    display: block;
     max-height: 100%;
 }
 .site-logo,
