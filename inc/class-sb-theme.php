@@ -221,6 +221,32 @@ class SB_Theme {
         }
     }
 
+    public static function the_mobile_menu($args = array()) {
+        $menu_class = isset($args['menu_class']) ? $args['menu_class'] : '';
+        $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sb-menu');
+        $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
+        if(!empty($theme_location)) {
+            $menu_class = SB_PHP::add_string_with_space_before($menu_class, $theme_location);
+        }
+        $locations = SB_Core::get_menu_location();
+        $menu_id = isset($locations[$theme_location]) ? $locations[$theme_location] : 0;
+        $menu = wp_get_nav_menu_object($menu_id);
+        $position = isset($args['position']) ? $args['position'] : 'left';
+        $class = 'sb-mobile-menu';
+        $class = SB_PHP::add_string_with_space_before($class, $position);
+        $class = SB_PHP::add_string_with_space_before($class, $theme_location);
+        $args['menu_class'] = $menu_class;
+        if(!SB_Core::is_error($menu)) {
+            echo '<div class="' . $class . '"><span class="mobile-menu-button"><i class="fa fa fa-bars"></i></span>';
+            wp_nav_menu($args);
+            echo '</div>';
+        } else {
+            echo '<div class="' . $class . '"><span class="mobile-menu-button"><i class="fa fa fa-bars"></i></span>';
+            self::the_menu_default($args);
+            echo '</div>';
+        }
+    }
+
     private static function the_menu_default($args = array()) {
         ?>
         <div class="sb-menu-container">

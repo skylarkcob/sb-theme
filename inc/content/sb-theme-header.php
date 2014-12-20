@@ -14,4 +14,5 @@
 <body <?php body_class(); ?>>
 <?php do_action('sb_theme_body_before'); ?>
 <!-- // Theme is created by SB Team - laidinhcuongvn@gmail.com - ladiuvn@gmail.com - http://sauhi.com - http://hocwp.net -->
-<div class="site-container sb-site">
+<div class="sb-blog sb-site">
+    <div class="sb-blog-container sb-site-container">
