@@ -88,6 +88,7 @@ function sb_theme_addthis_callback() {
         'id' => 'sb_theme_addthis_profile_id',
         'name' => 'sb_options[theme][addthis_profile_id]',
         'description' => __('Your profile ID at AddThis.', 'sb-theme'),
+        'field_class' => 'width-medium',
         'value' => $value
     );
     SB_Field::text_field($args);
@@ -95,6 +96,22 @@ function sb_theme_addthis_callback() {
 
 function sb_theme_setting_field_addthis() {
     sb_theme_add_setting_field('sb_theme_addthis_profile_id', __('AddThis Profile ID', 'sb-theme'), 'sb_theme_addthis_callback');
+}
+
+function sb_theme_google_analytics_callback() {
+    $value = SB_Option::get_theme_option_single_key('google_analytics');
+    $args = array(
+        'id' => 'sb_theme_google_analytics',
+        'name' => SB_Option::build_sb_theme_option_name(array('google_analytics')),
+        'description' => __('Your Google Analytics tracking ID.', 'sb-theme'),
+        'field_class' => 'width-medium',
+        'value' => $value
+    );
+    SB_Field::text_field($args);
+}
+
+function sb_theme_setting_field_google_analtyics() {
+    sb_theme_add_setting_field('sb_theme_google_analytics', __('Google Analytics', 'sb-theme'), 'sb_theme_google_analytics_callback');
 }
 
 function sb_theme_facebook_api_callback() {

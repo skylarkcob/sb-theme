@@ -26,6 +26,9 @@ function sb_theme_setting_field() {
     if(SB_Option::utility_enabled('default_thumbnail')) {
         sb_theme_setting_field_no_thumbnail();
     }
+    if(SB_Option::utility_enabled('google_analytics')) {
+        sb_theme_setting_field_google_analtyics();
+    }
     if(SB_Option::utility_enabled('category_widget')) {
         sb_theme_setting_field_category_widget();
     }

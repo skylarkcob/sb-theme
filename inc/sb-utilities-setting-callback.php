@@ -224,7 +224,23 @@ function sb_utilities_facebook_php_sdk_callback() {
     SB_Field::switch_button($args);
 }
 
+function sb_utilities_setting_field_google_analytics() {
+    sb_theme_add_utilities_setting_field('sb_utilities_google_analytics', __('Google Analytics', 'sb-theme'), 'sb_utilities_google_analytics_callback');
+}
+
+function sb_utilities_google_analytics_callback() {
+    $value = SB_Option::get_utility('google_analytics');
+    $args = array(
+        'id' => 'sb_utilities_google_analytics',
+        'name' => SB_Option::build_sb_utility_option_name(array('google_analytics')),
+        'value' => $value,
+        'description' => __('Turn on or turn off function to add Gooogle Analytics tracking code.', 'sb-theme')
+    );
+    SB_Field::switch_button($args);
+}
+
 function sb_utilities_setting_field_callback() {
+    sb_utilities_setting_field_google_analytics();
 	sb_utilities_setting_field_responsive();
     sb_utilities_setting_field_statistics();
     sb_utilities_setting_field_default_thumbnail();

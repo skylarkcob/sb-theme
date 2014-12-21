@@ -424,6 +424,9 @@ function sb_theme_update_default_options() {
 function sb_theme_wp_head() {
     SB_Theme::the_favicon_html();
     SB_Theme::the_date_meta_html();
+    if(SB_Option::utility_enabled('google_analytics')) {
+        SB_Theme::google_analytics_tracking();
+    }
 }
 add_action('wp_head', 'sb_theme_wp_head');
 
