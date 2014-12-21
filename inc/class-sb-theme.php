@@ -232,19 +232,42 @@ class SB_Theme {
         $menu_id = isset($locations[$theme_location]) ? $locations[$theme_location] : 0;
         $menu = wp_get_nav_menu_object($menu_id);
         $position = isset($args['position']) ? $args['position'] : 'left';
-        $class = 'sb-mobile-menu';
+        $class = 'sb-mobile-menu an-aside-mobile-menu';
         $class = SB_PHP::add_string_with_space_before($class, $position);
         $class = SB_PHP::add_string_with_space_before($class, $theme_location);
         $args['menu_class'] = $menu_class;
+        $button_text = isset($args['button_text']) ? trim($args['button_text']) : '';
+        $search = isset($args['search']) ? (bool)$args['search'] : false;
+        $search_args = array(
+            ''
+        );
+        if($search) {
+            $class = SB_PHP::add_string_with_space_before($class, 'search');
+        }
         if(!SB_Core::is_error($menu)) {
-            echo '<div class="' . $class . '"><span class="mobile-menu-button"><i class="fa fa fa-bars"></i></span>';
+            echo '<div class="' . $class . '">';
+            self::the_mobile_menu_button($button_text);
+            if($search) {
+                self::the_search_form($search_args);
+            }
             wp_nav_menu($args);
             echo '</div>';
         } else {
-            echo '<div class="' . $class . '"><span class="mobile-menu-button"><i class="fa fa fa-bars"></i></span>';
+            echo '<div class="' . $class . '">';
+            self::the_mobile_menu_button($button_text);
+            if($search) {
+                self::the_search_form($search_args);
+            }
             self::the_menu_default($args);
             echo '</div>';
         }
+    }
+
+    public static function the_mobile_menu_button($button_text = '') {
+        if(!empty($button_text)) {
+            $button_text = '<span class="text">' . $button_text . '</span>';
+        }
+        echo '<span class="mobile-menu-button"><i class="fa fa fa-bars"></i>' . $button_text . '</span>';
     }
 
     public static function google_analytics_tracking() {

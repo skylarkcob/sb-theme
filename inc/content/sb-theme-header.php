@@ -14,5 +14,14 @@
 <body <?php body_class(); ?>>
 <?php do_action('sb_theme_body_before'); ?>
 <!-- // Theme is created by SB Team - laidinhcuongvn@gmail.com - ladiuvn@gmail.com - http://sauhi.com - http://hocwp.net -->
-<div class="sb-blog sb-site">
+<?php
+$transform = apply_filters('sb_theme_transform', true);
+$site_class = 'sb-blog sb-site';
+if(!(bool)$transform) {
+    $site_class = SB_PHP::add_string_with_space_before($site_class, 'transform-disabled');
+} else {
+    $site_class = SB_PHP::add_string_with_space_before($site_class, 'transform');
+}
+?>
+<div id="sb-site" class="<?php echo $site_class; ?>">
     <div class="sb-blog-container sb-site-container">

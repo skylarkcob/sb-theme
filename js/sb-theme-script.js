@@ -71,7 +71,6 @@
 
     // Mobile menu
     (function(){
-        /* $('div.sb-mobile-menu').css({'min-height': window.innerHeight}); */
         $('.mobile-menu-button').on('click', function(e){
             var that = $(this),
                 mobile_menu_container = that.closest('div.sb-mobile-menu'),
@@ -84,6 +83,7 @@
                 sb_site.removeClass('move-left');
                 sb_site.toggleClass('move-right');
             }
+            sb_site.toggleClass('moved');
         });
     })();
 
