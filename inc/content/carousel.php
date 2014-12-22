@@ -31,11 +31,11 @@ if(empty($id) || empty($callback)) {
     <?php if($count > 1 || $show_control) : ?>
         <a data-slide="prev" role="button" href="#<?php echo $id; ?>" class="left carousel-control">
             <span class="fa fa-chevron-left"></span>
-            <span class="sr-only"><?php _e('Previous', 'sb-theme'); ?></span>
+            <span class="sr-only"><?php _e('Trước', 'sb-theme'); ?></span>
         </a>
         <a data-slide="next" role="button" href="#<?php echo $id; ?>" class="right carousel-control">
             <span class="fa fa-chevron-right"></span>
-            <span class="sr-only"><?php _e('Next', 'sb-theme'); ?></span>
+            <span class="sr-only"><?php _e('Sau', 'sb-theme'); ?></span>
         </a>
     <?php endif; ?>
 </div>

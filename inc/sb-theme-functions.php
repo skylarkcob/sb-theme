@@ -35,7 +35,7 @@ function sb_theme_get_default_theme() {
     return $wp_theme;
 }
 
-function sb_theme_check_admin_notices () {
+function sb_theme_check_admin_notices() {
     if(!defined('SB_CORE_VERSION') && defined('SB_THEME_VERSION')) {
         unset($_GET['activated']);
         $my_theme = wp_get_theme();
