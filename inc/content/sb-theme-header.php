@@ -12,9 +12,8 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
-<?php do_action('sb_theme_body_before'); ?>
-<!-- // Theme is created by SB Team - laidinhcuongvn@gmail.com - ladiuvn@gmail.com - http://sauhi.com - http://hocwp.net -->
 <?php
+do_action('sb_theme_body_before');
 $transform = apply_filters('sb_theme_transform', true);
 $site_class = 'sb-blog sb-site';
 if(!(bool)$transform) {

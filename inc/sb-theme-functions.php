@@ -86,7 +86,11 @@ if(!isset($content_width)) {
 }
 
 function sb_theme_body_class($classes) {
-    $name = 'browser-' . SB_Browser::get_name();
+    $browser_code = SB_Browser::get_name();
+    if($browser_code != 'ie' && strlen($browser_code) > 2 && SB_PHP::is_string_contain($browser_code, 'ie')) {
+        $browser_code .= ' browser-ie';
+    }
+    $name = 'browser-' . $browser_code;
     $name = trim($name, '-');
     $classes[] = $name;
     if(SB_Detect::is_mobile()) {
