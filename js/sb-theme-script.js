@@ -21,7 +21,7 @@
     };
 
     window.sb_is_email = function(email) {
-        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        var regex = '/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/';
         return regex.test(email);
     };
 
@@ -104,5 +104,4 @@
         float_ads_left.css({'left': '50%', 'margin-left': '-' + margin_number + 'px'});
         float_ads_right.css({'right': '50%', 'margin-right': '-' + margin_number + 'px'});
     })();
-
 })(jQuery);

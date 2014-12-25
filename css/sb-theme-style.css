@@ -12,13 +12,16 @@ h6.poetry {
     margin-top: 35px;
     text-indent: -9999px;
 }
-
+.clear {
+    clear: both;
+}
 .aligncenter {
     display: block;
     margin: 5px auto;
 }
 
 .site-logo {
+    font-size: 17px;
     line-height: 17px;
     margin: 0;
 }
@@ -240,7 +243,9 @@ h6.poetry {
 .sb-social-share {
     padding: 10px 0;
 }
-
+.btn > a {
+    color: #fff;
+}
 
 .wpcf7-textarea {
     min-width: 80%;

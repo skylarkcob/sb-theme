@@ -18,7 +18,7 @@ if(empty($id) || empty($title) || empty($callback)) {
 <div class="<?php echo $container_class; ?>" id="<?php echo $id; ?>" tabindex="-1" role="dialog" aria-labelledby="<?php echo $id; ?>" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header text-left">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><?php echo $close_text; ?></span></button>
                 <h4 class="modal-title"><?php echo $title; ?></h4>
             </div>

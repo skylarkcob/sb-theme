@@ -35,6 +35,9 @@ function sb_theme_setting_field() {
     if(SB_Option::utility_enabled('facebook_php_sdk')) {
         sb_theme_setting_field_facebook_api();
     }
+    if(SB_Option::utility_enabled('sharethis')) {
+        sb_theme_setting_field_sharethis();
+    }
     if(SB_Option::utility_enabled('addthis') || sb_theme_support_addthis()) {
         sb_theme_setting_field_addthis();
     }

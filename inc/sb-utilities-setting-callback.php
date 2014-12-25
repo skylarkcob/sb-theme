@@ -14,6 +14,21 @@ function sb_utilities_jquery_marquee_callback() {
     SB_Field::switch_button($args);
 }
 
+function sb_utilities_setting_field_jquery_snowfall() {
+    sb_theme_add_utilities_setting_field('sb_utilities_jquery_snowfall', 'jQuery Snowfall', 'sb_utilities_jquery_snowfall_callback');
+}
+
+function sb_utilities_jquery_snowfall_callback() {
+    $value = SB_Option::get_utility('jquery_snowfall');
+    $args = array(
+        'id' => 'sb_utilities_jquery_snowfall',
+        'name' => 'sb_options[utilities][jquery_snowfall]',
+        'value' => $value,
+        'description' => __('Turn on or turn off the function to load snow fall on your website.', 'sb-theme')
+    );
+    SB_Field::switch_button($args);
+}
+
 function sb_utilities_setting_field_facebook_fanpage() {
     sb_theme_add_utilities_setting_field('sb_utilities_facebook_fanpage', 'Facebook Fanpage', 'sb_utilities_facebook_fanpage_callback');
 }
@@ -115,6 +130,21 @@ function sb_utilities_addthis_callback() {
         'name' => 'sb_options[utilities][addthis]',
         'value' => $value,
         'description' => __('Turn on or turn off the function to use AddThis share buttons on your website.', 'sb-theme')
+    );
+    SB_Field::switch_button($args);
+}
+
+function sb_utilities_setting_field_sharethis() {
+    sb_theme_add_utilities_setting_field('sb_utilities_sharethis', __('ShareThis', 'sb-theme'), 'sb_utilities_sharethis_callback');
+}
+
+function sb_utilities_sharethis_callback() {
+    $value = SB_Option::get_utility('sharethis');
+    $args = array(
+        'id' => 'sb_utilities_sharethis',
+        'name' => 'sb_options[utilities][sharethis]',
+        'value' => $value,
+        'description' => __('Turn on or turn off the function to use ShareThis share buttons on your website.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
@@ -246,7 +276,9 @@ function sb_utilities_setting_field_callback() {
     sb_utilities_setting_field_default_thumbnail();
     sb_utilities_setting_field_term_meta();
     sb_utilities_setting_field_shop();
+    sb_utilities_setting_field_sharethis();
     sb_utilities_setting_field_addthis();
+    sb_utilities_setting_field_jquery_snowfall();
     sb_utilities_setting_field_jquery_marquee();
     sb_utilities_setting_field_facebook_php_sdk();
     sb_utilities_setting_field_facebook_fanpage();

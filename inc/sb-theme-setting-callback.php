@@ -98,6 +98,22 @@ function sb_theme_setting_field_addthis() {
     sb_theme_add_setting_field('sb_theme_addthis_profile_id', __('AddThis Profile ID', 'sb-theme'), 'sb_theme_addthis_callback');
 }
 
+function sb_theme_sharethis_callback() {
+    $value = SB_Option::get_theme_option(array('keys' => array('sharethis_pub_key')));
+    $args = array(
+        'id' => 'sb_theme_sharethis_pub_key',
+        'name' => 'sb_options[theme][sharethis_pub_key]',
+        'description' => __('Your publisher key on ShareThis website.', 'sb-theme'),
+        'field_class' => 'width-medium',
+        'value' => $value
+    );
+    SB_Field::text_field($args);
+}
+
+function sb_theme_setting_field_sharethis() {
+    sb_theme_add_setting_field('sb_theme_sharethis_pub_key', __('ShareThis Publisher key', 'sb-theme'), 'sb_theme_sharethis_callback');
+}
+
 function sb_theme_google_analytics_callback() {
     $value = SB_Option::get_theme_option_single_key('google_analytics');
     $args = array(

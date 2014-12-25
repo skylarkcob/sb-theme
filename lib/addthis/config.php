@@ -7,4 +7,4 @@ if(empty($profile_id)) {
 <script type="text/javascript">
     var addthis_config = {"data_track_clickback":false,"data_track_addressbar":false,"data_track_textcopy":false,"ui_atversion":"300"};
 </script>
-<script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=<?php echo $profile_id; ?>" type="text/javascript"></script>
+<script src="<?php echo SB_THEME_LIB_URL; ?>/addthis/addthis_widget.js#pubid=<?php echo $profile_id; ?>" type="text/javascript"></script>

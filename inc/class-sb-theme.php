@@ -36,6 +36,10 @@ class SB_Theme {
 		wp_enqueue_style($handle, $file_path);
 	}
 
+    public static function the_clear_div() {
+        echo '<div class="clear"></div>';
+    }
+
 	public static function enqueue_custom_responsive_style($handle, $name) {
 		$file_path = SB_THEME_CUSTOM_URL . '/css/' . $name . '.css';
 		wp_enqueue_style($handle, $file_path, array(), false, 'screen and (max-width: 1024px)');
@@ -52,6 +56,23 @@ class SB_Theme {
         if(!empty($favicon_url)) {
             printf('<link type="images/x-icon" href="%s" rel="icon">', $favicon_url);
         }
+    }
+
+    public static function section_before($name, $class = '') {
+        $class = SB_PHP::add_string_with_space_before($name, $class);
+        ?>
+        <div class="<?php echo $class; ?>">
+            <div class="sb-wrap container">
+                <div class="<?php echo $name; ?>-container">
+        <?php
+    }
+
+    public static function section_after() {
+        ?>
+                </div>
+            </div>
+        </div>
+        <?php
     }
 
     public static function the_date_meta_html() {
@@ -420,5 +441,39 @@ class SB_Theme {
 
     public static function addthis() {
         echo '<div class="addthis_native_toolbox addthis_toolbox"></div>';
+    }
+    public static function sharethis() {
+        ?>
+        <span class='st_facebook_hcount sharethis-facebook' displayText='Facebook'></span>
+        <span class='st_twitter_hcount sharethis-twitter' displayText='Tweet'></span>
+        <span class='st_googleplus_hcount sharethis-googleplus' displayText='Google +'></span>
+        <span class='st_linkedin_hcount sharethis-linkedin' displayText='LinkedIn'></span>
+        <span class='st_pinterest_hcount sharethis-pinterest' displayText='Pinterest'></span>
+        <span class='st_email_hcount sharethis-email' displayText='Email'></span>
+        <?php
+    }
+
+    public static function sharethis_facebook() {
+        echo '<span class="st_facebook_hcount sharethis-facebook" displayText="Facebook"></span>';
+    }
+    
+    public static function sharethis_twitter() {
+        echo '<span class="st_twitter_hcount sharethis-twitter" displayText="Tweet"></span>';
+    }
+    
+    public static function sharethis_pinterest() {
+        echo '<span class="st_pinterest_hcount sharethis-pinterest" displayText="Pinterest"></span>';
+    }
+    
+    public static function sharethis_googleplus() {
+        echo '<span class="st_googleplus_hcount sharethis-googleplus" displayText="Google +"></span>';
+    }
+    
+    public static function sharethis_linkedin() {
+        echo '<span class="st_linkedin_hcount sharethis-linkedin" displayText="LinkedIn"></span>';
+    }
+    
+    public static function sharethis_email() {
+        echo '<span class="st_email_hcount sharethis-email" displayText="Email"></span>';
     }
 }

@@ -5,12 +5,22 @@ if((sb_theme_support_shop() || SB_Option::utility_enabled('shop')) && !class_exi
     require SB_THEME_INC_PATH . '/class-sb-product.php';
 }
 
-if(sb_theme_support_addthis() || SB_Option::utility_enabled('addthis')) {
-    function sb_theme_addthis_config() {
+function sb_theme_wp_footer() {
+    $scroll_top = SB_Option::get_scroll_top();
+    if($scroll_top) {
+        echo '<a id="sb-scroll-top" href="javascript:;" class="go-top-button"><i class="fa fa-chevron-up"></i></a>';
+    }
+    if(SB_Option::utility_enabled('float_ads')) {
+        sb_theme_get_content('content-float-ads');
+    }
+    if(sb_theme_support_addthis() || SB_Option::utility_enabled('addthis')) {
         include SB_THEME_LIB_PATH . '/addthis/config.php';
     }
-    add_action('wp_footer', 'sb_theme_addthis_config');
+    if(SB_Option::utility_enabled('sharethis')) {
+        include SB_THEME_LIB_PATH . '/sharethis/config.php';
+    }
 }
+add_action('wp_footer', 'sb_theme_wp_footer');
 
 if(sb_theme_support_term_meta() || SB_Option::utility_enabled('term_meta')) {
     if(!class_exists('SB_Term_Meta')) {
