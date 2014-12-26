@@ -78,9 +78,22 @@ class SB_Detect {
         return SB_PHP::get_country_code_by_ip($ip_address);
     }
 
+    public static function get_visitor_country_by_ip($ip_address) {
+        return SB_PHP::ip_info_geoplugin($ip_address, 'country');
+    }
+
+    public static function get_referer() {
+        return wp_get_referer();
+    }
+
     public static function get_visitor_country_code() {
         $ip_address = self::get_visitor_ip();
         return self::get_visitor_country_code_by_ip($ip_address);
+    }
+
+    public static function get_visitor_country() {
+        $ip_address = self::get_visitor_ip();
+        return self::get_visitor_country_by_ip($ip_address);
     }
 
     public static function get_bots() {
