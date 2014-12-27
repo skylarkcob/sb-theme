@@ -362,6 +362,15 @@ function sb_theme_the_post_thumbnail_crop_only_image($width, $height) {
     SB_Post::the_thumbnail_crop_only_image_html($width, $height);
 }
 
+function sb_theme_the_post_thumbnail_only_image_html($width, $height) {
+    $args = array(
+        'width' => $width,
+        'height' => $height,
+        'crop' => false
+    );
+    SB_Post::the_thumbnail_only_image_html($args);
+}
+
 function sb_theme_the_post_thumbnail_only_link_image($width, $height) {
     SB_Post::the_thumbnail_crop_only_link_image_html($width, $height);
 }
