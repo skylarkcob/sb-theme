@@ -22,6 +22,13 @@ function sb_theme_wp_footer() {
 }
 add_action('wp_footer', 'sb_theme_wp_footer');
 
+function sb_theme_wp_head_hook() {
+    if(SB_Option::utility_enabled('add_to_head')) {
+        echo SB_Option::get_theme_option_single_key('add_to_head');
+    }
+}
+add_action('wp_head', 'sb_theme_wp_head_hook');
+
 if(sb_theme_support_term_meta() || SB_Option::utility_enabled('term_meta')) {
     if(!class_exists('SB_Term_Meta')) {
         require SB_CORE_INC_PATH . '/class-sb-term-meta.php';

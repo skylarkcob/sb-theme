@@ -98,6 +98,27 @@ function sb_theme_setting_field_addthis() {
     sb_theme_add_setting_field('sb_theme_addthis_profile_id', __('AddThis Profile ID', 'sb-theme'), 'sb_theme_addthis_callback');
 }
 
+function sb_theme_add_to_head_callback() {
+    $value = SB_Option::get_theme_option(array('keys' => array('add_to_head')));
+    $args = array(
+        'id' => 'sb_theme_add_to_head',
+        'name' => 'sb_options[theme][add_to_head]',
+        'description' => __('Put your code here and it will be inserted into head meta.', 'sb-theme'),
+        'field_class' => 'width-large',
+        'value' => $value,
+        'media_buttons' => false,
+        'teeny' => true,
+        'tinymce' => false,
+        'only_text' => true,
+        'textarea_rows' => 10
+    );
+    SB_Field::rich_editor($args);
+}
+
+function sb_theme_setting_field_add_to_head() {
+    sb_theme_add_setting_field('sb_theme_add_to_head', __('Add to head', 'sb-theme'), 'sb_theme_add_to_head_callback');
+}
+
 function sb_theme_sharethis_callback() {
     $value = SB_Option::get_theme_option(array('keys' => array('sharethis_pub_key')));
     $args = array(

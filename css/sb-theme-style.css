@@ -2753,3 +2753,32 @@ blockquote {
 
     }
 }
+
+/* ============================= Strength Indicator ============================= */
+
+.sb-password-strength-indicator {
+    background-color: #eee;
+    border: 1px solid #ddd;
+    color: #444;
+    display: block;
+    margin: 13px 5px 5px 1px;
+    padding: 3px 5px;
+    text-align: center;
+    width: 100%;
+}
+.sb-password-strength-indicator.bad {
+    background-color: #ffb78c;
+    border-color: #ff853c;
+}
+.sb-password-strength-indicator.good {
+    background-color: #ffec8b;
+    border-color: #fc0;
+}
+.sb-password-strength-indicator.short {
+    background-color: #ffa0a0;
+    border-color: #f04040;
+}
+.sb-password-strength-indicator.strong {
+    background-color: #c3ff88;
+    border-color: #8dff1c;
+}

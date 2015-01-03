@@ -269,7 +269,23 @@ function sb_utilities_google_analytics_callback() {
     SB_Field::switch_button($args);
 }
 
+function sb_utilities_setting_field_add_to_head() {
+    sb_theme_add_utilities_setting_field('sb_utilities_add_to_head', __('Add to head', 'sb-theme'), 'sb_utilities_add_to_head_callback');
+}
+
+function sb_utilities_add_to_head_callback() {
+    $value = SB_Option::get_utility('add_to_head');
+    $args = array(
+        'id' => 'sb_utilities_add_to_head',
+        'name' => SB_Option::build_sb_utility_option_name(array('add_to_head')),
+        'value' => $value,
+        'description' => __('Turn on or turn off function to add content between head tag.', 'sb-theme')
+    );
+    SB_Field::switch_button($args);
+}
+
 function sb_utilities_setting_field_callback() {
+    sb_utilities_setting_field_add_to_head();
     sb_utilities_setting_field_google_analytics();
 	sb_utilities_setting_field_responsive();
     sb_utilities_setting_field_statistics();

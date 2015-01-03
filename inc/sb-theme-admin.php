@@ -23,6 +23,9 @@ function sb_theme_setting_field() {
     SB_Admin_Custom::add_setting_field('sb_theme_default_language', __('Language', 'sb-core'), 'sb_theme_setting_section', 'sb_theme_default_language_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_logo', 'Logo', 'sb_theme_setting_section', 'sb_theme_logo_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_favicon', 'Favicon', 'sb_theme_setting_section', 'sb_theme_favicon_callback', 'sb_theme');
+    if(SB_Option::utility_enabled('add_to_head')) {
+        sb_theme_setting_field_add_to_head();
+    }
     if(SB_Option::utility_enabled('default_thumbnail')) {
         sb_theme_setting_field_no_thumbnail();
     }

@@ -91,9 +91,23 @@ class SB_Detect {
         return self::get_visitor_country_code_by_ip($ip_address);
     }
 
+    public static function get_geoplugin_locate($ip_address) {
+        if(!class_exists('geoPlugin')) {
+            require SB_THEME_LIB_PATH . '/geoplugin/geoplugin.class.php';
+        }
+        $geoplugin = new geoPlugin();
+        $geoplugin->locate($ip_address);
+        return $geoplugin;
+    }
+
     public static function get_visitor_country() {
         $ip_address = self::get_visitor_ip();
-        return self::get_visitor_country_by_ip($ip_address);
+        $country = self::get_visitor_country_by_ip($ip_address);
+        if(empty($country)) {
+            $geo = self::get_geoplugin_locate($ip_address);
+            $country = $geo->countryName;
+        }
+        return $country;
     }
 
     public static function get_bots() {
