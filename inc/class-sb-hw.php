@@ -47,6 +47,29 @@ class SB_HW {
         <?php
     }
 
+    public static function get_example_guide_url($post_id) {
+        return SB_Post::get_sb_meta($post_id, 'guide_url');
+    }
+
+    public static function get_example_download_url($post_id) {
+        return SB_Post::get_sb_meta($post_id, 'download_url');
+    }
+
+    public static function get_example_source_url($post_id) {
+        return SB_Post::get_sb_meta($post_id, 'source_url');
+    }
+
+    public static function get_example_source($path) {
+        if(empty($path)) {
+            return '';
+        }
+        $example_path = untrailingslashit(get_template_directory()) . '/examples';
+        if(file_exists($example_path . '/' . $path)) {
+            return untrailingslashit(get_template_directory_uri() . '/examples/' . $path);
+        }
+        return '';
+    }
+
     public static function get_reference_description($post_id) {
         $desc = SB_Post::get_sb_meta($post_id, 'reference_description');
         return $desc;
@@ -233,7 +256,11 @@ class SB_HW {
     public static function the_project_price($project_id) {
         $price = self::get_project_price($project_id);
         $price = floatval($price);
-        $price = number_format($price, 0, ',', '.') . '₫';
+        if(is_numeric($price) && $price > 10) {
+            $price = number_format($price, 0, ',', '.') . '₫';
+        } else {
+            $price = __('Liên hệ', 'sb-theme');
+        }
         echo $price;
     }
 

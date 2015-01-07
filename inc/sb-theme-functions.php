@@ -7,8 +7,10 @@ function sb_theme_error_checking() {
     if(!is_admin()) {
         if(!defined('SB_CORE_VERSION')) {
             wp_die(sprintf(__('You must install and activate plugin %1$s first! Click here to %2$s.', 'sb-theme'), '<a href="https://wordpress.org/plugins/sb-core/">SB Core</a>', sprintf('<a target="_blank" href="%1$s">%2$s</a>', admin_url('themes.php'), __('go back', 'sb-theme'))));
+            exit;
         } elseif(!defined('SB_THEME_VERSION') || !class_exists('SB_Theme')) {
             wp_die(sprintf(__('It looks like you\'re using incorrect %1$s pack! Click here to %2$s.', 'sb-theme'), '<strong>SB Theme Core</strong>', sprintf('<a target="_blank" href="%1$s">%2$s</a>', 'https://github.com/skylarkcob/sb-theme/', __('re-download', 'sb-theme'))));
+            exit;
         }
     }
 }
@@ -35,21 +37,6 @@ function sb_theme_get_default_theme() {
     return $wp_theme;
 }
 
-function sb_theme_check_admin_notices() {
-    if(!defined('SB_CORE_VERSION') && defined('SB_THEME_VERSION')) {
-        unset($_GET['activated']);
-        $my_theme = wp_get_theme();
-        $theme_name = $my_theme->get('Name');
-        printf('<div class="error"><p><strong>' . __('Error', 'sb-theme') . ':</strong> ' . __('The theme with name %1$s will be deactivated because of missing %2$s plugin', 'sb-theme') . '.</p></div>', '<strong>' . $theme_name . '</strong>', sprintf('<a target="_blank" href="%s" style="text-decoration: none">SB Core</a>', 'https://wordpress.org/plugins/sb-core/'));
-        sb_theme_switch_to_default_theme();
-    } elseif(!class_exists('SB_Theme') && defined('SB_THEME_VERSION')) {
-        printf('<div class="error"><p><strong>' . __('Error', 'sb-theme') . ':</strong> ' . __('It looks like you\'re using incorrect %1$s pack! Click here to %2$s.', 'sb-theme') . '</p></div>', '<strong>SB Theme Core</strong>', sprintf('<a target="_blank" href="%1$s" style="text-decoration: none">%2$s</a>', 'https://github.com/skylarkcob/sb-theme/', __('re-download', 'sb-theme')));
-    }
-}
-if(!empty($GLOBALS['pagenow']) && 'themes.php' === $GLOBALS['pagenow']) {
-    add_action('admin_notices', 'sb_theme_check_admin_notices', 0);
-}
-
 function sb_theme_switch_to_default_theme() {
     $theme = sb_theme_get_default_theme();
     if(!empty($theme)) {
@@ -61,23 +48,7 @@ function sb_theme_check_core() {
     return defined('SB_CORE_VERSION');
 }
 
-function sb_theme_after_switch() {
-    if(!current_user_can('switch_themes')) {
-        return;
-    }
-    sb_theme_error_checking();
-    if(is_admin() && defined('SB_CORE_VERSION')) {
-        sb_theme_update_default_options();
-    }
-}
-add_action('after_switch_theme', 'sb_theme_after_switch');
-
-function sb_theme_init_before_running() {
-    sb_theme_error_checking();
-}
-add_action('sb_theme_init', 'sb_theme_init_before_running');
-
-if(!defined('SB_CORE_VERSION')) {
+if(!sb_theme_check_core()) {
     return;
 }
 
@@ -85,106 +56,13 @@ if(!isset($content_width)) {
     $content_width = 800;
 }
 
-function sb_theme_body_class($classes) {
-    $browser_code = SB_Browser::get_name();
-    if($browser_code != 'ie' && strlen($browser_code) > 2 && SB_PHP::is_string_contain($browser_code, 'ie')) {
-        $browser_code .= ' browser-ie';
-    }
-    $name = 'browser-' . $browser_code;
-    $name = trim($name, '-');
-    $classes[] = $name;
-    if(SB_Detect::is_mobile()) {
-        $classes[] = 'mobile';
-    } else {
-        $classes[] = 'pc';
-    }
-    if(is_singular()) {
-        $classes[] = 'sb-singular';
-        if(!is_page()) {
-            $classes[] = 'sb-singular-post';
-        }
-    }
-    if(is_404()) {
-        $classes[] = 'sb-not-found';
-    }
-    if(SB_Option::utility_enabled('jquery_snowfall')) {
-        $classes[] = 'snowfall';
-    }
-    $classes[] = 'sb-theme sb-team';
-    return $classes;
-}
-add_filter('body_class', 'sb_theme_body_class');
-
-function sb_theme_post_class($classes) {
-    global $post;
-    if(!SB_Core::is_error($post)) {
-        if(is_sticky($post->ID)) {
-            $classes[] = 'sb-post-sticky';
-        }
-    }
-    $classes[] = 'sb-post';
-    return $classes;
-}
-add_filter('post_class', 'sb_theme_post_class');
-
 function sb_theme_testing() {
     return apply_filters('sb_theme_testing', false);
 }
 
-function sb_theme_after_setup() {
-    load_theme_textdomain('sb-theme', get_template_directory() . '/languages');
-    add_theme_support( 'automatic-feed-links' );
-    add_theme_support('title-tag');
-    add_theme_support('post-thumbnails');
-    add_theme_support(
-        'html5',
-        array(
-            'search-form',
-            'comment-form',
-            'comment-list',
-            'gallery',
-            'caption'
-        )
-    );
-    register_nav_menus(
-        array(
-            'top' => __('Top menu', 'sb-theme'),
-            'primary'   => __('Primary menu', 'sb-theme'),
-            'secondary' => __('Secondary menu', 'sb-theme'),
-            'footer' => __('Footer menu', 'sb-theme')
-        )
-    );
-}
-add_action('after_setup_theme', 'sb_theme_after_setup');
-
-function sb_theme_remove_default_image_size($sizes) {
-    unset($sizes['thumbnail']);
-    unset($sizes['medium']);
-    unset($sizes['large']);
-    return $sizes;
-}
-add_filter('intermediate_image_sizes_advanced', 'sb_theme_remove_default_image_size');
-
 function sb_theme_register_sidebar($sidebar_id, $sidebar_name, $sidebar_description) {
     SB_Theme::register_sidebar($sidebar_id, $sidebar_name, $sidebar_description);
 }
-
-function sb_theme_widgets_init() {
-    if(SB_Option::statistics_enabled() && class_exists('SB_Statistics_Widget')) {
-        register_widget('SB_Statistics_Widget');
-    }
-    sb_theme_register_sidebar('primary', 'Primary Sidebar', __('Main sidebar on your site.', 'sb-theme'));
-    sb_theme_register_sidebar('secondary', 'Secondary Sidebar', __('Secondary sidebar on your site.', 'sb-theme'));
-    if(SB_Option::utility_enabled('leaderboard_ads')) {
-        sb_theme_register_sidebar('leaderboard-ads', 'Leaderboard ads', __('The avertising on top of site.', 'sb-theme'));
-    }
-    if(SB_Option::utility_enabled('float_ads')) {
-        sb_theme_register_sidebar('float-ads-left', 'Float ads left', __('The avertising on the left of site.', 'sb-theme'));
-        sb_theme_register_sidebar('float-ads-right', 'Float ads right', __('The avertising on the right of site.', 'sb-theme'));
-    }
-    sb_theme_register_sidebar('footer', 'Footer Widget Area', __('Appears in the footer section of the site.', 'sb-theme'));
-}
-add_action('widgets_init', 'sb_theme_widgets_init');
 
 function sb_get_template_part($slug, $name = null) {
     $slug = 'sb-theme/inc/' . $slug;
@@ -248,42 +126,6 @@ function sb_theme_term_meta_field_term_select($args = array()) {
     }
     SB_Term_Field::term_select($args);
 }
-
-function sb_theme_style_and_script() {
-    if(sb_theme_testing()) {
-        wp_enqueue_style('sb-theme-style', SB_THEME_URL . '/css/sb-theme-style.css');
-        wp_enqueue_script('sb-theme', SB_THEME_URL . '/js/sb-theme-script.js', array('jquery'), false, true);
-    } else {
-        wp_enqueue_style('sb-theme-style', SB_THEME_URL . '/css/sb-theme-style.min.css');
-        wp_enqueue_script('sb-theme', SB_THEME_URL . '/js/sb-theme-script.min.js', array('jquery'), false, true);
-    }
-    if(SB_Option::utility_enabled('jquery_marquee')) {
-        wp_enqueue_script('jquery-marquee', SB_THEME_LIB_URL . '/jquery-marquee/jquery.marquee.min.js', array('jquery'), false, true);
-    }
-    if(SB_Option::utility_enabled('jquery_snowfall')) {
-        wp_enqueue_script('jquery-snowfall', SB_THEME_LIB_URL . '/jquery-snowfall/snowfall.jquery.min.js', array('jquery'), false, true);
-    }
-}
-add_action('wp_enqueue_scripts', 'sb_theme_style_and_script');
-
-function sb_theme_admin_style_and_script() {
-    $screen = SB_Admin_Custom::get_current_page();
-    if(strrpos($screen, 'sb_theme') !== false) {
-        if(sb_theme_testing()) {
-            wp_enqueue_script('sb-theme-admin', SB_THEME_URL . '/js/sb-theme-admin-script.js', array('jquery'), false, true);
-            wp_enqueue_style('sb-theme-admin-style', SB_THEME_URL . '/css/sb-theme-admin-style.css');
-        } else {
-            wp_enqueue_script('sb-theme-admin', SB_THEME_URL . '/js/sb-theme-admin-script.min.js', array('jquery'), false, true);
-            wp_enqueue_style('sb-theme-admin-style', SB_THEME_URL . '/css/sb-theme-admin-style.min.css');
-        }
-    }
-}
-add_action('admin_enqueue_scripts', 'sb_theme_admin_style_and_script');
-
-function sb_theme_excerpt_more($more) {
-    return '...';
-}
-add_filter('excerpt_more', 'sb_theme_excerpt_more');
 
 function sb_theme_add_setting_field($field_id, $field_title, $callback) {
     SB_Admin_Custom::add_setting_field($field_id, $field_title, 'sb_theme_setting_section', $callback, 'sb_theme');
@@ -424,21 +266,6 @@ function sb_theme_comment_template() {
     SB_Theme::the_comment_template();
 }
 
-function sb_theme_frontend_language($locale) {
-    if(!is_admin()) {
-        $locale = SB_Option::get_default_language();
-        return $locale;
-    }
-}
-add_filter('locale', 'sb_theme_frontend_language', 1, 1);
-
-function sb_theme_backend_language($locale) {
-    if(is_admin()) {
-        return 'en';
-    }
-}
-add_filter('locale', 'sb_theme_backend_language');
-
 function sb_theme_update_default_options() {
     sb_theme_change_default_image_setting();
     SB_Core::regenerate_htaccess_file();
@@ -446,23 +273,151 @@ function sb_theme_update_default_options() {
     SB_Option::edit_bcn_breadcrumb_sep();
 }
 
-function sb_theme_wp_head() {
-    SB_Theme::the_favicon_html();
-    SB_Theme::the_date_meta_html();
-    if(SB_Option::utility_enabled('google_analytics')) {
-        SB_Theme::google_analytics_tracking();
+function sb_theme_counter() {
+    if(is_admin()) {
+        return;
+    }
+    sb_theme_visits_counter();
+    sb_theme_visitor_online_counter();
+}
+
+function sb_theme_visitor_online_counter() {
+    $user_id = 0;
+    if(SB_User::is_logged_in()) {
+        $user_id = SB_User::get_current()->ID;
+    } elseif(SB_Detect::is_bots()) {
+        $user_id = -1;
+    }
+    $support_bot_count = SB_Option::get_statistics_switch('bots_statistics');
+    if($user_id < 0 && !(bool)$support_bot_count) {
+        return;
+    }
+    $user_online_counted = SB_PHP::get_session('sb_count_online');
+    $current_ip = SB_Detect::get_visitor_ip();
+    $uname = php_uname();
+    $local_ip = SB_PHP::get_pc_ip();
+    $user_agent = SB_PHP::get_user_agent();
+    $current_date_time = SB_Core::get_current_date_time();
+    $sb_user_online_option = get_option('sb_user_online');
+    $sb_user_online_option = (array)$sb_user_online_option;
+    $new_sb_user_online_option = array();
+    $same_user = false;
+    $count_user_online = 0;
+    $count_bot_online = 0;
+    $count_guest_online = 0;
+    foreach($sb_user_online_option as $item) {
+        $ip = isset($item['ip']) ? $item['ip'] : '';
+        $last = isset($item['last']) ? $item['last'] : 0;
+        $id = isset($item['id']) ? $item['id'] : 0;
+        $pc_info = isset($item['uname']) ? $item['uname'] : '';
+        $pc_ip = isset($item['local_ip']) ? $item['local_ip'] : '';
+        $agent = isset($item['user_agent']) ? $item['user_agent'] : '';
+        $minutes = (strtotime($current_date_time) - $last)/60;
+        $minutes = absint($minutes);
+        if($minutes < 15) {
+            array_push($new_sb_user_online_option, $item);
+            if($id > 0) {
+                $count_user_online++;
+            }
+            if($ip == $current_ip && $id == $user_id && $pc_info == $uname && $pc_ip == $local_ip && $user_agent == $agent) {
+                $same_user = true;
+            }
+            if(SB_Detect::is_bots()) {
+                $count_bot_online++;
+            }
+            if($id == 0) {
+                $count_guest_online++;
+            }
+        }
+    }
+    if(!$same_user) {
+        $user_online_item = array(
+            'ip' => $current_ip,
+            'last' => strtotime($current_date_time),
+            'id' => $user_id,
+            'uname' => $uname,
+            'local_ip' => $local_ip,
+            'user_agent' => $user_agent
+        );
+        array_push($new_sb_user_online_option, $user_online_item);
+    }
+    update_option('sb_user_online', $new_sb_user_online_option);
+    update_option('visitor_online', count($new_sb_user_online_option));
+    update_option('user_online', $count_user_online);
+    update_option('bot_online', $count_bot_online);
+    update_option('guest_online', $count_guest_online);
+}
+
+function sb_theme_visits_counter() {
+    $support_bot_count = SB_Option::get_statistics_switch('bots_statistics');
+    if(!(bool)$support_bot_count && SB_Detect::is_bots()) {
+        return;
+    }
+    $visits_session = intval(SB_PHP::get_session('sb_visits'));
+    $visits_cookie = intval(SB_PHP::get_cookie('sb_visits'));
+    $current_date_time = SB_Core::get_current_date_time();
+    if($visits_session != 1 && $visits_cookie != 1) {
+        SB_PHP::set_session('sb_visits', 1);
+        SB_PHP::set_cookie_minute('sb_visits', 1, 15);
+
+        $daily_stats = SB_Option::get_statistics_switch('daily_statistics');
+        if((bool)$daily_stats) {
+            $today_date = strtotime(date('Y-m-d', strtotime($current_date_time)));
+            update_option('sb_today', $today_date);
+
+            $key = 'visits_today';
+            $count = intval(get_option($key));
+            $tomorrow_date = strtotime('+1 day', $today_date);
+            $yesterday_date = strtotime('-1 day', $today_date);
+            $tomorrow_option = SB_Option::get_tomorrow();
+            $yesterday_option = SB_Option::get_yesterday();
+            if(SB_Option::get_tomorrow() == '' || SB_Option::get_yesterday() == '' || ($tomorrow_option - $today_date) < 0  || $tomorrow_date != $tomorrow_option || $yesterday_date != $yesterday_option) {
+                update_option('sb_tomorrow', $tomorrow_date);
+                update_option('sb_yesterday', $yesterday_date);
+            }
+            if($today_date == $tomorrow_option) {
+                update_option('visits_yesterday', $count);
+                $count = 0;
+                update_option('sb_tomorrow', $tomorrow_date);
+                update_option('sb_yesterday', $yesterday_date);
+            }
+            $count++;
+            update_option($key, $count);
+        }
+
+        $weekly_stats = SB_Option::get_statistics_switch('weekly_statistics');
+        if((bool)$weekly_stats) {
+            $key = 'visits_this_week';
+            $count = intval(get_option($key));
+            $count++;
+            update_option($key, $count);
+        }
+
+        $monthly_stats = SB_Option::get_statistics_switch('monthly_statistics');
+        if((bool)$monthly_stats) {
+            $key = 'visits_this_month';
+            $count = intval(get_option($key));
+            $count++;
+            update_option($key, $count);
+        }
+
+        SB_Option::update_visits();
     }
 }
-add_action('wp_head', 'sb_theme_wp_head');
 
-function sb_theme_wordpress_seo_activation() {
-    SB_Option::edit_breadcrumb_sep();
+function sb_theme_track_post_views() {
+    if(!is_admin() && is_singular() && !SB_Core::wp_postviews_activated() && !SB_Detect::is_bots()) {
+        global $wp_query;
+        $post = $wp_query->post;
+        if(SB_Core::is_error($post)) {
+            return;
+        }
+        $post_id = $post->ID;
+        $post_views_session_key = 'post_' . $post_id . '_views';
+        $post_views_session = intval(SB_PHP::get_session($post_views_session_key));
+        if($post_views_session != 1) {
+            SB_PHP::set_session($post_views_session_key, 1);
+            SB_Post::update_views($post_id);
+        }
+    }
 }
-register_activation_hook(WP_PLUGIN_DIR . '/wordpress-seo/wp-seo.php', 'sb_theme_wordpress_seo_activation');
-
-function sb_theme_bcn_activation() {
-    SB_Option::edit_bcn_breadcrumb_sep();
-}
-register_activation_hook(WP_PLUGIN_DIR . '/breadcrumb-navxt/breadcrumb-navxt.php', 'sb_theme_bcn_activation');
-
-require SB_THEME_INC_PATH . '/sb-theme-load.php';
