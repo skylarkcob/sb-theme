@@ -100,7 +100,9 @@ h6.poetry {
     font-family: monospace;
     font-size: 20px;
 }
-
+.reference-function a .hook-func {
+    color: #888;
+}
 .reference-function a:hover {
     border-bottom: 1px dotted #21759b;
 }
