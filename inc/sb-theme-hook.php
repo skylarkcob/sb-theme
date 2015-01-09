@@ -32,6 +32,11 @@ function sb_theme_body_class($classes) {
         $classes[] = 'snowfall';
     }
     $classes[] = 'sb-theme sb-team';
+    if(SB_User::is_logged_in()) {
+        $classes[] = 'sb-user';
+    } else {
+        $classes[] = 'sb-guest';
+    }
     return $classes;
 }
 add_filter('body_class', 'sb_theme_body_class');
@@ -174,16 +179,6 @@ function sb_theme_excerpt_more($more) {
     return '...';
 }
 add_filter('excerpt_more', 'sb_theme_excerpt_more');
-
-function sb_theme_frontend_language($locale) {
-    if(!is_admin()) {
-        $locale = SB_Option::get_default_language();
-        return $locale;
-    } else {
-        return 'en_US';
-    }
-}
-add_filter('locale', 'sb_theme_frontend_language', 10);
 
 function sb_theme_wp_head() {
     SB_Theme::the_favicon_html();
