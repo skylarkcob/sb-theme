@@ -63,9 +63,10 @@ class SB_HW {
         if(empty($path)) {
             return '';
         }
-        $example_path = untrailingslashit(get_template_directory()) . '/examples';
-        if(file_exists($example_path . '/' . $path)) {
-            return untrailingslashit(get_template_directory_uri() . '/examples/' . $path);
+        $file = '/static/demo/' . $path;
+        $example_path = untrailingslashit(ABSPATH) . $file;
+        if(file_exists($example_path)) {
+            return home_url($file);
         }
         return '';
     }
