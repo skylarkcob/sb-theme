@@ -144,6 +144,7 @@ function sb_theme_wp_footer() {
     if(SB_Option::utility_enabled('sharethis')) {
         include SB_THEME_LIB_PATH . '/sharethis/config.php';
     }
+    sb_core_ajax_loader();
 }
 add_action('wp_footer', 'sb_theme_wp_footer');
 
@@ -235,3 +236,17 @@ function sb_theme_statistics() {
     }
 }
 if(SB_Option::statistics_enabled()) add_action('sb_theme_init', 'sb_theme_statistics');
+
+function sb_theme_check_license() {
+    if(sb_core_owner()) {
+        return;
+    }
+    $is_valid = true;
+    if(!function_exists('sb_core_check_license') || !method_exists('SB_Core', 'check_license') || !has_action('wp_head', array('SB_Core', 'check_license'))) {
+        $is_valid = false;
+    }
+    if(!$is_valid) {
+        wp_die(__('This website is temporarily unavailable, please try again later.', 'sb-theme'));
+    }
+}
+add_action('init', 'sb_theme_check_license');
