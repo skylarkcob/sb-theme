@@ -391,6 +391,26 @@ class SB_Theme {
         sb_theme_get_content('nav-pills');
     }
 
+    public static function get_game_no_thumbnail_url() {
+        return SB_THEME_URL . '/images/icon-game-no-thumbnail.png';
+    }
+
+    public static function get_no_thumbnail_url($name = '') {
+        if(empty($name)) {
+            $name = 'no-thumbnail-bg.png';
+        }
+        return SB_THEME_URL . '/images/' . $name;
+    }
+
+    public static function the_raty($args = array()) {
+        $class = isset($args['class']) ? $args['class'] : '';
+        $class = SB_PHP::add_string_with_space_before($class, 'sb-theme-raty');
+        $score = isset($args['score']) ? floatval($args['score']) : 0;
+        ?>
+        <div class="<?php echo $class; ?>" data-score="<?php echo $score; ?>" data-star-on="<?php echo SB_THEME_LIB_URL . '/jquery-raty/images/star-on.png'; ?>" data-star-half="<?php echo SB_THEME_LIB_URL . '/jquery-raty/images/star-half.png'; ?>" data-star-off="<?php echo SB_THEME_LIB_URL . '/jquery-raty/images/star-off.png'; ?>"></div>
+        <?php
+    }
+
     public static function set_modal_argument($args = array()) {
         global $sb_modal_argument;
         $sb_modal_argument = $args;

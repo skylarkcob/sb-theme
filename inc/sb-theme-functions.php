@@ -97,6 +97,11 @@ function sb_get_custom_content_default_query($slug, $name = null) {
     }
 }
 
+function sb_theme_load_jquery_raty() {
+    wp_enqueue_style('jquery-raty-style', SB_THEME_LIB_URL . '/jquery-raty/jquery.raty.css');
+    wp_enqueue_script('jquery-raty', SB_THEME_LIB_URL . '/jquery-raty/jquery.raty.js', array('jquery'), false, true);
+}
+
 function sb_get_custom_ajax($slug, $name = null) {
     sb_get_custom_template_part('ajax/' . $slug, $name);
 }

@@ -75,11 +75,15 @@ img {
 }
 
 .no-padding-right {
-    padding-right: 0 !important;
+    padding-right: 0;
 }
 
 .no-padding-left {
     padding-left: 0 !important;
+}
+
+.no-padding-top {
+    padding-top: 0 !important;
 }
 
 .margin-bottom-10 {
@@ -120,6 +124,14 @@ img {
 
 .inline-block {
     display: inline-block;
+}
+
+.sb-menu-container ul {
+    margin: 0;
+}
+
+#_atssh {
+    display: none;
 }
 
 /* ==================== Hide placehoder ==================== */
@@ -218,21 +230,6 @@ ol.guides li a:hover{
     margin: 0 auto;
     position: relative;
     width: 50px;
-}
-
-@keyframes reveal {
-    0% {
-        transform: scale(0.001);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes slide {
-    100% {
-        transform: translateX(20px);
-    }
 }
 
 .loading-container .loading .dot {
@@ -407,8 +404,8 @@ ol.guides li a:hover{
 }
 
 .sb-mobile-menu ul {
-    margin: 0 !important;
-    padding: 0 !important;
+    margin: 0;
+    padding: 0;
     width: 100%;
 }
 
@@ -417,42 +414,52 @@ ol.guides li a:hover{
 }
 
 .sb-mobile-menu ul > li {
-    background: none repeat scroll 0 0 transparent !important;
-    border-radius: 0 !important;
-    display: block !important;
-    float: none !important;
-    height: auto !important;
+    background: none repeat scroll 0 0 transparent;
+    border-radius: 0;
+    display: block;
+    float: none;
+    height: auto;
     overflow: hidden;
-    padding: 0 !important;
+    padding: 0;
     width: 100%;
 }
 
+.sb-mobile-menu .sub-menu li > a,
 .sb-mobile-menu li > a {
-    background: none repeat scroll 0 0 #333 !important;
-    border-bottom: 1px solid #000 !important;
-    border-radius: 0 !important;
-    border-top: 1px solid #4e4e4e !important;
-    box-shadow: 0 1px 0 0 rgba(60, 60, 60, 1) inset;
-    color: #fff !important;
-    display: block !important;
-    font-weight: 400 !important;
-    line-height: 17px !important;
-    padding: 11px 15px !important;
+    background: none repeat scroll 0 0 #333;
+    border-radius: 0;
+    color: rgba(255, 255, 255, 0.7);
+    display: block;
+    font-weight: 400;
+    line-height: 17px;
+    padding: 11px 15px;
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
     width: 100%;
 }
 
+.sb-mobile-menu li a {
+    border-bottom: 1px solid #262626;
+}
+
+.sb-mobile-menu .sub-menu > li:last-child {
+
+}
+
 .sb-mobile-menu.right li > a {
-    padding-left: 25px !important;
+    padding-left: 25px;
 }
 
 .sb-mobile-menu ul > li:last-child {
-    border-bottom: 1px solid #4e4e4e !important;;
+    /*border-bottom: 1px solid #4e4e4e;*/
 }
 
 .sb-mobile-menu .mobile-menu-button {
     position: absolute;
     top: 0;
+}
+
+.sb-mobile-menu .mobile-menu-button {
+    z-index: 499;
 }
 
 .sb-mobile-menu.left .mobile-menu-button {
@@ -492,39 +499,39 @@ ol.guides li a:hover{
 }
 
 .sb-site.transform-disabled.moved {
-    transform: none !important;
+    transform: none;
 }
 
-.sb-site.transform.move-left > .sb-site-container {
+.sb-site.move-left .sb-site-container.moved {
+    left: auto;
     right: 250px;
 }
 
-.sb-site.transform.move-right > .sb-site-container {
+.sb-site.move-right .sb-site-container.moved {
     left: 250px;
+    right: auto;
 }
 
 .sb-site-container {
+    left: 0;
     position: relative;
-    transition: all 500ms ease 0s;
+    right: 0;
     width: 100%;
 }
 
-.sb-site.transform-disabled > .sb-site-container {
-    transition: all 500ms ease 0s;
+.sb-site-container,
+.sb-menu-container {
+    -o-transition: all 0.5s ease 0.5s;
+    -ms-transition: all 0.5s ease 0.5s;
+    -moz-transition: all 0.5s ease 0.5s;
+    -webkit-transition: all 0.5s ease 0.5s;
+    transition: all 0.5s ease 0.5s;
 }
 
 .sb-mobile-menu .sf-menu > li:hover > a,
 .sb-mobile-menu .sub-menu li > a,
 .sb-mobile-menu .sf-menu > li > a {
-    border-bottom: 1px solid #262626;
-    border-top: medium none;
-    color: rgba(255, 255, 255, 0.7);
-    display: block;
-    margin: 0;
-    padding: 0.66667rem;
-    text-align: left;
-    text-transform: initial;
-    top: auto;
+
 }
 
 .sb-mobile-menu .sf-menu > li:hover,
@@ -548,12 +555,7 @@ ol.guides li a:hover{
     top: auto;
 }
 
-.sb-mobile-menu .sub-menu > li:last-child {
-    border-bottom: medium none !important;
-}
-
 .sb-mobile-menu .sub-menu > li:last-child > a {
-    border-bottom: 0 none;
     box-shadow: none;
 }
 
@@ -602,6 +604,14 @@ ol.guides li a:hover{
 .syntaxhighlighter .container .line,
 .syntaxhighlighter .gutter .line {
     line-height: 1.8em !important;
+}
+
+.syntaxhighlighter {
+    opacity: 0.5;
+}
+
+.syntaxhighlighter:hover {
+    opacity: 0.9;
 }
 
 /* ==================== Ads ==================== */
@@ -716,7 +726,7 @@ ol.guides li a:hover{
 }
 
 .reference-function {
-    margin-bottom: 24px !important;
+    margin-bottom: 24px;
 }
 
 .reference-function a {
@@ -902,4 +912,21 @@ ol.guides li a:hover{
 
 .go-top-button:hover {
     opacity: 1;
+}
+
+/* ==================== Keyframes ==================== */
+
+@keyframes reveal {
+    0% {
+        transform: scale(0.001);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes slide {
+    100% {
+        transform: translateX(20px);
+    }
 }
