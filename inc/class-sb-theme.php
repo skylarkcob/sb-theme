@@ -123,7 +123,13 @@ class SB_Theme {
     public static function the_comments() {
         if(function_exists('sb_comments')) {
             sb_comments();
+        } else {
+            sb_theme_get_content('comment-template');
         }
+    }
+
+    public static function the_footer_text() {
+        echo wpautop(SB_Option::get_theme_footer_text());
     }
 
     public static function the_leaderboard_ads() {

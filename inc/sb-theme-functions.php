@@ -15,43 +15,6 @@ function sb_theme_error_checking() {
     }
 }
 
-function sb_theme_get_default_theme() {
-    $themes = wp_get_themes();
-    $wp_theme = '';
-    foreach($themes as $theme) {
-        $author_uri = $theme->get('AuthorURI');
-        if(strrpos($author_uri, 'wordpress.org') !== false) {
-            $wp_theme = $theme;
-            break;
-        }
-    }
-    if(empty($wp_theme)) {
-        foreach($themes as $theme) {
-            $text_domain = $theme->get('TextDomain');
-            if(strrpos($text_domain, 'sb-theme') === false) {
-                $wp_theme = $theme;
-                break;
-            }
-        }
-    }
-    return $wp_theme;
-}
-
-function sb_theme_switch_to_default_theme() {
-    $theme = sb_theme_get_default_theme();
-    if(!empty($theme)) {
-        switch_theme($theme->get('TextDomain'));
-    }
-}
-
-function sb_theme_check_core() {
-    return defined('SB_CORE_VERSION');
-}
-
-if(!sb_theme_check_core()) {
-    return;
-}
-
 if(!isset($content_width)) {
     $content_width = 800;
 }

@@ -1,7 +1,92 @@
 <?php
 class SB_Coupon {
+    public static function get_coupon_type_slug() {
+        return apply_filters('sb_theme_coupon_type_slug', 'ct');
+    }
+
+    public static function get_coupon_season_slug() {
+        return apply_filters('sb_theme_coupon_season_slug', 'cs');
+    }
+
+    public static function install_post_type_and_taxonomy() {
+        $args = array(
+            'name' => __('Stores', 'sb-theme'),
+            'singular_name' => __('Store', 'sb-theme'),
+            'slug' => 'store',
+            'taxonomies' => array('category'),
+            'supports' => array('thumbnail')
+        );
+        SB_Core::register_post_type($args);
+
+        $args = array(
+            'name' => __('Coupons', 'sb-theme'),
+            'singular_name' => __('Coupon', 'sb-theme'),
+            'slug' => 'coupon',
+            'taxonomies' => array('category', self::get_coupon_type_slug()),
+            'supports' => array('thumbnail', 'excerpt')
+        );
+        SB_Core::register_post_type($args);
+
+        $args = array(
+            'name' => __('Types', 'sb-theme'),
+            'singular_name' => __('Type', 'sb-theme'),
+            'slug' => self::get_coupon_type_slug(),
+            'post_types' => array('coupon')
+        );
+        SB_Core::register_taxonomy($args);
+
+        $args = array(
+            'name' => __('Seasons', 'sb-theme'),
+            'singular_name' => __('Season', 'sb-theme'),
+            'slug' => self::get_coupon_season_slug(),
+            'post_types' => array('coupon')
+        );
+        SB_Core::register_taxonomy($args);
+    }
+
+    public static function get_featured_coupons($args = array()) {
+        $args['meta_key'] = sb_build_meta_name('featured');
+        $args['post_type'] = 'coupon';
+        $args['meta_value'] = 1;
+        return new WP_Query($args);
+    }
+
+    public static function get_coupon_store_id($post_id) {
+        return SB_Post::get_sb_meta($post_id, 'store');
+    }
+
+    public static function get_just_for_you_page() {
+        $page = SB_Post::get_by_slug('justforyou', 'page');
+        if(SB_Core::is_error($page) || !$page) {
+            $page = SB_Post::get_by_slug('just-for-you', 'page');
+        }
+        return $page;
+    }
+
+    public static function get_season() {
+        $term_id = SB_Option::get_theme_option_single_key('season');
+        $term_id = intval($term_id);
+        return SB_Term::get_by('id', $term_id, self::get_coupon_season_slug());
+    }
+
+    public static function get_favorites_page() {
+        return SB_Post::get_by_slug('favorites', 'page');
+    }
+
+    public static function get_saved_page() {
+        return SB_Post::get_by_slug('saved', 'page');
+    }
+
+    public static function get_blog_page() {
+        return SB_Core::get_blog_page();
+    }
+
     public static function get_code($post_id) {
-        return SB_Post::get_meta($post_id, 'wpcf-coupon-code');
+        if(SB_Core::is_wpcf_installed()) {
+            return SB_Post::get_meta($post_id, 'wpcf-coupon-code');
+        } else {
+            return SB_Post::get_sb_meta($post_id, 'code');
+        }
     }
 
     public static function get_type_value($post_id) {
@@ -41,17 +126,64 @@ class SB_Coupon {
     }
 
     public static function get_store_coupon($store_id, $args = array()) {
-        $defaults = array(
-            'meta_query' => array(
-                array(
-                    'key' => '_wpcf_belongs_stores_id',
-                    'value' => $store_id
-                )
-            )
-        );
+        return self::get_coupon_from_stores($store_id, $args);
+    }
+
+    public static function get_coupon_from_stores($store_ids, $args = array()) {
+        if(is_array($store_ids)) {
+            if(SB_Core::is_wpcf_installed()) {
+                $defaults = array(
+                    'meta_query' => array(
+                        'relation' => 'OR'
+                    )
+                );
+                foreach($store_ids as $store_id) {
+                    $meta_item = array(
+                        'key' => '_wpcf_belongs_stores_id',
+                        'value' => $store_id
+                    );
+                    array_push($defaults['meta_query'], $meta_item);
+                }
+            } else {
+                $defaults = array(
+                    'meta_query' => array(
+                        'relation' => 'OR'
+                    )
+                );
+                foreach($store_ids as $store_id) {
+                    $meta_item = array(
+                        'key' => sb_build_meta_name('store'),
+                        'value' => $store_id
+                    );
+                    array_push($defaults['meta_query'], $meta_item);
+                }
+            }
+        } else {
+            if(SB_Core::is_wpcf_installed()) {
+                $defaults = array(
+                    'meta_query' => array(
+                        'relation' => 'OR',
+                        array(
+                            'key' => '_wpcf_belongs_stores_id',
+                            'value' => $store_ids
+                        )
+                    )
+                );
+            } else {
+                $defaults = array(
+                    'meta_query' => array(
+                        'relation' => 'OR',
+                        array(
+                            'key' => sb_build_meta_name('store'),
+                            'value' => $store_ids
+                        )
+                    )
+                );
+            }
+        }
         if(isset($args['meta_query'])) {
-            $args['relation'] = 'AND';
-            array_push($args['meta_query'], $defaults['meta_query'][0]);
+            $args['relation'] = isset($args['meta_query']['relation']) ? $args['meta_query']['relation'] : $defaults['meta_query']['relation'];
+            array_push($args['meta_query'], $defaults['meta_query'][1]);
         } else {
             $args = wp_parse_args($args, $defaults);
         }
@@ -110,13 +242,16 @@ class SB_Coupon {
     }
 
     public static function get_featured_store($args = array()) {
-        $defaults = array(
-            'post_type' => 'stores',
-            'meta_key' => 'wpcf-featured-store',
-            'meta_value' => '1'
-        );
-        $args = wp_parse_args($args, $defaults);
-        return new WP_Query($args);
+        if(SB_Core::is_wpcf_installed()) {
+            $defaults = array(
+                'post_type' => 'stores',
+                'meta_key' => 'wpcf-featured-store',
+                'meta_value' => '1'
+            );
+            $args = wp_parse_args($args, $defaults);
+            return new WP_Query($args);
+        }
+        return self::get_featured_stores($args);
     }
 
     public static function get_featured_guide($args = array()) {
@@ -130,11 +265,86 @@ class SB_Coupon {
     }
 
     public static function get_coupon_store($post_id) {
-        $store_id = SB_Post::get_meta($post_id, '_wpcf_belongs_stores_id');
+        if(SB_Core::is_wpcf_installed()) {
+            $store_id = SB_Post::get_meta($post_id, '_wpcf_belongs_stores_id');
+        } else {
+            $store_id = self::get_coupon_store_id($post_id);
+        }
         if(intval($store_id) < 1) {
             return '';
         }
         return get_post($store_id);
+    }
+
+    public static function get_short_title($post) {
+        if(!SB_Post::is($post)) {
+            return '';
+        }
+        $title = SB_Post::get_sb_meta($post->ID, 'short_title');
+        if(empty($title)) {
+            $title = $post->post_title;
+        }
+        return $title;
+    }
+
+    public static function get_type_text($post_id) {
+        $type_text = __('Coupon Code', 'sb-theme');
+        $term = SB_Post::get_first_term($post_id, self::get_coupon_type_slug());
+        if(!SB_Core::is_error($term)) {
+            $type_text = $term->name;
+        }
+        return $type_text;
+    }
+
+    public static function get_first_type($post_id) {
+        $term = SB_Post::get_first_term($post_id, self::get_coupon_type_slug());
+        if(!SB_Core::is_error($term)) {
+            return $term;
+        }
+        $term = SB_Term::get_by('slug', 'coupon-codes', self::get_coupon_type_slug());
+        return $term;
+    }
+
+    public static function get_type_short_text($post_id) {
+        $type = __('Coupon code', 'sb-theme');
+        $term = self::get_first_type($post_id);
+        if(!SB_Core::is_error($term)) {
+            $slug = $term->slug;
+            switch($slug) {
+                case 'printable-coupons':
+                    $type = __('Printable', 'sb-theme');
+                    break;
+                case 'product-deals':
+                    $type = __('Sale', 'sb-theme');
+                    break;
+            }
+        }
+        return $type;
+    }
+
+    public static function get_action_button_text($post_id) {
+        $args = array(
+            'code' => __('Get code', 'sb-theme'),
+            'printable' => __('Show coupon', 'sb-theme'),
+            'sale' => __('Shop sale', 'sb-theme')
+        );
+        $args = apply_filters('sb_coupon_action_button_text', $args);
+        $type = 'code';
+        $term = self::get_first_type($post_id);
+        if(!SB_Core::is_error($term)) {
+            $slug = $term->slug;
+            switch($slug) {
+                case 'printable-coupons':
+                    $type = 'printable';
+                    break;
+                case 'product-deals':
+                    $type = 'sale';
+                    break;
+            }
+        }
+        if(isset($args[$type])) {
+            return $args[$type];
+        }
     }
 
     public static function get_expired($post_id) {
@@ -162,29 +372,38 @@ class SB_Coupon {
     }
 
     public static function get_stores($args = array()) {
-        $args['post_type'] = 'stores';
+        if(SB_Core::is_wpcf_installed()) {
+            $args['post_type'] = 'stores';
+        } else {
+            $args['post_type'] = 'store';
+        }
         return new WP_Query($args);
     }
 
     public static function get_top_stores($args = array()) {
-        $args['post_type'] = 'stores';
         $args['meta_key'] = 'followers';
         $args['orderby'] = 'meta_value_num';
-        $stores = new WP_Query($args);
+        $stores = self::get_stores($args);
         if(!$stores->have_posts()) {
             unset($args['meta_key']);
             unset($args['orderby']);
-            $stores = new WP_Query($args);
+            $stores = self::get_stores($args);
         }
         return $stores;
     }
 
     public static function get_category($args = array()) {
-        return SB_Term::get('coupon-cat', $args);
+        if(SB_Core::is_wpcf_installed()) {
+            return SB_Term::get('coupon-cat', $args);
+        }
+        return SB_Term::get('category', $args);
     }
 
     public static function get_category_by_id($cat_id) {
-        return get_term_by('id', $cat_id, 'coupon-cat');
+        if(SB_Core::is_wpcf_installed()) {
+            return SB_Term::get_by('id', $cat_id, 'coupon-cat');
+        }
+        return SB_Term::get_by('id', $cat_id, 'category');
     }
 
     public static function get_guide_banner($post_id) {
@@ -359,6 +578,88 @@ class SB_Coupon {
             )
         );
         return self::get($args);
+    }
+
+    public static function get_coupon_guest_viewed() {
+        $value = isset($_SESSION['coupon_guest_viewed']) ? $_SESSION['coupon_guest_viewed'] : '';
+        if(!empty($value)) {
+            $value = SB_PHP::json_string_to_array($value);
+            $value = array_filter($value);
+        } else {
+            $value = array();
+        }
+        return $value;
+    }
+
+    public static function set_coupon_guest_viewed($post_id, $remove = false) {
+        $result = self::get_coupon_guest_viewed();
+        if($remove) {
+            $key = array_search($post_id, $result);
+            unset($result[$key]);
+        } else {
+            if(!in_array($post_id, $result)) {
+                array_push($result, $post_id);
+            }
+        }
+        $_SESSION['coupon_guest_viewed'] = json_encode($result);
+        return $result;
+    }
+
+    public static function get_store_guest_favorite() {
+        $value = isset($_SESSION['store_guest_favorite']) ? $_SESSION['store_guest_favorite'] : '';
+        if(!empty($value)) {
+            $value = SB_PHP::json_string_to_array($value);
+            $value = array_filter($value);
+        } else {
+            $value = array();
+        }
+        return $value;
+    }
+
+    public static function set_store_guest_favorite($post_id, $remove = false) {
+        $result = self::get_coupon_guest_viewed();
+        if($remove) {
+            $key = array_search($post_id, $result);
+            unset($result[$key]);
+        } else {
+            if(!in_array($post_id, $result)) {
+                array_push($result, $post_id);
+            }
+        }
+        $_SESSION['store_guest_favorite'] = json_encode($result);
+        return $result;
+    }
+
+
+
+    public static function get_coupon_guest_saved() {
+        $value = isset($_SESSION['coupon_guest_saved']) ? $_SESSION['coupon_guest_saved'] : '';
+        if(!empty($value)) {
+            $value = SB_PHP::json_string_to_array($value);
+            $value = array_filter($value);
+        } else {
+            $value = array();
+        }
+        return $value;
+    }
+
+    public static function set_coupon_guest_saved($post_id, $remove = false) {
+        $result = self::get_coupon_guest_viewed();
+        if($remove) {
+            $key = array_search($post_id, $result);
+            unset($result[$key]);
+        } else {
+            if(!in_array($post_id, $result)) {
+                array_push($result, $post_id);
+            }
+        }
+        $_SESSION['coupon_guest_saved'] = json_encode($result);
+        return $result;
+    }
+
+    public static function get_featured_stores($args = array()) {
+        $args['post_type'] = 'store';
+        return new WP_Query($args);
     }
 
     public static function get_store_similar($store_id) {

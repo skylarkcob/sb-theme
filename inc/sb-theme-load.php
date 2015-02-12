@@ -3,6 +3,10 @@ require SB_THEME_INC_PATH . '/sb-theme-constant.php';
 
 require SB_THEME_INC_PATH . '/sb-theme-install.php';
 
+if(!sb_theme_check_core()) {
+    return;
+}
+
 require SB_THEME_INC_PATH . '/sb-theme-functions.php';
 
 if(sb_theme_support_term_meta() || SB_Option::utility_enabled('term_meta')) {

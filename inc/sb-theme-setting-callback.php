@@ -222,63 +222,17 @@ function sb_theme_setting_field_scroll_top() {
 function sb_theme_social_callback() {
     $options = SB_Option::get();
     $args = array();
-    $field = array(
-        'id' => 'sb_theme_social_facebook',
-        'name' => 'sb_options[theme][social][facebook]',
-        'value' => isset($options['theme']['social']['facebook']) ? $options['theme']['social']['facebook'] : '',
-        'description' => __('The url to your Facebook page.', 'sb-theme')
-    );
-    array_push($args, $field);
-    $field = array(
-        'id' => 'sb_theme_social_twitter',
-        'name' => 'sb_options[theme][social][twitter]',
-        'value' => isset($options['theme']['social']['twitter']) ? $options['theme']['social']['twitter'] : '',
-        'description' => __('The url to your Twitter account.', 'sb-theme')
-    );
-    array_push($args, $field);
-    $field = array(
-        'id' => 'sb_theme_social_gplus',
-        'name' => 'sb_options[theme][social][gplus]',
-        'value' => isset($options['theme']['social']['gplus']) ? $options['theme']['social']['gplus'] : '',
-        'description' => __('The url to your Google Plus account.', 'sb-theme')
-    );
-    array_push($args, $field);
-    $field = array(
-        'id' => 'sb_theme_social_youtube',
-        'name' => 'sb_options[theme][social][youtube]',
-        'value' => isset($options['theme']['social']['youtube']) ? $options['theme']['social']['youtube'] : '',
-        'description' => __('The url to your YouTube channel.', 'sb-theme')
-    );
-    array_push($args, $field);
-    $field = array(
-        'id' => 'sb_theme_social_linkedin',
-        'name' => 'sb_options[theme][social][linkedin]',
-        'value' => isset($options['theme']['social']['linkedin']) ? $options['theme']['social']['linkedin'] : '',
-        'description' => __('The url to your LinkedIn account.', 'sb-theme')
-    );
-    array_push($args, $field);
-    $field = array(
-        'id' => 'sb_theme_social_pinterest',
-        'name' => 'sb_options[theme][social][pinterest]',
-        'value' => isset($options['theme']['social']['pinterest']) ? $options['theme']['social']['pinterest'] : '',
-        'description' => __('The url to your Pinterest account.', 'sb-theme')
-    );
-    array_push($args, $field);
-    $field = array(
-        'id' => 'sb_theme_social_zingme',
-        'name' => 'sb_options[theme][social][zingme]',
-        'value' => isset($options['theme']['social']['zingme']) ? $options['theme']['social']['zingme'] : '',
-        'description' => __('The url to your Zing Me account.', 'sb-theme')
-    );
-    array_push($args, $field);
-    $field = array(
-        'id' => 'sb_theme_social_rss',
-        'name' => 'sb_options[theme][social][rss]',
-        'value' => isset($options['theme']['social']['rss']) ? $options['theme']['social']['rss'] : '',
-        'description' => __('The url for RSS on your site.', 'sb-theme')
-    );
-    array_push($args, $field);
-    $args = apply_filters('sb_theme_social', $args);
+    $socials = apply_filters('sb_theme_social', array('facebook' => 'Facebook', 'gplus' => 'Google Plus', 'twitter' => 'Twitter', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn', 'pinterest' => 'Pinterest', 'zingme' => 'Zing Me', 'rss' => 'RSS'));
+    foreach($socials as $social => $name) {
+        $field = array(
+            'id' => 'sb_theme_social_' . $social,
+            'name' => 'sb_options[theme][social][' . $social . ']',
+            'value' => isset($options['theme']['social'][$social]) ? $options['theme']['social'][$social] : '',
+            'description' => __('The url to your ' . $name . ' page.', 'sb-theme')
+        );
+        array_push($args, $field);
+    }
+    $args = apply_filters('sb_theme_social_field', $args);
     SB_Field::social_field($args);
 }
 
