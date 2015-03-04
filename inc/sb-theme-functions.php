@@ -65,6 +65,21 @@ function sb_theme_load_jquery_raty() {
     wp_enqueue_script('jquery-raty', SB_THEME_LIB_URL . '/jquery-raty/jquery.raty.js', array('jquery'), false, true);
 }
 
+function sb_theme_load_jquery_datetimepicker() {
+    wp_enqueue_style('datetimepicker-style', SB_THEME_LIB_URL . '/datetimepicker/jquery.datetimepicker.css');
+    wp_enqueue_script('datetimepicker', SB_THEME_LIB_URL . '/datetimepicker/jquery.datetimepicker.js', array('jquery'), false, true);
+}
+
+function sb_theme_load_zeroclipboard() {
+    wp_enqueue_script('zeroclipboard', SB_THEME_LIB_URL . '/zeroclipboard/ZeroClipboard.min.js', array('jquery'), false, true);
+}
+
+function sb_theme_load_owl_carousel() {
+    wp_enqueue_style( 'owl-carousel-style', SB_THEME_LIB_URL. '/owl-carousel/owl.carousel.css' );
+    wp_enqueue_style( 'owl-carousel-theme-style', SB_THEME_LIB_URL. '/owl-carousel/owl.theme.css' );
+    wp_enqueue_script('owl-carousel', SB_THEME_LIB_URL. '/owl-carousel/owl.carousel.js', array('jquery'), false, true);
+}
+
 function sb_get_custom_ajax($slug, $name = null) {
     sb_get_custom_template_part('ajax/' . $slug, $name);
 }
@@ -210,7 +225,10 @@ function sb_theme_the_post_thumbnail($args = array()) {
         $params = isset($args['params']) ? $args['params'] : array();
         $params = (array)$params;
         $params = wp_parse_args($params, $defaults);
-        $thumbnail_url = bfi_thumb($thumbnail_url, $params);
+        $bfi_thumb = isset($args['bfi_thumb']) ? $args['bfi_thumb'] : true;
+        if($bfi_thumb) {
+            $thumbnail_url = bfi_thumb($thumbnail_url, $params);
+        }
     }
     $args['thumbnail_url'] = $thumbnail_url;
     SB_Post::the_thumbnail_html($args);

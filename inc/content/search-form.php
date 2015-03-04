@@ -16,9 +16,13 @@ $font_awesome = isset($args['font_awesome']) ? $args['font_awesome'] : false;
 if((bool)$font_awesome) {
     $search_submit_class = SB_PHP::add_string_with_space_before($search_submit_class, 'font-awesome');
 }
+$fields = isset($args['fields']) ? $args['fields'] : array();
 ?>
 <form action="<?php echo $action; ?>" class="<?php echo $form_class; ?>" method="<?php echo $method; ?>" role="search">
     <span class="screen-reader-text"><?php echo $label; ?></span>
     <input type="search" title="<?php echo $label; ?>" name="s" value="" placeholder="<?php echo $placeholder; ?>" class="<?php echo $search_field_class; ?>">
+    <?php foreach($fields as $field) : ?>
+        <?php echo $field; ?>
+    <?php endforeach; ?>
     <input type="submit" value="<?php echo $submit_text; ?>" class="<?php echo $search_submit_class; ?>">
 </form>

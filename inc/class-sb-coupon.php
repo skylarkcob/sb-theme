@@ -14,7 +14,7 @@ class SB_Coupon {
             'singular_name' => __('Store', 'sb-theme'),
             'slug' => 'store',
             'taxonomies' => array('category'),
-            'supports' => array('thumbnail')
+            'supports' => array('thumbnail', 'excerpt', 'editor', 'comments')
         );
         SB_Core::register_post_type($args);
 
@@ -22,8 +22,8 @@ class SB_Coupon {
             'name' => __('Coupons', 'sb-theme'),
             'singular_name' => __('Coupon', 'sb-theme'),
             'slug' => 'coupon',
-            'taxonomies' => array('category', self::get_coupon_type_slug()),
-            'supports' => array('thumbnail', 'excerpt')
+            'taxonomies' => array('category', 'post_tag', self::get_coupon_type_slug()),
+            'supports' => array('thumbnail', 'excerpt', 'editor', 'comments')
         );
         SB_Core::register_post_type($args);
 
@@ -82,11 +82,11 @@ class SB_Coupon {
     }
 
     public static function get_code($post_id) {
-        if(SB_Core::is_wpcf_installed()) {
-            return SB_Post::get_meta($post_id, 'wpcf-coupon-code');
-        } else {
-            return SB_Post::get_sb_meta($post_id, 'code');
+        $code = SB_Post::get_sb_meta($post_id, 'code');
+        if(empty($code)) {
+            $code = SB_Post::get_meta($post_id, 'wpcf-coupon-code');
         }
+        return trim($code);
     }
 
     public static function get_type_value($post_id) {
@@ -98,7 +98,11 @@ class SB_Coupon {
     }
 
     public static function get_type($post_id) {
-        return SB_Post::get_meta($post_id, 'wpcf-coupon-type');
+        $type = SB_Post::get_first_term($post_id, self::get_coupon_type_slug());
+        if((empty($type) || SB_Core::is_error($type)) && SB_Core::is_wpcf_installed()) {
+            $type = SB_Post::get_meta($post_id, 'wpcf-coupon-type');
+        }
+        return $type;
     }
 
     public static function get_filter($post_id) {
@@ -130,60 +134,27 @@ class SB_Coupon {
     }
 
     public static function get_coupon_from_stores($store_ids, $args = array()) {
-        if(is_array($store_ids)) {
-            if(SB_Core::is_wpcf_installed()) {
-                $defaults = array(
-                    'meta_query' => array(
-                        'relation' => 'OR'
-                    )
-                );
-                foreach($store_ids as $store_id) {
-                    $meta_item = array(
-                        'key' => '_wpcf_belongs_stores_id',
-                        'value' => $store_id
-                    );
-                    array_push($defaults['meta_query'], $meta_item);
-                }
-            } else {
-                $defaults = array(
-                    'meta_query' => array(
-                        'relation' => 'OR'
-                    )
-                );
-                foreach($store_ids as $store_id) {
-                    $meta_item = array(
-                        'key' => sb_build_meta_name('store'),
-                        'value' => $store_id
-                    );
-                    array_push($defaults['meta_query'], $meta_item);
-                }
-            }
-        } else {
-            if(SB_Core::is_wpcf_installed()) {
-                $defaults = array(
-                    'meta_query' => array(
-                        'relation' => 'OR',
-                        array(
-                            'key' => '_wpcf_belongs_stores_id',
-                            'value' => $store_ids
-                        )
-                    )
-                );
-            } else {
-                $defaults = array(
-                    'meta_query' => array(
-                        'relation' => 'OR',
-                        array(
-                            'key' => sb_build_meta_name('store'),
-                            'value' => $store_ids
-                        )
-                    )
-                );
-            }
+        $store_ids = (array)$store_ids;
+        $defaults = array(
+            'meta_query' => array(
+                'relation' => 'OR'
+            )
+        );
+        foreach($store_ids as $store_id) {
+            $meta_item = array(
+                'key' => sb_build_meta_name('store'),
+                'value' => $store_id
+            );
+            array_push($defaults['meta_query'], $meta_item);
+            $meta_item = array(
+                'key' => '_wpcf_belongs_stores_id',
+                'value' => $store_id
+            );
+            array_push($defaults['meta_query'], $meta_item);
         }
         if(isset($args['meta_query'])) {
+            array_push($args['meta_query'], $defaults['meta_query']);
             $args['relation'] = isset($args['meta_query']['relation']) ? $args['meta_query']['relation'] : $defaults['meta_query']['relation'];
-            array_push($args['meta_query'], $defaults['meta_query'][1]);
         } else {
             $args = wp_parse_args($args, $defaults);
         }
@@ -217,11 +188,19 @@ class SB_Coupon {
 
     public static function get_popular($args = array()) {
         $defaults = array(
-            'meta_key' => 'count-saver',
+            'meta_key' => 'count_saver',
             'orderby' => 'meta_value_num'
         );
         $new_args = wp_parse_args($args, $defaults);
         $coupons = self::get($new_args);
+        if(!$coupons->have_posts()) {
+            $defaults = array(
+                'meta_key' => 'count-saver',
+                'orderby' => 'meta_value_num'
+            );
+            $new_args = wp_parse_args($args, $defaults);
+            $coupons = self::get($new_args);
+        }
         $paged = isset($args['paged']) ? $args['paged'] : 1;
         if($paged > 1) {
             return $coupons;
@@ -241,19 +220,6 @@ class SB_Coupon {
         return $coupons;
     }
 
-    public static function get_featured_store($args = array()) {
-        if(SB_Core::is_wpcf_installed()) {
-            $defaults = array(
-                'post_type' => 'stores',
-                'meta_key' => 'wpcf-featured-store',
-                'meta_value' => '1'
-            );
-            $args = wp_parse_args($args, $defaults);
-            return new WP_Query($args);
-        }
-        return self::get_featured_stores($args);
-    }
-
     public static function get_featured_guide($args = array()) {
         $defaults = array(
             'post_type' => 'guides',
@@ -265,15 +231,11 @@ class SB_Coupon {
     }
 
     public static function get_coupon_store($post_id) {
-        if(SB_Core::is_wpcf_installed()) {
+        $store_id = self::get_coupon_store_id($post_id);
+        if(absint($store_id) < 1) {
             $store_id = SB_Post::get_meta($post_id, '_wpcf_belongs_stores_id');
-        } else {
-            $store_id = self::get_coupon_store_id($post_id);
         }
-        if(intval($store_id) < 1) {
-            return '';
-        }
-        return get_post($store_id);
+        return get_post(absint($store_id));
     }
 
     public static function get_short_title($post) {
@@ -322,13 +284,7 @@ class SB_Coupon {
         return $type;
     }
 
-    public static function get_action_button_text($post_id) {
-        $args = array(
-            'code' => __('Get code', 'sb-theme'),
-            'printable' => __('Show coupon', 'sb-theme'),
-            'sale' => __('Shop sale', 'sb-theme')
-        );
-        $args = apply_filters('sb_coupon_action_button_text', $args);
+    public static function get_type_code_text($post_id) {
         $type = 'code';
         $term = self::get_first_type($post_id);
         if(!SB_Core::is_error($term)) {
@@ -342,17 +298,36 @@ class SB_Coupon {
                     break;
             }
         }
+        return $type;
+    }
+
+    public static function get_action_button_text($post_id) {
+        $args = array(
+            'code' => __('Get code', 'sb-theme'),
+            'printable' => __('Show coupon', 'sb-theme'),
+            'sale' => __('Shop sale', 'sb-theme')
+        );
+        $args = apply_filters('sb_coupon_action_button_text', $args);
+        $type = self::get_type_code_text($post_id);
         if(isset($args[$type])) {
             return $args[$type];
         }
     }
 
-    public static function get_expired($post_id) {
-        $timestamp = SB_Post::get_meta($post_id, 'wpcf-expiration-date');
+    public static function get_expire_timestamp($post_id) {
+        $timestamp = SB_Post::get_sb_meta($post_id, 'expire');
+        if(empty($timestamp)) {
+            $timestamp = SB_Post::get_meta($post_id, 'wpcf-expiration-date');
+        }
+        return $timestamp;
+    }
+
+    public static function get_expired($post_id, $format = SB_DATE_TIME_FORMAT) {
+        $timestamp = self::get_expire_timestamp($post_id);
         if(empty($timestamp)) {
             return '';
         }
-        $date = date(SB_DATE_TIME_FORMAT, $timestamp);
+        $date = date($format, $timestamp);
         return $date;
     }
 
@@ -371,13 +346,49 @@ class SB_Coupon {
         return new WP_Query($args);
     }
 
-    public static function get_stores($args = array()) {
-        if(SB_Core::is_wpcf_installed()) {
-            $args['post_type'] = 'stores';
+    public static function get_vote_up($post_id) {
+        $result = absint(SB_Post::get_meta($post_id, 'vote_up'));
+        return $result;
+    }
+
+    public static function get_vote_down($post_id) {
+        $result = absint(SB_Post::get_meta($post_id, 'vote_down'));
+        return $result;
+    }
+
+    public static function get_success_percentage($post_id) {
+        $vote_up = self::get_vote_up($post_id);
+        $vote_down = self::get_vote_down($post_id);
+        $vote_total = $vote_up + $vote_down;
+        if($vote_total < 1) {
+            return 0;
         } else {
-            $args['post_type'] = 'store';
+            $result = ($vote_up - $vote_down) / $vote_total;
+            $result *= 100;
+            return $result;
         }
-        return new WP_Query($args);
+    }
+
+    public static function update_vote($post_id, $vote_up = true) {
+        if($vote_up) {
+            $vote = self::get_vote_up($post_id);
+            $vote++;
+            SB_Post::update_meta($post_id, 'vote_up', $vote);
+        } else {
+            $vote = self::get_vote_down($post_id);
+            $vote++;
+            SB_Post::update_meta($post_id, 'vote_down', $vote);
+        }
+    }
+
+    public static function get_stores($args = array()) {
+        $args['post_type'] = 'store';
+        $query = new WP_Query($args);
+        if(!$query->have_posts()) {
+            $args['post_type'] = 'stores';
+            $query = new WP_Query($args);
+        }
+        return $query;
     }
 
     public static function get_top_stores($args = array()) {
@@ -393,17 +404,19 @@ class SB_Coupon {
     }
 
     public static function get_category($args = array()) {
-        if(SB_Core::is_wpcf_installed()) {
-            return SB_Term::get('coupon-cat', $args);
+        $terms = SB_Term::get('category', $args);
+        if(!SB_PHP::is_array_has_value($terms)) {
+            $terms = SB_Term::get('coupon-cat', $args);
         }
-        return SB_Term::get('category', $args);
+        return $terms;
     }
 
     public static function get_category_by_id($cat_id) {
-        if(SB_Core::is_wpcf_installed()) {
-            return SB_Term::get_by('id', $cat_id, 'coupon-cat');
+        $term = SB_Term::get_by('id', $cat_id, 'category');
+        if(SB_Core::is_error($term)) {
+            $term = SB_Term::get_by('id', $cat_id, 'coupon-cat');
         }
-        return SB_Term::get_by('id', $cat_id, 'category');
+        return $term;
     }
 
     public static function get_guide_banner($post_id) {
@@ -436,12 +449,15 @@ class SB_Coupon {
             if($remove) {
                 $key = array_search($user_id, $users);
                 unset($users[$key]);
-                $users = implode(',', $users);
             } else {
                 if(!in_array($user_id, $users)) {
-                    $users = implode(',', $users);
-                    $users .= ',' . $user_id;
-                    $users = trim($users, ',');
+                    if(SB_Core::is_wpcf_installed()) {
+                        $users = implode(',', $users);
+                        $users .= ',' . $user_id;
+                        $users = trim($users, ',');
+                    } else {
+                        array_push($users, $user_id);
+                    }
                 }
             }
             SB_Post::update_meta($store_id, 'followers', $users);
@@ -454,17 +470,29 @@ class SB_Coupon {
 
     public static function get_store_follower_array($store_id) {
         $users = SB_Post::get_meta($store_id, 'followers');
-        $users = explode(',', $users);
-        $users = array_filter($users);
-        return $users;
+        if(SB_Core::is_wpcf_installed()) {
+            $users = explode(',', $users);
+        }
+        if(!is_array($users) && SB_PHP::is_string_contain($users, '[')) {
+            $users = SB_PHP::json_string_to_array($users);
+        }
+        if(is_array($users)) {
+            $users = array_filter($users);
+        }
+        return (array)$users;
     }
 
     public static function count_saver($post_id) {
-        $count = SB_Post::get_meta($post_id, 'count-saver');
-        if(empty($count) || !is_numeric($count) || $count < 0) {
-            $count = 0;
+        $count = SB_Post::get_meta($post_id, 'count_saver');
+        if(empty($count) || $count == 0) {
+            $count = SB_Post::get_meta($post_id, 'count-saver');
         }
+        $count = absint($count);
         return $count;
+    }
+
+    public static function update_coupon_saver($coupon_id, $user_id, $remove = false) {
+        self::update_saver($coupon_id, $user_id, $remove);
     }
 
     public static function update_saver($coupon_id, $user_id, $remove = false) {
@@ -474,18 +502,14 @@ class SB_Coupon {
             if($remove) {
                 $key = array_search($user_id, $users);
                 unset($users[$key]);
-                $users = implode(',', $users);
-                $count--;
             } else {
                 if(!in_array($user_id, $users)) {
-                    $users = implode(',', $users);
-                    $users .= ',' . $user_id;
-                    $users = trim($users, ',');
+                    array_push($users, $user_id);
                     $count++;
                 }
             }
             SB_Post::update_meta($coupon_id, 'savers', $users);
-            SB_Post::update_meta($coupon_id, 'count-saver', $count);
+            SB_Post::update_meta($coupon_id, 'count_saver', $count);
         }
     }
 
@@ -500,34 +524,38 @@ class SB_Coupon {
 
     public static function get_saver_array($coupon_id) {
         $users = SB_Post::get_meta($coupon_id, 'savers');
-        $users = explode(',', $users);
-        $users = array_filter($users);
-        return $users;
+        if(!is_array($users) && SB_Core::is_wpcf_installed()) {
+            $users = explode(',', $users);
+        }
+        if(is_array($users)) {
+            $users = array_filter($users);
+        }
+        return (array)$users;
     }
 
     public static function count_store_coupon($store_id) {
         $result = 0;
         if($store_id > 0) {
             global $wpdb;
-            $result = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->postmeta WHERE meta_value = %d AND meta_key = %s", $store_id, '_wpcf_belongs_stores_id'));
+            $result = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->postmeta WHERE meta_value = %d AND (meta_key = %s OR meta_key = %s)", $store_id, '_wpcf_belongs_stores_id', sb_build_meta_name('store')));
         }
-        return $result;
+        return absint($result);
     }
 
     public static function count_guide_store($guide_id) {
         $result = 0;
         if($guide_id > 0) {
             global $wpdb;
-            $result = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->postmeta WHERE meta_value = %d AND meta_key = %s", $guide_id, '_wpcf_belongs_guides_id'));
+            $result = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->postmeta WHERE meta_value = %d AND (meta_key = %s OR meta_key = %s)", $guide_id, '_wpcf_belongs_guides_id', sb_build_meta_name('guide')));
         }
-        return $result;
+        return absint($result);
     }
 
     public static function get_store_of_guide($guide_id) {
         $result = array();
         if($guide_id > 0) {
             global $wpdb;
-            $result = $wpdb->get_results($wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_value = %d AND meta_key = %s", $guide_id, '_wpcf_belongs_guides_id'));
+            $result = $wpdb->get_results($wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_value = %d AND (meta_key = %s OR meta_key = %s)", $guide_id, '_wpcf_belongs_guides_id', sb_build_meta_name('guide')));
             $tmp = array();
             foreach($result as $value) {
                 array_push($tmp, $value->post_id);
@@ -538,7 +566,11 @@ class SB_Coupon {
     }
 
     public static function get_guide_description($guide_id) {
-        return SB_Post::get_meta($guide_id, 'wpcf-guide-description');
+        $result = SB_Post::get_sb_meta($guide_id, 'description');
+        if(empty($result)) {
+            $result = SB_Post::get_meta($guide_id, 'wpcf-guide-description');
+        }
+        return $result;
     }
 
     public static function get_current() {
@@ -567,17 +599,21 @@ class SB_Coupon {
         return self::get_stores(array('post__in' => $store_ids));
     }
 
-    public static function get_coupon_of_following_store($user_id) {
-        $store_ids = SB_User::get_following_stores_array($user_id);
-        $args = array(
-            'meta_query' => array(
-                array(
-                    'key' => '_wpcf_belongs_stores_id',
-                    'value' => $store_ids
+    public static function get_coupon_of_following_store($user_id = 0, $args = array()) {
+        $store_ids = self::get_user_favorite_stores();
+        $query = self::get_coupon_from_stores($store_ids, $args);
+        if(!$query->have_posts()) {
+            $args = array(
+                'meta_query' => array(
+                    array(
+                        'key' => '_wpcf_belongs_stores_id',
+                        'value' => $store_ids
+                    )
                 )
-            )
-        );
-        return self::get($args);
+            );
+            $query = self::get($args);
+        }
+        return $query;
     }
 
     public static function get_coupon_guest_viewed() {
@@ -616,8 +652,35 @@ class SB_Coupon {
         return $value;
     }
 
+    public static function get_user_favorite_stores() {
+        if(SB_User::is_logged_in()) {
+            $user = SB_User::get_current();
+            $result = SB_User::get_favorite_stores($user->ID);
+            if(!SB_PHP::is_array_has_value($result)) {
+                $result = self::get_store_guest_favorite();
+            }
+            return (array)$result;
+        }
+        return self::get_store_guest_favorite();
+    }
+
+    public static function get_user_saved_coupons() {
+        if(SB_User::is_logged_in()) {
+            $user = SB_User::get_current();
+            $result = SB_User::get_saving_coupons_array($user->ID);
+            if(!SB_PHP::is_array_has_value($result)) {
+                $result = self::get_coupon_guest_saved();
+            }
+        } else {
+            $result = self::get_coupon_guest_saved();
+        }
+        $result = (array)$result;
+        $result = array_filter($result);
+        return $result;
+    }
+
     public static function set_store_guest_favorite($post_id, $remove = false) {
-        $result = self::get_coupon_guest_viewed();
+        $result = self::get_store_guest_favorite();
         if($remove) {
             $key = array_search($post_id, $result);
             unset($result[$key]);
@@ -629,8 +692,6 @@ class SB_Coupon {
         $_SESSION['store_guest_favorite'] = json_encode($result);
         return $result;
     }
-
-
 
     public static function get_coupon_guest_saved() {
         $value = isset($_SESSION['coupon_guest_saved']) ? $_SESSION['coupon_guest_saved'] : '';
@@ -644,7 +705,7 @@ class SB_Coupon {
     }
 
     public static function set_coupon_guest_saved($post_id, $remove = false) {
-        $result = self::get_coupon_guest_viewed();
+        $result = self::get_coupon_guest_saved();
         if($remove) {
             $key = array_search($post_id, $result);
             unset($result[$key]);
@@ -657,21 +718,53 @@ class SB_Coupon {
         return $result;
     }
 
+    public static function get_featured_store($args = array()) {
+        $query = self::get_featured_stores($args);
+        if(!$query->have_posts()) {
+            $defaults = array(
+                'post_type' => 'stores',
+                'meta_key' => 'wpcf-featured-store',
+                'meta_value' => '1'
+            );
+            $args = wp_parse_args($args, $defaults);
+            $query = new WP_Query($args);
+        }
+        return $query;
+    }
+
     public static function get_featured_stores($args = array()) {
         $args['post_type'] = 'store';
         return new WP_Query($args);
     }
 
+    public static function is_store_favorited($store_id) {
+        $result = false;
+        $favorite_ids = self::get_user_favorite_stores();
+        if(is_array($favorite_ids) && in_array($store_id, $favorite_ids)) {
+            $result = true;
+        }
+        return $result;
+    }
+
     public static function get_store_similar($store_id) {
-        $terms = SB_Post::get_term_ids($store_id, 'coupon-cat');
+        $terms = SB_Post::get_term_ids($store_id, 'category');
+        if(!SB_PHP::is_array_has_value($terms)) {
+            $terms = SB_Post::get_term_ids($store_id, 'coupon-cat');
+        }
         $args = array(
             'posts_per_page' => 10,
             'post__not_in' => array($store_id)
         );
         if(count($terms) > 0) {
             $args['tax_query'] = array(
+                'relation' => 'OR',
                 array(
                     'taxonomy' => 'coupon-cat',
+                    'field' => 'id',
+                    'terms' => $terms
+                ),
+                array(
+                    'taxonomy' => 'category',
                     'field' => 'id',
                     'terms' => $terms
                 )
@@ -680,8 +773,13 @@ class SB_Coupon {
             $guide = self::get_guide_of_store($store_id);
             if($guide) {
                 $args['meta_query'] = array(
+                    'relation' => 'OR',
                     array(
                         'key' => '_wpcf_belongs_guides_id',
+                        'value' => $guide->ID
+                    ),
+                    array(
+                        'key' => sb_build_meta_name('guide'),
                         'value' => $guide->ID
                     )
                 );
@@ -767,8 +865,26 @@ class SB_Coupon {
     }
 
     public static function get_printable_code($post_id) {
-        $image = SB_Post::get_meta($post_id, 'wpcf-printable-code');
-        return SB_PHP::get_first_image($image);
+        $image_url = SB_Post::get_sb_meta($post_id, 'printable');
+        $image = '';
+        if(!empty($image_url)) {
+            $image = '<img src="' . $image_url . '">';
+        }
+        if(empty($image)) {
+            $image = SB_Post::get_meta($post_id, 'wpcf-printable-code');
+            $image = SB_PHP::get_first_image($image);
+        }
+        return $image;
+    }
+
+    public static function get_print_coupon_url($post_id) {
+        $result = '';
+        $page = SB_Post::get_by_slug('print-coupon', 'page');
+        if(!SB_Core::is_error($page)) {
+            $result = get_permalink($page);
+            $result = add_query_arg(array('ci' => $post_id), $result);
+        }
+        return $result;
     }
 
     public static function get_store_url($post_id) {
@@ -776,7 +892,10 @@ class SB_Coupon {
     }
 
     public static function get_coupon_url($post_id) {
-        $url = SB_Post::get_meta($post_id, 'wpcf-coupon-url');
+        $url = SB_Post::get_sb_meta($post_id, 'url');
+        if(empty($url)) {
+            $url = SB_Post::get_meta($post_id, 'wpcf-coupon-url');
+        }
         if(empty($url)) {
             $store = self::get_coupon_store($post_id);
             $url = self::get_store_url($store->ID);

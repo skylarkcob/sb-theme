@@ -117,6 +117,8 @@ class SB_Theme {
     public static function the_comment_template() {
         if(function_exists('sb_comment_template')) {
             sb_comment_template();
+        } else {
+            comments_template();
         }
     }
 
