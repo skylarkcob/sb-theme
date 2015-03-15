@@ -10,8 +10,8 @@ $submit_text = isset($args['submit_text']) ? $args['submit_text'] : __('Tìm ki�
 $placeholder = isset($args['placeholder']) ? $args['placeholder'] : __('Nhập từ khóa…', 'sb-theme');
 $search_field_class = isset($args['search_field_class']) ? $args['search_field_class'] : 'search-field';
 $search_field_class = SB_PHP::add_string_with_space_before($search_field_class, 'sb-search-input');
-$search_submit_class = isset($args['search_submit_class']) ? $args['search_submit_class'] : 'search-submit';
-$search_submit_class = SB_PHP::add_string_with_space_before($search_submit_class, 'sb-submit-button');
+$search_submit_class = isset($args['search_submit_class']) ? $args['search_submit_class'] : '';
+$search_submit_class = SB_PHP::add_string_with_space_before($search_submit_class, 'sb-submit-button search-submit');
 $font_awesome = isset($args['font_awesome']) ? $args['font_awesome'] : false;
 if((bool)$font_awesome) {
     $search_submit_class = SB_PHP::add_string_with_space_before($search_submit_class, 'font-awesome');

@@ -733,8 +733,66 @@ class SB_Coupon {
     }
 
     public static function get_featured_stores($args = array()) {
-        $args['post_type'] = 'store';
-        return new WP_Query($args);
+        $args['meta_query'] = array(
+            array(
+                'key' => sb_build_meta_name('featured'),
+                'value' => 1,
+                'type' => 'numeric',
+                'compare' => '='
+            )
+        );
+        return self::get_stores($args);
+    }
+
+    public static function get_most_viewed_stores($args = array()) {
+        $args['orderby'] = 'meta_value_num';
+        $args['meta_key'] = 'views';
+        return self::get_stores($args);
+    }
+
+    public static function get_pupular_stores($args = array(), $exact_number = false) {
+        $query = self::get_top_stores($args);
+        if($exact_number) {
+            $post_numbers = $query->post_count;
+            $posts_per_page = isset($args['posts_per_page']) ? $args['posts_per_page'] : SB_Query::get_posts_per_page();
+            if($post_numbers < $posts_per_page) {
+                $need_more_numbers = $posts_per_page - $post_numbers;
+                $post_ids = array();
+                foreach($query->posts as $my_post) {
+                    array_push($post_ids, $my_post->ID);
+                }
+                $args['posts_per_page'] = $need_more_numbers;
+                $args['post__not_in'] = $post_ids;
+                $tmp_query = self::get_featured_stores($args);
+                foreach($tmp_query->posts as $my_post) {
+                    array_push($post_ids, $my_post->ID);
+                }
+                $need_more_numbers = $posts_per_page - count($post_ids);
+                if($need_more_numbers > 0) {
+                    $args['posts_per_page'] = $need_more_numbers;
+                    $args['post__not_in'] = $post_ids;
+                    $tmp_query = self::get_most_viewed_stores($args);
+                    foreach($tmp_query->posts as $my_post) {
+                        array_push($post_ids, $my_post->ID);
+                    }
+                    $need_more_numbers = $posts_per_page - count($post_ids);
+                    if($need_more_numbers > 0) {
+                        $args['posts_per_page'] = $need_more_numbers;
+                        $args['post__not_in'] = $post_ids;
+                        $tmp_query = self::get_stores($args);
+                        foreach($tmp_query->posts as $my_post) {
+                            array_push($post_ids, $my_post->ID);
+                        }
+                        $need_more_numbers = $posts_per_page - count($post_ids);
+                    }
+                }
+                unset($args['post__not_in']);
+                $args['posts_per_page'] = $posts_per_page;
+                $args['post__in'] = $post_ids;
+                $query = self::get_stores($args);
+            }
+        }
+        return $query;
     }
 
     public static function is_store_favorited($store_id) {
@@ -899,6 +957,9 @@ class SB_Coupon {
         if(empty($url)) {
             $store = self::get_coupon_store($post_id);
             $url = self::get_store_url($store->ID);
+            if(empty($url)) {
+                $url = SB_Post::get_sb_meta($store->ID, 'destination_url');
+            }
         }
         return $url;
     }
