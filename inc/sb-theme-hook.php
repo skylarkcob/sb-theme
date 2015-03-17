@@ -1,4 +1,10 @@
 <?php
+/**
+ * Gọi và chạy tất cả các hook trên giao diện.
+ *
+ * @package SB Theme
+ */
+
 do_action('sb_theme_setup');
 
 function sb_theme_init_before_running() {
@@ -235,3 +241,24 @@ function sb_theme_check_license() {
     }
 }
 add_action('init', 'sb_theme_check_license');
+
+function sb_theme_more_mce_buttons_toolbar_1($buttons) {
+    $buttons[] = 'fontselect';
+    $buttons[] = 'fontsizeselect';
+    $buttons[] = 'styleselect';
+    return $buttons;
+}
+add_filter('mce_buttons', 'sb_theme_more_mce_buttons_toolbar_1');
+
+function sb_theme_more_mce_buttons_toolbar_2($buttons) {
+    $buttons[] = 'subscript';
+    $buttons[] = 'superscript';
+    $buttons[] = 'hr';
+    $buttons[] = 'cut';
+    $buttons[] = 'copy';
+    $buttons[] = 'paste';
+    $buttons[] = 'backcolor';
+    $buttons[] = 'newdocument';
+    return $buttons;
+}
+add_filter('mce_buttons_2', 'sb_theme_more_mce_buttons_toolbar_2');

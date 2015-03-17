@@ -6,7 +6,7 @@
  */
 
 /** Khai báo phiên bản hiện tại của SB Theme */
-define( 'SB_THEME_VERSION', '1.5.3' );
+define( 'SB_THEME_VERSION', '1.5.4' );
 
 /** Khai báo phiên bản SB Core tối thiểu để SB Theme hoạt động */
 define( 'SB_THEME_USE_CORE_VERSION', '1.5.9' );
