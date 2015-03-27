@@ -69,6 +69,24 @@ class SB_Coupon {
         return SB_Term::get_by('id', $term_id, self::get_coupon_season_slug());
     }
 
+    public static function get_coupon_season($coupon_id) {
+        $terms = SB_Post::get_terms($coupon_id, self::get_coupon_season_slug());
+        $result = array_shift($terms);
+        return $result;
+    }
+
+    public static function get_current_event() {
+        return self::get_season();
+    }
+
+    public static function get_events( $args = array() ) {
+        return SB_Term::get( self::get_coupon_season_slug(), $args );
+    }
+
+    public static function get_types($args = array()) {
+        return SB_Term::get(self::get_coupon_type_slug(), $args);
+    }
+
     public static function get_favorites_page() {
         return SB_Post::get_by_slug('favorites', 'page');
     }
@@ -133,6 +151,11 @@ class SB_Coupon {
         return self::get_coupon_from_stores($store_id, $args);
     }
 
+    public static function get_coupon_from_category($term_id, $args = array()) {
+        $args['cat'] = $term_id;
+        return self::get($args);
+    }
+
     public static function get_coupon_from_stores($store_ids, $args = array()) {
         $store_ids = (array)$store_ids;
         $defaults = array(
@@ -180,7 +203,8 @@ class SB_Coupon {
 
     public static function get($args = array()) {
         $defaults = array(
-            'post_type' => 'coupon'
+            'post_type' => 'coupon',
+            'post_status' => 'publish'
         );
         $args = wp_parse_args($args, $defaults);
         return new WP_Query($args);
@@ -296,6 +320,9 @@ class SB_Coupon {
                 case 'product-deals':
                     $type = 'sale';
                     break;
+                case 'free-shipping':
+                    $type = 'free';
+                    break;
             }
         }
         return $type;
@@ -305,7 +332,8 @@ class SB_Coupon {
         $args = array(
             'code' => __('Get code', 'sb-theme'),
             'printable' => __('Show coupon', 'sb-theme'),
-            'sale' => __('Shop sale', 'sb-theme')
+            'sale' => __('Shop sale', 'sb-theme'),
+            'free' => __('Shop free', 'sb-theme')
         );
         $args = apply_filters('sb_coupon_action_button_text', $args);
         $type = self::get_type_code_text($post_id);
@@ -401,6 +429,11 @@ class SB_Coupon {
             $stores = self::get_stores($args);
         }
         return $stores;
+    }
+
+    public static function get_top_stores_by_category($term_id, $args = array()) {
+        $args['cat'] = $term_id;
+        return self::get_top_stores($args);
     }
 
     public static function get_category($args = array()) {
@@ -961,6 +994,19 @@ class SB_Coupon {
                 $url = SB_Post::get_sb_meta($store->ID, 'destination_url');
             }
         }
+        return $url;
+    }
+
+    public static function get_store_aff_url( $store_id ) {
+        $url = SB_Post::get_sb_meta( $store_id, 'destination_url' );
+        if ( empty( $url ) ) {
+            $url = SB_Post::get_sb_meta( $store_id, 'url' );
+        }
+        return $url;
+    }
+
+    public static function get_store_website_url( $store_id ) {
+        $url = SB_Post::get_sb_meta( $store_id, 'url' );
         return $url;
     }
 }

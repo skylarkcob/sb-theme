@@ -9,6 +9,10 @@ $close_text = __('Đóng', 'sb-theme');
 
 extract($args, EXTR_OVERWRITE);
 
+if(isset($args['close_button_text']) && !empty($args['close_button_text'])) {
+    $close_text = $args['close_button_text'];
+}
+
 $container_class .= ' modal fade';
 $container_class = trim($container_class);
 if(empty($id) || empty($title) || empty($callback)) {

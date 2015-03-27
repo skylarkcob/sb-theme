@@ -6,10 +6,10 @@
  */
 
 /** Khai báo phiên bản hiện tại của SB Theme */
-define( 'SB_THEME_VERSION', '1.5.5' );
+define( 'SB_THEME_VERSION', '1.5.6' );
 
 /** Khai báo phiên bản SB Core tối thiểu để SB Theme hoạt động */
-define( 'SB_THEME_USE_CORE_VERSION', '1.5.9' );
+define( 'SB_THEME_USE_CORE_VERSION', '1.6.1' );
 
 /** Khai báo đường dẫn đến thư mục sb-theme */
 define( 'SB_THEME_PATH', untrailingslashit(get_template_directory()) . '/sb-theme' );
