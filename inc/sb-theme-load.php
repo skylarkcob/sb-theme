@@ -25,6 +25,8 @@ if(!sb_theme_check_core() || !sb_theme_is_valid_core_version()) {
 /** Load tập tin khai báo các hàm trên SB Theme */
 require SB_THEME_INC_PATH . '/sb-theme-functions.php';
 
+require SB_THEME_INC_PATH . '/class-sb-lib.php';
+
 /*
  * Kiểm tra nếu giao diện có hỗ trợ meta cho term hoặc tiện ích chức năng
  * meta cho term được bật thì load class cần thiết.

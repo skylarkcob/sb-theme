@@ -51,6 +51,17 @@ class SB_Theme {
         }
     }
 
+    public static function container_class($class = '') {
+        $class = SB_PHP::add_string_with_space_before($class, 'sb-container sb-wrap container');
+        echo $class;
+    }
+
+    public static function the_copyright_html() {
+        ?>
+        Copyright © <?php echo date('Y'); ?> <?php echo get_bloginfo('name');?> - Giao diện được tạo bởi <a href="http://hocwp.net">SB Team</a>
+        <?php
+    }
+
     public static function the_favicon_html() {
         $favicon_url = SB_Option::get_favicon_url();
         if(!empty($favicon_url)) {

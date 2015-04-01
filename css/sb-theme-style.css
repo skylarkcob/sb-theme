@@ -799,26 +799,60 @@ ol.guides li a:hover{
     background-color: #fff;
     color: #26c4f1;
 }
+
+.btn-gplus,
 .btn-googleplus {
     background-color: #e93f2e;
     border: 1px solid #e52b18;
 }
+.btn-gplus:hover, .btn-gplus:focus, .btn-gplus:active, .btn-gplus.active, .open > .btn-gplus.dropdown-toggle,
 .btn-googleplus:hover, .btn-googleplus:focus, .btn-googleplus:active, .btn-googleplus.active, .open > .btn-googleplus.dropdown-toggle {
     background-color: #ce2616;
     border: 1px solid #ae2012;
     color: #fff;
 }
+.btn-gplus:active, .btn-gplus.active, .open > .btn-gplus.dropdown-toggle,
 .btn-googleplus:active, .btn-googleplus.active, .open > .btn-googleplus.dropdown-toggle {
     background-image: none;
 }
+
+.btn-gplus.disabled, .btn-gplus.disabled:hover, .btn-gplus.disabled:focus, .btn-gplus.disabled:active, .btn-gplus.disabled.active, .btn-gplus[disabled], .btn-gplus[disabled]:hover, .btn-gplus[disabled]:focus, .btn-gplus[disabled]:active, .btn-gplus.active[disabled], fieldset[disabled] .btn-gplus, fieldset[disabled] .btn-gplus:hover, fieldset[disabled] .btn-gplus:focus, fieldset[disabled] .btn-gplus:active, fieldset[disabled] .btn-gplus.active,
 .btn-googleplus.disabled, .btn-googleplus.disabled:hover, .btn-googleplus.disabled:focus, .btn-googleplus.disabled:active, .btn-googleplus.disabled.active, .btn-googleplus[disabled], .btn-googleplus[disabled]:hover, .btn-googleplus[disabled]:focus, .btn-googleplus[disabled]:active, .btn-googleplus.active[disabled], fieldset[disabled] .btn-googleplus, fieldset[disabled] .btn-googleplus:hover, fieldset[disabled] .btn-googleplus:focus, fieldset[disabled] .btn-googleplus:active, fieldset[disabled] .btn-googleplus.active {
     background-color: #e93f2e;
     border: 1px solid #e52b18;
 }
+
+.btn-gplus .badge,
 .btn-googleplus .badge {
     background-color: #fff;
     color: #e93f2e;
 }
+
+.btn-youtube {
+    background-color: #e63127;
+    border: 1px solid #cf2c23;
+}
+
+.btn-youtube:hover, .btn-youtube:focus, .btn-youtube:active, .btn-youtube.active, .open > .btn-youtube.dropdown-toggle {
+    background-color: #ce2616;
+    border: 1px solid #ae2012;
+    color: #fff;
+}
+
+.btn-youtube:active, .btn-youtube.active, .open > .btn-youtube.dropdown-toggle {
+    background-image: none;
+}
+
+.btn-youtube.disabled, .btn-youtube.disabled:hover, .btn-youtube.disabled:focus, .btn-youtube.disabled:active, .btn-youtube.disabled.active, .btn-youtube[disabled], .btn-youtube[disabled]:hover, .btn-youtube[disabled]:focus, .btn-youtube[disabled]:active, .btn-youtube.active[disabled], fieldset[disabled] .btn-youtube, fieldset[disabled] .btn-youtube:hover, fieldset[disabled] .btn-youtube:focus, fieldset[disabled] .btn-youtube:active, fieldset[disabled] .btn-youtube.active {
+    background-color: #e63127;
+    border: 1px solid #cf2c23;
+}
+
+.btn-youtube .badge {
+    background-color: #fff;
+    color: #e63127;
+}
+
 .btn-pinterest {
     background-color: #b81621;
     border: 1px solid #a1131d;
@@ -839,6 +873,7 @@ ol.guides li a:hover{
     background-color: #fff;
     color: #b81621;
 }
+
 .btn-linkedin {
     background-color: #007bb6;
     border: 1px solid #006a9d;
