@@ -246,3 +246,16 @@ function sb_theme_more_mce_buttons_toolbar_2( $buttons ) {
     return $buttons;
 }
 add_filter( 'mce_buttons_2', 'sb_theme_more_mce_buttons_toolbar_2' );
+
+function sb_theme_on_nav_menu_update( $id ) {
+    $locations = get_nav_menu_locations();
+    if( is_array( $locations ) && $locations ) {
+        $locations = array_keys( $locations, $id );
+        if( $locations ) {
+            foreach( $locations as $location ) {
+                delete_transient( 'sb_menu_' . $location );
+            }
+        }
+    }
+}
+add_action( 'wp_update_nav_menu', 'sb_theme_on_nav_menu_update' );

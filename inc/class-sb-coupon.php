@@ -48,7 +48,7 @@ class SB_Coupon {
         $args['meta_key'] = sb_build_meta_name('featured');
         $args['post_type'] = 'coupon';
         $args['meta_value'] = 1;
-        return new WP_Query($args);
+        return SB_Query::get($args);
     }
 
     public static function get_coupon_store_id($post_id) {
@@ -207,7 +207,7 @@ class SB_Coupon {
             'post_status' => 'publish'
         );
         $args = wp_parse_args($args, $defaults);
-        return new WP_Query($args);
+        return SB_Query::get($args);
     }
 
     public static function get_popular($args = array()) {
@@ -251,7 +251,7 @@ class SB_Coupon {
             'meta_value' => '1'
         );
         $args = wp_parse_args($args, $defaults);
-        return new WP_Query($args);
+        return SB_Query::get($args);
     }
 
     public static function get_coupon_store($post_id) {
@@ -371,7 +371,7 @@ class SB_Coupon {
 
     public static function get_guides($args = array()) {
         $args['post_type'] = 'guides';
-        return new WP_Query($args);
+        return SB_Query::get($args);
     }
 
     public static function get_vote_up($post_id) {
@@ -411,10 +411,10 @@ class SB_Coupon {
 
     public static function get_stores($args = array()) {
         $args['post_type'] = 'store';
-        $query = new WP_Query($args);
+        $query = SB_Query::get($args);
         if(!$query->have_posts()) {
             $args['post_type'] = 'stores';
-            $query = new WP_Query($args);
+            $query = SB_Query::get($args);
         }
         return $query;
     }
@@ -760,7 +760,7 @@ class SB_Coupon {
                 'meta_value' => '1'
             );
             $args = wp_parse_args($args, $defaults);
-            $query = new WP_Query($args);
+            $query = SB_Query::get($args);
         }
         return $query;
     }

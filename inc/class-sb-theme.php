@@ -248,16 +248,7 @@ class SB_Theme {
     }
 
     public static function the_menu($args = array()) {
-        $superfish = isset($args['superfish']) ? (bool)$args['superfish'] : true;
-        $menu_class = isset($args['menu_class']) ? $args['menu_class'] : '';
-        if($superfish) {
-            $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sf-menu');
-        }
-        $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sb-menu');
         $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
-        if(!empty($theme_location)) {
-            $menu_class = SB_PHP::add_string_with_space_before($menu_class, $theme_location);
-        }
         $locations = SB_Core::get_menu_location();
 	    $menu_id = isset($locations[$theme_location]) ? $locations[$theme_location] : 0;
         $menu = wp_get_nav_menu_object($menu_id);
@@ -265,12 +256,12 @@ class SB_Theme {
         $position = isset($args['position']) ? $args['position'] : 'left';
         $class = 'sb-mobile-menu';
         $class = SB_PHP::add_string_with_space_before($class, $position);
-        $args['menu_class'] = $menu_class;
         if(!SB_Core::is_error($menu)) {
-            wp_nav_menu($args);
+            $sb_menu = self::get_menu($args);
+            echo $sb_menu;
             if($mobile) {
                 echo '<div class="' . $class . '"><span class="mobile-menu-button"><i class="fa fa fa-bars"></i></span>';
-                wp_nav_menu($args);
+                echo $sb_menu;
                 echo '</div>';
             }
         } else {
@@ -283,13 +274,30 @@ class SB_Theme {
         }
     }
 
-    public static function the_mobile_menu($args = array()) {
-        $menu_class = isset($args['menu_class']) ? $args['menu_class'] : '';
-        $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sb-menu');
+    public static function get_menu($args = array()) {
         $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
-        if(!empty($theme_location)) {
-            $menu_class = SB_PHP::add_string_with_space_before($menu_class, $theme_location);
+        if(empty($theme_location)) {
+            return '';
         }
+        $transient_name = 'sb_menu_' . $theme_location;
+        $args['echo'] = false;
+        $menu_class = isset($args['menu_class']) ? $args['menu_class'] : '';
+        $superfish = isset($args['superfish']) ? (bool)$args['superfish'] : true;
+        if($superfish) {
+            $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sf-menu');
+        }
+        $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sb-menu');
+        $menu_class = SB_PHP::add_string_with_space_before($menu_class, $theme_location);
+        $args['menu_class'] = $menu_class;
+        if(false == ($sb_menu = get_transient($transient_name))) {
+            $sb_menu = wp_nav_menu($args);
+            set_transient($transient_name, $sb_menu, WEEK_IN_SECONDS);
+        }
+        return $sb_menu;
+    }
+
+    public static function the_mobile_menu($args = array()) {
+        $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
         $locations = SB_Core::get_menu_location();
         $menu_id = isset($locations[$theme_location]) ? $locations[$theme_location] : 0;
         $menu = wp_get_nav_menu_object($menu_id);
@@ -297,7 +305,6 @@ class SB_Theme {
         $class = 'sb-mobile-menu an-aside-mobile-menu';
         $class = SB_PHP::add_string_with_space_before($class, $position);
         $class = SB_PHP::add_string_with_space_before($class, $theme_location);
-        $args['menu_class'] = $menu_class;
         $button_text = isset($args['button_text']) ? trim($args['button_text']) : '';
         $search = isset($args['search']) ? (bool)$args['search'] : false;
         $search_args = array(
@@ -312,7 +319,8 @@ class SB_Theme {
             if($search) {
                 self::the_search_form($search_args);
             }
-            wp_nav_menu($args);
+            $sb_menu = self::get_menu($args);
+            echo $sb_menu;
             echo '</div>';
         } else {
             echo '<div class="' . $class . '">';

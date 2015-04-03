@@ -10,7 +10,7 @@ class SB_HW {
         if($all_project) {
             $args['post__not_in'] = array($all_project->ID);
         }
-        return new WP_Query($args);
+        return SB_Query::get($args);
     }
 
     public static function get_project_cats($args = array()) {

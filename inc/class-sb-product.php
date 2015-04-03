@@ -148,7 +148,7 @@ class SB_Product {
     }
 
     public static function count_product() {
-        $products = new WP_Query(array("post_type" => "product", "posts_per_page" => -1));
+        $products = SB_Query::get(array("post_type" => "product", "posts_per_page" => -1));
         return $products->post_count;
     }
 
@@ -228,7 +228,7 @@ class SB_Product {
         if(count($params) > 0) {
             $args = array_merge($params, $args);
         }
-        return new WP_Query($args);
+        return SB_Query::get($args);
     }
 
     public static function get_account_uri() {
@@ -288,7 +288,7 @@ class SB_Product {
             )
         );
         $args = wp_parse_args($args, $defaults);
-        return new WP_Query($args);
+        return SB_Query::get($args);
     }
 
     public function get_bulk_discount() {
