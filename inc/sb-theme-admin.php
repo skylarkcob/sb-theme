@@ -1,26 +1,29 @@
 <?php
+$sb_admin = new SB_Admin();
+
+add_action( 'init', 'sb_theme_check_license' );
+
+function is_sb_admin_page() {
+    $result = SB_Admin_Custom::is_sb_page();
+    return apply_filters( 'sb_admin_page', $result );
+}
+
 function sb_theme_menu() {
     SB_Admin_Custom::add_submenu_page(__('Theme Settings', 'sb-theme'), 'sb_theme', array('SB_Admin_Custom', 'setting_page_callback'));
     SB_Admin_Custom::add_submenu_page('SB Utilities', 'sb_utilities', array('SB_Admin_Custom', 'setting_page_callback'));
-    if(SB_Option::statistics_enabled()) {
-        SB_Admin_Custom::add_submenu_page('SB Statistics', 'sb_statistics', array('SB_Admin_Custom', 'setting_page_callback'));
-    }
 }
 add_action('sb_admin_menu', 'sb_theme_menu');
 
 function sb_theme_setting_tab($tabs) {
     $tabs['sb_theme'] = array('title' => __('Theme Settings', 'sb-theme'), 'section_id' => 'sb_theme_setting_section', 'type' => 'theme');
     $tabs['sb_utilities'] = array('title' => 'SB Utilities', 'section_id' => 'sb_utilities_section', 'type' => 'theme');
-    if(SB_Option::statistics_enabled()) {
-        $tabs['sb_statistics'] = array('title' => 'SB Statistics', 'section_id' => 'sb_statistics_section', 'type' => 'statistics');
-    }
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_theme_setting_tab');
 
 function sb_theme_setting_field() {
     SB_Admin_Custom::add_section('sb_theme_setting_section', __('SB Theme options page', 'sb-theme'), 'sb_theme');
-    SB_Admin_Custom::add_setting_field('sb_theme_default_language', __('Language', 'sb-core'), 'sb_theme_setting_section', 'sb_theme_default_language_callback', 'sb_theme');
+    SB_Admin_Custom::add_setting_field('sb_theme_default_language', __('Language', 'sb-theme'), 'sb_theme_setting_section', 'sb_theme_default_language_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_logo', 'Logo', 'sb_theme_setting_section', 'sb_theme_logo_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_favicon', 'Favicon', 'sb_theme_setting_section', 'sb_theme_favicon_callback', 'sb_theme');
     if(SB_Option::utility_enabled('add_to_head')) {

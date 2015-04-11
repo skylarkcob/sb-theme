@@ -1,3 +1,4 @@
+<?php do_action('sb_theme_init'); ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?> class="no-js">
 <head>

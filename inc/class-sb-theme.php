@@ -4,9 +4,9 @@ class SB_Theme {
         if(is_home()) {
             echo get_bloginfo('name') . ' - ' . get_bloginfo('description');
         } elseif(is_post_type_archive('product')) {
-            _e('Products List', 'sb-core');
+            _e('Products List', 'sb-theme');
         } elseif(is_post_type_archive('forum')) {
-            printf(__('%s forum', 'sb-core'), get_bloginfo('name'));
+            printf(__('%s forum', 'sb-theme'), get_bloginfo('name'));
         } elseif(is_singular('forum')) {
             echo get_the_title().' - '.get_bloginfo('name');
         } elseif(is_singular('topic') || is_single() || is_page()) {
@@ -18,12 +18,12 @@ class SB_Theme {
         }
     }
 
-    public static function init() {
-        sb_theme_init();
+    public static function created_by() {
+        printf('Giao diện được tạo bởi <a href="%1$s">%2$s</a>', SB_THEME_WEBSITE, SB_THEME_AUTHOR);
     }
 
-    public static function created_by() {
-        printf('Giao diện được tạo bởi <a href="http://hocwp.net">%s</a>', 'SB Team');
+    public static function the_copyright_html() {
+        printf('Copyright © %1$s %2$s - Giao diện được tạo bởi <a href="%3$s">%4$s</a>', date('Y'), get_bloginfo('name'), SB_THEME_WEBSITE, SB_THEME_AUTHOR);
     }
 
 	public static function enqueue_custom_script($handle, $name) {
@@ -40,9 +40,9 @@ class SB_Theme {
         echo '<div class="clear"></div>';
     }
 
-	public static function enqueue_custom_responsive_style($handle, $name) {
+	public static function enqueue_custom_responsive_style($handle, $name, $max_width = 1024) {
 		$file_path = SB_THEME_CUSTOM_URL . '/css/' . $name . '.css';
-		wp_enqueue_style($handle, $file_path, array(), false, 'screen and (max-width: 1024px)');
+		wp_enqueue_style($handle, $file_path, array(), false, 'screen and (max-width: ' . $max_width . 'px)');
 	}
 
     public static function sidebar($name) {
@@ -54,12 +54,6 @@ class SB_Theme {
     public static function container_class($class = '') {
         $class = SB_PHP::add_string_with_space_before($class, 'sb-container sb-wrap container');
         echo $class;
-    }
-
-    public static function the_copyright_html() {
-        ?>
-        Copyright © <?php echo date('Y'); ?> <?php echo get_bloginfo('name');?> - Giao diện được tạo bởi <a href="http://hocwp.net">SB Team</a>
-        <?php
     }
 
     public static function the_favicon_html() {
@@ -197,6 +191,10 @@ class SB_Theme {
 
     public static function the_logo_image_html() {
         $logo_url = SB_Option::get_logo_url();
+        if(is_array($logo_url)) {
+            $logo_url = SB_Option::get_media_detail($logo_url);
+            $logo_url = $logo_url['url'];
+        }
         if(!empty($logo_url)) {
             printf('<img src="%1$s" alt="%2$s">', $logo_url, esc_attr(get_bloginfo('name')));
         } else {
@@ -360,6 +358,15 @@ class SB_Theme {
     }
 
     private static function the_menu_default($args = array()) {
+        $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
+        $menu_class = isset($args['menu_class']) ? $args['menu_class'] : '';
+        $superfish = isset($args['superfish']) ? (bool)$args['superfish'] : true;
+        if($superfish) {
+            $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sf-menu');
+        }
+        $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sb-menu');
+        $menu_class = SB_PHP::add_string_with_space_before($menu_class, $theme_location);
+        $args['menu_class'] = $menu_class;
         ?>
         <div class="sb-menu-container">
             <ul class="<?php echo $args['menu_class']; ?>">
@@ -393,12 +400,26 @@ class SB_Theme {
         SB_Core::register_sidebar($sidebar_id, $sidebar_name, $sidebar_description);
     }
 
+    public static function register_sidebar_leaderboard_ads() {
+        sb_theme_register_sidebar('leaderboard-ads', 'Leaderboard ads', __('The avertising on top of site.', 'sb-theme'));
+    }
+
+    public static function register_sidebar_float_ads() {
+        sb_theme_register_sidebar('float-ads-left', 'Float ads left', __('The avertising on the left of site.', 'sb-theme'));
+        sb_theme_register_sidebar('float-ads-right', 'Float ads right', __('The avertising on the right of site.', 'sb-theme'));
+    }
+
     public static function the_loading_dotted() {
         sb_theme_get_content('loading-dotted');
     }
 
     public static function get_social_share_url($args = array()) {
         return SB_Core::get_social_share_url($args);
+    }
+
+    public static function the_login_page_header() {
+        do_action('sb_login_page_init');
+        get_header();
     }
 
     public static function get_page_not_found_image_url() {

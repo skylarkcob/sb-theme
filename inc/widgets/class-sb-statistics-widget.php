@@ -39,7 +39,7 @@ class SB_Statistics_Widget extends WP_Widget {
         } else {
             $title = '';
         }
-        SB_Widget_Field::before('sb-banner-widget');
+        SB_Widget_Field::before('sb-theme');
         SB_Widget_Field::title($this->get_field_id('title'), $this->get_field_name('title'), $title);
         SB_Widget_Field::after();
     }

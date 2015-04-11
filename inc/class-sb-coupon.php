@@ -1,19 +1,35 @@
 <?php
 class SB_Coupon {
     public static function get_coupon_type_slug() {
-        return apply_filters('sb_theme_coupon_type_slug', 'ct');
+        return apply_filters('sb_theme_coupon_type_slug', 'coupon_type');
     }
 
     public static function get_coupon_season_slug() {
-        return apply_filters('sb_theme_coupon_season_slug', 'cs');
+        return apply_filters('sb_theme_coupon_season_slug', 'coupon_event');
+    }
+
+    public static function get_coupon_event_slug() {
+        return apply_filters('sb_theme_coupon_event_slug', self::get_coupon_season_slug());
+    }
+
+    public static function get_coupon_category_slug() {
+        return apply_filters('sb_theme_coupon_category_slug', 'coupon_cat');
     }
 
     public static function install_post_type_and_taxonomy() {
         $args = array(
+            'name' => __('Categories', 'sb-theme'),
+            'singular_name' => __('Category', 'sb-theme'),
+            'slug' => self::get_coupon_category_slug(),
+            'post_types' => array('coupon')
+        );
+        SB_Core::register_taxonomy($args);
+
+        $args = array(
             'name' => __('Stores', 'sb-theme'),
             'singular_name' => __('Store', 'sb-theme'),
             'slug' => 'store',
-            'taxonomies' => array('category'),
+            'taxonomies' => array(self::get_coupon_category_slug()),
             'supports' => array('thumbnail', 'excerpt', 'editor', 'comments')
         );
         SB_Core::register_post_type($args);
@@ -22,7 +38,7 @@ class SB_Coupon {
             'name' => __('Coupons', 'sb-theme'),
             'singular_name' => __('Coupon', 'sb-theme'),
             'slug' => 'coupon',
-            'taxonomies' => array('category', 'post_tag', self::get_coupon_type_slug()),
+            'taxonomies' => apply_filters('sb_theme_coupon_taxonomies', array(self::get_coupon_category_slug(), self::get_coupon_type_slug())),
             'supports' => array('thumbnail', 'excerpt', 'editor', 'comments')
         );
         SB_Core::register_post_type($args);
@@ -36,8 +52,8 @@ class SB_Coupon {
         SB_Core::register_taxonomy($args);
 
         $args = array(
-            'name' => __('Seasons', 'sb-theme'),
-            'singular_name' => __('Season', 'sb-theme'),
+            'name' => __('Events', 'sb-theme'),
+            'singular_name' => __('Event', 'sb-theme'),
             'slug' => self::get_coupon_season_slug(),
             'post_types' => array('coupon')
         );
@@ -152,7 +168,12 @@ class SB_Coupon {
     }
 
     public static function get_coupon_from_category($term_id, $args = array()) {
-        $args['cat'] = $term_id;
+        $tax_item = array(
+            'taxonomy' => self::get_coupon_category_slug(),
+            'field' => 'id',
+            'terms' => $term_id
+        );
+        $args = SB_Query::build_tax_query($tax_item, $args);
         return self::get($args);
     }
 
@@ -432,20 +453,25 @@ class SB_Coupon {
     }
 
     public static function get_top_stores_by_category($term_id, $args = array()) {
-        $args['cat'] = $term_id;
+        $tax_item = array(
+            'taxonomy' => self::get_coupon_category_slug(),
+            'field' => 'id',
+            'terms' => $term_id
+        );
+        $args = SB_Query::build_tax_query($tax_item, $args);
         return self::get_top_stores($args);
     }
 
     public static function get_category($args = array()) {
-        $terms = SB_Term::get('category', $args);
-        if(!SB_PHP::is_array_has_value($terms)) {
-            $terms = SB_Term::get('coupon-cat', $args);
-        }
-        return $terms;
+        return self::get_categories($args);
+    }
+
+    public static function get_categories($args = array()) {
+        return SB_Term::get(self::get_coupon_category_slug(), $args);
     }
 
     public static function get_category_by_id($cat_id) {
-        $term = SB_Term::get_by('id', $cat_id, 'category');
+        $term = SB_Term::get_by('id', $cat_id, self::get_coupon_category_slug());
         if(SB_Core::is_error($term)) {
             $term = SB_Term::get_by('id', $cat_id, 'coupon-cat');
         }
@@ -838,7 +864,7 @@ class SB_Coupon {
     }
 
     public static function get_store_similar($store_id) {
-        $terms = SB_Post::get_term_ids($store_id, 'category');
+        $terms = SB_Post::get_term_ids($store_id, self::get_coupon_category_slug());
         if(!SB_PHP::is_array_has_value($terms)) {
             $terms = SB_Post::get_term_ids($store_id, 'coupon-cat');
         }
@@ -855,7 +881,7 @@ class SB_Coupon {
                     'terms' => $terms
                 ),
                 array(
-                    'taxonomy' => 'category',
+                    'taxonomy' => self::get_coupon_category_slug(),
                     'field' => 'id',
                     'terms' => $terms
                 )
