@@ -5,6 +5,9 @@
  * @package SB Theme
  */
 
+/** Tạo hook trước khi load SB Theme */
+do_action('sb_theme_load_before');
+
 /** Load tập tin cài đặt SB Theme */
 require SB_THEME_INC_PATH . '/sb-theme-install.php';
 
@@ -135,3 +138,6 @@ if(file_exists(SB_THEME_CUSTOM_PATH . '/sb-theme-custom.php')) {
     require SB_THEME_CUSTOM_PATH . '/sb-theme-custom.php';
 
 }
+
+/** Tạo hook sau khi load SB Theme */
+do_action('sb_theme_load_after');

@@ -71,28 +71,7 @@ function sb_deactivate_all_sb_plugin() {
 }
 
 function sb_switch_to_default_theme() {
-    $themes = wp_get_themes();
-    $wp_theme = '';
-    foreach ( $themes as $theme ) {
-        $author_uri = $theme->get( 'AuthorURI' );
-        if ( false !== strrpos( $author_uri, 'wordpress.org' ) ) {
-            $wp_theme = $theme;
-            break;
-        }
-    }
-    if ( empty( $wp_theme ) ) {
-        foreach ( $themes as $theme ) {
-            $text_domain = $theme->get( 'TextDomain' );
-            if ( false === strrpos( $text_domain, 'sb-theme' ) ) {
-                $wp_theme = $theme;
-                break;
-            }
-        }
-    }
-    $theme = $wp_theme;
-    if ( ! empty( $theme ) ) {
-        switch_theme( $theme->get( 'TextDomain' ) );
-    }
+
 }
 
 function sb_core_captcha_reload_ajax_callback() {
