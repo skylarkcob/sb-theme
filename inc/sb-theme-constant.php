@@ -42,3 +42,15 @@ define( 'SB_THEME_LIB_PATH', SB_THEME_PATH . '/lib' );
 define( 'SB_THEME_LIB_URL', SB_THEME_URL . '/lib' );
 
 define( 'SB_THEME_DEFAULT_LANGUAGE', 'vi' );
+
+define( 'SB_THEME_EMAIL', 'codewpvn@gmail.com' );
+
+define( 'SB_THEME_GITHUB', 'https://github.com/skylarkcob/sb-theme' );
+
+define( 'SB_THEME_FACEBOOK_PAGE', 'https://www.facebook.com/Sauhicom' );
+
+define( 'SB_THEME_FACEBOOK', 'https://www.facebook.com/skylarkcob' );
+
+define( 'SB_THEME_TWITTER', 'https://twitter.com/skylarkcob' );
+
+define( 'SB_THEME_LICENSE_REDIRECT', SB_THEME_WEBSITE );

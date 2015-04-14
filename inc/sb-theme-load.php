@@ -100,15 +100,8 @@ if(!function_exists('bfi_thumb')) {
 /** Load class SB_Browser */
 require SB_THEME_INC_PATH . '/class-sb-browser.php';
 
-/*
- * Kiểm tra nếu class SB_Detect không tồn tại thì load class này.
- */
-if(!class_exists('SB_Detect')) {
-
-    /** Load class SB_Detect */
-    require SB_THEME_INC_PATH . '/class-sb-detect.php';
-
-}
+/** Load class SB_Detect */
+require SB_THEME_INC_PATH . '/class-sb-detect.php';
 
 /** Load tập tin khởi tạo chức năng quản lý trong Dashboard */
 require SB_THEME_INC_PATH . '/sb-theme-admin.php';

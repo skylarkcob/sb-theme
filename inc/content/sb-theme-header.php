@@ -1,4 +1,4 @@
-<?php do_action('sb_theme_init'); ?>
+<?php do_action('sb_theme_html_before'); ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?> class="no-js">
 <head>

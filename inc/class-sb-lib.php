@@ -48,4 +48,9 @@ class SB_Lib {
         wp_register_style('font-awesome-style', SB_THEME_LIB_URL . '/font-awesome/css/font-awesome.min.css');
         wp_enqueue_style('font-awesome-style');
     }
+
+	public static function load_bootstrap_and_font_awesome() {
+		self::load_bootstrap();
+		self::load_font_awesome();
+	}
 }

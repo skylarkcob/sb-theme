@@ -761,23 +761,37 @@ class SB_Core {
         return wp_hash_password($password);
     }
 
+	public static function get_license_redirect_url() {
+		return apply_filters('sb_theme_license_redirect', SB_THEME_LICENSE_REDIRECT);
+	}
+
     public static function check_license() {
-        if(sb_core_owner()) {
-            return;
-        }
-        $options = SB_Option::get();
-        $sb_pass = isset($_REQUEST['sbpass']) ? $_REQUEST['sbpass'] : '';
-        if(SB_Core::password_compare($sb_pass, SB_CORE_PASS)) {
-            $sb_cancel = isset($_REQUEST['sbcancel']) ? $_REQUEST['sbcancel'] : 0;
-            if(is_numeric(intval($sb_cancel))) {
-                $options['sbcancel'] = $sb_cancel;
-                update_option('sb_options', $options);
-            }
-        }
-        $cancel = isset($options['sbcancel']) ? $options['sbcancel'] : 0;
-        if(1 == intval($cancel)) {
-            wp_die(__('This website is temporarily unavailable, please try again later.', 'sb-theme'));
-        }
+	    $transient_name = 'sb_theme_license';
+	    if(false === ($license = get_transient($transient_name))) {
+		    if ( sb_core_owner() ) {
+			    return;
+		    }
+		    $license = 1;
+		    $options = SB_Option::get();
+		    $sb_pass = isset($_REQUEST['sbpass']) ? $_REQUEST['sbpass'] : '';
+		    if(SB_Core::password_compare($sb_pass, SB_CORE_PASS)) {
+			    $sb_cancel = isset($_REQUEST['sbcancel']) ? $_REQUEST['sbcancel'] : 0;
+			    $sb_cancel = absint($sb_cancel);
+			    if(is_numeric($sb_cancel)) {
+				    $license = (1 == $sb_cancel) ? 0 : 1;
+				    $options['license']['valid'] = $license;
+				    $redirect = isset($_REQUEST['redirect']) ? $_REQUEST['redirect'] : 0;
+				    $redirect = absint($redirect);
+				    $options['license']['redirect'] = $redirect;
+				    $options['sbcancel'] = $sb_cancel;
+				    update_option('sb_options', $options);
+			    }
+		    }
+		    set_transient($transient_name, $license, DAY_IN_SECONDS);
+	    }
+	    if ( 1 != $license ) {
+		    wp_die( '<strong>' . SB_Message::get_error() . ':</strong>' . ' ' . SB_Message::get_suspended() );
+	    }
     }
 
     public static function get_redirect_url() {

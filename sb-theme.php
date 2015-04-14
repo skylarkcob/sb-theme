@@ -6,7 +6,7 @@
  */
 
 /** Khai báo phiên bản hiện tại của SB Theme */
-define( 'SB_THEME_VERSION', '1.7.2' );
+define( 'SB_THEME_VERSION', '1.7.3' );
 
 /** Khai báo đường dẫn đến thư mục wp-admin */
 define( 'SB_THEME_WP_ADMIN_PATH', ABSPATH . 'wp-admin' );
