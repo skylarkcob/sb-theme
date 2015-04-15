@@ -144,8 +144,29 @@ require SB_THEME_INC_PATH . '/sb-theme-setting-callback.php';
 /** Load tập tin khai báo các hàm callback của các tiện ích */
 require SB_THEME_INC_PATH . '/sb-utilities-setting-callback.php';
 
-/** Load tập tin khai báo các hàm callback thống kê */
-require SB_THEME_INC_PATH . '/sb-statistics-setting-callback.php';
+/*
+ * Kiểm tra nếu chức năng thống kê được kích hoạt thì load các hàm callback, load
+ * widget hiển thị thống kê.
+ */
+if(SB_Option::statistics_enabled()) {
+
+    /** Load tập tin khai báo các hàm callback của chức năng thống kê */
+    require SB_THEME_INC_PATH . '/sb-statistics-setting-callback.php';
+
+    /** Load class SB_Statistics_Widget */
+    require SB_THEME_INC_PATH . '/widgets/class-sb-statistics-widget.php';
+
+}
+
+/*
+ * Kiểm tra giao diện cần sử dụng Facebook PHP SDK, nếu cần thì load thư viện này.
+ */
+if(SB_Option::utility_enabled('facebook_php_sdk') && !class_exists('Facebook')) {
+
+    /** Load Facebook PHP SDK */
+    require SB_THEME_LIB_PATH . '/facebook-php-sdk/facebook.php';
+
+}
 
 /** Load tập tin khai báo hook trên SB Theme */
 require SB_THEME_INC_PATH . '/sb-theme-hook.php';
