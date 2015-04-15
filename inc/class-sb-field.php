@@ -355,7 +355,7 @@ class SB_Field {
                     <?php endforeach; ?>
                 </ul>
             </div>
-            <input type="hidden" class="active-sortalbe-value" name="sb_options[<?php echo $base_key; ?>][<?php echo $option_name; ?>]" value="<?php echo $terms; ?>">
+            <input type="hidden" class="active-sortable-value" name="sb_options[<?php echo $base_key; ?>][<?php echo $option_name; ?>]" value="<?php echo $terms; ?>">
         </div>
         <div style="clear: both"></div>
         <?php
