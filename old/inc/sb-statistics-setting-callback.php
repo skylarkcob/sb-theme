@@ -135,23 +135,20 @@ function sb_statistics_monthly_statistics_callback() {
 }
 
 function sb_statistics_setting_callback() {
-	sb_utilities_setting_field_statistics();
-    if(SB_Option::statistics_enabled()) {
-	    sb_statistics_setting_field_post_views();
-	    $count_post_views = SB_Option::get_statistics_switch('post_views');
-	    if((bool)$count_post_views) {
-		    sb_statistics_setting_field_daily_post_views();
-		    sb_statistics_setting_field_weekly_post_views();
-		    sb_statistics_setting_field_monthly_post_views();
-	    }
-	    sb_statistics_setting_field_visitor_statistics();
-	    $visitor_statistics = SB_Option::get_statistics_switch('visitor_statistics');
-	    if((bool)$visitor_statistics) {
-		    sb_statistics_setting_field_daily_statistics();
-		    sb_statistics_setting_field_weekly_statistics();
-		    sb_statistics_setting_field_monthly_statistics();
-		    sb_statistics_setting_field_bots_statistics();
-	    }
+    sb_statistics_setting_field_post_views();
+    $count_post_views = SB_Option::get_statistics_switch('post_views');
+    if((bool)$count_post_views) {
+        sb_statistics_setting_field_daily_post_views();
+        sb_statistics_setting_field_weekly_post_views();
+        sb_statistics_setting_field_monthly_post_views();
+    }
+    sb_statistics_setting_field_visitor_statistics();
+    $visitor_statistics = SB_Option::get_statistics_switch('visitor_statistics');
+    if((bool)$visitor_statistics) {
+        sb_statistics_setting_field_daily_statistics();
+        sb_statistics_setting_field_weekly_statistics();
+        sb_statistics_setting_field_monthly_statistics();
+        sb_statistics_setting_field_bots_statistics();
     }
 }
 add_action('sb_statistics_setting_field', 'sb_statistics_setting_callback');

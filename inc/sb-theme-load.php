@@ -84,6 +84,35 @@ require SB_THEME_INC_PATH . '/sb-theme-functions.php';
 
 require SB_THEME_INC_PATH . '/class-sb-lib.php';
 
+/*
+ * Kiểm tra nếu giao diện có hỗ trợ meta cho term hoặc tiện ích chức năng
+ * meta cho term được bật thì load class cần thiết.
+ */
+if(sb_theme_support_term_meta() || SB_Option::utility_enabled('term_meta')) {
+
+    /*
+     * Kiểm tra nếu không tồn tại class SB_Term_Meta thì load class này.
+     */
+    if(!class_exists('SB_Term_Meta')) {
+
+        /** Load class SB_Term_Meta */
+        require SB_CORE_INC_PATH . '/class-sb-term-meta.php';
+
+    }
+
+    // Kiểm tra nếu không tồn tại class SB_Term_Field thì load class này.
+    if(!class_exists('SB_Term_Field')) {
+
+        /** Load class SB_Term_Field */
+        require SB_CORE_INC_PATH . '/class-sb-term-field.php';
+
+    }
+
+    /** Load tập tin khai báo meta */
+    require SB_THEME_INC_PATH . '/sb-theme-meta.php';
+
+}
+
 /** Load class SB_CSS */
 require SB_THEME_INC_PATH . '/class-sb-css.php';
 
@@ -114,6 +143,9 @@ require SB_THEME_INC_PATH . '/sb-theme-setting-callback.php';
 
 /** Load tập tin khai báo các hàm callback của các tiện ích */
 require SB_THEME_INC_PATH . '/sb-utilities-setting-callback.php';
+
+/** Load tập tin khai báo các hàm callback thống kê */
+require SB_THEME_INC_PATH . '/sb-statistics-setting-callback.php';
 
 /** Load tập tin khai báo hook trên SB Theme */
 require SB_THEME_INC_PATH . '/sb-theme-hook.php';

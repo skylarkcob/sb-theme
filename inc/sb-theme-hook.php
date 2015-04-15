@@ -83,6 +83,14 @@ function sb_theme_admin_enqueue_scripts_hook() {
 }
 add_action( 'admin_enqueue_scripts', 'sb_theme_admin_enqueue_scripts_hook' );
 
+function sb_theme_update_option_permalink_structure_hook() {
+	if(isset($_REQUEST['settings-updated']) && (bool)$_REQUEST['settings-updated']) {
+		SB_Core::delete_transient('sb_menu');
+		do_action('sb_theme_update_permalink');
+	}
+}
+if($GLOBALS['pagenow'] == 'options-permalink.php') add_action( 'sb_theme_admin_init' , 'sb_theme_update_option_permalink_structure_hook' );
+
 function sb_theme_wp_enqueue_scripts_hook() {
     do_action('sb_theme_wp_enqueue_scripts_before');
 

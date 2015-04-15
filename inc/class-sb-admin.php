@@ -49,14 +49,12 @@ class SB_Admin {
         }
     }
 
-    public function action_admin_head() {
-        do_action('sb_admin_head');
-    }
-
     public function sanitize($input) {
         $options = SB_Option::get();
         $input = wp_parse_args($input, $options);
-        return apply_filters('sb_options_sanitize', $input);
+        $input = apply_filters('sb_options_sanitize', $input);
+	    $input = apply_filters('sb_theme_sanitize_option', $input);
+	    return $input;
     }
 
     private function register_sb_setting() {
@@ -111,14 +109,20 @@ class SB_Admin {
     private function action() {
         add_action('admin_menu', array($this, 'action_admin_menu'));
         add_action('admin_head', array($this, 'action_admin_head'));
-        add_action('admin_enqueue_scripts', array($this, 'admin_style_and_script'));
-        add_action('admin_init', array($this, 'action_admin_init'));
+        add_action('sb_theme_admin_enqueue_scripts', array($this, 'admin_style_and_script'));
+        add_action('sb_theme_admin_init', array($this, 'action_admin_init'));
     }
+
+	public function action_admin_head() {
+		do_action('sb_admin_head');
+		do_action('sb_theme_admin_head');
+	}
 
     public function action_admin_menu() {
         $this->add_menu_page();
         $this->add_default_submenu();
         do_action('sb_admin_menu');
+	    do_action('sb_theme_admin_menu');
     }
 
     private function add_default_submenu() {

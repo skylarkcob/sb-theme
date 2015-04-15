@@ -180,7 +180,7 @@ function sb_utilities_responsive_callback() {
 }
 
 function sb_utilities_setting_field_statistics() {
-    sb_theme_add_statistics_setting_field('sb_utilities_statistics', __('Statistics', 'sb-theme'), 'sb_utilities_statistics_callback');
+    sb_theme_add_utilities_setting_field('sb_utilities_statistics', __('Statistics', 'sb-theme'), 'sb_utilities_statistics_callback');
 }
 
 function sb_utilities_statistics_callback() {
@@ -288,7 +288,7 @@ function sb_utilities_setting_field_callback() {
     sb_utilities_setting_field_add_to_head();
     sb_utilities_setting_field_google_analytics();
 	sb_utilities_setting_field_responsive();
-
+    sb_utilities_setting_field_statistics();
     sb_utilities_setting_field_default_thumbnail();
     sb_utilities_setting_field_term_meta();
     sb_utilities_setting_field_shop();
