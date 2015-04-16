@@ -277,7 +277,7 @@ class SB_Theme {
         if(empty($theme_location)) {
             return '';
         }
-        $transient_name = 'sb_menu_' . $theme_location;
+        $transient_name = SB_Cache::build_menu_transient_name($theme_location);
         $args['echo'] = false;
         $menu_class = isset($args['menu_class']) ? $args['menu_class'] : '';
         $superfish = isset($args['superfish']) ? (bool)$args['superfish'] : true;

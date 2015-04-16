@@ -258,33 +258,7 @@ function sb_theme_the_post_thumbnail_crop_by_id($post_id, $width, $height) {
 }
 
 function sb_theme_the_post_thumbnail($args = array()) {
-    $thumbnail_url = SB_Post::get_thumbnail_url($args);
-    $width = isset($args['width']) ? intval($args['width']) : 0;
-    $height = isset($args['height']) ? intval($args['height']) : 0;
-    if($width < 16) {
-        $width = $height;
-    }
-    if($height < 16) {
-        $height = $width;
-    }
-    if($width > 15) {
-        $crop = isset($args['crop']) ? $args['crop'] : false;
-        $crop = (bool)$crop;
-        $defaults = array(
-            'width' => $width,
-            'height' => $height,
-            'crop' => $crop
-        );
-        $params = isset($args['params']) ? $args['params'] : array();
-        $params = (array)$params;
-        $params = wp_parse_args($params, $defaults);
-        $bfi_thumb = isset($args['bfi_thumb']) ? $args['bfi_thumb'] : true;
-        if($bfi_thumb) {
-            $thumbnail_url = bfi_thumb($thumbnail_url, $params);
-        }
-    }
-    $args['thumbnail_url'] = $thumbnail_url;
-    SB_Post::the_thumbnail_html($args);
+    SB_Post::the_thumbnail($args);
 }
 
 function sb_theme_change_default_image_setting() {

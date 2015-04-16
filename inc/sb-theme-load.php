@@ -21,6 +21,8 @@ require SB_THEME_INC_PATH . '/sb-theme-constant.php';
 
 do_action('sb_theme_load');
 
+require SB_THEME_INC_PATH . '/class-sb-cache.php';
+
 require SB_THEME_INC_PATH . '/class-sb-text.php';
 
 require SB_THEME_INC_PATH . '/class-sb-php.php';

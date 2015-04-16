@@ -60,7 +60,7 @@ class SB_HTML {
             $href = $this->get_attribute('href');
             if(!empty($href)) {
                 if(!SB_Core::is_my_domain($href)) {
-                    $this->set_attribute('rel', 'nofollow');
+                    $this->set_attribute('rel', 'external nofollow');
                     $this->set_attribute('target', '_blank');
                 }
             }

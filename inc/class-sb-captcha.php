@@ -26,6 +26,7 @@ class SB_Captcha {
 
     public static function use_captcha() {
         $use_captcha = apply_filters('sb_use_captcha', true);
+        $use_captcha = apply_filters('sb_theme_use_captcha', $use_captcha);
         if($use_captcha && !class_exists('ReallySimpleCaptcha')) {
             $use_captcha = false;
         }
@@ -34,7 +35,7 @@ class SB_Captcha {
 
     public static function build_key($args = array()) {
         $key = isset($args['key']) ? $args['key'] : 'default';
-        $key = 'sb_captcha_' . $key . '_prefix';
+        $key = SB_Cache::build_captcha_transient_name($key);
         return $key;
     }
 
@@ -44,18 +45,11 @@ class SB_Captcha {
     }
 
     public static function delete_expired_transient() {
-        global $wpdb;
-        $current_timestamp = time();
-        $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->options WHERE option_name like %s AND option_value < %d", '_transient_timeout_sb_captcha_%', $current_timestamp ) );
-        foreach($results as $row) {
-            $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_id = %d", $row->option_id ) );
-        }
+        SB_Cache::delete_captcha_expired_cache();
     }
 
     public static function delete_all_transient() {
-        global $wpdb;
-        $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_name like %s", '_transient_sb_captcha_%' ) );
-        $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_name like %s", '_transient_timeout_sb_captcha_%' ) );
+        SB_Cache::delete_all_captcha_cache();
     }
 
     public static function remove($file_name) {
@@ -63,30 +57,21 @@ class SB_Captcha {
             return;
         }
         $sb_captcha = self::get();
-        $file_name_only = SB_PHP::get_file_name_without_extension($file_name);
-        delete_transient('sb_captcha_' . $file_name_only . '_code');
-        delete_transient('sb_captcha_' . $file_name_only . '_prefix');
-        SB_PHP::set_session('sb_captcha_image', '');
-        self::delete_expired_transient();
+        SB_Cache::delete_captcha_transient($file_name);
         $sb_captcha->remove($file_name_only);
     }
 
     public static function get_captcha_session() {
-        $file_name = SB_PHP::get_session('sb_captcha_image');
+        $file_name = SB_PHP::get_session('sb_theme_captcha_image');
         return $file_name;
     }
 
     public static function set_captcha_session($file_name) {
-        SB_PHP::set_session('sb_captcha_image', $file_name);
+        SB_PHP::set_session('sb_theme_captcha_image', $file_name);
     }
 
     public static function build_transient_name($file_name) {
-        $file_name_only = SB_PHP::get_file_name_without_extension($file_name);
-        $result = array(
-            'prefix' => 'sb_captcha_' . $file_name_only . '_prefix',
-            'code' => 'sb_captcha_' . $file_name_only . '_code'
-        );
-        return $result;
+        return SB_Cache::build_captcha_transient_name($file_name);
     }
 
     public static function set_transient($name, $value) {
@@ -121,10 +106,10 @@ class SB_Captcha {
             return true;
         }
         $result = false;
-        $file_name = SB_PHP::get_session('sb_captcha_image');
+        $file_name = SB_PHP::get_session('sb_theme_captcha_image');
         if(!empty($file_name)) {
-            $file_name_only = SB_PHP::get_file_name_without_extension($file_name);
-            $transient_key = 'sb_captcha_' . $file_name_only . '_code';
+            $transient_keys = SB_Cache::build_captcha_transient_name($file_name);
+            $transient_key = $transient_keys['code'];
             if(false !== ($captcha_code = get_transient($transient_key))) {
                 if(SB_Core::password_compare($code, $captcha_code)) {
                     $result = true;
@@ -139,7 +124,7 @@ class SB_Captcha {
         $file_name = SB_PHP::get_file_name_without_extension($url);
         if(!empty($url)) {
             $len = isset($args['len']) ? $args['len'] : 4;
-            echo '<img class="sb-captcha-image captcha-code" data-file="' . $file_name . '" src="' . $url . '" data-len="' . $len . '">';
+            echo '<img class="sb-captcha-image captcha-code sb-theme-captcha-image" data-file="' . $file_name . '" src="' . $url . '" data-len="' . $len . '">';
         }
     }
 }

@@ -29,7 +29,7 @@ add_action( 'init', 'sb_theme_init_hook' );
 add_action( 'sb_theme_init', array( 'SB_Core', 'check_license' ) );
 
 function sb_theme_check_license() {
-	$transient_name = 'sb_theme_license';
+	$transient_name = SB_Cache::build_license_transient_name();
 	if(false === ($license = get_transient($transient_name))) {
 		if ( sb_core_owner() ) {
 			return;
@@ -283,6 +283,7 @@ function sb_theme_on_nav_menu_update( $id ) {
             }
         }
     }
+    delete_transient('sb_theme_menu_custom_item');
 }
 add_action( 'wp_update_nav_menu', 'sb_theme_on_nav_menu_update' );
 
@@ -510,6 +511,45 @@ function sb_tab_widget_load_sidebar() {
 }
 add_action('sb_theme_widgets_init', 'sb_tab_widget_load_sidebar');
 
+function sb_theme_save_post_hook( $post_id ) {
+    if ( wp_is_post_revision( $post_id ) ) {
+        return;
+    }
+    SB_Core::delete_transient('sb_theme_post_' . $post_id);
+    do_action('sb_theme_update_post');
+    do_action('sb_theme_save_post');
+}
+add_action( 'save_post', 'sb_theme_save_post_hook' );
+
+function sb_theme_delete_post_hook($post_id) {
+    do_action('sb_theme_delete_post', $post_id);
+}
+add_action( 'delete_post', 'sb_theme_delete_post_hook', 10 );
+
+function sb_theme_post_status_transitions_hook( $new_status, $old_status, $post ) {
+    if( $new_status != $old_status ) {
+        do_action('sb_theme_transition_post_status', $new_status, $old_status, $post);
+    }
+}
+add_action('transition_post_status', 'sb_theme_post_status_transitions_hook', 10, 3);
+
+function sb_theme_on_post_publish_hook( $ID, $post ) {
+    do_action('sb_theme_publish_post', $ID, $post);
+}
+add_action(  'publish_post',  'sb_theme_on_post_publish_hook', 10, 2 );
+
+function sb_theme_sb_option_update_hook() {
+    if(SB_Admin_Custom::is_sb_page()) {
+        if(isset($_REQUEST['settings-updated']) && (bool)$_REQUEST['settings-updated']) {
+            SB_Core::delete_transient('sb_theme_post');
+            do_action('sb_theme_update_sb_option');
+        }
+    }
+}
+if(isset($GLOBALS['pagenow']) && 'admin.php' == $GLOBALS['pagenow']) add_action('sb_theme_admin_init', 'sb_theme_sb_option_update_hook');
+
+/* ================================================================================================================== */
+
 // Thiết lập filter cho giao diện
 
 /*
@@ -545,7 +585,7 @@ function sb_theme_get_avatar_cache( $avatar, $id_or_email, $size, $default, $alt
         }
     }
     $user_key = str_replace('@', '_', $id_or_email);
-    $transient_name = 'sb_theme_avatar_' . $user_key;
+    $transient_name = SB_Cache::build_user_avatar_transient_name($user_key);
     if(false === ($avatar_url = get_transient($transient_name))) {
         $avatar_url = SB_PHP::get_image_source($avatar);
         set_transient($transient_name, $avatar_url, DAY_IN_SECONDS);

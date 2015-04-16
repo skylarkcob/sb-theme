@@ -173,7 +173,7 @@ class SB_Option {
     }
 
     public static function get_login_logo_url() {
-        $logo_url = self::get_media_url(array('keys' => array('login_page', 'logo')));
+        $logo_url = self::get_media_url(array('login_page', 'logo'));
         if(empty($logo_url) && defined('SB_THEME_VERSION')) {
             $logo_url = self::get_logo_url();
         }
@@ -182,13 +182,14 @@ class SB_Option {
 
     public static function get_theme_thumbnail_url() {
         $options = self::get();
-        $url = self::get_media_url(array('keys' => array('thumbnail')));
+        $url = self::get_media_url(array('theme', 'thumbnail'));
         if(empty($url)) {
             $url = isset($options['post_widget']['no_thumbnail']) ? $options['post_widget']['no_thumbnail'] : '';
         }
         if(empty($url)) {
             $url = SB_Post::get_default_thumbnail_url();
         }
+        $url = apply_filters('sb_theme_post_thumbnail_url_default', $url);
         return $url;
     }
 

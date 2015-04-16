@@ -103,4 +103,22 @@ class SB_Message {
 		$text = __('Không khớp', 'sb-theme');
 		return apply_filters('sb_theme_password_strength_mismatch_text', $text);
 	}
+
+    public static function get_category() {
+        $text = __('Chuyên mục', 'sb-theme');
+        $text = apply_filters('sb_theme_category_text', $text);
+        return $text;
+    }
+
+    public static function get_comment() {
+        $text = __('Bình luận', 'sb-theme');
+        $text = apply_filters('sb_theme_comment_text', $text);
+        return $text;
+    }
+
+    public static function get_posts_by() {
+        $text = __('Bài viết bởi %s', 'sb-theme');
+        $text = apply_filters('sb_theme_post_by_person_text', $text);
+        return $text;
+    }
 }

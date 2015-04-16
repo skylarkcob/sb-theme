@@ -66,7 +66,7 @@ class SB_Plugin {
     }
 
     public function get_information() {
-        $key = str_replace('_', '_', $this->slug) . '_information';
+        $key = SB_Cache::build_plugin_transient_name($this->slug);
         if(false === ($this->information = get_transient($key))) {
             if(!function_exists('plugins_api')) {
                 require ABSPATH . 'wp-admin/includes/plugin-install.php';

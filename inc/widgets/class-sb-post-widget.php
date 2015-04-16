@@ -6,7 +6,7 @@ class SB_Post_Widget extends WP_Widget {
 	
 	private $default_number = 5;
 	private $excerpt_length = 75;
-	private $thumbnail_size = array(100, 70);
+	private $thumbnail_size = array(64, 64);
     private $title_length = 50;
     private $show_author = 0;
     private $show_date = 0;
@@ -30,7 +30,15 @@ class SB_Post_Widget extends WP_Widget {
 		$this->order_by_init();
 		$this->order_type_init();
         $this->post_range_init();
+
+        add_action( 'sb_theme_save_post', array( $this, 'delete_cache' ) );
+        add_action( 'sb_theme_delete_post', array( $this, 'delete_cache' ) );
+        add_action( 'sb_theme_after_switch_theme', array( $this, 'delete_cache' ) );
 	}
+
+    public function delete_cache() {
+        SB_Cache::delete_widget_cache($this->id);
+    }
 
     private function post_range_init() {
         $this->post_ranges['all'] = __('All times', 'sb-theme');
@@ -76,176 +84,174 @@ class SB_Post_Widget extends WP_Widget {
 	}
 	
 	public function widget($args, $instance) {
-		$arr_tmp = $args;
-		$number = empty($instance['number']) ? $this->default_number : absint($instance['number']);
-		$title  = apply_filters('widget_title', empty($instance['title']) ? '' : $instance['title'], $instance, $this->id_base);
-		$type = isset($instance['type']) ? $instance['type'] : 'recent';
-		$taxonomy = isset($instance['taxonomy']) ? $instance['taxonomy'] : 'category';
-		$order_by = isset($instance['order_by']) ? $instance['order_by'] : 'post_date';
-		$order_type = $instance['order_type'];
-		$order_type = strtoupper($order_type);
-        $post_range = isset($instance['post_range']) ? $instance['post_range'] : 'all';
-		$only_thumbnail = isset($instance['only_thumbnail']) ? absint($instance['only_thumbnail']) : 0;
-        $this->only_thumbnail = $only_thumbnail;
-		$show_excerpt = isset($instance['show_excerpt']) ? absint($instance['show_excerpt']) : 0;
-		
-		$thumbnail_width = empty($instance['thumbnail_width']) ? $this->thumbnail_size[0] : absint($instance['thumbnail_width']);
-		$thumbnail_height = empty($instance['thumbnail_height']) ? $this->thumbnail_size[1] : absint($instance['thumbnail_height']);
-		$thumbnail_size = array($thumbnail_width, $thumbnail_height);
-		
-		$excerpt_length = empty($instance['excerpt_length']) ? $this->excerpt_length : absint($instance['excerpt_length']);
-		
-		$show_author = isset($instance['show_author']) ? absint($instance['show_author']) : 0;
-		$show_date = isset($instance['show_date']) ? absint($instance['show_date']) : 0;
-		$show_comment_count = isset($instance['show_comment_count']) ? absint($instance['show_comment_count']) : 0;
+        if(false === ($widget_html = get_transient(SB_Cache::build_widget_transient_name($this->id)))) {
+            $arr_tmp = $args;
+            $number = empty($instance['number']) ? $this->default_number : absint($instance['number']);
+            $title  = apply_filters('widget_title', empty($instance['title']) ? '' : $instance['title'], $instance, $this->id_base);
+            $type = isset($instance['type']) ? $instance['type'] : 'recent';
+            $taxonomy = isset($instance['taxonomy']) ? $instance['taxonomy'] : 'category';
+            $order_by = isset($instance['order_by']) ? $instance['order_by'] : 'post_date';
+            $order_type = $instance['order_type'];
+            $order_type = strtoupper($order_type);
+            $post_range = isset($instance['post_range']) ? $instance['post_range'] : 'all';
+            $only_thumbnail = isset($instance['only_thumbnail']) ? absint($instance['only_thumbnail']) : 0;
+            $this->only_thumbnail = $only_thumbnail;
+            $show_excerpt = isset($instance['show_excerpt']) ? absint($instance['show_excerpt']) : 0;
 
-        $title_length = empty($instance['title_length']) ? $this->title_length : absint($instance['title_length']);
-        $disable_thumbnail = isset($instance['disable_thumbnail']) ? intval($instance['disable_thumbnail']) : 0;
-        $this->post_display = isset($instance['post_display']) ? $instance['post_display'] : '';
-        $post_type = isset($instance['post_type']) ? $instance['post_type'] : 'post';
-		switch($type) {
-			case 'random':
-				$args = array(
-					'posts_per_page'	=> $number,
-					'orderby'			=> 'rand',
-					'order'				=> $order_type
-				);
-				break;
-			case 'comment':
-				$args = array(
-					'posts_per_page'	=> $number,
-					'orderby'			=> 'comment_count',
-					'order'				=> $order_type
-				);
-				break;
-			case 'view':
-				$args = array(
-					'posts_per_page'	=> $number,
-					'meta_key'			=> 'views',
-					'orderby'			=> 'meta_value_num',
-					'order'				=> $order_type
-				);
-				break;
-			case 'like':
-				$args = array(
-					'posts_per_page'	=> $number,
-					'meta_key'			=> 'likes',
-					'orderby'			=> 'meta_value_num',
-					'order'				=> $order_type
-				);
-				break;
-			case 'favorite':
-				$user = wp_get_current_user();
-				$list_posts = array();
-				if(!empty($user)) {
-					$list_posts = (array)get_user_meta($user->ID, 'favorite_posts', true);
-				}				
-				if(count($list_posts) < 1) {
-					array_push($list_posts, 0);
-				}
-				$args = array(
-					'posts_per_page'	=> $number,
-					'post__in'			=> $list_posts,
-					'orderby'			=> $order_by,
-					'order'				=> $order_type
-				);
-				break;
-			case 'category':
-				$args = array();
-				$category = $instance['category'];
-				if($category > 0) {
-					$args = array(
-						'posts_per_page'	=> $number,
-						'orderby'			=> $order_by,
-						'order'				=> $order_type,
-						'tax_query'		=> array(
-							array(
-								'taxonomy'	=> $taxonomy,
-								'field'		=> 'id',
-								'terms'		=> $category
-							)
-						)
-					);
-				}
-				break;
-			default:
-				$args = array(
-					'posts_per_page'	=> $number,
-					'orderby'			=> $order_by,
-					'order'				=> $order_type
-				);
-		}
-        $args['post_type'] = $post_type;
-        switch($post_range) {
-            case 'daily':
-                $args = SB_Query::build_daily_post_args($args);
-                break;
-            case 'weekly':
-                $args = SB_Query::build_weekly_post_args($args);
-                break;
-            case 'monthly':
-                $args = SB_Query::build_monthly_post_args($args);
-                break;
-            case 'yearly':
-                $args = SB_Query::build_yearly_post_args($args);
-                break;
+            $thumbnail_width = empty($instance['thumbnail_width']) ? $this->thumbnail_size[0] : absint($instance['thumbnail_width']);
+            $thumbnail_height = empty($instance['thumbnail_height']) ? $this->thumbnail_size[1] : absint($instance['thumbnail_height']);
+            $thumbnail_size = array($thumbnail_width, $thumbnail_height);
+
+            $excerpt_length = empty($instance['excerpt_length']) ? $this->excerpt_length : absint($instance['excerpt_length']);
+
+            $show_author = isset($instance['show_author']) ? absint($instance['show_author']) : 0;
+            $show_date = isset($instance['show_date']) ? absint($instance['show_date']) : 0;
+            $show_comment_count = isset($instance['show_comment_count']) ? absint($instance['show_comment_count']) : 0;
+
+            $title_length = empty($instance['title_length']) ? $this->title_length : absint($instance['title_length']);
+            $disable_thumbnail = isset($instance['disable_thumbnail']) ? intval($instance['disable_thumbnail']) : 0;
+            $this->post_display = isset($instance['post_display']) ? $instance['post_display'] : '';
+            $post_type = isset($instance['post_type']) ? $instance['post_type'] : 'post';
+            switch($type) {
+                case 'random':
+                    $args = array(
+                        'posts_per_page'	=> $number,
+                        'orderby'			=> 'rand',
+                        'order'				=> $order_type
+                    );
+                    break;
+                case 'comment':
+                    $args = array(
+                        'posts_per_page'	=> $number,
+                        'orderby'			=> 'comment_count',
+                        'order'				=> $order_type
+                    );
+                    break;
+                case 'view':
+                    $args = array(
+                        'posts_per_page'	=> $number,
+                        'meta_key'			=> 'views',
+                        'orderby'			=> 'meta_value_num',
+                        'order'				=> $order_type
+                    );
+                    break;
+                case 'like':
+                    $args = array(
+                        'posts_per_page'	=> $number,
+                        'meta_key'			=> 'likes',
+                        'orderby'			=> 'meta_value_num',
+                        'order'				=> $order_type
+                    );
+                    break;
+                case 'favorite':
+                    $user = wp_get_current_user();
+                    $list_posts = array();
+                    if(!empty($user)) {
+                        $list_posts = (array)get_user_meta($user->ID, 'favorite_posts', true);
+                    }
+                    if(count($list_posts) < 1) {
+                        array_push($list_posts, 0);
+                    }
+                    $args = array(
+                        'posts_per_page'	=> $number,
+                        'post__in'			=> $list_posts,
+                        'orderby'			=> $order_by,
+                        'order'				=> $order_type
+                    );
+                    break;
+                case 'category':
+                    $args = array();
+                    $category = $instance['category'];
+                    if($category > 0) {
+                        $args = array(
+                            'posts_per_page'	=> $number,
+                            'orderby'			=> $order_by,
+                            'order'				=> $order_type,
+                            'tax_query'		=> array(
+                                array(
+                                    'taxonomy'	=> $taxonomy,
+                                    'field'		=> 'id',
+                                    'terms'		=> $category
+                                )
+                            )
+                        );
+                    }
+                    break;
+                default:
+                    $args = array(
+                        'posts_per_page'	=> $number,
+                        'orderby'			=> $order_by,
+                        'order'				=> $order_type
+                    );
+            }
+            $args['post_type'] = $post_type;
+            switch($post_range) {
+                case 'daily':
+                    $args = SB_Query::build_daily_post_args($args);
+                    break;
+                case 'weekly':
+                    $args = SB_Query::build_weekly_post_args($args);
+                    break;
+                case 'monthly':
+                    $args = SB_Query::build_monthly_post_args($args);
+                    break;
+                case 'yearly':
+                    $args = SB_Query::build_yearly_post_args($args);
+                    break;
+            }
+
+            $sb_post = SB_Query::get($args);
+
+            if($sb_post->have_posts()) {
+                if('favorite' == $type && !is_user_logged_in()) return;
+                $args = $arr_tmp;
+                $widget_html = $args['before_widget'];
+                if(!empty($title)) {
+                    $widget_html .= $args['before_title'] . $title . $args['after_title'];
+                }
+
+                $list = new SB_HTML('ul');
+                $list->set_attribute('class', 'widgets-list-layout list-widget-posts sb-post-widget list-posts');
+
+                $list_items = '';
+
+                while($sb_post->have_posts()) {
+                    $sb_post->the_post();
+                    $post_id = get_the_ID();
+
+                    $thumb_args = array(
+                        'size' => $thumbnail_size,
+                        'post_id' => $post_id,
+                        'cache' => false
+                    );
+
+                    $thumbnail_link = SB_Post::get_thumbnail_link($thumb_args);
+
+                    $post_link = new SB_HTML('a');
+                    $atts = array(
+                        'class' => 'post-title',
+                        'href' => get_permalink($post_id),
+                        'title' => get_the_title($post_id),
+                        'text' => get_the_title($post_id)
+                    );
+                    $post_link->set_attribute_array($atts);
+
+                    $list_item = new SB_HTML('li');
+                    $list_item->set_text($thumbnail_link . $post_link->build());
+                    $list_items .= $list_item->build();
+                }
+                wp_reset_postdata();
+
+                $list->set_text($list_items);
+
+                $widget_html .= $list->build();
+
+                $widget_html .= $args['after_widget'];
+
+                set_transient(SB_Cache::build_widget_transient_name($this->id), $widget_html, 4 * WEEK_IN_SECONDS);
+            }
         }
-
-		$sb_post = new WP_Query($args);
-        //print_r($sb_post);
-		if($sb_post->have_posts()) {
-			if('favorite' == $type && !is_user_logged_in()) return;
-			$args = $arr_tmp;
-			echo $args['before_widget'];
-			if(!empty($title)) {
-				echo $args['before_title'] . $title . $args['after_title'];
-			}
-			?>
-			<div class='sb-theme'>
-				<div class='sb-post-widget-inner'>
-					<ol class='list-unstyled list-posts'>
-                        <?php $count = 0; $tmp_thumbnail_size = $thumbnail_size; ?>
-						<?php while($sb_post->have_posts()) : $sb_post->the_post(); ?>
-                            <?php
-                            $post_class = 'sb-post';
-                            if(('all' == $this->post_display) || ('first' == $this->post_display && $count == 0) || ('last' == $this->post_display && ($count + 1) == $sb_post->post_count) || ('first_last' == $this->post_display && ($count == 0 || (($count + 1) == $sb_post->post_count)))) {
-                                $post_class = SB_PHP::add_string_with_space_before($post_class, 'full-width');
-                                $thumbnail_size = '';
-                            }
-                            if((bool)$disable_thumbnail) {
-                                $post_class = SB_PHP::add_string_with_space_before($post_class, 'disable-thumbnail');
-                            }
-                            ?>
-                            <li class="<?php echo $post_class; ?>">
-                                <?php SB_Post::the_thumbnail_html(array('size' => $thumbnail_size, 'post_id' => get_the_ID())); ?>
-                                <?php if(!$only_thumbnail) : ?>
-                                    <h3 class='post-title'><a href='<?php the_permalink(); ?>'><?php echo SB_PHP::substr(get_the_title(), $title_length); ?></a></h3>
-                                    <?php if((bool)$show_excerpt) : ?>
-                                        <p class="excerpt"><?php echo SB_PHP::substr(get_the_excerpt(), $excerpt_length); ?></p>
-                                    <?php endif; ?>
-                                    <div class="post-meta">
-                                        <?php if((bool)$show_author) : ?>
-                                            <?php SB_Post::the_author(); ?>
-                                        <?php endif; ?>
-                                        <?php if((bool)$show_date) : ?>
-                                            <?php SB_Post::the_date(); ?>
-                                        <?php endif; ?>
-                                        <?php if((bool)$show_comment_count) : ?>
-                                            <?php SB_Post::the_comment_link(); ?>
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endif; ?>
-                            </li>
-                            <?php
-                            $thumbnail_size = $tmp_thumbnail_size;
-                            ?>
-						<?php $count++; endwhile; wp_reset_postdata(); ?>
-					</ol>
-				</div>
-			</div>
-			<?php
-			echo $args['after_widget'];
-		}
+        echo $widget_html;
 	}
 	
 	public function form($instance) {
@@ -524,6 +530,9 @@ class SB_Post_Widget extends WP_Widget {
         $instance['post_display'] = isset($new_instance['post_display']) ? $new_instance['post_display'] : '';
         $instance['post_type'] = isset($new_instance['post_type']) ? $new_instance['post_type'] : 'post';
         $instance['disable_thumbnail'] = isset($new_instance['disable_thumbnail']) ? 1 : 0;
+
+        $this->delete_cache();
+
 		return $instance;
 	}
 }

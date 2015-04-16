@@ -1,13 +1,21 @@
 <?php
 class SB_Post {
     public static function get_images($post_id) {
-        $result = array();
-        $files = get_posts(array('post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image'));
-        foreach($files as $file) {
-            $image_file = get_attached_file($file->ID);
-            if(file_exists($image_file)) {
-                array_push($result, $file);
+        return self::get_all_media_images($post_id);
+    }
+
+    public static function get_all_media_images($post_id) {
+        $transient_name = SB_Cache::build_post_transient_name($post_id, '_media_images');
+        if(false === ($result = get_transient($transient_name))) {
+            $result = array();
+            $files = get_posts(array('post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image'));
+            foreach($files as $file) {
+                $image_file = get_attached_file($file->ID);
+                if(file_exists($image_file)) {
+                    array_push($result, $file);
+                }
             }
+            set_transient($transient_name, $result, YEAR_IN_SECONDS);
         }
         return $result;
     }
@@ -17,10 +25,19 @@ class SB_Post {
     }
 
     public static function get_comment_number($post_id = '') {
-        $comment_number = get_comments_number($post_id);
-        if($comment_number == 1) {
-            $comments = SB_Post::get_comments($post_id);
-            $comment_number = count($comments);
+        if(empty($post_id)) {
+            $post_id = get_the_ID();
+        }
+        $transient_name = SB_Cache::build_post_transient_name($post_id, '_comment_number');
+        if(false === ($comment_number = get_transient($transient_name))) {
+            $comment_number = get_comments_number($post_id);
+            if($comment_number == 1) {
+                $comments = SB_Post::get_comments($post_id);
+                $comment_number = count($comments);
+            }
+            if(!empty($post_id)) {
+                set_transient($transient_name, $comment_number, DAY_IN_SECONDS);
+            }
         }
         return $comment_number;
     }
@@ -56,7 +73,7 @@ class SB_Post {
 
     public static function auto_set_thumbnail($post_id) {
         $first_image = self::get_first_image($post_id);
-        if(empty($first_image)) {
+        if(!is_object($first_image) || empty($first_image)) {
             $post = get_post($post_id);
             if($post) {
                 $first_image = SB_PHP::get_first_image($post->post_content);
@@ -69,12 +86,14 @@ class SB_Post {
 
     public static function get_first_image_url($post_id) {
         $image = self::get_first_image($post_id);
+        $url = '';
         if($image && !is_wp_error($image)) {
-            return wp_get_attachment_url($image->id);
+            $url = wp_get_attachment_url($image->id);
         } else {
             $post = get_post($post_id);
-            return SB_PHP::get_first_image($post->post_content);
+            $url = SB_PHP::get_first_image($post->post_content);
         }
+        return $url;
     }
 
     public static function check_duplicate_comment($commentdata) {
@@ -130,12 +149,12 @@ class SB_Post {
         self::update_product_price($post_id, $price);
     }
 
-    public static function minus_product_price($post_id, $price_plus) {
-        if(!is_numeric($price_plus) || !is_numeric($post_id) || $post_id < 1) {
+    public static function minus_product_price($post_id, $price_minus) {
+        if(!is_numeric($price_minus) || !is_numeric($post_id) || $post_id < 1) {
             return;
         }
         $price = floatval(self::get_meta($post_id, '_price'));
-        $price -= $price_plus;
+        $price -= $price_minus;
         self::update_product_price($post_id, $price);
     }
 
@@ -217,67 +236,73 @@ class SB_Post {
         return SB_Query::get($args);
     }
 
-    public static function get_thumbnail_url($args = array()) {
-        $post_id = isset($args['post_id']) ? $args['post_id'] : get_the_ID();
-        $result = '';
-        $size = isset($args['size']) ? $args['size'] : '';
+    public static function get_file_path($media_id) {
+        return get_attached_file($media_id);
+    }
+
+    public static function get_thumbnail_id($post_id) {
+        return get_post_thumbnail_id($post_id);
+    }
+
+    public static function get_thumbnail_detail($post_id) {
+        $result = array();
         if(has_post_thumbnail($post_id)) {
-            $image_path = get_attached_file(get_post_thumbnail_id($post_id));
+            $thumbnail_id = self::get_thumbnail_id($post_id);
+            $image_path = self::get_file_path($thumbnail_id);
             if(file_exists($image_path)) {
-                $image_attributes = wp_get_attachment_image_src(get_post_thumbnail_id($post_id), $size);
-                if($image_attributes) {
-                    $result = $image_attributes[0];
+                $result = wp_get_attachment_image_src($thumbnail_id, $size);
+            }
+        }
+        return $result;
+    }
+
+    public static function get_thumbnail_url($args = array()) {
+        $post_id = isset($args['post_id']) ? absint($args['post_id']) : get_the_ID();
+        $result = '';
+        if($post_id > 0) {
+            $size = isset($args['size']) ? $args['size'] : '';
+            $size_key = is_array($size) ? implode('_', $size) : $size;
+            if(empty($size_key)) {
+                $size_key = 'default';
+            }
+            $transient_name = SB_Cache::build_post_transient_name($post_id, '_thumbnail_url_' . $size_key);
+            $result = get_transient($transient_name);
+            $cache = isset($args['cache']) ? $args['cache'] : true;
+            if(false === $result || !SB_PHP::is_image_url($result) || !$cache) {
+                if(has_post_thumbnail($post_id)) {
+                    $thumbnail_id = self::get_thumbnail_id($post_id);
+                    $image_path = self::get_file_path($thumbnail_id);
+                    if(file_exists($image_path)) {
+                        $image_attributes = wp_get_attachment_image_src($thumbnail_id, $size);
+                        if($image_attributes) {
+                            $result = $image_attributes[0];
+                        }
+                    }
+                }
+                if(empty($result)) {
+                    $result = apply_filters('hocwp_post_image_url', '', $post_id);
+                }
+                if(empty($result)) {
+                    $result = self::get_first_image_url($post_id);
+                }
+                if(empty($result)) {
+                    $result = SB_Option::get_theme_thumbnail_url();
+                }
+                if($cache && !empty($result) && SB_PHP::is_image_url($result)) {
+                    set_transient($transient_name, $result, WEEK_IN_SECONDS);
                 }
             }
         }
-        if(empty($result)) {
-            $result = apply_filters('hocwp_post_image_url', '');
-        }
-        if(empty($result)) {
-            $result = self::get_first_image_url($post_id);
-        }
-        if(empty($result)) {
-            $post = get_post($post_id);
-            if($post && !is_wp_error($post)) {
-                $result = SB_PHP::get_first_image($post->post_content);
-            }
-        }
-        if(empty($result)) {
-            $result = SB_Option::get_theme_thumbnail_url();
-        }
-        return apply_filters('sb_thumbnail_url', $result);
+        $result = apply_filters('sb_thumbnail_url', $result, $post_id);
+        $result = apply_filters('sb_theme_post_thumbnail_url', $result, $post_id);
+        return $result;
     }
 
     public static function get_thumbnail_full_url($post_id = '') {
-        if(empty($post_id)) {
-            $post_id = get_the_ID();
-        }
-        $result = '';
-        if(has_post_thumbnail($post_id)) {
-            $image_path = get_attached_file(get_post_thumbnail_id($post_id));
-            if(file_exists($image_path)) {
-                $image_attributes = wp_get_attachment_image_src(get_post_thumbnail_id($post_id));
-                if($image_attributes) {
-                    $result = $image_attributes[0];
-                }
-            }
-        }
-        if(empty($result)) {
-            $result = apply_filters('hocwp_post_image_url', '');
-        }
-        if(empty($result)) {
-            $result = self::get_first_image_url($post_id);
-        }
-        if(empty($result)) {
-            $post = get_post($post_id);
-            if($post && !is_wp_error($post)) {
-                $result = SB_PHP::get_first_image($post->post_content);
-            }
-        }
-        if(empty($result)) {
-            $result = SB_Option::get_theme_thumbnail_url();
-        }
-        return apply_filters('sb_thumbnail_full_url', $result);
+        $result = self::get_thumbnail_url(array('post_id' => $post_id));
+        $result = apply_filters('sb_thumbnail_full_url', $result, $post_id);
+        $result = apply_filters('sb_theme_post_thumbnail_full_url', $result, $post_id);
+        return $result;
     }
 
     public static function get_default_thumbnail_url() {
@@ -285,38 +310,65 @@ class SB_Post {
     }
 
     public static function get_thumbnail_html($args = array()) {
-        $size = isset($args['size']) ? $args['size'] : '';
         $post_id = isset($args['post_id']) ? $args['post_id'] : get_the_ID();
-        $width = isset($args['width']) ? $args['width'] : '';
-        $height = isset($args['height']) ? $args['height'] : '';
-        $style = isset($args['style']) ? $args['style'] : '';
-        $crop = isset($args['crop']) ? (bool)$args['crop'] : false;
-        $bfi_thumb = isset($args['bfi_thumb']) ? (bool)$args['bfi_thumb'] : true;
-        if(is_array($size) && count($size) == 1) {
-            $size = array($size, $size);
-        }
-        if(count($size) == 2) {
-            $width = $size[0];
-            $height = $size[1];
-            $style = ' style="width:' . $width . 'px; height:' . $height . 'px;"';
-        }
-        $args['size'] = $size;
-        $result = self::get_thumbnail_url($args);
-        if(!empty($result)) {
-            if($bfi_thumb) {
-                $height = intval($height);
-                if($height > 0) {
-                    $tmp = bfi_thumb($result, array('width' => $width, 'height' => $height, 'crop' => $crop));
-                } else {
-                    $tmp = bfi_thumb($result, array('width' => $width, 'crop' => $crop));
+        $result = '';
+        if($post_id > 0) {
+            $size = isset($args['size']) ? $args['size'] : '';
+            $size_key = is_array($size) ? implode('_', $size) : $size;
+            if(empty($size_key)) {
+                $size_key = 'default';
+            }
+            $trasient_name = SB_Cache::build_post_transient_name($post_id, '_thumbnail_image_' . $size_key);
+            $result = get_transient($trasient_name);
+            $image_source = SB_PHP::get_image_source($result);
+            $cache = isset($args['cache']) ? $args['cache'] : true;
+            if(false === $result || empty($image_source) || !$cache) {
+                $width = isset($args['width']) ? $args['width'] : '';
+                $height = isset($args['height']) ? $args['height'] : '';
+                $style = isset($args['style']) ? $args['style'] : '';
+                $crop = isset($args['crop']) ? (bool)$args['crop'] : false;
+                $bfi_thumb = isset($args['bfi_thumb']) ? (bool)$args['bfi_thumb'] : true;
+                if(is_array($size) && count($size) == 1) {
+                    $size = array($size, $size);
                 }
-                if(!empty($tmp)) {
-                    $result = $tmp;
+                if(is_array($size) && count($size) == 2) {
+                    $width = absint($size[0]);
+                    $height = absint($size[1]);
+                    if(empty($style)) {
+                        $style = 'width:' . $width . 'px; height:' . $height . 'px;';
+                    }
+                }
+                $args['size'] = $size;
+                $thumbnail_url = isset($args['thumbnail_url']) ? $args['thumbnail_url'] : '';
+                if(empty($thumbnail_url)) {
+                    $thumbnail_url = self::get_thumbnail_url($args);
+                }
+                if(!empty($thumbnail_url)) {
+                    if($bfi_thumb) {
+                        if($height < 1) {
+                            $height = $width;
+                        }
+                        if($height > 0) {
+                            $tmp = bfi_thumb($thumbnail_url, array('width' => $width, 'height' => $height, 'crop' => $crop));
+                        } else {
+                            $tmp = bfi_thumb($thumbnail_url, array('width' => $width, 'crop' => $crop));
+                        }
+                        if(!empty($tmp)) {
+                            $thumbnail_url = $tmp;
+                        }
+                    }
+                    $thumbnail_image_class = apply_filters('sb_theme_post_thumbnail_image_class', '', $post_id);
+                    $thumbnail_image_class .= SB_PHP::add_string_with_space_before($thumbnail_image_class, 'wp-post-image sb-post-image img-responsive thumbnail-image');
+                    $result = '<img class="' . $thumbnail_image_class . '" alt="' . get_the_title($post_id) . '" width="' . $width . '" height="' . $height . '" src="' . $thumbnail_url . '" style="' . $style . '" itemprop="image">';
+                }
+                if($cache && !empty($result)) {
+                    set_transient($trasient_name, $result, WEEK_IN_SECONDS);
                 }
             }
-            $result = '<img class="wp-post-image sb-post-image img-responsive thumbnail-image" alt="' . get_the_title($post_id) . '" width="' . $width . '" height="' . $height . '" src="' . $result . '"' . $style . '>';
         }
-        return apply_filters('sb_thumbnail_html', $result);
+        $result = apply_filters('sb_thumbnail_html', $result, $post_id);
+        $result = apply_filters('sb_theme_post_thumbnail_image', $result, $post_id);
+        return $result;
     }
 
     public static function is($post) {
@@ -327,42 +379,46 @@ class SB_Post {
     }
 
     public static function the_thumbnail_html($args = array()) {
-        $post_id = get_the_ID();
-        $thumbnail_url = isset($args['thumbnail_url']) ? $args['thumbnail_url'] : '';
-        if(empty($thumbnail_url)) {
-            $thumbnail_url = self::get_thumbnail_html($args);
+        echo self::get_thumbnail_html($args);
+    }
+
+    public static function the_thumbnail_link($args = array()) {
+        self::the_thumbnail($args);
+    }
+
+    public static function get_thumbnail_link($args = array()) {
+        $link = isset($args['link']) ? (bool)$args['link'] : true;
+        $link_class = isset($args['link_class']) ? $args['link_class'] : '';
+        $link_class = SB_PHP::add_string_with_space_before($link_class, 'img-hyperlink');
+        $post_id = isset($args['post_id']) ? $args['post_id'] : get_the_ID();
+        $result = '';
+        if($link) {
+            $link_html = new SB_HTML('a');
+            $atts = array(
+                'class' => $link_class,
+                'title' => get_the_title($post_id),
+                'href' => get_permalink($post_id),
+                'text' => self::get_thumbnail_html($args)
+            );
+            $link_html->set_attribute_array($atts);
+            $result = $link_html->build();
         } else {
-            $thumbnail_url = sprintf('<img class="wp-post-image sb-post-image img-responsive thumbnail-image" src="%1$s" alt="%2$s">', $thumbnail_url, get_the_title($post_id));
+            $result = self::get_thumbnail_html($args);
         }
-        ?>
-        <div class="post-thumbnail">
-            <a href="<?php echo get_permalink($post_id); ?>"><?php echo $thumbnail_url; ?></a>
-        </div>
-        <?php
+        return $result;
+    }
+
+    public static function the_thumbnail($args = array()) {
+        echo self::get_thumbnail_link($args);
     }
 
     public static function the_thumbnail_only_link_image_html($args = array()) {
-        $post_id = isset($args['post_id']) ? $args['post_id'] : get_the_ID();
-        $thumbnail_url = isset($args['thumbnail_url']) ? $args['thumbnail_url'] : '';
-        if(empty($thumbnail_url)) {
-            $thumbnail_url = self::get_thumbnail_html($args);
-        } else {
-            $thumbnail_url = sprintf('<img class="wp-post-image sb-post-image img-responsive thumbnail-image" src="%1$s" alt="%2$s">', $thumbnail_url, get_the_title($post_id));
-        }
-        ?>
-        <a href="<?php echo get_permalink($post_id); ?>"><?php echo $thumbnail_url; ?></a>
-        <?php
+        self::the_thumbnail($args);
     }
 
     public static function the_thumbnail_only_image_html($args = array()) {
-        $post_id = isset($args['post_id']) ? $args['post_id'] : get_the_ID();
-        $thumbnail_url = isset($args['thumbnail_url']) ? $args['thumbnail_url'] : '';
-        if(empty($thumbnail_url)) {
-            $thumbnail_url = self::get_thumbnail_html($args);
-        } else {
-            $thumbnail_url = sprintf('<img class="wp-post-image sb-post-image img-responsive thumbnail-image" src="%1$s" alt="%2$s">', $thumbnail_url, get_the_title($post_id));
-        }
-        echo $thumbnail_url;
+        $args['link'] = false;
+        self::the_thumbnail($args);
     }
 
     public static function the_thumbnail_crop_html_by_id($post_id, $width, $height) {
@@ -372,7 +428,7 @@ class SB_Post {
             'crop' => true,
             'post_id' => $post_id
         );
-        self::the_thumbnail_html($args);
+        self::the_thumbnail($args);
     }
 
     public static function the_thumbnail_crop_html($width, $height) {
@@ -381,7 +437,7 @@ class SB_Post {
             'height' => $height,
             'crop' => true
         );
-        self::the_thumbnail_html($args);
+        self::the_thumbnail($args);
     }
 
     public static function the_thumbnail_crop_only_link_image_html($width, $height) {
@@ -390,7 +446,7 @@ class SB_Post {
             'height' => $height,
             'crop' => true
         );
-        self::the_thumbnail_only_link_image_html($args);
+        self::the_thumbnail($args);
     }
 
     public static function the_thumbnail_crop_only_image_html($width, $height) {
@@ -399,7 +455,7 @@ class SB_Post {
             'height' => $height,
             'crop' => true
         );
-        self::the_thumbnail_only_image_html($args);
+        self::the_thumbnail($args);
     }
 
     public static function set_thumbnail($post_id, $attach_id) {
@@ -419,10 +475,95 @@ class SB_Post {
     }
 
     public static function the_author() {
-        printf('<span class="post-author"><i class="fa fa-user icon-left"></i> <span class="author vcard"><a class="url fn n" href="%1$s" rel="author">%2$s</a></span></span>',
-            esc_url( self::get_author_url()),
-            get_the_author_meta('user_nicename')
+        $user_nicename = get_the_author_meta('user_nicename');
+
+        $author_name = new SB_HTML('span');
+        $atts = array(
+            'itemprop' => 'name',
+            'text' => $user_nicename
         );
+        $author_name->set_attribute_array($atts);
+
+        $author_link = new SB_HTML('a');
+        $atts = array(
+            'class' => 'url fn n',
+            'itemprop' => 'url',
+            'text' => $author_name->build(),
+            'rel' => 'author',
+            'href' => esc_url( self::get_author_url()),
+            'title' => sprintf(SB_Message::get_posts_by(), $user_nicename)
+        );
+        $author_link->set_attribute_array($atts);
+
+        $span = new SB_HTML('span');
+        $atts = array(
+            'class' => 'post-author entry-author',
+            'itemtype' => 'http://schema.org/Person',
+            'itemscope' => 'itemscope',
+            'itemprop' => 'author',
+            'text' => '<i class="fa fa-user icon-left"></i> <span>' . $author_link->build() . '</span>'
+        );
+        $span->set_attribute_array($atts);
+
+        echo $span->build();
+    }
+
+    public static function get_the_date($format = '') {
+        if(empty($format)) {
+            $format = SB_Option::get_date_format();
+        }
+        $post_date = get_the_date($format);
+        if(empty($post_date)) {
+            $post_id = get_the_ID();
+            $post = get_post($post_id);
+            $post_date = $post->post_date_gmt;
+            $post_date = date($format, strtotime($post_date));
+        }
+        return $post_date;
+    }
+
+    public static function the_title($args = array()) {
+        $link = isset($args['link']) ? $args['link'] : true;
+        $headline = isset($args['headline']) ? $args['headline'] : 'h2';
+        $title = new SB_HTML($headline);
+        $title->set_attribute('class', 'entry-title');
+        $title->set_attribute('itemprop', 'headline');
+        $post_id = isset($args['post_id']) ? $args['post_id'] : get_the_ID();
+        $title_text = '';
+        if($link) {
+            $post_link = new SB_HTML('a');
+            $post_link->set_attribute('itemprop', 'url');
+            $post_link->set_attribute('rel', 'bookmark');
+            $post_link->set_attribute('href', get_permalink($post_id));
+            $post_link->set_text(get_the_title($post_id));
+            $title_text = $post_link->build();
+        } else {
+            $title_text = get_the_title($post_id);
+        }
+        $title->set_text($title_text);
+        echo $title->build();
+    }
+
+    public static function the_date($date_format = '', $has_time = false, $time_format = '') {
+        $post_date = self::get_the_date($date_format);
+        $time = new SB_HTML('time');
+        $date_class = apply_filters('sb_theme_date_class', '');
+        $date_class = SB_PHP::add_string_with_space_before($date_class, 'entry-published date updated');
+        if($has_time) {
+            $post_date = SB_PHP::add_string_with_space_before($post_date, get_the_time($time_format));
+        }
+        $atts = array(
+            'title' => get_the_date('l, F d, Y, h:i a'),
+            'datetime' => get_the_time('c', false),
+            'class' => $date_class,
+            'text' => $post_date
+        );
+        $time->set_attribute_array($atts);
+        echo $time->build();
+    }
+
+    public static function the_date_time($date_format = '', $time_format = '') {
+        self::the_date($date_format, true, $time_format);
     }
 
     public static function get_time_compare($post) {
@@ -435,31 +576,6 @@ class SB_Post {
 
     public static function get_human_time_diff($post) {
         return SB_Core::get_human_time_diff(self::get_time_compare($post));
-    }
-
-    public static function get_the_date() {
-        $post_date = get_the_date();
-        if(empty($post_date)) {
-            $post_id = get_the_ID();
-            $post = get_post($post_id);
-            $post_date = $post->post_date_gmt;
-            $post_date = date(SB_Option::get_date_format(), strtotime($post_date));
-        }
-        return $post_date;
-    }
-
-    public static function the_date() {
-        $post_date = self::get_the_date();
-        printf('<span class="date"><i class="fa fa-clock-o icon-left"></i><span>%1$s</span></span>',
-            esc_html($post_date)
-        );
-    }
-
-    public static function the_date_time() {
-        printf('<span class="date"><i class="fa fa-clock-o"></i><span class="post-date">%1$s</span>&nbsp;<span class="post-time">%2$s</span></span>',
-            esc_html(get_the_date()),
-            esc_html(get_the_time())
-        );
     }
 
     public static function get_first_term($post_id, $taxonomy) {
@@ -486,8 +602,8 @@ class SB_Post {
         if(!post_password_required() && (comments_open() || get_comments_number())) : ?>
             <span class="comments-link post-comment">
                 <i class="fa fa-comments icon-left"></i>
-                <a href="<?php echo $comment_link; ?>">
-                    <?php echo '<span class="count">' . $comment_number . '</span> <span class="text">' . __('bình  luận', 'sb-theme') . '</span>'; ?>
+                <a class="comments-link" href="<?php echo $comment_link; ?>" itemprop="discussionURL">
+                    <?php echo '<span class="count">' . $comment_number . '</span> <span class="text">' . SB_Message::get_comment() . '</span>'; ?>
                 </a>
             </span>
         <?php endif;
@@ -510,39 +626,6 @@ class SB_Post {
         return wp_get_post_terms($post_id, $taxonomy);
     }
 
-    public static function the_term_link($post_id, $taxonomy, $args = array()) {
-        $separator = isset($args['separator']) ? $args['separator'] : ', ';
-        $number = isset($args['number']) ? $args['number'] : -1;
-        $link = isset($args['link']) ? $args['link'] : true;
-        $top_level = isset($args['top_level']) ? $args['top_level'] : false;
-        $terms = self::get_terms($post_id, $taxonomy);
-        $result = '';
-        $count = 0;
-        foreach($terms as $term) {
-            if($top_level && $term->parent > 0) {
-                continue;
-            }
-            if($link) {
-                $result .= sprintf('<a href="%1$s">%2$s</a>', get_term_link($term), $term->name);
-            } else {
-                $result .= $term->name;
-            }
-            $result .= $separator;
-            $count++;
-            if($number > 0 && $count >= $number) {
-                break;
-            }
-        }
-        $result = trim($result, $separator);
-        if(empty($result)) {
-            $term = array_shift($terms);
-            if(!SB_Core::is_error($term)) {
-                $result = $term->name;
-            }
-        }
-        echo $result;
-    }
-
     public static function get_next_post_url() {
         $result = '';
         $post = get_adjacent_post(false, '', true);
@@ -559,11 +642,6 @@ class SB_Post {
             $result = get_permalink($post);
         }
         return $result;
-    }
-
-    public static function the_term_name($post_id, $taxonomy, $args = array()) {
-        $args['link'] = false;
-        self::the_term_link($post_id, $taxonomy, $args);
     }
 
     public static function get_meta($post_id, $meta_key) {
@@ -683,19 +761,25 @@ class SB_Post {
 
     public static function get_menu_custom_items() {
         $result = array();
-        $menus = wp_get_nav_menus();
-        if(!is_array($menus)) {
-            return;
-        }
-        foreach($menus as $menu) {
-            $menu_items = wp_get_nav_menu_items($menu->term_id);
-            if(!is_array($menu_items)) {
-                continue;
+        $transient_name = SB_Cache::build_custom_menu_transient_name();
+        if(false === ($result = get_transient($transient_name))) {
+            $menus = wp_get_nav_menus();
+            if(!is_array($menus)) {
+                return;
             }
-            foreach($menu_items as $item) {
-                if('custom' == $item->type) {
-                    array_push($result, $item);
+            foreach($menus as $menu) {
+                $menu_items = wp_get_nav_menu_items($menu->term_id);
+                if(!is_array($menu_items)) {
+                    continue;
                 }
+                foreach($menu_items as $item) {
+                    if('custom' == $item->type) {
+                        array_push($result, $item);
+                    }
+                }
+            }
+            if(count($result) > 0) {
+                set_transient($transient_name, $result, YEAR_IN_SECONDS);
             }
         }
         return $result;
@@ -736,6 +820,10 @@ class SB_Post {
 
     public static function get_by_slug($slug, $post_type = 'post') {
         return get_page_by_path($slug, OBJECT, $post_type);
+    }
+
+    public static function add($args = array()) {
+        self::insert($args);
     }
 
     public static function insert($args = array()) {
@@ -787,17 +875,9 @@ class SB_Post {
         echo self::get_author_link();
     }
 
-    public static function the_category() {
-        the_category(', ', '');
-    }
-
     public static function get_comments($post_id, $args = array()) {
         $args['post_id'] = $post_id;
         return get_comments($args);
-    }
-
-    public static function the_term($post_id, $taxonomy, $before = '', $sep = ', ', $after = '') {
-        the_terms($post_id, $taxonomy, $before, $sep, $after);
     }
 
     public static function get_rate_average($post_id, $precision = 2) {
@@ -827,13 +907,92 @@ class SB_Post {
         return $count;
     }
 
-    public static function the_term_html($post_id, $taxonomy) {
-        $terms = get_the_terms($post_id, $taxonomy);
-        if($terms && ! is_wp_error($terms)) : ?>
-        <span class="cat-links">
-		        <span class="entry-utility-prep"><?php _e('Chuyên mục:', 'sb-theme'); ?> </span>
-            <?php the_terms($post_id, $taxonomy); ?>
-            </span>
-    <?php endif;
+    public static function build_transient_name_prefix($post_id) {
+        return SB_Cache::build_post_transient_name($post_id);
+    }
+
+    public static function the_term($post_id, $taxonomy, $before = '', $sep = ', ', $after = '') {
+        echo self::get_term_list_html($post_id, $taxonomy, $before, $sep, $after);
+    }
+
+    public static function get_tag_list_html($post_id, $before = '', $sep = ', ', $after = '') {
+        $taxonomy = 'post_tag';
+        $transient_name = SB_Cache::build_post_transient_name($post_id, '_' . $taxonomy . '_term_list');
+        if(false === ($term_list = get_transient($transient_name))) {
+            $before = '<span class="entry-terms ' . $taxonomy . '" itemprop="keywords"><span class="entry-utility-prep">' . SB_Message::get_category() . ': </span>';
+            $after = '</span>';
+            $term_list = get_the_tag_list($before, ', ', $after, $post_id);
+            if(!is_wp_error($term_list)) {
+                set_transient($transient_name, $term_list, 4 * WEEK_IN_SECONDS);
+            }
+        }
+        return $term_list;
+    }
+
+    public static function the_tags($post_id, $before = '', $sep = ', ', $after = '') {
+        echo self::get_tag_list_html($post_id, $before, $sep, $after);
+    }
+
+    public static function get_term_list_html($post_id, $taxonomy, $before = '', $sep = ', ', $after = '') {
+        $transient_name = SB_Cache::build_post_transient_name($post_id, '_' . $taxonomy . '_term_list');
+        if(false === ($term_list = get_transient($transient_name))) {
+            $before = '<span class="cat-links entry-terms ' . $taxonomy . '" itemprop="articleSection"><span class="entry-utility-prep">' . SB_Message::get_category() . ': </span>';
+            $after = '</span>';
+            $term_list = get_the_term_list($post_id, $taxonomy, $before, ', ', $after);
+            if(!is_wp_error($term_list)) {
+                set_transient($transient_name, $term_list, 4 * WEEK_IN_SECONDS);
+            }
+        }
+        return $term_list;
+    }
+
+    public static function the_term_html($post_id, $taxonomy, $before = '', $sep = ', ', $after = '') {
+        echo self::get_term_list_html($post_id, $taxonomy, $before, $sep, $after);
+    }
+
+    public static function the_category($post_id = '', $before = '', $sep = ', ', $after = '') {
+        $post_id = absint($post_id);
+        if(1 > $post_id) {
+            $post_id = get_the_ID();
+        }
+        echo self::get_term_list_html($post_id, 'category', $before, $sep, $after);
+    }
+
+    public static function the_term_name($post_id, $taxonomy, $args = array()) {
+        $args['link'] = false;
+        self::the_term_link($post_id, $taxonomy, $args);
+    }
+
+    public static function the_term_link($post_id, $taxonomy, $args = array()) {
+        $separator = isset($args['separator']) ? $args['separator'] : ', ';
+        $number = isset($args['number']) ? $args['number'] : -1;
+        $link = isset($args['link']) ? $args['link'] : true;
+        $top_level = isset($args['top_level']) ? $args['top_level'] : false;
+        $terms = self::get_terms($post_id, $taxonomy);
+        $result = '';
+        $count = 0;
+        foreach($terms as $term) {
+            if($top_level && $term->parent > 0) {
+                continue;
+            }
+            if($link) {
+                $result .= sprintf('<a href="%1$s">%2$s</a>', get_term_link($term), $term->name);
+            } else {
+                $result .= $term->name;
+            }
+            $result .= $separator;
+            $count++;
+            if($number > 0 && $count >= $number) {
+                break;
+            }
+        }
+        $result = trim($result, $separator);
+        if(empty($result)) {
+            $term = array_shift($terms);
+            if(!SB_Core::is_error($term)) {
+                $result = $term->name;
+            }
+        }
+        echo $result;
     }
 }
