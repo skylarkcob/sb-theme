@@ -88,9 +88,24 @@ class SB_Admin_Custom {
         return false;
     }
 
+    public static function row_setting_field($args = array()) {
+        $title = isset($args['title']) ? $args['title'] : '';
+        $decription = isset($args['description']) ? $args['description'] : '';
+        $callback = isset($args['callback']) ? $args['callback'] : '';
+        if(!empty($callback)) : ?>
+            <div class="a-row">
+                <strong class="row-title"><?php echo $title; ?></strong>
+                <div class="row-desc"><p><?php echo $decription; ?></p></div>
+                <div class="a-row-content">
+                    <?php call_user_func($callback); ?>
+                </div>
+            </div>
+        <?php endif;
+    }
+
     public static function is_sb_page() {
         $page = self::get_current_page();
-        if ( SB_PHP::is_string_contain( $page, 'sb' ) ) {
+        if ( SB_PHP::is_string_contain( $page, 'sb' ) || SB_PHP::is_string_contain( $page, 'sbt' ) ) {
             return true;
         }
         return false;
@@ -139,5 +154,61 @@ class SB_Admin_Custom {
 
     public static function setting_page_callback() {
         sb_core_get_content( 'sb-admin-setting-page' );
+    }
+
+    public static function row_setting_page_callback() {
+        sb_theme_get_content('sb-admin-row-setting-page');
+    }
+
+    public static function setting_page_before() {
+        ?>
+        <div class="wrap sb-theme sb-option sb-options" data-message-confirm="<?php echo SB_Message::get_confirm_text(); ?>" data-option-changed="0">
+        <noscript><div class="no-js"><?php echo SB_Message::get_browser_not_support_javascript(); ?></div></noscript>
+        <?php
+    }
+
+    public static function setting_page_after() {
+        echo '</div>';
+    }
+
+    public static function table_setting_page( $page, $table = true ) {
+        global $wp_settings_sections, $wp_settings_fields;
+        if ( ! isset( $wp_settings_sections[$page] ) ) {
+            return;
+        }
+        $count = 0;
+        foreach ( (array) $wp_settings_sections[$page] as $section ) {
+            $section_id = $section['id'];
+            $class = 'sbtheme-option-section';
+            $class = SB_PHP::add_string_with_space_before($class, str_replace('_', '-', $section_id));
+            echo '<div id="' . $section_id . '" class="' . $class . '">';
+            if ( $section['title'] ) {
+                echo "<h3 class=\"setting-title\">{$section['title']}</h3>\n";
+            }
+            if ( $section['callback'] ) {
+                call_user_func( $section['callback'], $section );
+            }
+            $has_field = true;
+            if ( ! isset( $wp_settings_fields ) || !isset( $wp_settings_fields[$page] ) || !isset( $wp_settings_fields[$page][$section_id] ) ) {
+                $has_field = false;
+            }
+            if($table) {
+                echo '<table class="form-table">';
+            }
+            if($has_field && 'sb_options_section' != $section_id) {
+                do_settings_fields( $page, $section_id );
+            } elseif('sb_options_section' == $section_id) {
+                sb_core_get_content('sb-admin-about');
+            }
+            if($table) {
+                echo '</table>';
+            }
+            echo '</div>';
+            $count++;
+        }
+    }
+
+    public static function row_setting_page( $page ) {
+        self::table_setting_page($page, false);
     }
 }

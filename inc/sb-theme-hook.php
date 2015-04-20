@@ -21,6 +21,9 @@ function sb_theme_init_hook() {
             session_start();
         }
     }
+    if(!current_user_can('read')) {
+        show_admin_bar(false);
+    }
     do_action('sb_theme_init');
 	do_action('sb_theme_init_after');
 }
@@ -57,7 +60,7 @@ function sb_theme_unlock_license() {
 			$options = SB_Option::get();
 			unset($options['sbcancel']);
 			unset($options['license']);
-			update_option($options);
+			SB_Option::update($options);
 		}
 	}
 }
@@ -132,11 +135,13 @@ function sb_theme_wp_enqueue_scripts_hook() {
 add_action( 'wp_enqueue_scripts', 'sb_theme_wp_enqueue_scripts_hook' );
 
 function sb_theme_login_enqueue_scripts() {
-    wp_register_style('sb-login-style', SB_THEME_URL . '/css/sb-login-style.css');
-    wp_enqueue_style('sb-login-style');
-    wp_register_script('sb-login', SB_THEME_URL . '/js/sb-login-script.js', array('jquery'), false, true);
-    wp_enqueue_script('sb-login');
+    wp_enqueue_style('sb-theme-login-style', SB_THEME_URL . '/css/sb-theme-login-style.css');
+    wp_register_script('sb-theme-login', SB_THEME_URL . '/js/sb-theme-login-script.js', array('jquery'), false, true);
+    wp_localize_script('sb-theme-login', 'sb_theme_login', array('ajax_url' => admin_url('admin-ajax.php')));
+    wp_enqueue_script('sb-theme-login');
     $logo_url = SB_Option::get_login_logo_url();
+    $logo_url = SB_Option::get_media_detail($logo_url);
+    $logo_url = $logo_url['url'];
     if(!empty($logo_url)) {
         echo '<style>';
         echo 'body.login div#login h1 a{background-image:url("' . $logo_url . '");}';
@@ -146,6 +151,49 @@ function sb_theme_login_enqueue_scripts() {
     }
 }
 add_action('login_enqueue_scripts', 'sb_theme_login_enqueue_scripts');
+
+function sb_theme_logout_hook() {
+    unset($_SESSION['access_token']);
+    do_action('sb_theme_logout');
+}
+add_action('wp_logout', 'sb_theme_logout_hook');
+
+function sb_theme_login_init_hook() {
+    do_action('sb_theme_login_init');
+}
+add_action('login_init', 'sb_theme_login_init_hook');
+
+function sb_theme_login_head_hook() {
+    do_action('sb_theme_login_head');
+}
+add_action('login_head', 'sb_theme_login_head_hook');
+
+function sb_theme_login_check_social_login() {
+    $data_social = isset($_GET['data_social']) ? $_GET['data_social'] : '';
+    if(empty($data_social)) {
+        $data_social = isset($_GET['state']) ? $_GET['state'] : '';
+    }
+    $data_social = SB_Core::decrypt($data_social);
+    SB_User::check_social_login_data_send_back($data_social);
+}
+add_action('sb_theme_login_init', 'sb_theme_login_check_social_login');
+
+function sb_theme_login_form_hook() {
+    sb_theme_get_content('sb-theme-wp-login-social');
+    do_action('sb_theme_login_form');
+}
+add_action('login_form', 'sb_theme_login_form_hook');
+
+function sb_theme_login_footer_hook() {
+    do_action('sb_theme_login_footer');
+}
+add_action('login_footer', 'sb_theme_login_footer_hook');
+
+function sb_theme_register_form_hook() {
+    sb_theme_get_content('sb-theme-wp-login-social');
+    do_action('sb_theme_register_form');
+}
+add_action('register_form', 'sb_theme_register_form_hook');
 
 function sb_theme_custom_post_type_and_taxonomy_hook() {
     do_action( 'sb_post_type_and_taxonomy' );
@@ -211,7 +259,7 @@ function sb_theme_widgets_init_hook() {
 }
 add_action('widgets_init', 'sb_theme_widgets_init_hook');
 
-function sb_theme_after_switch() {
+function sb_theme_after_switch_hook() {
     sb_theme_error_checking();
     if(is_admin() && defined('SB_CORE_VERSION')) {
         sb_theme_update_default_options();
@@ -223,11 +271,19 @@ function sb_theme_after_switch() {
     update_option('image_default_link_type', 'none');
     update_option('image_default_size', 'large');
 
-    sb_login_page_create_user_role();
+    SB_Membership::init_roles_and_capabilities();
 
     flush_rewrite_rules();
 }
-add_action('sb_theme_after_switch_theme', 'sb_theme_after_switch');
+add_action('sb_theme_after_switch_theme', 'sb_theme_after_switch_hook');
+
+function sb_theme_switch_hook($newname, $newtheme) {
+    SB_Membership::remove_all_role();
+    do_action('sb_theme_switch_theme', $newname, $newtheme);
+    do_action('sb_theme_deactivation', $newname, $newtheme);
+    do_action('sb_theme_uninstall', $newname, $newtheme);
+}
+add_action('switch_theme', 'sb_theme_switch_hook', 10, 2);
 
 function sb_theme_wp_footer() {
     $scroll_top = SB_Option::get_scroll_top();
@@ -244,6 +300,7 @@ function sb_theme_wp_footer() {
         include SB_THEME_LIB_PATH . '/sharethis/config.php';
     }
     sb_core_ajax_loader();
+    sb_theme_remove_facebook_login_special_char();
 }
 add_action('wp_footer', 'sb_theme_wp_footer');
 
@@ -279,11 +336,12 @@ function sb_theme_on_nav_menu_update( $id ) {
         $locations = array_keys( $locations, $id );
         if( $locations ) {
             foreach( $locations as $location ) {
-                delete_transient( 'sb_menu_' . $location );
+                delete_transient( SB_Cache::build_menu_transient_name($location) );
             }
         }
     }
-    delete_transient('sb_theme_menu_custom_item');
+    delete_transient(SB_Cache::build_custom_menu_transient_name());
+    do_action('sb_theme_update_menu', $id);
 }
 add_action( 'wp_update_nav_menu', 'sb_theme_on_nav_menu_update' );
 
@@ -299,6 +357,7 @@ function sb_theme_pre_ping_hook(&$links) {
             unset($links[$l]);
         }
     }
+    do_action('sb_theme_pre_ping', $links);
 }
 add_action('pre_ping', 'sb_theme_pre_ping_hook');
 
@@ -307,6 +366,8 @@ function sb_theme_insert_comment_hook($comment_id, $comment_object) {
         SB_Comment::delete($comment_id);
         wp_die(__('Bình luận spam đã được phát hiện!', 'sb-theme'));
     }
+    delete_transient(SB_Cache::build_post_transient_name($comment_object->comment_post_ID . '_comment_number'));
+    do_action('sb_theme_insert_comment', $comment_id, $comment_object);
 }
 add_action('wp_insert_comment', 'sb_theme_insert_comment_hook', 10, 2);
 
@@ -317,9 +378,15 @@ function sb_transition_comment_status($new_status, $old_status, $comment) {
         } elseif('spam' == $new_status && SB_Comment::enable_auto_empty_spam()) {
             SB_Comment::delete($comment->comment_ID);
         }
+        do_action('sb_theme_transition_comment_status', $new_status, $old_status, $comment);
     }
 }
 add_action('transition_comment_status', 'sb_transition_comment_status', 10, 3);
+
+function sb_theme_on_upgrade_hook() {
+    SB_Cache::delete_all_cache();
+}
+add_action('sb_theme_upgrade', 'sb_theme_on_upgrade_hook');
 
 function sb_comment_nonce_field() {
     wp_nonce_field('sb_comment_form');
@@ -429,7 +496,7 @@ function sb_login_page_user_profile_extra_field($user) {
     $user_data = SB_User::get_data($user_id);
     ?>
     <h3><?php _e('Extra information', 'sb-theme'); ?></h3>
-    <table class="form-table">
+    <table class="form-table sb-theme-user-extra-information">
         <tr>
             <th><label for="gender"><?php _e('Gender', 'sb-theme'); ?></label></th>
             <td>
@@ -458,7 +525,7 @@ function sb_login_page_user_profile_extra_field($user) {
             <tr>
                 <th><label for="user_nicename"><?php _e('User nice name', 'sb-theme'); ?></label></th>
                 <td>
-                    <input type="text" class="regular-text" value="<?php echo $user_data->user_nicename; ?>" id="user_nicename" name="user_nicename">
+                    <input type="text" class="regular-text" value="<?php echo $user_data->user_nicename; ?>" id="user_nicename" disabled="disabled" name="user_nicename" readonly>
                 </td>
             </tr>
             <tr>
@@ -490,6 +557,7 @@ function sb_login_page_save_profile($user_id) {
         );
         SB_User::update($user_id, $user_data);
     }
+    do_action('sb_theme_save_user_profile', $user_id);
 }
 add_action('personal_options_update', 'sb_login_page_save_profile');
 add_action('edit_user_profile_update', 'sb_login_page_save_profile');
@@ -516,8 +584,8 @@ function sb_theme_save_post_hook( $post_id ) {
         return;
     }
     SB_Core::delete_transient('sb_theme_post_' . $post_id);
-    do_action('sb_theme_update_post');
-    do_action('sb_theme_save_post');
+    do_action('sb_theme_update_post', $post_id);
+    do_action('sb_theme_save_post', $post_id);
 }
 add_action( 'save_post', 'sb_theme_save_post_hook' );
 
@@ -536,12 +604,27 @@ add_action('transition_post_status', 'sb_theme_post_status_transitions_hook', 10
 function sb_theme_on_post_publish_hook( $ID, $post ) {
     do_action('sb_theme_publish_post', $ID, $post);
 }
-add_action(  'publish_post',  'sb_theme_on_post_publish_hook', 10, 2 );
+add_action('publish_post', 'sb_theme_on_post_publish_hook', 10, 2);
+
+function sb_theme_delete_user_hook($user_id) {
+    $current_user = SB_User::get_current();
+    if(SB_User::is($current_user) && !SB_Membership::is_super_admin($current_user->ID) && SB_Membership::is_super_admin($user_id)) {
+        wp_die(__('You don\'t have permission to delete super administrator users!', 'sb-theme'));
+        exit;
+    }
+    if(SB_User::is($current_user) && $current_user->ID == $user_id) {
+        wp_die(__('You can\'t delete your own account!', 'sb-theme'));
+        exit;
+    }
+    do_action('sb_theme_delete_user', $user_id);
+}
+add_action('delete_user', 'sb_theme_delete_user_hook');
 
 function sb_theme_sb_option_update_hook() {
     if(SB_Admin_Custom::is_sb_page()) {
         if(isset($_REQUEST['settings-updated']) && (bool)$_REQUEST['settings-updated']) {
             SB_Core::delete_transient('sb_theme_post');
+            delete_transient(SB_Cache::build_admin_advanced_setting_tab_transient_name());
             do_action('sb_theme_update_sb_option');
         }
     }
@@ -569,23 +652,46 @@ function sb_theme_get_avatar_default($avatar, $id_or_email, $size, $default, $al
 		$image_source = apply_filters('sb_theme_default_avatar_url', $image_source);
 		$avatar = '<img class="' . $class . '" src="' . $image_source . '" width="' . $size . '" height="' . $size . '" alt="' . $alt . '">';
 	}
+    $avatar = apply_filters('sb_theme_get_avatar', $avatar, $id_or_email, $size, $default, $alt);
 	return $avatar;
 }
 add_filter('get_avatar', 'sb_theme_get_avatar_default', 10, 5);
 
 /*
+ * Không cho người dùng chỉnh sửa quyền admin
+ */
+function sb_theme_remove_admin_editable_role($roles) {
+    $current_user = SB_User::get_current();
+    if((SB_Membership::has_super_admin() && !SB_Membership::is_super_admin($current_user->ID)) || !current_user_can('update_core')) {
+        unset($roles['administrator']);
+        unset($roles['super_administrator']);
+    }
+    $roles = apply_filters('sb_theme_editable_roles', $roles);
+    $roles = apply_filters('sb_theme_select_roles', $roles);
+    return $roles;
+}
+add_filter('editable_roles', 'sb_theme_remove_admin_editable_role');
+
+function sb_theme_filter_select_user_groups( $editable_roles ) {
+    if(current_user_can('update_core')) {
+        if(isset($GLOBALS['pagenow']) && ('user-new.php' == $GLOBALS['pagenow'] || 'user-edit.php' == $GLOBALS['pagenow'])) {
+            if(SB_Membership::is_paid_membership_enabled()) {
+                $paid_roles = SB_Membership::get_paid_membership_groups();
+                foreach($paid_roles as $key => $data) {
+                    $editable_roles[$key] = $data;
+                }
+            }
+        }
+    }
+    return $editable_roles;
+}
+//add_filter('sb_theme_select_roles', 'sb_theme_filter_select_user_groups');
+
+/*
  * Lưu cache avatar
  */
 function sb_theme_get_avatar_cache( $avatar, $id_or_email, $size, $default, $alt ) {
-    if(is_object($id_or_email)) {
-        if($id_or_email->comment_ID && $id_or_email->comment_ID > 0) {
-            $comment_author = $id_or_email->comment_author;
-            $comment_author_ip = $id_or_email->comment_author_IP;
-            $id_or_email = $comment_author . '_' . $comment_author_ip;
-        }
-    }
-    $user_key = str_replace('@', '_', $id_or_email);
-    $transient_name = SB_Cache::build_user_avatar_transient_name($user_key);
+    $transient_name = SB_Cache::build_user_avatar_transient_name($id_or_email, '_' . $size);
     if(false === ($avatar_url = get_transient($transient_name))) {
         $avatar_url = SB_PHP::get_image_source($avatar);
         set_transient($transient_name, $avatar_url, DAY_IN_SECONDS);
@@ -593,7 +699,7 @@ function sb_theme_get_avatar_cache( $avatar, $id_or_email, $size, $default, $alt
     $avatar = '<img width="' . $size . '" height="' . $size . '" class="avatar avatar-' . $size . ' photo" src="' . $avatar_url . '" alt="">';
     return $avatar;
 }
-add_filter( 'get_avatar' , 'sb_theme_get_avatar_cache' , 1 , 5 );
+add_filter( 'sb_theme_get_avatar' , 'sb_theme_get_avatar_cache' , 1 , 5 );
 
 /*
  * Thay đổi tên người gửi mail
@@ -614,9 +720,27 @@ function sb_login_page_custom_logout_redirect($logout_url, $redirect) {
 	$redirect = SB_User::get_logout_redirect();
 	$redirect = apply_filters('sb_theme_logout_redirect', $redirect);
 	$logout_url = add_query_arg(array('redirect_to' => $redirect), $logout_url);
+    $logout_url = apply_filters('sb_theme_logout_url', $logout_url, $redirect);
 	return $logout_url;
 }
 add_filter('logout_url', 'sb_login_page_custom_logout_redirect', 10, 2);
+
+function sb_theme_author_view_only_own_post( $wp_query ) {
+    if(strpos($_SERVER['REQUEST_URI'], '/wp-admin/edit.php') !== false) {
+        if(!current_user_can('update_core')) {
+            global $current_user;
+            $wp_query->set('author', $current_user->ID);
+        }
+    }
+    apply_filters('sb_theme_parse_query', $wp_query);
+}
+add_filter('parse_query', 'sb_theme_author_view_only_own_post');
+
+function sb_theme_before_save_post_content_filter( $content ) {
+    $content = apply_filters('sb_theme_pre_save_post_content', $content);
+    return $content;
+}
+add_filter( 'content_save_pre', 'sb_theme_before_save_post_content_filter', 10, 1 );
 
 /*
  * Khai báo đường dẫn chuyển tiếp khi đăng nhập
@@ -625,6 +749,7 @@ function sb_login_page_custom_login_redirect($login_url, $redirect) {
 	$redirect = SB_User::get_login_redirect();
 	$redirect = apply_filters('sb_theme_login_redirect', $redirect);
 	$login_url = add_query_arg(array('redirect_to' => $redirect), $login_url);
+    $login_url = apply_filters('sb_theme_login_url', $login_url, $redirect);
 	return $login_url;
 }
 add_filter('login_url', 'sb_login_page_custom_login_redirect', 10, 2);
@@ -640,17 +765,6 @@ function sb_theme_add_user_contact_fields($fields) {
 	return $fields;
 }
 add_filter('user_contactmethods', 'sb_theme_add_user_contact_fields');
-
-/*
- * Không cho người dùng chỉnh sửa quyền admin
- */
-function sb_theme_remove_admin_editable_role($roles){
-	if(!current_user_can('administrator')) {
-		unset($roles['administrator']);
-	}
-	return $roles;
-}
-add_filter('editable_roles', 'sb_theme_remove_admin_editable_role');
 
 /*
  * Thay đổi đường dẫn logo trang đăng nhập về trang chủ
@@ -670,7 +784,13 @@ function sb_theme_login_logo_description() {
 	$desc = apply_filters('sb_theme_login_logo_description', $desc);
 	return $desc;
 }
-add_filter('login_headertitle', 'sb_login_page_logo_title');
+add_filter('login_headertitle', 'sb_theme_login_logo_description');
+
+function sb_theme_authenticate_filter($user, $username, $password) {
+    $user = apply_filters( 'sb_theme_authenticate', $user, $username, $password );
+    return $user;
+}
+add_filter( 'authenticate', 'sb_theme_authenticate_filter', 30, 3 );
 
 /*
  * Thêm class trang đăng nhập vào thẻ body
@@ -706,6 +826,22 @@ function sb_theme_login_body_class($classes) {
 }
 add_filter('body_class', 'sb_theme_login_body_class');
 
+function sb_theme_login_body_class_filter($classes, $action) {
+    $classes[] = 'sb-theme-login';
+    if(!empty($action)) {
+        $classes[] = 'sb-theme-action-' . $action;
+    }
+    $classes = apply_filters('sb_theme_login_body_class', $classes, $action);
+    return $classes;
+}
+add_filter('login_body_class', 'sb_theme_login_body_class_filter', 10, 3);
+
+function custom_login_message($message) {
+    $message = apply_filters('sb_theme_login_message', $message);
+    return $message;
+}
+add_filter('login_message', 'custom_login_message');
+
 /*
  * Thêm class của SB vào thẻ body
  */
@@ -740,10 +876,9 @@ function sb_theme_body_class($classes) {
 	} else {
 		$classes[] = 'sb-guest';
 	}
-	$classes = apply_filters('sb_theme_body_class', $classes);
 	return $classes;
 }
-add_filter('body_class', 'sb_theme_body_class');
+add_filter('sb_theme_body_class', 'sb_theme_body_class');
 
 /*
  * Thêm thông tin của SB vào trong class của bài viết
@@ -820,10 +955,7 @@ function sb_theme_remove_post_table_columns( $columns ) {
 	unset( $columns['wpseo-title'] );
 	unset( $columns['wpseo-metadesc'] );
 	unset( $columns['wpseo-focuskw'] );
-	unset($columns['tags']);
-	unset($columns['date']);
-	unset($columns['author']);
-	unset($columns['views']);
+    $columns = apply_filters('sb_theme_edit_post_column', $columns);
 	return $columns;
 }
 add_filter( 'manage_edit-post_columns', 'sb_theme_remove_post_table_columns' );
@@ -832,8 +964,7 @@ add_filter( 'manage_edit-post_columns', 'sb_theme_remove_post_table_columns' );
  * Xóa các cột không cần thiết trong trang quản lý trang
  */
 function sb_theme_remove_page_table_columns( $columns ) {
-	unset($columns['date']);
-	unset($columns['author']);
+    $columns = apply_filters('sb_theme_edit_page_column', $columns);
 	return $columns;
 }
 add_filter( 'manage_edit-page_columns', 'sb_theme_remove_page_table_columns' );
@@ -847,6 +978,7 @@ function sb_theme_shortcode_from_excerpt($excerpt) {
 	$excerpt = strip_tags($excerpt);
 	$excerpt = trim(trim($excerpt, '&nbsp;'));
 	$excerpt = wpautop($excerpt);
+    $excerpt = apply_filters('sb_theme_the_excerpt', $excerpt);
 	return trim($excerpt);
 }
 add_filter('the_excerpt', 'sb_theme_shortcode_from_excerpt');
@@ -889,7 +1021,7 @@ add_filter('the_content', 'shortcode_unautop', 100);
 function sb_theme_default_avatar_array($avatar_defaults) {
 	$myavatar = SB_CORE_URL . '/images/sb-default-avatar-32.png';
 	$avatar_defaults[$myavatar] = 'SB default avatar';
-	apply_filters('sb_theme_default_avatar_array', $avatar_defaults);
+    $avatar_defaults = apply_filters('sb_theme_default_avatar_array', $avatar_defaults);
 	return $avatar_defaults;
 }
 add_filter('avatar_defaults', 'sb_theme_default_avatar_array');
@@ -909,7 +1041,7 @@ function sb_theme_get_avatar_options_discussion($avatar, $id_or_email, $size, $d
 	}
 	return $avatar;
 }
-add_filter('get_avatar', 'sb_theme_get_avatar_options_discussion', 10, 5);
+add_filter('sb_theme_get_avatar', 'sb_theme_get_avatar_options_discussion', 10, 5);
 
 /*
  * Kiểm tra dữ liệu bình luận trước khi thêm vào cơ sở dữ liệu
@@ -929,6 +1061,8 @@ function sb_theme_preprocess_comment($commentdata) {
 	if( $commentdata['comment_content'] == SB_PHP::strtoupper( $commentdata['comment_content'] )) {
 		$commentdata['comment_content'] = SB_PHP::strtolower( $commentdata['comment_content'] );
 	}
+    $commentdata = apply_filters('sb_theme_pre_save_comment', $commentdata);
+    $commentdata = apply_filters('sb_theme_preprocess_comment', $commentdata);
 	return $commentdata;
 }
 add_filter('preprocess_comment', 'sb_theme_preprocess_comment', 1);

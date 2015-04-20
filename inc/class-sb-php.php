@@ -13,6 +13,20 @@ class SB_PHP {
         return number_format( $number, 0, '.', ',' ) . $suffix;
     }
 
+    public static function encrypt($key, $string) {
+        $encrypted = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $string, MCRYPT_MODE_CBC, md5(md5($key))));
+        return $encrypted;
+    }
+
+    public static function decrypt($key, $encrypted) {
+        $decrypted = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($encrypted), MCRYPT_MODE_CBC, md5(md5($key))), '\0');
+        return $decrypted;
+    }
+
+    public static function object_to_array($object) {
+        return json_decode(json_encode($object), true);
+    }
+
     public static function get_operating_system() {
         $result = 'Unknown OS';
         $os = array(
@@ -498,6 +512,24 @@ class SB_PHP {
 
     public static function strip_bbcode( $string ) {
         return self::strip_shortcode( $string );
+    }
+
+    public static function strip_tag_from_string($string, $tags = '') {
+        $tags = (array)$tags;
+        $args = func_get_args();
+        $text = array_shift($args);
+        $tags = func_num_args() > 2 ? array_diff($args, array($text))  : (array)$tags;
+        foreach ($tags as $tag){
+            if(preg_match_all('/<'.$tag.'[^>]*>(.*)<\/'.$tag.'>/iU', $text, $found)){
+                $text = str_replace($found[0],$found[1],$text);
+            }
+        }
+        return $text;
+    }
+
+    public static function remove_all_link($string) {
+        $result = self::strip_tag_from_string($string, 'a');
+        return $result;
     }
 
     public static function paragraph_to_array( $list_paragraph ) {
@@ -1017,6 +1049,12 @@ class SB_PHP {
             $value = json_decode( $value, true );
         }
         return (array) $value;
+    }
+
+    public static function string_to_array($delimiter, $text) {
+        $result = explode($delimiter, $text);
+        $result = array_filter($result);
+        return $result;
     }
 
     public static function get_cookie( $key ) {

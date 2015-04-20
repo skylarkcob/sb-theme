@@ -135,7 +135,9 @@ class SB_Option {
     }
 
     public static function get_logo_url() {
-        return self::get_theme_option(array('keys' => array('logo')));
+        $logo = self::get_theme_option(array('keys' => array('logo')));
+        $logo = self::get_media_detail($logo);
+        return $logo['url'];
     }
 
     public static function get_logo_type() {
@@ -178,6 +180,22 @@ class SB_Option {
             $logo_url = self::get_logo_url();
         }
         return $logo_url;
+    }
+
+    public static function check_switch_value($result, $default) {
+        if(0 != $result && !is_numeric($result) && empty($result)) {
+            $result = $default;
+        }
+        return (bool)$result;
+    }
+
+    public static function social_login_enabled() {
+        $result = self::get_option_by_key(array('login_page', 'social_login'));
+        return self::check_switch_value($result, 1);
+    }
+
+    public static function get_social_login_app($social_name) {
+        return self::get_theme_advanced_option(array('keys' => array('social_login', $social_name)));
     }
 
     public static function get_theme_thumbnail_url() {
@@ -269,6 +287,12 @@ class SB_Option {
         return $key_name;
     }
 
+    public static function build_sb_theme_advanced_option_name($key_array) {
+        array_unshift($key_array, 'sbt_advanced');
+        $key_name = self::build_sb_option_name($key_array);
+        return $key_name;
+    }
+
     public static function get_color_schemes() {
         $options = (array)self::get_theme_option_single_key('color_schemes');
         return $options;
@@ -289,6 +313,13 @@ class SB_Option {
     public static function get_theme_option($args = array()) {
         if(isset($args['keys']) && is_array($args['keys'])) {
             array_unshift($args['keys'], 'theme');
+        }
+        return self::get_by_key($args);
+    }
+
+    public static function get_theme_advanced_option($args = array()) {
+        if(isset($args['keys']) && is_array($args['keys'])) {
+            array_unshift($args['keys'], 'sbt_advanced');
         }
         return self::get_by_key($args);
     }

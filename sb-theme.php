@@ -10,7 +10,7 @@ function sb_theme_use_old_version_update() {
     if(false === ($use_old_version = get_transient($trasient_name))) {
         $use_old_version = absint(sb_theme_use_old_version());
         update_option('sb_theme_use_old_version', $use_old_version);
-        set_transient($trasient_name, $use_old_version, DAY_IN_SECONDS);
+        set_transient($trasient_name, $use_old_version, 4 * DAY_IN_SECONDS);
     }
 }
 add_action('admin_init', 'sb_theme_use_old_version_update');
@@ -21,7 +21,7 @@ if(sb_theme_use_old_version()) {
     }
 } else {
     /** Khai báo phiên bản hiện tại của SB Theme */
-    define( 'SB_THEME_VERSION', '1.8.0' );
+    define( 'SB_THEME_VERSION', '1.8.4' );
 
     /** Khai báo đường dẫn đến thư mục wp-admin */
     define( 'SB_THEME_WP_ADMIN_PATH', ABSPATH . 'wp-admin' );

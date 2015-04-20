@@ -3,6 +3,7 @@ class SB_Admin {
 
     private $sb_admin_added = false;
     private $tabs = array();
+    private $advanced_tabs = array();
 
     public function __construct() {
         if($this->has_sb_admin()) {
@@ -13,17 +14,66 @@ class SB_Admin {
         $this->filter();
     }
 
+    private function init() {
+        $this->sb_admin_added = true;
+        $this->sb_tab_init();
+        do_action('sb_theme_option_construct');
+    }
+
+    private function action() {
+        add_action('admin_menu', array($this, 'action_admin_menu'));
+        add_action('admin_head', array($this, 'action_admin_head'));
+        add_action('sb_theme_admin_enqueue_scripts', array($this, 'admin_style_and_script'));
+        add_action('sb_theme_admin_init', array($this, 'action_admin_init'));
+    }
+
+    private function tab_filter() {
+        add_filter('sb_admin_tabs', array($this, 'option_tab'));
+        add_filter('sb_theme_advanced_setting_tabs', array($this, 'advanced_setting_tabs'));
+    }
+
+    private function filter() {
+
+    }
+
+    public function advanced_setting_tabs($tabs) {
+        $defaults = array(
+            'general' => array(
+                'name' => __('General', 'sb-theme')
+            ),
+            'writing' => array(
+                'name' => __('Writing', 'sb-theme')
+            ),
+            'reading' => array(
+                'name' => __('Reading', 'sb-theme')
+            ),
+            'discussion' => array(
+                'name' => __('Discussion', 'sb-theme')
+            ),
+            'media' => array(
+                'name' => __('Media', 'sb-theme')
+            ),
+            'permalinks' => array(
+                'name' => __('Permalinks', 'sb-theme')
+            ),
+            'membership' => array(
+                'name' => __('Membership', 'sb-theme')
+            )
+        );
+        $tabs = wp_parse_args($tabs, $defaults);
+        return $tabs;
+    }
+
+    public function get_advanced_setting_tabs() {
+        return apply_filters('sb_theme_advanced_setting_tabs', $this->advanced_tabs);
+    }
+
     private function has_sb_admin() {
         global $sb_admin;
         if($sb_admin && $sb_admin->sb_admin_added) {
             return true;
         }
         return false;
-    }
-
-    private function init() {
-        $this->sb_admin_added = true;
-        $this->sb_tab_init();
     }
 
     public function submenu_exists($name) {
@@ -38,13 +88,8 @@ class SB_Admin {
         SB_Admin_Custom::setting_page_callback();
     }
 
-    private function sb_admin_test() {
-        return apply_filters('sb_testing', false);
-    }
-
     public function admin_style_and_script() {
-        $page = SB_Admin_Custom::get_current_page();
-        if(SB_PHP::is_string_contain($page, 'sb')) {
+        if(SB_Admin_Custom::is_sb_page()) {
             wp_enqueue_media();
         }
     }
@@ -59,6 +104,7 @@ class SB_Admin {
 
     private function register_sb_setting() {
         register_setting('sb-setting', 'sb_options', array($this, 'sanitize'));
+        do_action('sb_theme_register_setting');
     }
 
     private function add_sb_options_section() {
@@ -75,6 +121,7 @@ class SB_Admin {
         $this->register_sb_setting();
         $this->add_default_section();
         do_action('sb_admin_init');
+        do_action('sb_theme_option_page_init');
     }
 
     public function sb_options_callback() {
@@ -90,7 +137,9 @@ class SB_Admin {
     }
 
     private function sb_tab_init() {
+        $this->tab_filter();
         $this->add_tab('sb_options', __('About SB', 'sb-theme'), 'sb_options_section');
+        $this->advanced_tabs = $this->advanced_tabs;
     }
 
     private function add_tab($key, $title, $section_id) {
@@ -99,18 +148,8 @@ class SB_Admin {
 
     public function option_tab($tabs) {
         $tabs = array_merge($tabs, $this->tabs);
+        $tabs = apply_filters('sb_theme_sidebar_tabs', $tabs);
         return $tabs;
-    }
-
-    private function filter() {
-        add_filter('sb_admin_tabs', array($this, 'option_tab'));
-    }
-
-    private function action() {
-        add_action('admin_menu', array($this, 'action_admin_menu'));
-        add_action('admin_head', array($this, 'action_admin_head'));
-        add_action('sb_theme_admin_enqueue_scripts', array($this, 'admin_style_and_script'));
-        add_action('sb_theme_admin_init', array($this, 'action_admin_init'));
     }
 
 	public function action_admin_head() {
@@ -133,11 +172,13 @@ class SB_Admin {
         if(!$this->submenu_exists('sb_options')) {
             add_submenu_page('sb_options', __('About SB', 'sb-theme'), __('About SB', 'sb-theme'), 'manage_options', 'sb_options', array($this, 'settings_page'));
         }
+        do_action('sb_theme_add_submenu_page');
     }
 
     public function add_menu_page() {
         if(empty($GLOBALS['admin_page_hooks']['sb_options'])) {
             add_menu_page('SB Options', 'SB Options', 'manage_options', 'sb_options', '', sb_theme_get_image_url('px.png'), 71);
         }
+        do_action('sb_theme_add_menu_page');
     }
 }

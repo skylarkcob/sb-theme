@@ -385,16 +385,27 @@ class SB_Core {
 
     public static function admin_notices_message($args = array()) {
         $id = 'message';
-        $message = '';
-        $is_error = false;
-        extract($args, EXTR_OVERWRITE);
+        $message = isset($args['message']) ? $args['message'] : '';
+        $is_error = isset($args['is_error']) ? $args['is_error'] : false;
+        if(empty($message)) {
+            return;
+        }
+        $div = new SB_HTML('div');
+        $div->set_attribute('id', $id);
+        $pgraph_text = '';
         if ($is_error) {
-            echo '<div id="'.$id.'" class="error">';
+            $div->set_attribute('class', 'error');
+            $pgraph_text = '<strong>' . __('Error:', 'sb-theme') . '</strong>';
         }
         else {
-            echo '<div id="message" class="updated fade">';
+            $div->set_attribute('class', 'updated fade');
         }
-        echo "<p><strong>$message</strong></p></div>";
+        $paragraph = new SB_HTML('p');
+        $paragraph->set_text($pgraph_text . ' ' . $message);
+
+        $div->set_text($paragraph->build());
+
+        echo $div->build();
     }
 
     public static function get_menu_location() {
@@ -712,6 +723,9 @@ class SB_Core {
     public static function sanitize($data, $type) {
         switch($type) {
             case 'url':
+                if(is_array($data)) {
+                    $data = isset($data['url']) ? $data['url'] : '';
+                }
                 $data = trim($data);
                 $data = esc_url_raw($data);
                 if(!SB_PHP::is_valid_url($data)) {
@@ -1002,6 +1016,20 @@ class SB_Core {
 
     public static function get_blog_page() {
         return SB_Post::get_by_slug('blog', 'page');
+    }
+
+    public static function get_encryption_key() {
+        $key = apply_filters('sb_theme_encryption_key', 'SBTheme');
+        return $key;
+    }
+
+    public static function encrypt($string) {
+        $key = self::get_encryption_key();
+        return SB_PHP::encrypt($key, $string);
+    }
+
+    public static function decrypt($encrypted) {
+        return SB_PHP::decrypt(self::get_encryption_key(), $encrypted);
     }
 
     public static function get_social_share_url($args = array()) {

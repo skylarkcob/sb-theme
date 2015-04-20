@@ -59,6 +59,18 @@ function sb_theme_admin_init_hook() {
     if(file_exists(WP_PLUGIN_DIR . '/sb-core')) {
         sb_theme_remove_all_sb_plugin(10);
     }
+    $saved_version = get_option('sb_theme_version');
+    $transient_name = SB_Cache::build_init_role_transient_name();
+    if(version_compare($saved_version, SB_THEME_VERSION, '<')) {
+        update_option('sb_theme_version', SB_THEME_VERSION);
+        delete_transient($transient_name);
+        do_action('sb_theme_upgrade');
+    }
+    if(false === get_transient($transient_name)) {
+        SB_Membership::init_roles_and_capabilities();
+        set_transient($transient_name, 1, YEAR_IN_SECONDS);
+    }
+
     do_action('sb_theme_admin_init');
 }
 add_action('admin_init', 'sb_theme_admin_init_hook');
@@ -95,6 +107,7 @@ function sb_theme_after_theme_switch_hook() {
     sb_theme_deactivate_all_sb_plugin();
     update_option('sb_theme_version', SB_THEME_VERSION);
     sb_theme_remove_all_sb_plugin();
+    SB_Membership::init_roles_and_capabilities();
     do_action('sb_theme_after_switch_theme');
 }
 add_action('after_switch_theme', 'sb_theme_after_theme_switch_hook');

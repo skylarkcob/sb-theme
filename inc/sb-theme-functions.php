@@ -501,7 +501,7 @@ function sb_user_can_post_comment() {
 }
 
 function sb_comments() {
-    include SB_THEME_INC_PATH . '/sb-comment-template.php';
+    sb_theme_get_content('sb-comment-template');
 }
 
 function sb_comment_spam($commentdata) {
@@ -710,10 +710,6 @@ function sb_login_page_is_account_custom_page() {
     return is_page_template('page-template-account.php');
 }
 
-function sb_login_page_create_user_role() {
-
-}
-
 function sb_login_page_can_deactivate_account() {
     return apply_filters('sb_login_page_can_deactivate_account', true);
 }
@@ -729,7 +725,6 @@ function sb_login_page_user_signup($args = array()) {
     $user_id = SB_User::add($user_args);
     if($user_id > 0) {
         $user = SB_User::get_by('id', $user_id);
-        $check_activation = isset($args['check_activation']) ? $args['check_activation'] : true;
         $name = isset($args['name']) ? $args['name'] : '';
         $name_arr = explode(' ', $name);
         $first_name = array_pop($name_arr);
@@ -747,6 +742,7 @@ function sb_login_page_user_signup($args = array()) {
         SB_User::update_meta($user_id, 'phone', $phone);
         $address = isset($args['address']) ? $args['address'] : '';
         SB_User::update_meta($user_id, 'address', $address);
+        $check_activation = isset($args['check_activation']) ? $args['check_activation'] : true;
         if($check_activation) {
             SB_User::update_status($user, 6);
             SB_User::generate_activation_code($user);
@@ -855,4 +851,189 @@ function sb_tab_widget_get_sidebars() {
         array_push($list_sidebars, $sidebar);
     }
     return $list_sidebars;
+}
+
+function sb_theme_get_social_login_facebook() {
+    $facebook = SB_Option::get_social_login_app('facebook');
+    $args = array(
+        'app_id' => isset($facebook['app_id']) ? $facebook['app_id'] : '',
+        'app_secret' => isset($facebook['app_secret']) ? $facebook['app_secret'] : '',
+        'callback_url' => isset($facebook['redirect_uri']) ? $facebook['redirect_uri'] : SB_User::get_login_url()
+    );
+    $sb_login = new SB_Login('facebook');
+    $sb_login->set_facebook_arg($args);
+    $sb_login->facebook_login();
+    return $sb_login;
+}
+
+function sb_theme_get_social_login_google($code = '') {
+    $google = SB_Option::get_social_login_app('google');
+    $args = array(
+        'client_id' => isset($google['client_id']) ? $google['client_id'] : '',
+        'client_secret' => isset($google['client_secret']) ? $google['client_secret'] : '',
+        'api_key' => isset($google['api_key']) ? $google['api_key'] : '',
+        'callback_url' => isset($facebook['redirect_uri']) ? $facebook['redirect_uri'] : SB_User::get_login_url(),
+        'code' => $code
+    );
+    $sb_login = new SB_Login('google');
+    $sb_login->set_google_arg($args);
+    $sb_login->google_login();
+    return $sb_login;
+}
+
+function sb_theme_social_login_facebook_error_message($message) {
+    $message = SB_Message::login_error_message(SB_Message::connect_facebook_error());
+    return $message;
+}
+
+function sb_theme_social_login_facebook_verify_error_message($message) {
+    $message = SB_Message::login_error_message(SB_Message::facebook_account_not_verify());
+    return $message;
+}
+
+function sb_theme_social_login_twitter_error_message($message) {
+    $message = SB_Message::login_error_message(SB_Message::connect_twitter_error());
+    return $message;
+}
+
+function sb_theme_social_login_twitter_verify_error_message($message) {
+    $message = SB_Message::login_error_message(SB_Message::twitter_account_not_verify());
+    return $message;
+}
+
+function sb_theme_social_login_google_error_message($message) {
+    $message = SB_Message::login_error_message(SB_Message::connect_google_error());
+    return $message;
+}
+
+function sb_theme_social_login_google_verify_error_message($message) {
+    $message = SB_Message::login_error_message(SB_Message::google_account_not_verify());
+    return $message;
+}
+
+function sb_theme_social_login_email_exists($message) {
+    $message = SB_Message::login_error_message(SB_Message::email_exists_please_login());
+    return $message;
+}
+
+function sb_theme_remove_facebook_login_special_char() {
+    ?>
+    <script type="text/javascript">
+        if(window.location.hash && window.location.hash == '#_=_') {
+            if(window.history && history.pushState) {
+                window.history.pushState('', document.title, window.location.pathname);
+            } else {
+                var scroll = {
+                    top: document.body.scrollTop,
+                    left: document.body.scrollLeft
+                };
+                window.location.hash = '';
+                document.body.scrollTop = scroll.top;
+                document.body.scrollLeft = scroll.left;
+            }
+        }
+    </script>
+<?php
+}
+
+function sb_theme_social_login_facebook_check_data_back() {
+    $sb_login = sb_theme_get_social_login_facebook();
+    $facebook = $sb_login->get_facebook();
+    $profile = isset($facebook['profile']) ? $facebook['profile'] : '';
+    if(is_array($profile)) {
+        $verified = isset($profile['verified']) ? (bool)$profile['verified'] : false;
+        if($verified) {
+            $user_email = isset($profile['email']) ? $profile['email'] : '';
+            if(email_exists($user_email)) {
+                $user = SB_User::get_by('email', $user_email);
+                if(SB_User::is($user)) {
+                    $facebook_integrated = (bool)SB_User::get_meta($user->ID, 'facebook_integrated');
+                    if($facebook_integrated) {
+                        SB_User::force_login($user->ID);
+                        wp_redirect(sb_login_page_get_login_redirect_url());
+                        exit;
+                    } else {
+                        add_filter('sb_theme_login_message', 'sb_theme_social_login_email_exists');
+                    }
+                } else {
+                    add_filter('sb_theme_login_message', 'sb_theme_social_login_email_exists');
+                }
+            } else {
+                $args = array(
+                    'email' => $user_email,
+                    'password' => wp_generate_password(),
+                    'check_activation' => false,
+                    'force_login' => true
+                );
+                $result = sb_login_page_user_signup($args);
+                if($result) {
+                    $user = SB_User::get_by('email', $user_email);
+                    if(SB_User::is($user)) {
+                        SB_User::update_meta($user->ID, 'facebook_profile', $profile);
+                        SB_User::update_meta($user->ID, 'facebook_integrated', 1);
+                    }
+                    wp_redirect(sb_login_page_get_login_redirect_url());
+                    exit;
+                } else {
+                    add_filter('sb_theme_login_message', 'sb_theme_social_login_facebook_error_message');
+                }
+            }
+        } else {
+            add_filter('sb_theme_login_message', 'sb_theme_social_login_facebook_verify_error_message');
+        }
+    } else {
+        add_filter('sb_theme_login_message', 'sb_theme_social_login_facebook_error_message');
+    }
+}
+
+function sb_theme_social_login_google_check_data_back() {
+    $code = isset($_GET['code']) ? $_GET['code'] : '';
+    $sb_login = sb_theme_get_social_login_google($code);
+    $social = $sb_login->get_google();
+    $profile = $sb_login->get_google_profile();
+    print_r($social);
+    if(is_array($profile)) {
+        $verified = isset($profile['verifiedEmail']) ? (bool)$profile['verifiedEmail'] : false;
+        if($verified) {
+            $user_email = isset($profile['email']) ? $profile['email'] : '';
+            if(email_exists($user_email)) {
+                $user = SB_User::get_by('email', $user_email);
+                if(SB_User::is($user)) {
+                    $google_integrated = (bool)SB_User::get_meta($user->ID, 'google_integrated');
+                    if($google_integrated) {
+                        SB_User::force_login($user->ID);
+                        wp_redirect(sb_login_page_get_login_redirect_url());
+                        exit;
+                    } else {
+                        add_filter('sb_theme_login_message', 'sb_theme_social_login_email_exists');
+                    }
+                } else {
+                    add_filter('sb_theme_login_message', 'sb_theme_social_login_email_exists');
+                }
+            } else {
+                $args = array(
+                    'email' => $user_email,
+                    'password' => wp_generate_password(),
+                    'check_activation' => false,
+                    'force_login' => true
+                );
+                $result = sb_login_page_user_signup($args);
+                if($result) {
+                    $user = SB_User::get_by('email', $user_email);
+                    if(SB_User::is($user)) {
+                        SB_User::update_meta($user->ID, 'google_profile', $profile);
+                        SB_User::update_meta($user->ID, 'google_integrated', 1);
+                    }
+                    wp_redirect(sb_login_page_get_login_redirect_url());
+                    exit;
+                } else {
+                    add_filter('sb_theme_login_message', 'sb_theme_social_login_google_error_message');
+                }
+            }
+        } else {
+            add_filter('sb_theme_login_message', 'sb_theme_social_login_google_verify_error_message');
+        }
+    } else {
+        add_filter('sb_theme_login_message', 'sb_theme_social_login_google_error_message');
+    }
 }

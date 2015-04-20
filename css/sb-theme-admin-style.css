@@ -209,6 +209,11 @@ a:focus {
     padding-left: 50px;
 }
 
+.sb-option .sb-theme-sidebar .sb-sortable-list li > img {
+    margin-left: 5px;
+    top: 18px;
+}
+
 .sb-sidebar-group li .sb-icon-delete {
     left: 25px;
 }
@@ -797,6 +802,16 @@ ul.sb-sortable-list {
     width: 43%;
 }
 
+ul.sb-sortable-list.active-sortable {
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+    color: #8a6d3b;
+}
+
+.sb-option .sb-sortable-list.active-sortable li {
+
+}
+
 .sb-sortable ul:first-child {
 
 }
@@ -978,6 +993,92 @@ div.sb-post-meta-row .image-preview {
 
 .widget .sb-media-upload .image-preview.has-image {
     height: auto;
+}
+
+/* ================= Advanced Settings ================= */
+.form-table td .sbt-row-setting p,
+.sbt-row-setting p,
+.sbt-row-setting {
+    font-size: 13px;
+}
+
+.sb-theme-advanced-setting-section {
+
+}
+
+.sb-theme-advanced-setting-section th {
+    display: none;
+}
+
+.sb-theme-advanced-setting-section td {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.sb-theme-advanced-setting-section .tab-content-item {
+    display: none;
+}
+
+.sb-theme-advanced-setting-section .tab-content-item.active {
+    display: block;
+}
+
+.sbt-row-setting label {
+    float: left;
+    margin: 0 0 5px 10px;
+    width: 180px;
+}
+
+.sbt-row-setting input {
+    margin: 0 3px 5px 5px;
+    padding: 5px;
+    width: 400px;
+}
+
+.sbt-row-setting h3 {
+    border: medium none;
+}
+
+.sbt-row-setting .tab-content-inner {
+    padding: 10px 0;
+}
+
+.sbt-row-setting .row-desc {
+    margin-bottom: 10px;
+}
+
+.sbt-row-setting .row-setting-content {
+    margin-top: 10px;
+}
+
+.sbt-row-setting label.checkbox-label {
+    display: inline-block;
+    float: none;
+    margin-bottom: 15px;
+    margin-left: 5px;
+    vertical-align: top;
+    width: auto;
+}
+
+.sbt-row-setting input[type="checkbox"] {
+    margin-left: 0;
+    margin-right: 0;
+    vertical-align: middle;
+    width: auto;
+}
+
+.sbt-row-setting .a-row {
+    margin-bottom: 1.5em;
+}
+
+/* ================= User profile ================= */
+
+.sb-theme-user-extra-information td .sb-birthday-field {
+    margin: 0;
+}
+
+.sb-theme-user-extra-information td .sb-birthday-field .sep {
+    margin: 0 10px;
 }
 
 /* ================= META BOX ================= */

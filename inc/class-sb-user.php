@@ -11,7 +11,7 @@ class SB_User {
         }
         if(is_a($user, 'WP_User')) {
             foreach($user->roles as $key => $value) {
-                if('administrator' == $value) {
+                if('administrator' == $value || 'super_administrator' == $value) {
                     return true;
                 }
             }
@@ -364,9 +364,10 @@ class SB_User {
 
     public static function add($args = array()) {
         $result = 0;
-        $password = '';
-        $role = '';
-        extract($args, EXTR_OVERWRITE);
+        $password = isset($args['password']) ? $args['password'] : '';
+        $role = isset($args['role']) ? $args['role'] : '';
+        $username = isset($args['username']) ? $args['username'] : '';
+        $email = isset($args['email']) ? $args['email'] : '';
         if(!empty($password) && !empty($username) && !empty($email) && !username_exists($username) && !email_exists($email)) {
             $user_id = wp_create_user( $username, $password, $email );
             $user = get_user_by('id', $user_id);
@@ -555,6 +556,18 @@ class SB_User {
         }
         return $url;
     }
+
+    public static function check_social_login_data_send_back($social) {
+        $social = trim($social);
+        switch($social) {
+            case 'facebook':
+                sb_theme_social_login_facebook_check_data_back();
+                break;
+            case 'google':
+                sb_theme_social_login_google_check_data_back();
+                break;
+        }
+    }
     
     public static function get_login_redirect() {
         $url = '';
@@ -621,5 +634,21 @@ class SB_User {
     public static function get_by_meta($meta_key, $args = array()) {
         $args['meta_key'] = $meta_key;
         return self::get($args);
+    }
+
+    public static function count_post($user_id, $post_type = 'post') {
+        return count_user_posts($user_id, $post_type);
+    }
+
+    public static function count_all_post($user_id, $post_type = 'post') {
+        $args = array(
+            'post_type' => $post_type,
+            'author' => $user_id,
+            'status' => 'any',
+            'posts_per_page' => -1,
+            'transient_name' => SB_Cache::build_user_transient_name($user_id, '_count_post')
+        );
+        $query = SB_Query::get($args);
+        return $query->post_count;
     }
 }

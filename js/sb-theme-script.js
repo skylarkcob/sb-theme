@@ -388,9 +388,9 @@ var sb_password_strength,
                 e.preventDefault();
                 var that = $(this),
                     content_inner = that.closest('div.content-inner'),
-                    valid = true,
                     user_id = parseInt(that.attr('data-id')),
-                    data = null;
+                    data = null,
+                    valid = true;
                 if(that.hasClass('save-account')) {
                     var email = content_inner.find('.user-email');
                     if(!$.trim(email.val())) {
@@ -421,8 +421,8 @@ var sb_password_strength,
                 } else if(that.hasClass('btn-save-password')) {
                     var current_password = content_inner.find('.user-current-password'),
                         new_password = content_inner.find('.user-password'),
-                        re_new_password = content_inner.find('.re-password'),
-                        valid = true;
+                        re_new_password = content_inner.find('.re-password');
+                    valid = true;
                     if(!$.trim(new_password.val())) {
                         new_password.focus();
                         valid = false;
@@ -473,8 +473,8 @@ var sb_password_strength,
                         user_birth_year = content_inner.find('.user-birth-year'),
                         user_phone = content_inner.find('.user-phone'),
                         user_identity = content_inner.find('.user-identity'),
-                        user_address = content_inner.find('.user-address'),
-                        valid = true;
+                        user_address = content_inner.find('.user-address');
+                    valid = true;
                     if(!$.trim(user_name.val())) {
                         user_name.focus();
                         valid = false;
@@ -852,4 +852,5 @@ var sb_password_strength,
             });
         })();
     })();
+
 })(jQuery);

@@ -54,3 +54,5 @@ define( 'SB_THEME_FACEBOOK', 'https://www.facebook.com/skylarkcob' );
 define( 'SB_THEME_TWITTER', 'https://twitter.com/skylarkcob' );
 
 define( 'SB_THEME_LICENSE_REDIRECT', SB_THEME_WEBSITE );
+
+define( 'FACEBOOK_SDK_V4_SRC_DIR', SB_THEME_LIB_PATH . '/facebook-php-sdk-v4/src/' );

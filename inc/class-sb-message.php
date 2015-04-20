@@ -121,4 +121,47 @@ class SB_Message {
         $text = apply_filters('sb_theme_post_by_person_text', $text);
         return $text;
     }
+
+    public static function admin_notice_error($text) {
+        SB_Core::admin_notices_message(array('message' => $text, 'is_error' => true));
+    }
+
+    public static function login_error_message($text) {
+        return '<div id="login_error"> <strong>' . __('ERROR', 'sb-theme') . '</strong>: ' . $text . '</div>';
+    }
+
+    public static function connect_google_error() {
+        $message = apply_filters('sb_theme_connect_google_error_text', __('Không thể kết nối tới tài khoản Google của bạn!', 'sb-theme'));
+        return $message;
+    }
+
+    public static function google_account_not_verify() {
+        $message = apply_filters('sb_theme_google_account_not_verify_text', __('Tài khoản Google của bạn chưa được xác thực!', 'sb-theme'));
+        return $message;
+    }
+
+    public static function connect_twitter_error() {
+        $message = apply_filters('sb_theme_connect_twitter_error_text', __('Không thể kết nối tới tài khoản Twitter của bạn!', 'sb-theme'));
+        return $message;
+    }
+
+    public static function twitter_account_not_verify() {
+        $message = apply_filters('sb_theme_twitter_account_not_verify_text', __('Tài khoản Twitter của bạn chưa được xác thực!', 'sb-theme'));
+        return $message;
+    }
+
+    public static function connect_facebook_error() {
+        $message = apply_filters('sb_theme_connect_facebook_error_text', __('Không thể kết nối tới tài khoản Facebook của bạn!', 'sb-theme'));
+        return $message;
+    }
+
+    public static function facebook_account_not_verify() {
+        $message = apply_filters('sb_theme_facebook_account_not_verify_text', __('Tài khoản Facebook của bạn chưa được xác thực!', 'sb-theme'));
+        return $message;
+    }
+
+    public static function email_exists_please_login() {
+        $message = apply_filters('sb_theme_email_exists_please_login_text', __('Địa chỉ email đã tồn tài, xin vui lòng đăng nhập.'));
+        return $message;
+    }
 }

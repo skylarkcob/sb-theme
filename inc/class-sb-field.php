@@ -118,7 +118,11 @@ class SB_Field {
         if($birth_year < $year_min || $birth_year > $year_max) {
             $all_option_year .= self::get_option(array('text' => $birth_year, 'value' => $birth_year, 'selected' => $birth_year));
         }
+        $container_class = isset($args['container_class']) ? $args['container_class'] : 'sb-birthday-field';
+        $before = isset($args['before']) ? $args['before'] : '<p class="' . $container_class . '">';
+        $after = isset($args['after']) ? $args['after'] : '</p>';
         $args['before'] = '';
+        echo $before;
         if('vi' == $lang) {
             $args['all_option'] = $all_option_day;
             self::select($args);
@@ -138,6 +142,7 @@ class SB_Field {
             $args['all_option'] = $all_option_day;
             self::select($args);
         }
+        echo $after;
     }
 
     public static function media_upload_group($args = array()) {
@@ -430,7 +435,9 @@ class SB_Field {
         $description = isset($args['description']) ? $args['description'] : '';
         $field_class = isset($args['field_class']) ? $args['field_class'] : '';
         $container_class = isset($args['container_class']) ? $args['container_class'] : '';
-        $value = trim($value);
+        if('checkbox' != $type && 'radio' != $type) {
+            $value = trim($value);
+        }
         $container_class = SB_PHP::add_string_with_space_before($container_class, 'sb-' . $type . '-field');
         $widefat = isset($args['widefat']) ? $args['widefat'] : true;
         if($widefat) {
@@ -451,6 +458,12 @@ class SB_Field {
             'autocomplete' => (bool)$autocomplete ? '' : 'off',
             'class' => esc_attr($field_class)
         );
+        if('checkbox' == $type || 'radio' == $type) {
+            $checked = checked(1, $value, false);
+            if(!empty($checked)) {
+                $atts['checked'] = 'checked';
+            }
+        }
         $html->set_attribute_array($atts);
         $attributes = isset($args['attributes']) ? $args['attributes'] : array();
         $html = self::set_attributes($html, $attributes);

@@ -18,6 +18,12 @@ function sb_plugins_ajax_callback() {
 }
 add_action( 'wp_ajax_sb_plugins', 'sb_plugins_ajax_callback' );
 
+function sb_theme_admin_sidebar_change_ajax_callback() {
+    delete_transient(SB_Cache::build_admin_sidebar_tab_transient_name());
+    die();
+}
+add_action('wp_ajax_sb_theme_admin_sidebar_change', 'sb_theme_admin_sidebar_change_ajax_callback');
+
 function sb_option_reset_ajax_callback() {
     $sb_page = isset( $_POST['sb_option_page'] ) ? $_POST[ 'sb_option_page' ] : '';
     $data = array();
@@ -102,6 +108,38 @@ function sb_login_page_login_ajax_callback() {
     die();
 }
 add_action('wp_ajax_nopriv_sb_login_page_login', 'sb_login_page_login_ajax_callback');
+
+function sb_theme_login_social_ajax_callback() {
+    $result = array(
+        'successful' => false
+    );
+    $data_social = isset($_POST['data_social']) ? $_POST['data_social'] : '';
+    $url = '';
+    if(!empty($data_social)) {
+        unset($_SESSION['access_token']);
+        switch($data_social) {
+            case 'facebook':
+                $sb_login = sb_theme_get_social_login_facebook();
+                $url = $sb_login->get_facebook_login_url();
+                break;
+            case 'google':
+                $sb_login = sb_theme_get_social_login_google();
+                $url = $sb_login->get_google_login_url();
+                break;
+            case 'gplus':
+                $sb_login = sb_theme_get_social_login_google();
+                $url = $sb_login->get_google_login_url();
+                break;
+        }
+    }
+    if(empty($url)) {
+        $result['message'] = __('Đã có lỗi xảy ra, xin vui lòng kiểm tra lại.', 'sb-theme');
+    }
+    $result['url'] = $url;
+    echo json_encode($result);
+    die();
+}
+add_action('wp_ajax_nopriv_sb_theme_login_social', 'sb_theme_login_social_ajax_callback');
 
 function sb_login_page_verify_email_ajax_callback() {
     check_ajax_referer('sb-verify-email-page', 'security');

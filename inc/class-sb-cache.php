@@ -4,6 +4,26 @@ class SB_Cache {
         return 'sb_theme_post_' . $post_id . $suffix;
     }
 
+    public static function build_post_media_images_transient_name($post_id) {
+        return self::build_post_transient_name($post_id, '_media_images');
+    }
+
+    public static function build_post_comment_number_transient_name($post_id) {
+        return self::build_post_transient_name($post_id, '_comment_number');
+    }
+
+    public static function build_post_thumbnail_url_transient_name($post_id, $size) {
+        return self::build_post_transient_name($post_id, '_thumbnail_url_' . $size);
+    }
+
+    public static function build_post_thumbnail_image_transient_name($post_id, $size) {
+        return self::build_post_transient_name($post_id, '_thumbnail_image_' . $size);
+    }
+
+    public static function build_post_term_list_transient_name($post_id, $taxonomy) {
+        return self::build_post_transient_name($post_id, '_' . $taxonomy . '_term_list');
+    }
+
     public static function build_widget_transient_name($widget_id) {
         $widget_id = str_replace('-', '_', $widget_id);
         return 'sb_theme_widget_cache_' . $widget_id;
@@ -37,12 +57,32 @@ class SB_Cache {
         SB_Core::delete_transient('sb_theme_query');
     }
 
-    public static function build_user_avatar_transient_name($user_key) {
-        return 'sb_theme_avatar_' . $user_key;
+    public static function build_user_avatar_transient_name($id_or_email, $suffix) {
+        if(is_object($id_or_email)) {
+            if($id_or_email->comment_ID && $id_or_email->comment_ID > 0) {
+                $comment_author = $id_or_email->comment_author;
+                $comment_author_ip = $id_or_email->comment_author_IP;
+                $id_or_email = $comment_author . '_' . $comment_author_ip;
+            }
+        }
+        $user_key = str_replace('@', '_', $id_or_email);
+        return self::build_user_transient_name($user_key . '_avatar', $suffix);
     }
 
     public static function build_license_transient_name() {
         return 'sb_theme_license';
+    }
+
+    public static function build_admin_advanced_setting_tab_transient_name() {
+        return 'sb_theme_admin_advanced_setting_tabs';
+    }
+
+    public static function build_admin_sidebar_tab_transient_name() {
+        return 'sb_theme_admin_sidebar_tabs';
+    }
+
+    public static function build_init_role_transient_name() {
+        return 'sb_theme_init_role';
     }
 
     public static function check_name($name) {
@@ -90,5 +130,9 @@ class SB_Cache {
         foreach($results as $row) {
             $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_id = %d", $row->option_id ) );
         }
+    }
+
+    public static function build_user_transient_name($user_id, $suffix = '') {
+        return 'sb_theme_user_' . $user_id . $suffix;
     }
 }

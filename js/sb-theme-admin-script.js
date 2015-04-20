@@ -1,7 +1,8 @@
 window.wp = window.wp || {};
 window.sb_core = window.sb_core || {};
 var sb_ajax_loader,
-    sb_receive_media_selected;
+    sb_receive_media_selected,
+    sb_option_form_submit = false;
 
 (function($){
 
@@ -11,6 +12,18 @@ var sb_ajax_loader,
         new_post_id = 0,
         old_post_id = '',
         body = $('body');
+
+    // Detect SB option form submit
+    (function(){
+        $('#sb-options-form').on('submit', function(e){
+            sb_option_form_submit = true;
+        });
+    })();
+
+    function sb_theme_make_sb_option_unsaved_message(selector) {
+        var sb_options = selector.closest('div.sb-options');
+        sb_options.attr('data-option-changed', 1);
+    }
 
     window.sb_default_quick_tags = function() {
         QTags.addButton('hr', 'hr', '<hr>\n', '', 'w');
@@ -29,6 +42,7 @@ var sb_ajax_loader,
     };
 
     sb_core.sb_receive_media_selected = function(file_frame) {
+        $('.sb-options').attr('data-option-changed', 1);
         return file_frame.state().get('selection').first().toJSON();
     }
 
@@ -53,13 +67,70 @@ var sb_ajax_loader,
         return false;
     }
 
+    // Detect options changes
+    (function(){
+        $('.sb-theme.sb-options').find('.sb-remove-media, .reset-button, .sb-add-sidebar, .sb-icon-delete').on('click', function(e){
+            sb_theme_make_sb_option_unsaved_message($(this));
+        });
+
+        $('.sb-theme.sb-options').find('.switch-button').on('click', function(e){
+            var that = $(this);
+            if(!that.hasClass('active')) {
+                sb_theme_make_sb_option_unsaved_message(that);
+            }
+        });
+
+        $('.sb-theme.sb-options').find('select, input[type="checkbox"]').on('change', function(e){
+            sb_theme_make_sb_option_unsaved_message($(this));
+        });
+
+        $('.sb-theme.sb-options').find('textarea, input').on('input', function(e){
+            sb_theme_make_sb_option_unsaved_message($(this));
+        });
+        $(window).bind('beforeunload', function(e) {
+            var sb_option_page = $('.sb-theme.sb-options');
+            if(sb_option_page.length && parseInt(sb_option_page.attr('data-option-changed')) == 1 && !sb_option_form_submit) {
+                return 'Are you sure?';
+            }
+        });
+    })();
+
+    // Clean post revision
+    (function(){
+        $('.sb-clean-post-revision').on('click', function(e){
+            e.preventDefault();
+            sb_core.sb_ajax_loader(true);
+            var that = $(this),
+                data = null;
+            data = {
+                action: 'sb_clean_post_revision'
+            };
+            $.post(sb_core_admin_ajax.url, data, function(resp){
+                sb_core.sb_ajax_loader(false);
+            });
+        });
+    })();
+
     // Disable current tab clicked
     (function(){
-        $('div.sb-option .section-item > a').on('click', function(){
-            var that = $(this);
+        $('div.sb-option .section-item > a').on('click', function(e){
+            var that = $(this),
+                tab_item = that.parent(),
+                tab_container = tab_item.parent();
+
             if(that.parent().hasClass('active')) {
                 return false;
+            } else {
+                e.preventDefault();
+                tab_container.find('.tab-item').removeClass('active');
+                tab_item.addClass('active');
             }
+            var data = {
+                'action' : 'sb_theme_admin_sidebar_change'
+            };
+            $.post(sb_core_admin_ajax.url, data, function(resp){
+                window.location.href = that.attr('href');
+            });
         });
     })();
 
@@ -184,7 +255,10 @@ var sb_ajax_loader,
         if($('#sb-sortable-sidebar').length) {
             $('#sb-sortable-sidebar').sortable({
                 cancel: ':input, .ui-state-disabled, .sb-icon-delete',
-                placeholder: 'ui-state-highlight'
+                placeholder: 'ui-state-highlight',
+                stop: function(event, ui) {
+                    sb_theme_make_sb_option_unsaved_message($(ui.item));
+                }
             });
         }
         $('button.sb-add-sidebar').on('click', function(e){
@@ -387,6 +461,7 @@ var sb_ajax_loader,
                         data = data.slice(0, -1);
                         sortable_connect_active.val(data);
                     }
+                    sb_theme_make_sb_option_unsaved_message(that);
                 }
             }).disableSelection();
         }
@@ -604,6 +679,32 @@ var sb_ajax_loader,
                 }
             })
         })();
+    })();
+
+    // SB Theme Advanced Settings
+    (function(){
+        $('.sbt-adv-setting .sbt-adv-tabs .nav-tab').on('click', function(e){
+            e.preventDefault();
+            var that = $(this),
+                tab_container = that.parent(),
+                sbt_adv_setting = that.closest('.sbt-adv-setting');
+            tab_container.find('.nav-tab').removeClass('nav-tab-active');
+            that.addClass('nav-tab-active');
+            sbt_adv_setting.find('.tab-content-item').removeClass('active');
+            sbt_adv_setting.find('.tab-content-item.' + that.attr('data-tab')).addClass('active');
+        });
+    })();
+
+    // Checkbox click
+    (function(){
+        $('.sb-options input[type="checkbox"]').on('click', function(e){
+            var that = $(this);
+            if(that.is(':checked')) {
+                that.attr('value', 1);
+            } else {
+                that.attr('value', 0);
+            }
+        });
     })();
 
     // SB Tab Widget

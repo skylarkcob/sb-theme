@@ -5,20 +5,29 @@ body.login div#login h1 a {
     padding-bottom: 30px;
     width: 320px;
 }
-#login{padding-top:60px}.wp-core-ui .button-primary{font-size:15px;margin-bottom:-20px;margin-top:10px;padding-bottom:35px!important;padding-top:10px!important;width:100%}.login #backtoblog{display:none}
 
-@media screen and (max-width:769px) {
-    .wp-core-ui .button,
-    .wp-core-ui .button.button-large,
-    .wp-core-ui .button.button-small,
-    a.preview,
-    input#publish,
-    input#save-post {
-        height: 48px;
-        padding-bottom: 10px! important;
-    }
-    #login{padding-bottom:10px}
+body.login div#login h1 a {
+    min-width: 200px;
+    width: 70%;
 }
+
+#login{
+    padding-top:60px
+}
+
+.wp-core-ui .button-primary{
+    font-size: 15px;
+    margin-bottom: -20px;
+    margin-top: 10px;
+    padding-bottom: 35px!important;
+    padding-top: 10px!important;
+    width:100%
+}
+
+.login #backtoblog {
+    display:none
+}
+
 .login .wp-core-ui .button-group.button-large .button, .wp-core-ui .button.button-large {
     line-height: 23px;
 }
@@ -62,4 +71,213 @@ body.login div#login h1 a {
 
 #login input.error {
     border: 1px solid #dd4b39;
+}
+
+.login #nav {
+    padding: 0;
+}
+
+.login #nav {
+    color: rgba(0, 0, 0, 0);
+}
+
+.login #nav a {
+    background-repeat: no-repeat;
+    background-size: 16px auto;
+    color: #33b5e6;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.login #nav a {
+    background-image: url("../images/icon-16-login.png");
+    background-position: left 2px;
+    padding-left: 22px;
+}
+
+.login #nav .lostpassword {
+    background-image: url("../images/icon-24-lost-password.png");
+    background-position: left center;
+    background-size: 16px auto;
+    padding-left: 22px;
+}
+
+.login #nav .register {
+    background-image: url("../images/icon-16-register.png");
+    background-position: left 1px;
+    padding-left: 20px;
+}
+
+.sb-theme-login .button-primary {
+    background-color: #ff910f;
+    background-image: none;
+    border: medium none;
+    box-shadow: 0 -16px 12px rgba(0, 0, 0, 0) inset, 0 -2px 0 rgba(0, 0, 0, 0.1) inset;
+    color: #fff;
+    font-weight: 400;
+    text-shadow: 0 -1px transparent;
+}
+
+.sb-theme-btn-social,
+.sb-theme-login .button-primary {
+    -webkit-font-smoothing: antialiased;
+    background-clip: border-box;
+    transition: .1s ease-in;
+    -webkit-box-shadow: inset 0 -16px 12px rgba(0,0,0,0), inset 0 -2px 0 rgba(0,0,0,0.1);
+    -moz-box-shadow: inset 0 -16px 12px rgba(0,0,0,0), inset 0 -2px 0 rgba(0,0,0,0.1);
+    box-shadow: inset 0 -16px 12px rgba(0,0,0,0), inset 0 -2px 0 rgba(0,0,0,0.1)
+}
+
+.sb-theme-btn-social:hover,
+.sb-theme-login .button-primary:hover {
+    background-color: #ff910f;
+    text-decoration: none;
+    -webkit-box-shadow: inset 0 -20px 8px rgba(0,0,0,0.05), inset 0 -2px 0 rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.15);
+    -moz-box-shadow: inset 0 -20px 8px rgba(0,0,0,0.05), inset 0 -2px 0 rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.15);
+    box-shadow: inset 0 -20px 8px rgba(0,0,0,0.05), inset 0 -2px 0 rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.15)
+}
+
+.sb-theme-btn-social:focus,
+.sb-theme-btn-social:active,
+.sb-theme-login .button-primary:focus,
+.sb-theme-login .button-primary:active {
+    background-color: #ff910f;
+    -webkit-box-shadow: inset 0 -16px 12px rgba(0,0,0,0), inset 0 2px 4px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.05);
+    -moz-box-shadow: inset 0 -16px 12px rgba(0,0,0,0), inset 0 2px 4px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: inset 0 -16px 12px rgba(0,0,0,0), inset 0 2px 4px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.05)
+}
+
+.sb-theme-login .message {
+    border-left-color: #5cb85c;
+}
+
+.sb-theme-login #login_error {
+    margin-top: 10px;
+}
+
+.sb-theme-login.sb-theme-action-lostpassword #login_error {
+    padding-top: 1px;
+}
+
+.sb-theme-login #login {
+    padding-top: 20px;
+}
+
+.sb-theme-btn-social {
+    border: medium none;
+    border-radius: 4px;
+    color: #fff;
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    text-shadow: 0 -1px transparent;
+    vertical-align: middle;
+    width: 100%;
+}
+
+.sb-theme-btn-social.btn-facebook:hover,
+.sb-theme-btn-social.btn-facebook:focus,
+.sb-theme-btn-social.btn-facebook:active,
+.sb-theme-btn-social.btn-facebook {
+    background-color: #3b5998;
+}
+
+.sb-theme-login .hr {
+    border-bottom: 1px solid #c3c4c7;
+    box-shadow: 0 1px 0 #fff, 0 0 0 transparent;
+    height: 8px;
+    margin: 10px 0 20px;
+    position: relative;
+    text-align: center;
+    width: 100%;
+}
+
+.sb-theme-login .hr .inner {
+    background: none repeat scroll 0 0 #fff;
+    border-radius: 100px;
+    display: inline-block;
+    font-family: "Georgia","Times","Times New Roman",serif;
+    font-size: 16px;
+    font-style: italic;
+    line-height: 0;
+    padding: 9px 10px;
+    width: auto;
+}
+
+.sb-theme-login .sb-theme-btn-social .flip-icon {
+    display: inline-block;
+    fill: #fff;
+    float: left;
+    height: 18px;
+    line-height: 11px;
+    margin-top: 4px;
+    padding-right: 10px;
+    vertical-align: middle;
+    width: 18px;
+}
+
+.sb-theme-login .sb-theme-btn-social.btn-facebook .flip-icon {
+    border-right: 1px solid #627aac;
+    box-shadow: -1px 0 0 0 #293e6a inset;
+}
+
+.sb-theme-btn-social > span {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    vertical-align: 2px;
+}
+
+.sb-theme-btn-social {
+    cursor: pointer;
+    text-align: left;
+}
+
+.sb-theme-login .sb-theme-btn-social .flip-icon {
+    margin-right: 20px;
+}
+
+.sb-theme-btn-social.btn-gplus:hover,
+.sb-theme-btn-social.btn-gplus:focus,
+.sb-theme-btn-social.btn-gplus:active,
+.sb-theme-btn-social.btn-gplus {
+    background-color: #e93f2e;
+}
+
+.sb-theme-login .sb-theme-btn-social.btn-gplus .flip-icon {
+    border-right: 1px solid #ef786c;
+    box-shadow: -1px 0 0 0 #ba3224 inset;
+    margin-left: 3px;
+    padding-right: 7px;
+}
+
+.sb-theme-btn-social.btn-twitter:hover,
+.sb-theme-btn-social.btn-twitter:focus,
+.sb-theme-btn-social.btn-twitter:active,
+.sb-theme-btn-social.btn-twitter {
+    background-color: #26c4f1;
+}
+
+.sb-theme-login .sb-theme-btn-social.btn-twitter .flip-icon {
+    border-right: 1px solid #7cdbf6;
+    box-shadow: -1px 0 0 0 #1a89a8 inset;
+    margin-left: 3px;
+    padding-right: 7px;
+}
+
+@media screen and (max-width:769px) {
+    .wp-core-ui .button,
+    .wp-core-ui .button.button-large,
+    .wp-core-ui .button.button-small,
+    a.preview,
+    input#publish,
+    input#save-post {
+        height: 48px;
+        padding-bottom: 10px! important;
+    }
+    #login{
+        padding-bottom: 10px
+    }
 }

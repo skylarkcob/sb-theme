@@ -5,7 +5,7 @@ class SB_Post {
     }
 
     public static function get_all_media_images($post_id) {
-        $transient_name = SB_Cache::build_post_transient_name($post_id, '_media_images');
+        $transient_name = SB_Cache::build_post_media_images_transient_name($post_id);
         if(false === ($result = get_transient($transient_name))) {
             $result = array();
             $files = get_posts(array('post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image'));
@@ -28,7 +28,7 @@ class SB_Post {
         if(empty($post_id)) {
             $post_id = get_the_ID();
         }
-        $transient_name = SB_Cache::build_post_transient_name($post_id, '_comment_number');
+        $transient_name = SB_Cache::build_post_comment_number_transient_name($post_id);
         if(false === ($comment_number = get_transient($transient_name))) {
             $comment_number = get_comments_number($post_id);
             if($comment_number == 1) {
@@ -265,7 +265,7 @@ class SB_Post {
             if(empty($size_key)) {
                 $size_key = 'default';
             }
-            $transient_name = SB_Cache::build_post_transient_name($post_id, '_thumbnail_url_' . $size_key);
+            $transient_name = SB_Cache::build_post_thumbnail_url_transient_name($post_id, $size_key);
             $result = get_transient($transient_name);
             $cache = isset($args['cache']) ? $args['cache'] : true;
             if(false === $result || !SB_PHP::is_image_url($result) || !$cache) {
@@ -318,7 +318,7 @@ class SB_Post {
             if(empty($size_key)) {
                 $size_key = 'default';
             }
-            $trasient_name = SB_Cache::build_post_transient_name($post_id, '_thumbnail_image_' . $size_key);
+            $trasient_name = SB_Cache::build_post_thumbnail_image_transient_name($post_id, $size_key);
             $result = get_transient($trasient_name);
             $image_source = SB_PHP::get_image_source($result);
             $cache = isset($args['cache']) ? $args['cache'] : true;
@@ -917,7 +917,7 @@ class SB_Post {
 
     public static function get_tag_list_html($post_id, $before = '', $sep = ', ', $after = '') {
         $taxonomy = 'post_tag';
-        $transient_name = SB_Cache::build_post_transient_name($post_id, '_' . $taxonomy . '_term_list');
+        $transient_name = SB_Cache::build_post_term_list_transient_name($post_id, $taxonomy);
         if(false === ($term_list = get_transient($transient_name))) {
             $before = '<span class="entry-terms ' . $taxonomy . '" itemprop="keywords"><span class="entry-utility-prep">' . SB_Message::get_category() . ': </span>';
             $after = '</span>';
@@ -934,7 +934,7 @@ class SB_Post {
     }
 
     public static function get_term_list_html($post_id, $taxonomy, $before = '', $sep = ', ', $after = '') {
-        $transient_name = SB_Cache::build_post_transient_name($post_id, '_' . $taxonomy . '_term_list');
+        $transient_name = SB_Cache::build_post_term_list_transient_name($post_id, $taxonomy);
         if(false === ($term_list = get_transient($transient_name))) {
             $before = '<span class="cat-links entry-terms ' . $taxonomy . '" itemprop="articleSection"><span class="entry-utility-prep">' . SB_Message::get_category() . ': </span>';
             $after = '</span>';

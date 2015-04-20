@@ -43,6 +43,8 @@ require SB_THEME_INC_PATH . '/class-sb-user.php';
 
 require SB_THEME_INC_PATH . '/class-sb-query.php';
 
+require SB_THEME_INC_PATH . '/class-sb-membership.php';
+
 require SB_THEME_INC_PATH . '/class-sb-post.php';
 
 require SB_THEME_INC_PATH . '/class-sb-html.php';
@@ -80,6 +82,8 @@ require SB_THEME_INC_PATH . '/class-sb-paginate.php';
 require SB_THEME_INC_PATH . '/widgets/class-sb-post-widget.php';
 
 require SB_THEME_INC_PATH . '/widgets/class-sb-tab-widget.php';
+
+require SB_THEME_INC_PATH . '/class-sb-login.php';
 
 /** Load tập tin khai báo các hàm trên SB Theme */
 require SB_THEME_INC_PATH . '/sb-theme-functions.php';
@@ -136,6 +140,8 @@ require SB_THEME_INC_PATH . '/class-sb-detect.php';
 
 /** Load tập tin khởi tạo chức năng quản lý trong Dashboard */
 require SB_THEME_INC_PATH . '/sb-theme-admin.php';
+
+require SB_THEME_INC_PATH . '/sb-theme-admin-plugin.php';
 
 /** Load class SB_Theme */
 require SB_THEME_INC_PATH . '/class-sb-theme.php';

@@ -1,38 +1,4 @@
-<?php
-function sb_do_settings_sections( $page ) {
-    global $wp_settings_sections, $wp_settings_fields;
-    if ( ! isset( $wp_settings_sections[$page] ) ) {
-        return;
-    }
-    $count = 0;
-    foreach ( (array) $wp_settings_sections[$page] as $section ) {
-        $section_id = $section['id'];
-        $class = 'sbtheme-option-section';
-        echo '<div id="'.$section_id.'" class="'.$class.'">';
-        if ( $section['title'] ) {
-            echo "<h3 class=\"setting-title\">{$section['title']}</h3>\n";
-        }
-        if ( $section['callback'] ) {
-            call_user_func( $section['callback'], $section );
-        }
-        $has_field = true;
-        if ( ! isset( $wp_settings_fields ) || !isset( $wp_settings_fields[$page] ) || !isset( $wp_settings_fields[$page][$section_id] ) ) {
-            $has_field = false;
-        }
-        echo '<table class="form-table">';
-        if($has_field && 'sb_options_section' != $section_id) {
-            do_settings_fields( $page, $section_id );
-        } elseif('sb_options_section' == $section_id) {
-            sb_core_get_content('sb-admin-about');
-        }
-        echo '</table>';
-        echo '</div>';
-        $count++;
-    }
-}
-?>
-<div class="wrap sb-option sb-options" data-message-confirm="<?php echo SB_Message::get_confirm_text(); ?>">
-    <noscript><div class="no-js"><?php echo SB_Message::get_browser_not_support_javascript(); ?></div></noscript>
+<?php SB_Admin_Custom::setting_page_before(); ?>
     <h2 style="display: none">&nbsp;</h2>
     <?php if (isset($_REQUEST['submit']) || isset($_REQUEST['settings-updated'])) : ?>
         <div id="message" class="updated">
@@ -58,47 +24,76 @@ function sb_do_settings_sections( $page ) {
         </div>
         <div class="sbtheme-content">
             <div class="sidebar">
-                <ul class="sbtheme-list-section sb-tabs">
-                    <?php
+                <?php
+                $current_tab = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
+                $transient_name = SB_Cache::build_admin_sidebar_tab_transient_name();
+                $sidebar_html = get_transient($transient_name);
+                if(false === $sidebar_html || $current_tab != $sidebar_html['current_tab']) {
+                    $sidebar_tabs = new SB_HTML('ul');
+                    $sidebar_tabs->set_attribute('class', 'sbtheme-list-section sb-tabs');
+
                     $count = 0;
                     $tabs = apply_filters('sb_admin_tabs', array());
-                    $current_tab = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
+
                     $tabs = apply_filters('sb_theme_admin_tabs', $tabs);
                     $key = 'sb_options';
                     $about_tab = isset($tabs[$key]) ? $tabs[$key] : '';
+
+                    $tab_items = '';
                     if($about_tab) {
                         unset($tabs[$key]);
-                        $class = 'tab-item section-item tab-'.$key; if($key == $current_tab) $class .= ' active';
+                        $class = 'tab-item section-item tab-' . $key;
+                        if($key == $current_tab) {
+                            $class .= ' active';
+                        }
                         $type = isset($value['type']) ? $value['type'] : 'normal';
                         $class .= ' ' . $type;
                         $value = $about_tab;
-                        ?>
-                        <li class="<?php echo $class; ?>">
-                            <a class="sbtheme-group-tab" href="<?php echo admin_url('admin.php?page=' . $key); ?>" data-section="<?php echo $value['section_id']; ?>"><i class="tab-icon <?php echo $key; ?>"></i> <span class="group-title"><?php _e($value['title'], 'sb-theme'); ?></span></a>
-                        </li>
-                        <?php
+                        $tab_item = new SB_HTML('li');
+                        $tab_item->set_attribute('class', $class);
+
+                        $tab_link = new SB_HTML('a');
+                        $tab_link->set_attribute('class', 'sbtheme-group-tab');
+                        $tab_link->set_attribute('href', admin_url('admin.php?page=' . $key));
+                        $tab_link->set_attribute('data-section', $value['section_id']);
+                        $tab_link->set_text('<i class="tab-icon ' . $key . '"></i> <span class="group-title">' . $value['title'] . '</span>');
+                        $tab_item->set_text($tab_link->build());
+                        $tab_items .= $tab_item->build();
                     }
-                    foreach($tabs as $key => $value) :
-	                    $class = 'tab-item section-item tab-' . $key;
-	                    if($key == $current_tab) {
-		                    $class .= ' active';
-	                    }
+                    foreach($tabs as $key => $value) {
+                        $class = 'tab-item section-item tab-' . $key;
+                        if($key == $current_tab) {
+                            $class .= ' active';
+                        }
                         $type = isset($value['type']) ? $value['type'] : 'normal';
                         $class .= ' ' . $type;
-                        ?>
-                        <li class="<?php echo $class; ?>">
-                            <a class="sbtheme-group-tab" href="<?php echo admin_url('admin.php?page='.$key); ?>" data-section="<?php echo $value['section_id']; ?>"><i class="tab-icon <?php echo $key; ?>"></i> <span class="group-title"><?php _e($value['title'], 'sb-theme'); ?></span></a>
-                        </li>
-                        <?php
-	                    $count++;
-                    endforeach; ?>
-                </ul>
+                        $tab_item = new SB_HTML('li');
+                        $tab_item->set_attribute('class', $class);
+
+                        $tab_link = new SB_HTML('a');
+                        $tab_link->set_attribute('class', 'sbtheme-group-tab');
+                        $tab_link->set_attribute('href', admin_url('admin.php?page=' . $key));
+                        $tab_link->set_attribute('data-section', $value['section_id']);
+                        $tab_link->set_text('<i class="tab-icon ' . $key . '"></i> <span class="group-title">' . $value['title'] . '</span>');
+                        $tab_item->set_text($tab_link->build());
+                        $tab_items .= $tab_item->build();
+                        $count++;
+                    }
+                    $sidebar_tabs->set_text($tab_items);
+                    $sidebar_html = array(
+                        'html' => $sidebar_tabs->build(),
+                        'current_tab' => $current_tab
+                    );
+                    set_transient($transient_name, $sidebar_html, DAY_IN_SECONDS);
+                }
+                echo $sidebar_html['html'];
+                ?>
             </div>
             <div class="main">
                 <form id="sb-options-form" method="post" action="options.php" data-page="<?php echo $current_tab; ?>">
                     <?php
                     settings_fields( 'sb-setting' );
-                    sb_do_settings_sections( $current_tab );
+                    SB_Admin_Custom::table_setting_page( $current_tab );
                     if(!SB_Admin_Custom::is_about_page()) :
 	                    submit_button(SB_Message::get_save_changes()); ?>
 	                    <div class="top-save-button"><?php submit_button(SB_Message::get_save_changes()); ?></div>
@@ -131,4 +126,4 @@ function sb_do_settings_sections( $page ) {
     <div class="sbtheme-copyright sbteam-copyright">
         <p>&copy; 2008 - <?php echo date('Y'); ?> <a href="<?php echo SB_THEME_WEBSITE; ?>"><?php echo SB_THEME_AUTHOR; ?></a>. <?php echo SB_Message::get_all_rights_reserved(); ?>.</p>
     </div>
-</div>
+<?php SB_Admin_Custom::setting_page_after(); ?>

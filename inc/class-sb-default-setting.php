@@ -13,4 +13,8 @@ class SB_Default_Setting {
 		);
 		return $options;
 	}
+
+    public static function sb_paginate() {
+        return self::paginate();
+    }
 }

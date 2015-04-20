@@ -12,16 +12,24 @@ function sb_theme_menu() {
     SB_Admin_Custom::add_submenu_page(__('Theme Settings', 'sb-theme'), 'sb_theme', array('SB_Admin_Custom', 'setting_page_callback'));
     SB_Admin_Custom::add_submenu_page('SB Utilities', 'sb_utilities', array('SB_Admin_Custom', 'setting_page_callback'));
 	SB_Admin_Custom::add_submenu_page('SB Statistics', 'sb_statistics', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page(__('Advanced Settings', 'sb-theme'), 'sbt_advanced', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_theme_menu');
 
 function sb_theme_setting_tab($tabs) {
     $tabs['sb_theme'] = array('title' => __('Theme Settings', 'sb-theme'), 'section_id' => 'sb_theme_setting_section', 'type' => 'theme');
-    $tabs['sb_utilities'] = array('title' => 'SB Utilities', 'section_id' => 'sb_utilities_section', 'type' => 'theme');
-	$tabs['sb_statistics'] = array('title' => 'SB Statistics', 'section_id' => 'sb_statistics_section', 'type' => 'theme');
+    $tabs['sb_utilities'] = array('title' => 'Utilities', 'section_id' => 'sb_utilities_section', 'type' => 'theme');
+	$tabs['sb_statistics'] = array('title' => 'Statistics', 'section_id' => 'sb_statistics_section', 'type' => 'theme');
+    $tabs['sbt_advanced'] = array('title' => __('Advanced Settings', 'sb-theme'), 'section_id' => 'sb_theme_advanced_setting_section', 'type' => 'theme');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_theme_setting_tab');
+
+function sb_theme_advanced_setting_field() {
+    SB_Admin_Custom::add_section('sb_theme_advanced_setting_section', __('SB Theme Advanced Settings Page', 'sb-theme'), 'sbt_advanced');
+    SB_Admin_Custom::add_setting_field('sb_theme_advanced_setting_page_content', '', 'sb_theme_advanced_setting_section', array('SB_Admin_Custom', 'row_setting_page_callback'), 'sbt_advanced');
+}
+add_action('sb_theme_option_page_init', 'sb_theme_advanced_setting_field');
 
 function sb_theme_setting_field() {
     SB_Admin_Custom::add_section('sb_theme_setting_section', __('SB Theme options page', 'sb-theme'), 'sb_theme');
@@ -53,6 +61,7 @@ function sb_theme_setting_field() {
         sb_theme_setting_field_facebook_fanpage();
     }
     do_action('sb_theme_setting_field');
+    do_action('sb_theme_setting_page');
     if(SB_Option::utility_enabled('social')) {
         sb_theme_setting_field_social();
     }
@@ -145,6 +154,29 @@ function sb_theme_favicon_callback() {
     );
     SB_Field::media_image($args);
 }
+
+function sb_theme_advanced_setting_membership_hook() {
+    $args = array(
+        'id' => 'sb_theme_social_login',
+        'name' => SB_Option::build_sb_theme_option_name(array('social_login')),
+    );
+}
+add_action('sb_theme_advanced_setting_membership_field', 'sb_theme_advanced_setting_membership_hook');
+
+function sb_theme_advanced_setting_social_login_hook() {
+    sb_theme_get_content('sb-theme-admin-advanced-setting-social-login');
+}
+add_action('sb_theme_advanced_setting_social_login_field', 'sb_theme_advanced_setting_social_login_hook');
+
+function sb_theme_advanced_setting_tabs_filter($tabs) {
+    if(SB_Option::social_login_enabled()) {
+        $tabs['social_login'] = array(
+            'name' => __('Social login', 'sb-theme')
+        );
+    }
+    return $tabs;
+}
+add_filter('sb_theme_advanced_setting_tabs', 'sb_theme_advanced_setting_tabs_filter');
 
 function sb_theme_sanitize($input) {
     return $input;
