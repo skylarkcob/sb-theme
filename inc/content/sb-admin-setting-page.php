@@ -43,6 +43,8 @@
                     if($about_tab) {
                         unset($tabs[$key]);
                         $class = 'tab-item section-item tab-' . $key;
+                        $new_class_key = str_replace('_', '-', $key);
+                        $class = SB_PHP::add_string_with_space_before($class, $new_class_key);
                         if($key == $current_tab) {
                             $class .= ' active';
                         }
@@ -87,10 +89,14 @@
                     set_transient($transient_name, $sidebar_html, DAY_IN_SECONDS);
                 }
                 echo $sidebar_html['html'];
+                $autocomplete = '';
+                if('sbt_smtp_email' == $current_tab) {
+                    $autocomplete = 'off';
+                }
                 ?>
             </div>
             <div class="main">
-                <form id="sb-options-form" method="post" action="options.php" data-page="<?php echo $current_tab; ?>">
+                <form id="sb-options-form" method="post" action="options.php" data-page="<?php echo $current_tab; ?>" autocomplete="<?php echo $autocomplete; ?>">
                     <?php
                     settings_fields( 'sb-setting' );
                     SB_Admin_Custom::table_setting_page( $current_tab );

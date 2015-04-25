@@ -142,9 +142,9 @@ class SB_Admin_Custom {
 
     public static function section_description_callback($args) {
         if ( 'sb_options_section' == $args['id']) {
-            _e( 'Short description about SB Options.', 'sb-theme' );
+            _e( 'Mô tả ngắn gọn về mã nguồn SB.', 'sb-theme' );
         } else {
-            _e( 'Change your settings below:', 'sb-theme' );
+            _e( 'Cập nhật thông tin cài đặt của bạn ở bên dưới:', 'sb-theme' );
         }
     }
 
@@ -158,6 +158,10 @@ class SB_Admin_Custom {
 
     public static function row_setting_page_callback() {
         sb_theme_get_content('sb-admin-row-setting-page');
+    }
+
+    public static function checkout_setting_page_callback() {
+        sb_theme_get_content('sb-admin-setting-checkout-page');
     }
 
     public static function setting_page_before() {
@@ -210,5 +214,75 @@ class SB_Admin_Custom {
 
     public static function row_setting_page( $page ) {
         self::table_setting_page($page, false);
+    }
+
+    public static function build_row_setting_tab($base_id, $tabs, $container_class = '') {
+        $result = '';
+        $count = 0;
+        $tabs_html = new SB_HTML('h2');
+        $container_class = SB_PHP::add_string_with_space_before($container_class, 'nav-tab-wrapper');
+        $tabs_html->set_attribute('class', $container_class);
+        $tab_items = '';
+        foreach($tabs as $key => $tab) {
+            $tab_label = isset($tab['name']) ? $tab['name'] : '';
+            if(empty($tab_label)) {
+                continue;
+            }
+            $tab_item = new SB_HTML('a');
+            $atts = array(
+                'href' => 'javascript:;',
+                'id' => 'sbt_' . $base_id . '_' . $key . '_tab',
+                'text' => $tab_label,
+                'data-tab' => $key
+            );
+            $tab_item_class = 'nav-tab ' . $key;
+            if($count == 0) {
+                $tab_item_class = SB_PHP::add_string_with_space_before($tab_item_class, 'nav-tab-active');
+            }
+            $atts['class'] = $tab_item_class;
+            $tab_item->set_attribute_array($atts);
+            $tab_items .= $tab_item->build();
+            $count++;
+        }
+        if(!empty($tab_items)) {
+            $tabs_html->set_text($tab_items);
+        }
+        $result = $tabs_html->build();
+        return $result;
+    }
+
+    public static function do_row_setting_content($base_name, $tabs) {
+        $count = 0;
+        foreach($tabs as $key => $tab) :
+            $content_class = 'tab-content-item ' . $key;
+            if(0 == $count) {
+                $content_class .= ' active';
+            }
+            ?>
+            <div class="<?php echo $content_class; ?>">
+                <div class="tab-content-inner">
+                    <?php do_action('sb_theme_' . $base_name . '_setting_' . $key . '_field'); ?>
+                </div>
+            </div>
+            <?php $count++;
+        endforeach;
+    }
+
+    public static function row_setting_page_content($args = array()) {
+        $container_class = isset($args['container_class']) ? $args['container_class'] : '';
+        $container_class = SB_PHP::add_string_with_space_before($container_class, 'sbt-row-setting');
+        $tab_html = isset($args['tab_html']) ? $args['tab_html'] : '';
+        $callback = isset($args['callback']) ? $args['callback'] : '';
+        if(!SB_PHP::callback_exists($callback) || empty($tab_html)) {
+            return;
+        }
+        ?>
+        <div class="<?php echo $container_class; ?>">
+            <?php echo $tab_html; ?>
+            <div class="row-setting-content">
+                <?php call_user_func($callback); ?>
+            </div>
+        </div>
+        <?php
     }
 }

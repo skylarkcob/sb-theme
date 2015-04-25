@@ -4,6 +4,7 @@ class SB_Admin {
     private $sb_admin_added = false;
     private $tabs = array();
     private $advanced_tabs = array();
+    private $checkout_tabs = array();
 
     public function __construct() {
         if($this->has_sb_admin()) {
@@ -30,10 +31,21 @@ class SB_Admin {
     private function tab_filter() {
         add_filter('sb_admin_tabs', array($this, 'option_tab'));
         add_filter('sb_theme_advanced_setting_tabs', array($this, 'advanced_setting_tabs'));
+        add_filter('sb_theme_checkout_setting_tabs', array($this, 'checkout_setting_tabs'));
     }
 
     private function filter() {
 
+    }
+
+    public function checkout_setting_tabs($tabs) {
+        $defaults = array(
+            'ngan_luong' => array(
+                'name' => __('Ngân Lượng', 'sb-theme')
+            )
+        );
+        $tabs = wp_parse_args($tabs, $defaults);
+        return $tabs;
     }
 
     public function advanced_setting_tabs($tabs) {
@@ -68,6 +80,10 @@ class SB_Admin {
         return apply_filters('sb_theme_advanced_setting_tabs', $this->advanced_tabs);
     }
 
+    public function get_checkout_setting_tabs() {
+        return apply_filters('sb_theme_checkout_setting_tabs', $this->checkout_tabs);
+    }
+
     private function has_sb_admin() {
         global $sb_admin;
         if($sb_admin && $sb_admin->sb_admin_added) {
@@ -99,6 +115,7 @@ class SB_Admin {
         $input = wp_parse_args($input, $options);
         $input = apply_filters('sb_options_sanitize', $input);
 	    $input = apply_filters('sb_theme_sanitize_option', $input);
+        do_action('sb_theme_sanitize_option_done', $input);
 	    return $input;
     }
 
@@ -130,16 +147,15 @@ class SB_Admin {
 
     public function print_section_info($args) {
         if($args['id'] == 'sb_options_section') {
-            _e('Short description about SB Options.', 'sb-theme');
+            _e('Giới thiệu sơ lượt về mã nguồn SB Theme và SB Options.', 'sb-theme');
         } else {
-            _e('Change your settings below:', 'sb-theme');
+            _e('Thay đổi thông tin cài đặt tùy chọn của bạn ở bên dưới:', 'sb-theme');
         }
     }
 
     private function sb_tab_init() {
         $this->tab_filter();
         $this->add_tab('sb_options', __('About SB', 'sb-theme'), 'sb_options_section');
-        $this->advanced_tabs = $this->advanced_tabs;
     }
 
     private function add_tab($key, $title, $section_id) {

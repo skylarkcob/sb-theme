@@ -167,6 +167,10 @@ function sb_theme_add_setting_field($field_id, $field_title, $callback) {
     SB_Admin_Custom::add_setting_field($field_id, $field_title, 'sb_theme_setting_section', $callback, 'sb_theme');
 }
 
+function sb_theme_add_smtp_email_setting_field($id, $title, $callback) {
+    SB_Admin_Custom::add_setting_field($id, $title, 'sb_theme_smtp_email_setting_section', $callback, 'sbt_smtp_email');
+}
+
 function sb_theme_add_utilities_setting_field($field_id, $field_title, $callback) {
     SB_Admin_Custom::add_setting_field($field_id, $field_title, 'sb_utilities_section', $callback, 'sb_utilities');
 }
@@ -936,6 +940,23 @@ function sb_theme_remove_facebook_login_special_char() {
 <?php
 }
 
+function sb_theme_admin_confirm_publish_post() {
+    ?>
+    <script type="text/javascript">
+        (function($){
+            $('input[name="publish"]').on('click', function(e){
+                if(!confirm('Bạn có thật sự muốn đăng bài viết hay không?')) {
+                    if(!$.trim($('#title').val())) {
+                        $('#title').focus();
+                    }
+                    return false;
+                }
+            });
+        })(jQuery);
+    </script>
+    <?php
+}
+
 function sb_theme_social_login_facebook_check_data_back() {
     $sb_login = sb_theme_get_social_login_facebook();
     $facebook = $sb_login->get_facebook();
@@ -991,7 +1012,6 @@ function sb_theme_social_login_google_check_data_back() {
     $sb_login = sb_theme_get_social_login_google($code);
     $social = $sb_login->get_google();
     $profile = $sb_login->get_google_profile();
-    print_r($social);
     if(is_array($profile)) {
         $verified = isset($profile['verifiedEmail']) ? (bool)$profile['verifiedEmail'] : false;
         if($verified) {
@@ -1035,5 +1055,23 @@ function sb_theme_social_login_google_check_data_back() {
         }
     } else {
         add_filter('sb_theme_login_message', 'sb_theme_social_login_google_error_message');
+    }
+}
+
+function sb_theme_change_publish_post_button_text_filter($translation, $text) {
+    if('Submit for Review' == $text) {
+        return 'Update';
+    }
+    return $translation;
+}
+
+function sb_theme_statistics() {
+    $count_post_views = SB_Option::get_statistics_switch( 'post_views' );
+    if ( (bool) $count_post_views ) {
+        sb_theme_track_post_views();
+    }
+    $visitor_statistics = SB_Option::get_statistics_switch( 'visitor_statistics' );
+    if ( (bool) $visitor_statistics ) {
+        sb_theme_counter();
     }
 }

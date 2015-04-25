@@ -21,6 +21,8 @@ define( 'SB_CORE_PASS', SB_THEME_PASS );
 
 define( 'SB_THEME_RSS_FEED_NUMBER', 5 );
 
+define( 'SB_THEME_COIN_PRICE_BASE', 1000 );
+
 define( 'SB_RSS_FEED_NUMBER', SB_THEME_RSS_FEED_NUMBER );
 
 define('SB_LOGIN_PAGE_ACCOUNT_TEMPLATE', 'page-template-account.php');
@@ -54,5 +56,3 @@ define( 'SB_THEME_FACEBOOK', 'https://www.facebook.com/skylarkcob' );
 define( 'SB_THEME_TWITTER', 'https://twitter.com/skylarkcob' );
 
 define( 'SB_THEME_LICENSE_REDIRECT', SB_THEME_WEBSITE );
-
-define( 'FACEBOOK_SDK_V4_SRC_DIR', SB_THEME_LIB_PATH . '/facebook-php-sdk-v4/src/' );

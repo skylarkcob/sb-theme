@@ -719,6 +719,17 @@ class SB_PHP {
         return $domain_name;
     }
 
+    public static function callback_exists($callback) {
+        if(empty($callback) || (!is_array($callback) && !function_exists($callback)) || (is_array($callback) && count($callback) != 2) || (is_array($callback) && !method_exists($callback[0], $callback[1]))) {
+            return false;
+        }
+        return true;
+    }
+
+    public static function currency_vnd_suffix() {
+        return '₫';
+    }
+
     public static function get_domain_name_only($url) {
         $root_domain = self::get_root_domain($url);
         $data = explode('.', $root_domain);
@@ -1133,6 +1144,9 @@ class SB_PHP {
     }
 
     public static function is_string_contain( $string, $key ) {
+        if(empty($key) && !empty($string)) {
+            return false;
+        }
         if ( false !== strpos( $string, $key ) ) {
             return true;
         }
@@ -1151,6 +1165,21 @@ class SB_PHP {
             $characters .= '[];?=+-*~%';
         }
         return $characters;
+    }
+
+    public static function get_safe_characters($special_char = false) {
+        return self::get_all_safe_char($special_char);
+    }
+
+    public static function subtract_array($array_value, $substract_array) {
+        foreach($array_value as $key => $value) {
+            foreach($substract_array as $compare) {
+                if($compare == $value) {
+                    unset($array_value[$key]);
+                }
+            }
+        }
+        return $array_value;
     }
 
     public static function random_string_number( $length = 6 ) {

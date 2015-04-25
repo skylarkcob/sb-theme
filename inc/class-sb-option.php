@@ -135,9 +135,13 @@ class SB_Option {
     }
 
     public static function get_logo_url() {
-        $logo = self::get_theme_option(array('keys' => array('logo')));
+        $logo = self::get_logo_detail();
         $logo = self::get_media_detail($logo);
         return $logo['url'];
+    }
+
+    public static function get_logo_detail() {
+        return self::get_theme_option(array('keys' => array('logo')));
     }
 
     public static function get_logo_type() {
@@ -198,6 +202,22 @@ class SB_Option {
         return self::get_theme_advanced_option(array('keys' => array('social_login', $social_name)));
     }
 
+    public static function get_advanced_membership_setting($option_name) {
+        return self::get_advanced_setting('membership', $option_name);
+    }
+
+    public static function get_advanced_setting($base_option_name, $option_name) {
+        return self::get_theme_advanced_option(array('keys' => array($base_option_name, $option_name)));
+    }
+
+    public static function confirm_publish_post() {
+        $tab_base_option_name = 'writing';
+        $key = 'confirm_publish';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::check_switch_value($value, 1);
+        return $value;
+    }
+
     public static function get_theme_thumbnail_url() {
         $options = self::get();
         $url = self::get_media_url(array('theme', 'thumbnail'));
@@ -223,12 +243,24 @@ class SB_Option {
         return $url;
     }
 
+    public static function use_smtp_mail() {
+        $key = 'enabled';
+        $value = SB_Option::get_option_by_key(array('smtp_email', $key));
+        return (bool)$value;
+    }
+
     public static function get_option_by_key($array_key = array(), $default = '') {
         $args = array(
             'keys' => $array_key,
             'default' => $default
         );
         return self::get_by_key($args);
+    }
+
+    public static function use_login_captcha() {
+        $use_captcha = self::get_option_by_key(array('login_page', 'use_captcha'));
+        $use_captcha = self::check_switch_value($use_captcha, 1);
+        return $use_captcha;
     }
 
     public static function get_by_key($args = array()) {
@@ -318,10 +350,41 @@ class SB_Option {
     }
 
     public static function get_theme_advanced_option($args = array()) {
+        return self::get_by_base_option_name('sbt_advanced', $args);
+    }
+
+    public static function get_by_base_option_name($base_name, $args) {
         if(isset($args['keys']) && is_array($args['keys'])) {
-            array_unshift($args['keys'], 'sbt_advanced');
+            array_unshift($args['keys'], $base_name);
         }
         return self::get_by_key($args);
+    }
+
+    public static function get_theme_checkout_option($args = array()) {
+        return self::get_by_base_option_name('sbt_checkout', $args);
+    }
+
+    public static function get_ngan_luong_info() {
+        return SB_Option::get_checkout_by_base('ngan_luong');
+    }
+
+    public static function get_checkout_by_base($base, $option_name = '') {
+        $args = array(
+            'keys' => array(
+                $base
+            )
+        );
+        if(!empty($option_name)) {
+            $args['keys'][] = $option_name;
+        }
+        return self::get_theme_checkout_option($args);
+    }
+
+    public static function get_theme_advanced_option_by_key($key_array) {
+        $args = array(
+            'keys' => $key_array
+        );
+        return self::get_theme_advanced_option($args);
     }
 
     public static function get_utility_option($args = array()) {

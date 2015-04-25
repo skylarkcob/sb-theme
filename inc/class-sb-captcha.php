@@ -25,12 +25,49 @@ class SB_Captcha {
     }
 
     public static function use_captcha() {
-        $use_captcha = apply_filters('sb_use_captcha', true);
+        $use_captcha = apply_filters('sb_use_captcha', false);
         $use_captcha = apply_filters('sb_theme_use_captcha', $use_captcha);
-        if($use_captcha && !class_exists('ReallySimpleCaptcha')) {
-            $use_captcha = false;
-        }
         return $use_captcha;
+    }
+
+    public static function required_plugins_installed() {
+        $result = true;
+        if(!class_exists('ReallySimpleCaptcha')) {
+            $result = false;
+        }
+        return $result;
+    }
+
+    public static function need_check() {
+        if(self::use_captcha() && self::required_plugins_installed()) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function need_check_login_captcha() {
+        if(SB_Option::use_login_captcha() && self::need_check()) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function check_login_captcha_post_empty() {
+        if(self::need_check_login_captcha()) {
+            if(!isset($_POST['captcha_code']) || empty($_POST['captcha_code'])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function check_login_captcha_post_valid() {
+        if(SB_Captcha::need_check_login_captcha()) {
+            if(isset($_POST['captcha_code']) && !SB_Captcha::check($_POST['captcha_code'])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static function build_key($args = array()) {
@@ -58,7 +95,7 @@ class SB_Captcha {
         }
         $sb_captcha = self::get();
         SB_Cache::delete_captcha_transient($file_name);
-        $sb_captcha->remove($file_name_only);
+        $sb_captcha->remove($file_name);
     }
 
     public static function get_captcha_session() {
@@ -79,7 +116,7 @@ class SB_Captcha {
     }
 
     public static function generate_image($args = array()) {
-        if(!self::use_captcha()) {
+        if(!self::use_captcha() || !self::required_plugins_installed()) {
             return;
         }
         $sb_captcha = self::get($args);
@@ -97,12 +134,17 @@ class SB_Captcha {
             self::set_transient($transient_keys['code'], SB_Core::hash_password($word));
             self::remove($old_file_name);
         }
-        $file_name = trailingslashit(plugins_url()) . 'really-simple-captcha/tmp/' . $file_name;
+        if(file_exists(plugins_url() . 'really-simple-captcha')) {
+            $file_name = trailingslashit(plugins_url()) . 'really-simple-captcha/tmp/' . $file_name;
+        } else {
+            $upload = SB_Core::get_upload_folder_detail();
+            $file_name = $upload['url'] . '/sb-theme-captcha/' . $file_name;
+        }
         return $file_name;
     }
 
     public static function check($code) {
-        if(!self::use_captcha()) {
+        if(!self::use_captcha() || !self::required_plugins_installed()) {
             return true;
         }
         $result = false;
@@ -116,6 +158,7 @@ class SB_Captcha {
                 }
             }
         }
+        self::remove($file_name);
         return $result;
     }
 
@@ -124,7 +167,7 @@ class SB_Captcha {
         $file_name = SB_PHP::get_file_name_without_extension($url);
         if(!empty($url)) {
             $len = isset($args['len']) ? $args['len'] : 4;
-            echo '<img class="sb-captcha-image captcha-code sb-theme-captcha-image" data-file="' . $file_name . '" src="' . $url . '" data-len="' . $len . '">';
+            echo '<img class="sb-captcha-image captcha-code-image sb-theme-captcha-image" data-file="' . $file_name . '" src="' . $url . '" data-len="' . $len . '">';
         }
     }
 }

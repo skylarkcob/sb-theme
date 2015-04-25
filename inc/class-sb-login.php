@@ -1,20 +1,4 @@
 <?php
-if(!class_exists('FacebookSession')) {
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/FacebookSession.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/FacebookRedirectLoginHelper.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/FacebookRequest.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/FacebookResponse.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/FacebookSDKException.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/FacebookRequestException.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/FacebookAuthorizationException.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/GraphObject.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/HttpClients/FacebookCurl.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/HttpClients/FacebookHttpable.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/HttpClients/FacebookCurlHttpClient.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/Entities/AccessToken.php');
-    require_once(FACEBOOK_SDK_V4_SRC_DIR . 'Facebook/GraphUser.php');
-}
-
 use Facebook\FacebookSession;
 use Facebook\FacebookRedirectLoginHelper;
 use Facebook\FacebookRequest;
@@ -28,10 +12,6 @@ use Facebook\HttpClients\FacebookHttpable;
 use Facebook\HttpClients\FacebookCurlHttpClient;
 use Facebook\Entities\AccessToken;
 use Facebook\GraphUser;
-
-if(!class_exists('Google_Client')) {
-    require SB_THEME_LIB_PATH . '/google-api-php-client/src/Google/autoload.php';
-}
 
 class SB_Login {
 
@@ -103,38 +83,74 @@ class SB_Login {
             return $result;
         }
         $redirect_uri = isset($this->facebook['callback_url']) ? $this->facebook['callback_url'] : '';
-        FacebookSession::setDefaultApplication( $app_id, $app_secret );
         $redirect_uri = esc_url(remove_query_arg(array('redirect_to'), $redirect_uri));
-        $helper = new FacebookRedirectLoginHelper($redirect_uri, $app_id, $app_secret);
-        $session = null;
-        try {
-            if(isset($_SESSION['access_token']) && !empty($_SESSION['access_token'])) {
-                $session = new FacebookSession($_SESSION['access_token']);
+        if(version_compare(PHP_VERSION, '5.4', '<')) {
+            $facebook = new Facebook(
+                array(
+                    'appId' => $app_id,
+                    'secret' => $app_secret,
+                    'cookie' => true
+                )
+            );
+            $user = $facebook->getUser();
+            if($user) {
+                $user_profile = $facebook->api('/me');
+                $this->facebook['access_token'] = $facebook->getAccessToken();
+                $params = array(
+                    'next' => add_query_arg(array('logout' => 1), $redirect_uri),
+                    'access_token' => $facebook->getAccessToken()
+                );
+                $this->facebook['logout_url'] = $facebook->getLogoutUrl($params);
+                $this->facebook['profile'] = $user_profile;
+                $this->facebook['logged_in'] = true;
+                $this->facebook['email'] = isset($user['email']) ? $user['email'] : '';
+                $result = true;
             } else {
-                $session = $helper->getSessionFromRedirect();
+                $this->facebook['login_url'] = $facebook->getLoginUrl(
+                    array(
+                        'redirect_uri' => $redirect_uri,
+                        'scope' => 'friends_likes,email,publish_stream,status_update,offline_access'
+                    )
+                );
+                $this->facebook['logged_in'] = false;
             }
-        } catch(FacebookRequestException $ex) {
-
-        } catch(Exception $ex) {
-
-        }
-
-        $this->facebook['session'] = $session;
-
-        if(isset($session)) {
-            $access_token = $session->getToken();
-            $_SESSION['access_token'] = $access_token;
-            $this->facebook['profile'] = $access_token;
-            $this->facebook['access_token'] = $access_token;
-            $this->facebook['logout_url'] = $helper->getLogoutUrl( $session, $redirect_uri );
-            $request = ( new FacebookRequest( $session, 'GET', '/me' ) )->execute();
-            $user = $request->getGraphObject()->asArray();
-            $this->facebook['profile'] = $user;
-            $this->facebook['logged_in'] = true;
-            $this->facebook['email'] = isset($user['email']) ? $user['email'] : '';
-            $result = true;
         } else {
-            $this->facebook['login_url'] = $helper->getLoginUrl(array('email'));
+            FacebookSession::setDefaultApplication( $app_id, $app_secret );
+            $session = null;
+            try {
+                $helper = new FacebookRedirectLoginHelper($redirect_uri, $app_id, $app_secret);
+                if(isset($_SESSION['access_token']) && !empty($_SESSION['access_token'])) {
+                    $session = new FacebookSession($_SESSION['access_token']);
+                } else {
+                    $session = $helper->getSessionFromRedirect();
+                }
+            } catch(FacebookRequestException $ex) {
+
+            } catch(Exception $ex) {
+
+            }
+
+            $this->facebook['session'] = $session;
+
+            if(isset($session)) {
+                $access_token = $session->getToken();
+                $_SESSION['access_token'] = $access_token;
+                $this->facebook['access_token'] = $access_token;
+                $this->facebook['logout_url'] = $helper->getLogoutUrl( $session, $redirect_uri );
+                $request = new FacebookRequest( $session, 'GET', '/me' );
+                $user = '';
+                if($request) {
+                    $request = $request->execute();
+                    $user = $request->getGraphObject()->asArray();
+                }
+                $this->facebook['profile'] = $user;
+                $this->facebook['logged_in'] = true;
+                $this->facebook['email'] = isset($user['email']) ? $user['email'] : '';
+                $result = true;
+            } else {
+                $this->facebook['login_url'] = $helper->getLoginUrl(array('email'));
+                $this->facebook['logged_in'] = false;
+            }
         }
         return $result;
     }

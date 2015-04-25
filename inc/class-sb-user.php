@@ -19,6 +19,16 @@ class SB_User {
         return false;
     }
 
+    public static function get_super_admin_define_ids_array() {
+        $ids = (defined('SB_THEME_SUPER_ADMIN')) ? SB_THEME_SUPER_ADMIN : '';
+        $ids = SB_PHP::string_to_array(',', $ids);
+        $option_ids = SB_Option::get_theme_advanced_option_by_key(array('super_admin_ids'));
+        $admin_ids = strval($option_ids);
+        $admin_ids = SB_PHP::string_to_array(',', $admin_ids);
+        $ids = wp_parse_args($admin_ids, $ids);
+        return apply_filters('sb_theme_super_admin_ids', $ids);
+    }
+
     public static function get_avatar_image($id_or_email, $size) {
         $image = get_avatar($id_or_email, $size);
         if(has_filter('get_avatar', 'sb_comment_get_avatar')) {
@@ -30,6 +40,128 @@ class SB_User {
 			}
         }
         return apply_filters('get_avatar', $image, $id_or_email, $size, '', '');
+    }
+
+    public static function save_profile_posted($user_id) {
+        $gender = isset($_POST['gender']) ? absint($_POST['gender']) : 0;
+        SB_User::update_meta($user_id, 'gender', $gender);
+        $birth_day = isset($_POST['user_birth_day']) ? $_POST['user_birth_day'] : date('d');
+        $birth_month = isset($_POST['user_birth_month']) ? $_POST['user_birth_month'] : date('m');
+        $birth_year = isset($_POST['user_birth_year']) ? $_POST['user_birth_year'] : date('Y');
+        $birthday = $birth_year . '-' . $birth_month . '-' . $birth_day;
+        $birthday = strtotime($birthday);
+        SB_User::update_meta($user_id, 'birthday', $birthday);
+        $coin = isset($_POST['coin']) ? absint($_POST['coin']) : 0;
+        SB_User::update_meta($user_id, 'coin', $coin);
+    }
+
+    public static function get_coin($user_id) {
+        $coin = absint(SB_User::get_meta($user_id, 'coin'));
+        return $coin;
+    }
+
+    public static function plus_coin($user_id, $coin) {
+        $current_coin = self::get_coin($user_id);
+        $current_coin += $coin;
+        self::update_meta($user_id, 'coin', $current_coin);
+        return $current_coin;
+    }
+
+    public static function minus_coin($user_id, $coin) {
+        $current_coin = self::get_coin($user_id);
+        $current_coin -= $coin;
+        self::update_meta($user_id, 'coin', $current_coin);
+        return $current_coin;
+    }
+
+    public static function add_more_profile_field($user) {
+        $args = array(
+            'title' => __('Thông tin mở rộng', 'sb-theme'),
+            'class' => 'extra-profile-field sb-theme-user-extra-information',
+            'callback' => array('SB_User', 'extra_profile_field'),
+            'callback_params' => array($user)
+        );
+        self::extra_profile_field_group($args);
+    }
+
+    public static function extra_profile_field_group($args = array()) {
+        $title = isset($args['title']) ? $args['title'] : '';
+        $class = isset($args['class']) ? $args['class'] : '';
+        $callback = isset($args['callback']) ? $args['callback'] : '';
+        if(empty($title) || empty($callback) || (!is_array($callback) && !function_exists($callback)) || (is_array($callback) && !method_exists($callback[0], $callback[1]))) {
+            return;
+        }
+        $class = SB_PHP::add_string_with_space_before($class, 'sb-theme-user-profile-group sbt-profile-row form-table');
+        $callback_params = isset($args['callback_params']) ? (array)$args['callback_params'] : array();
+        echo '<h3>' . $title . '</h3>';
+        echo '<table class="' . $class . '">';
+        call_user_func_array($callback, $callback_params);
+        echo '</table>';
+    }
+
+    public static function extra_profile_field($user) {
+        $user_id = $user->ID;
+        $gender = SB_User::get_meta($user_id, 'gender');
+        $user_data = SB_User::get_data($user_id);
+        $coin = absint(SB_User::get_meta($user_id, 'coin'));
+        $args = array(
+            'id' => 'coin',
+            'label' => __('Coin', 'sb-theme'),
+            'field_class' => 'width-small',
+            'value' => $coin,
+            'type' => 'number'
+        );
+        if(!current_user_can('update_core')) {
+            $args['attributes'] = array(
+                'readonly' => 'readonly',
+                'disabled' => 'disabled'
+            );
+        }
+        SB_Field::row_user_profile_field($args);
+
+        $args = array(
+            'name' => 'gender',
+            'label' => __('Giới tính', 'sb-theme'),
+            'value' => $gender,
+            'field_type' => 'select_gender'
+        );
+        SB_Field::row_user_profile_field($args);
+
+        $birthday = SB_User::get_birthday_timestamp($user_id);
+        $args = array(
+            'name' => 'user_birth',
+            'label' => __('Ngày sinh', 'sb-theme'),
+            'value' => $birthday,
+            'field_type' => 'select_birthday'
+        );
+        SB_Field::row_user_profile_field($args);
+        if(current_user_can('update_core')) {
+            $args = array(
+                'name' => 'user_nicename',
+                'label' => __('Tên slug', 'sb-theme'),
+                'value' => $user_data->user_nicename,
+                'field_type' => 'text',
+                'field_class' => 'width-small',
+                'attributes' => array(
+                    'readonly' => 'readonly',
+                    'disabled' => 'disabled'
+                )
+            );
+            SB_Field::row_user_profile_field($args);
+
+            $code = SB_User::get_activation_code($user);
+            $args = array(
+                'name' => 'activation_code',
+                'label' => __('Mã kích hoạt', 'sb-theme'),
+                'value' => $code,
+                'field_type' => 'text',
+                'field_class' => 'width-medium',
+                'attributes' => array(
+                    'readonly' => 'readonly'
+                )
+            );
+            SB_Field::row_user_profile_field($args);
+        }
     }
 
     public static function get_avatar_url($id_or_email, $size) {
@@ -196,6 +328,13 @@ class SB_User {
     public static function update_status($user, $status = 0) {
         global $wpdb;
         $wpdb->update($wpdb->users, array('user_status' => $status), array('ID' => $user->ID));
+        $status_text = 'verified';
+        switch($status) {
+            case 6:
+                $status_text = 'pending';
+                break;
+        }
+        self::update_meta($user->ID, 'status', $status_text);
     }
 
     public static function force_login($user_id) {
@@ -230,6 +369,19 @@ class SB_User {
             $code = $row->user_activation_key;
         }
         return $code;
+    }
+
+    public static function get_current_role($current_user = null) {
+        if(self::is($current_user)) {
+            $user = $current_user;
+        } else {
+            $user = self::get_current();
+        }
+        if(self::is($user)) {
+            $roles = (array)$user->roles;
+            return array_shift($roles);
+        }
+        return '';
     }
 
     public static function can($action) {
@@ -355,8 +507,12 @@ class SB_User {
         return intval($user_info->user_status);
     }
 
+    public static function get_status_text($user_id) {
+        return self::get_meta($user_id, 'status');
+    }
+
     public static function is_awaiting_activation($user_id) {
-        if(6 == self::get_status($user_id)) {
+        if(6 == self::get_status($user_id) || 'pending' == self::get_status_text($user_id)) {
             return true;
         }
         return false;
@@ -568,7 +724,29 @@ class SB_User {
                 break;
         }
     }
-    
+
+    public static function add_transaction_ngan_luong($post_data, $secure_code, $meta = array()) {
+        $post_id = 0;
+        if(self::is_logged_in()) {
+            if(!isset($post_data['post_author'])) {
+                $user = self::get_current();
+                $post_data['post_author'] = $user->ID;
+            }
+            $post_data['post_type'] = 'transaction';
+            $post_id = SB_Post::insert($post_data);
+            if($post_id > 0) {
+                $transient_name = SB_Cache::build_transaction_secure_code_transient_name($secure_code);
+                foreach($meta as $key => $value) {
+                    SB_Post::update_sb_meta($post_id, $key, $value);
+                }
+                SB_Post::update_sb_meta($post_id, 'ngan_luong_secure_code', $secure_code);
+                delete_transient($transient_name);
+                $_SESSION[$transient_name] = $post_id;
+            }
+        }
+        return $post_id;
+    }
+
     public static function get_login_redirect() {
         $url = '';
         if(function_exists('sb_login_page_get_login_redirect_url')) {

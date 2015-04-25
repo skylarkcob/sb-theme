@@ -10,7 +10,7 @@ class SB_Query {
 
     public static function get($args = array()) {
         $transient_name = isset($args['transient_name']) ? $args['transient_name'] : '';
-        if(!empty($transient_name) && false === ($query = get_transient($transient_name))) {
+        if(SB_Cache::query_cache() && !empty($transient_name) && false === ($query = get_transient($transient_name))) {
             $query = new WP_Query($args);
             set_transient($transient_name, $query, DAY_IN_SECONDS);
         } else {

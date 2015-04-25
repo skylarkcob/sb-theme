@@ -80,18 +80,54 @@ var sb_ajax_loader,
             }
         });
 
-        $('.sb-theme.sb-options').find('select, input[type="checkbox"]').on('change', function(e){
+        $('.sb-theme.sb-options').find('select, input[type="checkbox"], input[type="radio"]').on('change', function(e){
             sb_theme_make_sb_option_unsaved_message($(this));
         });
 
         $('.sb-theme.sb-options').find('textarea, input').on('input', function(e){
-            sb_theme_make_sb_option_unsaved_message($(this));
+            var that = $(this);
+            if(!that.hasClass('test-field')) {
+                sb_theme_make_sb_option_unsaved_message(that);
+            }
         });
         $(window).bind('beforeunload', function(e) {
             var sb_option_page = $('.sb-theme.sb-options');
             if(sb_option_page.length && parseInt(sb_option_page.attr('data-option-changed')) == 1 && !sb_option_form_submit) {
                 return 'Are you sure?';
             }
+        });
+    })();
+
+    // Test send mail SMTP
+    (function(){
+        $('.sb-option .test-smtp-mail').on('click', function(e){
+            e.preventDefault();
+            var that = $(this),
+                container = that.parent(),
+                input = container.find('input'),
+                td = that.closest('td');
+            if(!$.trim(input.val())) {
+                input.focus();
+                return false;
+            }
+            sb_core.sb_ajax_loader(true);
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: sb_core_admin_ajax.url,
+                data: {
+                    action: 'sb_theme_test_smtp_mail',
+                    email: input.val()
+                },
+                success: function(response){
+                    sb_core.sb_ajax_loader(false);
+                    input.val('');
+                    if($.trim(response.message)) {
+                        alert(response.message);
+                    }
+                    td.find('.test-mail-debug').html(response.debug);
+                }
+            });
         });
     })();
 
@@ -368,6 +404,88 @@ var sb_ajax_loader,
         });
     })();
 
+    function sb_theme_sortable_update_result(ui_item) {
+        var data = '',
+            that = ui_item,
+            single_ui_order = null,
+            sortable_connect_active = null,
+            sortable_container = that.closest('div.sb-sortable'),
+            sortable_active_list = sortable_container.find('.sb-sortable-list.active-sortable'),
+            sortable_source_list = sortable_container.find('.sb-sortable-list.sortable-source');
+        if(!sortable_container.length) {
+            sortable_container = that.parent();
+            sortable_container = sortable_container.parent();
+            sortable_active_list = sortable_container.find('.sb-sortable-list.active-sortable');
+            sortable_source_list = sortable_container.find('.sb-sortable-list.sortable-source');
+        }
+        if(sortable_active_list.children().length < sortable_source_list.children().length) {
+            if(!sortable_active_list.hasClass('sortable-row')) {
+                sortable_active_list.css({'height': sortable_source_list.height()});
+            }
+        } else {
+            sortable_active_list.css({'height': 'auto'});
+        }
+        single_ui_order = sortable_container.find('input.ui-item-order');
+        sortable_connect_active = sortable_container.find('input.active-sortable-value');
+        if(single_ui_order.length) {
+            sortable_container.find('ul.sb-sortable-list li').each(function(i, el){
+                var p = $(el).find('.ui-item-id').val();
+                data += p + ',';
+            });
+            data = data.slice(0, -1);
+            single_ui_order.val(data);
+        }
+        if(sortable_connect_active.length) {
+            data = '';
+            sortable_container.find('ul.sb-sortable-list.active-sortable li').each(function(i, el){
+                var p = $(el).attr('data-term');
+                if(typeof p === 'undefined') {
+                    p = $(el).attr('data-value');
+                }
+                if(data.indexOf(p) != -1) {
+                    return;
+                } else {
+                    data += p + ',';
+                }
+            });
+            data = data.slice(0, -1);
+            sortable_connect_active.val(data);
+        }
+    }
+
+    var sb_theme_sortable_move_to_include = function(selector) {
+        var container = selector.closest('div'),
+            sortable_source = null;
+        sortable_source = container.find('.sb-sortable-list.click-to-connect.sortable-source');
+        selector.appendTo(sortable_source)
+            .live('click', function(){
+                sb_theme_make_sb_option_unsaved_message(selector);
+                sb_theme_sortable_move_to_exclude(selector);
+                sb_theme_sortable_update_result($(this));
+            });
+    };
+
+    var sb_theme_sortable_move_to_exclude = function(selector) {
+        var container = selector.closest('div'),
+            sortable_active = null;
+        sortable_active = container.find('.sb-sortable-list.click-to-connect.active-sortable');
+        selector.appendTo(sortable_active)
+            .live('click', function(){
+                sb_theme_make_sb_option_unsaved_message(selector);
+                sb_theme_sortable_move_to_include(selector);
+                sb_theme_sortable_update_result($(this));
+            });
+    };
+
+    (function(){
+        $('.sb-sortable-list.click-to-connect.sortable-source > li').live('click', function(){
+            sb_theme_sortable_move_to_include($(this));
+        }).trigger('click');
+        $('.sb-sortable-list.click-to-connect.active-sortable > li').live('click', function(){
+            sb_theme_sortable_move_to_exclude($(this));
+        }).trigger('click');
+    })();
+
     // UI Sortable List
     (function(){
         $('ul.sb-sortable-list.active-sortable').each(function(i, el){
@@ -377,6 +495,9 @@ var sb_ajax_loader,
                 sortable_source_list = null,
                 sortable_source_list_height = 0,
                 sortable_active_list_height = 0;
+            if(!sortable_container.length) {
+                sortable_container = sortable_active_list.parent();
+            }
             if(sortable_active_list.length) {
                 sortable_source_list = sortable_container.find('ul.sb-sortable-list.sortable-source')
                 if(sortable_source_list.length) {
@@ -388,6 +509,7 @@ var sb_ajax_loader,
                 }
             }
         });
+
         if(!$('ul.sb-sortable-list').hasClass('ui-sortable')) {
             var remove_item = false,
                 sortable_container = null;
@@ -421,8 +543,12 @@ var sb_ajax_loader,
                     }
                 },
                 sort: function(event, ui) {
-                    var that = $(this);
-                    that.find('.ui-state-highlight').css({'height': ui.item.height()});
+                    var that = $(this),
+                        ui_state_highlight = that.find('.ui-state-highlight');
+                    ui_state_highlight.css({'height': ui.item.outerHeight()});
+                    if(that.hasClass('display-inline')) {
+                        ui_state_highlight.css({'width': ui.item.outerWidth()});
+                    }
                 },
                 stop: function(event, ui) {
                     var data = '',
@@ -432,9 +558,16 @@ var sb_ajax_loader,
                         sortable_container = that.closest('div.sb-sortable'),
                         sortable_active_list = sortable_container.find('.sb-sortable-list.active-sortable'),
                         sortable_source_list = sortable_container.find('.sb-sortable-list.sortable-source');
-
+                    if(!sortable_container.length) {
+                        sortable_container = that.parent();
+                        sortable_container = sortable_container.parent();
+                        sortable_active_list = sortable_container.find('.sb-sortable-list.active-sortable');
+                        sortable_source_list = sortable_container.find('.sb-sortable-list.sortable-source');
+                    }
                     if(sortable_active_list.children().length < sortable_source_list.children().length) {
-                        sortable_active_list.css({'height': sortable_source_list.height()});
+                        if(!sortable_active_list.hasClass('sortable-row')) {
+                            sortable_active_list.css({'height': sortable_source_list.height()});
+                        }
                     } else {
                         sortable_active_list.css({'height': 'auto'});
                     }
@@ -452,6 +585,9 @@ var sb_ajax_loader,
                         data = '';
                         sortable_container.find('ul.sb-sortable-list.active-sortable li').each(function(i, el){
                             var p = $(el).attr('data-term');
+                            if(typeof p === 'undefined') {
+                                p = $(el).attr('data-value');
+                            }
                             if(data.indexOf(p) != -1) {
                                 return;
                             } else {
@@ -681,17 +817,17 @@ var sb_ajax_loader,
         })();
     })();
 
-    // SB Theme Advanced Settings
+    // SB Theme row Settings tab
     (function(){
-        $('.sbt-adv-setting .sbt-adv-tabs .nav-tab').on('click', function(e){
+        $('.sbt-row-setting .nav-tab-wrapper .nav-tab').on('click', function(e){
             e.preventDefault();
             var that = $(this),
                 tab_container = that.parent(),
-                sbt_adv_setting = that.closest('.sbt-adv-setting');
+                sbt_row_setting = that.closest('div');
             tab_container.find('.nav-tab').removeClass('nav-tab-active');
             that.addClass('nav-tab-active');
-            sbt_adv_setting.find('.tab-content-item').removeClass('active');
-            sbt_adv_setting.find('.tab-content-item.' + that.attr('data-tab')).addClass('active');
+            sbt_row_setting.find('.tab-content-item').removeClass('active');
+            sbt_row_setting.find('.tab-content-item.' + that.attr('data-tab')).addClass('active');
         });
     })();
 

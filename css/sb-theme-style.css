@@ -1344,6 +1344,11 @@ body.sb-user {
     line-height: 1.3rem;
 }
 
+.sb-post-widget {
+    list-style: outside none none;
+    padding: 0;
+}
+
 /* ==================== Hide placehoder ==================== */
 
 input:focus::-webkit-input-placeholder { color:transparent; }

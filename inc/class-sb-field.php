@@ -76,10 +76,13 @@ class SB_Field {
     }
 
     public static function select_gender($args = array()) {
-        $value = isset($args['value']) ? intval($args['value']) : 0;
+        $value = isset($args['value']) ? absint($args['value']) : 0;
         $all_option = '<option value="0" ' . selected(0, $value, false) . '>' . __('Male', 'sb-theme') . '</option>';
-        $all_option .= '<option value="0" ' . selected(1, $value, false) . '>' . __('Female', 'sb-theme') . '</option>';
+        $all_option .= '<option value="1" ' . selected(1, $value, false) . '>' . __('Female', 'sb-theme') . '</option>';
         $args['all_option'] = $all_option;
+        $field_class = isset($args['field_class']) ? $args['field_class'] : '';
+        $field_class = SB_PHP::add_string_with_space_before($field_class, 'select-gender');
+        $args['field_class'] = $field_class;
         self::select($args);
     }
 
@@ -122,24 +125,45 @@ class SB_Field {
         $before = isset($args['before']) ? $args['before'] : '<p class="' . $container_class . '">';
         $after = isset($args['after']) ? $args['after'] : '</p>';
         $args['before'] = '';
+        $field_class = isset($args['field_class']) ? $args['field_class'] : '';
+        $name = isset($args['name']) ? $args['name'] : '';
+        $id = isset($args['id']) ? $args['id'] : '';
         echo $before;
         if('vi' == $lang) {
             $args['all_option'] = $all_option_day;
+            $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'select-birth-day');
+            $args['name'] = (empty($name)) ? 'birth_day' : $name . '_day';
+            $args['id'] = (empty($id)) ? 'birth_day' : $id . '_day';
             self::select($args);
             echo $sep;
             $args['all_option'] = $all_option_month;
+            $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'select-birth-month');
+            $args['name'] = (empty($name)) ? 'birth_month' : $name . '_month';
+            $args['id'] = (empty($id)) ? 'birth_month' : $id . '_month';
             self::select($args);
             echo $sep;
             $args['all_option'] = $all_option_year;
+            $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'select-birth-year');
+            $args['name'] = (empty($name)) ? 'birth_year' : $name . '_year';
+            $args['id'] = (empty($id)) ? 'birth_year' : $id . '_year';
             self::select($args);
         } else {
             $args['all_option'] = $all_option_year;
+            $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'select-birth-year');
+            $args['name'] = (empty($name)) ? 'birth_year' : $name . '_year';
+            $args['id'] = (empty($id)) ? 'birth_year' : $id . '_year';
             self::select($args);
             echo $sep;
             $args['all_option'] = $all_option_month;
+            $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'select-birth-month');
+            $args['name'] = (empty($name)) ? 'birth_month' : $name . '_month';
+            $args['id'] = (empty($id)) ? 'birth_month' : $id . '_month';
             self::select($args);
             echo $sep;
             $args['all_option'] = $all_option_day;
+            $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'select-birth-day');
+            $args['name'] = (empty($name)) ? 'birth_day' : $name . '_day';
+            $args['id'] = (empty($id)) ? 'birth_day' : $id . '_day';
             self::select($args);
         }
         echo $after;
@@ -326,6 +350,85 @@ class SB_Field {
         <?php
     }
     
+    public static function sortable_ui_connect($args = array()) {
+        $option_name = isset($args['option_name']) ? $args['option_name'] : '';
+        if(empty($option_name)) {
+            $option_name = isset($args['name']) ? $args['name'] : '';
+        }
+        $sortable_class = isset($args['sortable_class']) ? $args['sortable_class'] : '';
+        $sortable_active_class = isset($args['sortable_active_class']) ? $args['sortable_active_class'] : '';
+        $sortable_callback = isset($args['sortable_callback']) ? $args['sortable_callback'] : '';
+        $sortable_active_callback = isset($args['sortable_active_callback']) ? $args['sortable_active_callback'] : '';
+        if(empty($option_name) || empty($sortable_callback) || empty($sortable_active_callback)) {
+            return;
+        }
+        $column = isset($args['column']) ? (bool)$args['column'] : true;
+        $sortable_class = SB_PHP::add_string_with_space_before($sortable_class, 'connected-sortable sb-sortable-list sortable-source');
+        $sortable_active_class = SB_PHP::add_string_with_space_before($sortable_active_class, 'connected-sortable active-sortable sb-sortable-list');
+        if($column) {
+            $sortable_class = SB_PHP::add_string_with_space_before($sortable_class, 'left min-height');
+            $sortable_active_class = SB_PHP::add_string_with_space_before($sortable_active_class, 'min-height right');
+        } else {
+            $sortable_class = SB_PHP::add_string_with_space_before($sortable_class, 'sortable-row');
+            $sortable_active_class = SB_PHP::add_string_with_space_before($sortable_active_class, 'sortable-row');
+        }
+        $click_to_connect = isset($args['click_to_connect']) ? (bool)$args['click_to_connect'] : false;
+        if($click_to_connect) {
+            $sortable_class = SB_PHP::add_string_with_space_before($sortable_class, 'click-to-connect');
+            $sortable_active_class = SB_PHP::add_string_with_space_before($sortable_active_class, 'click-to-connect');
+        }
+        $field_class = isset($args['field_class']) ? $args['field_class'] : '';
+        $sortable_class = SB_PHP::add_string_with_space_before($sortable_class, $field_class);
+        $sortable_active_class = SB_PHP::add_string_with_space_before($sortable_active_class, $field_class);
+        $bottom_description = isset($args['bottom_description']) ? (bool)$args['bottom_description'] : true;
+        $value = isset($args['value']) ? $args['value'] : '';
+        $before = isset($args['before']) ? $args['before'] : '<div class="sb-sortable"><div class="sb-sortable-container">';
+        $after = isset($args['after']) ? $args['after'] : '</div></div>';
+        $sortable_description = isset($args['sortable_description']) ? $args['sortable_description'] : '';
+        $sortable_active_description = isset($args['sortable_active_description']) ? $args['sortable_active_description'] : '';
+        $sortable_label = isset($args['sortable_label']) ? $args['sortable_label'] : '';
+        $sortable_active_label = isset($args['sortable_active_label']) ? $args['sortable_active_label'] : '';
+        echo $before;
+        if(!empty($sortable_label)) {
+            $lb_args = array(
+                'text' => $sortable_label,
+                'for' => $option_name . '_sortable'
+            );
+            self::label($lb_args);
+        }
+        ?>
+        <ul class="<?php echo $sortable_class; ?>">
+            <?php call_user_func($sortable_callback); ?>
+        </ul>
+        <?php
+        self::the_description($sortable_description);
+        if(!empty($sortable_active_label)) {
+            $lb_args = array(
+                'text' => $sortable_active_label,
+                'for' => $option_name . '_sortable_active'
+            );
+            self::label($lb_args);
+        }
+        ?>
+        <ul class="<?php echo $sortable_active_class; ?>">
+            <?php call_user_func($sortable_active_callback); ?>
+        </ul>
+        <?php self::the_description($sortable_active_description); ?>
+        <input type="hidden" class="active-sortable-value" name="<?php echo $option_name; ?>" value="<?php echo $value; ?>" autocomplete="off">
+        <?php self::the_after($before, $after); ?>
+        <?php if($bottom_description) : ?>
+            <div style="clear: both"></div>
+            <?php
+            self::the_description(__('Drag and drop the widget into right box to active it.', 'sb-theme'));
+        endif;
+    }
+
+    public static function sortable_ui_connect_row($args = array()) {
+        $args['column'] = false;
+        $args['bottom_description'] = false;
+        self::sortable_ui_connect($args);
+    }
+
     public static function sortble_term($args = array()) {
         $option_name = isset($args['option_name']) ? $args['option_name'] : '';
         if(empty($option_name)) {
@@ -427,7 +530,20 @@ class SB_Field {
         return $html;
     }
 
+    public static function captcha($args = array()) {
+        SB_Core::the_captcha($args);
+        $args['placeholder'] = __('Nhập mã bảo mật', 'sb-theme');
+        $args['before'] = '';
+        $args['field_class'] = 'captcha-code';
+        self::text($args);
+    }
+
+    public static function convert_rate($args = array()) {
+        self::text($args);
+    }
+
     public static function text($args = array()) {
+        $with_button = isset($args['button']) ? $args['button'] : false;
         $type = isset($args['type']) ? $args['type'] : 'text';
         $id = isset($args['id']) ? $args['id'] : '';
         $name = isset($args['name']) ? $args['name'] : '';
@@ -445,11 +561,16 @@ class SB_Field {
         }
         $label = isset($args['label']) ? $args['label'] : '';
         $after = isset($args['after']) ? $args['after'] : '</div>';
-
+        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : '';
         $autocomplete = isset($args['autocomplete']) ? $args['autocomplete'] : true;
+        if($with_button) {
+            $container_class .= ' has-button';
+        }
         $before = isset($args['before']) ? $args['before'] : '<div class="' . esc_attr($container_class) . '">';
         $only = isset($args['only']) ? $args['only'] : false;
         $html = new SB_HTML('input');
+        $option_value = isset($args['option_value']) ? $args['option_value'] : '';
+
         $atts = array(
             'type' => esc_attr($type),
             'id' => esc_attr($id),
@@ -458,10 +579,20 @@ class SB_Field {
             'autocomplete' => (bool)$autocomplete ? '' : 'off',
             'class' => esc_attr($field_class)
         );
+        if(!empty($placeholder)) {
+            $atts['placeholder'] = $placeholder;
+        }
         if('checkbox' == $type || 'radio' == $type) {
-            $checked = checked(1, $value, false);
+            $field_value = 1;
+            if(!empty($option_value)) {
+                $field_value = $option_value;
+            }
+            $checked = checked($field_value, $value, false);
             if(!empty($checked)) {
                 $atts['checked'] = 'checked';
+            }
+            if('radio' == $type) {
+                $atts['value'] = $option_value;
             }
         }
         $html->set_attribute_array($atts);
@@ -477,6 +608,14 @@ class SB_Field {
             echo $html->build();
             if('checkbox' == $type || 'radio' == $type) {
                 self::label(array('text' => $label, 'for' => 'id', 'attributes' => array('class' => $type . '-label')));
+            }
+
+            if($with_button) {
+                $args = isset($args['button_args']) ? $args['button_args'] : array();
+                $field_class = isset($args['field_class']) ? $args['field_class'] : '';
+                $field_class = SB_PHP::add_string_with_space_before($field_class, 'button button-primary');
+                $args['field_class'] = $field_class;
+                self::button($args);
             }
             self::the_description($description);
             self::the_after($before, $after);
@@ -517,6 +656,38 @@ class SB_Field {
 
     public static function number_field($args = array()){
         self::number($args);
+    }
+
+    public static function row_user_profile_field($args = array()) {
+        $name = isset($args['name']) ? $args['name'] : '';
+        if(empty($name)) {
+            $name = isset($args['id']) ? $args['id'] : '';
+        }
+        $label = isset($args['label']) ? $args['label'] : '';
+        $field_type = isset($args['field_type']) ? $args['field_type'] : 'text';
+        ?>
+        <tr>
+            <th><label for="<?php echo $name; ?>"><?php echo $label; ?></label></th>
+            <td>
+                <?php
+                $args['label'] = '';
+                $args['name'] = $name;
+                $args['id'] = $name;
+                switch($field_type) {
+                    case 'text':
+                        self::text($args);
+                        break;
+                    case 'select_gender':
+                        self::select_gender($args);
+                        break;
+                    case 'select_birthday':
+                        self::select_birthday($args);
+                        break;
+                }
+                ?>
+            </td>
+        </tr>
+        <?php
     }
 
     public static function number($args = array()) {
@@ -621,6 +792,11 @@ class SB_Field {
             'text' => $select_option
         );
         $html->set_attribute_array($atts);
+        $args = array(
+            'text' => isset($args['label']) ? $args['label'] : '',
+            'for' => $name
+        );
+        self::label($args);
         echo $html->build();
         self::the_description($description);
         self::the_after($before, $after);
@@ -628,7 +804,7 @@ class SB_Field {
 
     public static function select_page($args = array()) {
         $pages = SB_Post::get_all('page');
-        $all_option = '<option value="0">' . __('Choose page', 'sb-theme') . '</option>';
+        $all_option = '<option value="0">' . __('Chọn trang', 'sb-theme') . '</option>';
         $value = isset($args['value']) ? $args['value'] : '';
         while($pages->have_posts()) {
             $pages->the_post();

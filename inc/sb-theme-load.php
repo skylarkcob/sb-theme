@@ -45,6 +45,10 @@ require SB_THEME_INC_PATH . '/class-sb-query.php';
 
 require SB_THEME_INC_PATH . '/class-sb-membership.php';
 
+require SB_THEME_INC_PATH . '/class-sb-payment.php';
+
+require SB_THEME_INC_PATH . '/class-sb-ngan-luong.php';
+
 require SB_THEME_INC_PATH . '/class-sb-post.php';
 
 require SB_THEME_INC_PATH . '/class-sb-html.php';
@@ -83,7 +87,34 @@ require SB_THEME_INC_PATH . '/widgets/class-sb-post-widget.php';
 
 require SB_THEME_INC_PATH . '/widgets/class-sb-tab-widget.php';
 
+if(SB_Option::social_login_enabled()) {
+    $facebook = SB_Option::get_social_login_app('facebook');
+    $facebook_enabled = isset($facebook['enabled']) ? (bool)$facebook['enabled'] : false;
+    $google = SB_Option::get_social_login_app('google');
+    $google_enabled = isset($google['enabled']) ? (bool)$google['enabled'] : false;
+    $twitter = SB_Option::get_social_login_app('twitter');
+    $twitter_enabled = isset($twitter['enabled']) ? (bool)$twitter['enabled'] : false;
+    if($facebook_enabled) {
+        if(version_compare(PHP_VERSION, '5.4.0', '<')) {
+            /** Load Facebook PHP SDK */
+            require SB_THEME_LIB_PATH . '/facebook-php-sdk/facebook.php';
+        } else {
+            /** Load Facebook PHP SDK version 4 */
+            require SB_THEME_LIB_PATH . '/facebook-php-sdk-v4/autoload.php';
+        }
+    }
+    if($google_enabled) {
+        if(!class_exists('Google_Client')) {
+            require SB_THEME_LIB_PATH . '/google-api-php-client/src/Google/autoload.php';
+        }
+    }
+}
+
 require SB_THEME_INC_PATH . '/class-sb-login.php';
+
+if(!class_exists('ReallySimpleCaptcha')) {
+    require SB_THEME_PLUGIN_PATH . '/really-simple-captcha/really-simple-captcha.php';
+}
 
 /** Load tập tin khai báo các hàm trên SB Theme */
 require SB_THEME_INC_PATH . '/sb-theme-functions.php';
@@ -163,16 +194,6 @@ if(SB_Option::statistics_enabled()) {
 
     /** Load class SB_Statistics_Widget */
     require SB_THEME_INC_PATH . '/widgets/class-sb-statistics-widget.php';
-
-}
-
-/*
- * Kiểm tra giao diện cần sử dụng Facebook PHP SDK, nếu cần thì load thư viện này.
- */
-if(SB_Option::utility_enabled('facebook_php_sdk') && !class_exists('Facebook')) {
-
-    /** Load Facebook PHP SDK */
-    require SB_THEME_LIB_PATH . '/facebook-php-sdk/facebook.php';
 
 }
 

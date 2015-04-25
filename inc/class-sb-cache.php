@@ -4,6 +4,22 @@ class SB_Cache {
         return 'sb_theme_post_' . $post_id . $suffix;
     }
 
+    public static function build_theme_transient_name($suffix = '') {
+        return 'sb_theme' . $suffix;
+    }
+
+    public static function build_query_transient_name($name) {
+        return self::build_theme_transient_name($name . '_query');
+    }
+
+    public static function build_transaction_secure_code_transient_name($secure_code) {
+        return self::build_query_transient_name('_transaction_secure_code_' . $secure_code);
+    }
+
+    public static function delete_transaction_cache() {
+        SB_Core::delete_transient(self::build_theme_transient_name('_transaction'));
+    }
+
     public static function build_post_media_images_transient_name($post_id) {
         return self::build_post_transient_name($post_id, '_media_images');
     }
@@ -31,6 +47,60 @@ class SB_Cache {
 
     public static function delete_widget_cache($widget_id) {
         delete_transient(self::build_widget_transient_name($widget_id));
+    }
+
+    public static function post_images_cache() {
+        $key = 'post_images_cache_enabled';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::check_switch_value($value, 0);
+        return self::cache_result($value);
+    }
+
+    public static function cache_result($value) {
+        if(!self::enabled()) {
+            $value = false;
+        }
+        return $value;
+    }
+
+    public static function post_comment_count_cache() {
+        $key = 'post_comment_count_cache_enabled';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::check_switch_value($value, 0);
+        return self::cache_result($value);
+    }
+
+    public static function query_cache() {
+        $key = 'query_cache_enabled';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::check_switch_value($value, 0);
+        return self::cache_result($value);
+    }
+
+    public static function menu_cache() {
+        $key = 'menu_cache_enabled';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::check_switch_value($value, 0);
+        return self::cache_result($value);
+    }
+
+    public static function widget_cache() {
+        $key = 'widget_cache_enabled';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::check_switch_value($value, 0);
+        return self::cache_result($value);
+    }
+
+    public static function enabled() {
+        $key = 'cache_enabled';
+        if(isset($_SESSION[$key])) {
+            $value = $_SESSION[$key];
+        } else {
+            $value = SB_Option::get_advanced_setting('general', $key);
+            $value = SB_Option::check_switch_value($value, 0);
+            $_SESSION[$key] = absint($value);
+        }
+        return (bool)$value;
     }
 
     public static function build_custom_menu_transient_name() {
@@ -103,8 +173,12 @@ class SB_Cache {
         return $result;
     }
 
+    public static function delete_expired_transient() {
+        self::delete_captcha_expired_cache();
+    }
+
     public static function delete_captcha_transient($file_name) {
-        $transient_keys = SB_Cache::build_captcha_transient_name($file_name);
+        $transient_keys = self::build_captcha_transient_name($file_name);
         delete_transient($transient_keys['code']);
         delete_transient($transient_keys['prefix']);
         SB_PHP::set_session('sb_theme_captcha_image', '');

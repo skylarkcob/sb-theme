@@ -109,6 +109,45 @@ function sb_login_page_login_ajax_callback() {
 }
 add_action('wp_ajax_nopriv_sb_login_page_login', 'sb_login_page_login_ajax_callback');
 
+function sb_theme_test_smtp_mail_ajax_callback() {
+    $email = isset($_POST['email']) ? $_POST['email'] : '';
+    $result = array(
+        'successful' => false,
+        'debug' => ''
+    );
+    if(empty($email)) {
+        $result['message'] = __('Xin vui lòng nhập địa chỉ email người nhận.', 'sb-theme');
+    } else {
+        global $phpmailer;
+        if ( !is_object( $phpmailer ) || !is_a( $phpmailer, 'PHPMailer' ) ) {
+            require_once ABSPATH . WPINC . '/class-phpmailer.php';
+            require_once ABSPATH . WPINC . '/class-smtp.php';
+            $phpmailer = new PHPMailer( true );
+        }
+        $phpmailer->SMTPDebug = true;
+        $to = $email;
+        $subject = sprintf(__('Thử gửi mail bằng SMTP tới %s', 'sb-theme'), $to);
+        $subject .= ' ' . SB_PHP::get_current_date_time();
+        $message = sprintf(__('Đây là thư được gửi thử từ blog %s.', 'sb-theme'), get_bloginfo('name'));
+        ob_start();
+        $mail_result = SB_Mail::send_html($to, $subject, $message);
+        $debug = ob_get_clean();
+        if($mail_result) {
+            $result['successful'] = true;
+            $result['message'] = __('Gửi mail thành công.', 'sb-theme');
+        } else {
+            $result['message'] = __('Gửi mail thất bại.', 'sb-theme');
+        }
+        $pre = '<pre>';
+        $pre_close = '</pre>';
+        $result['debug'] = $pre . esc_html( $debug ) . $pre_close;
+        unset($phpmailer);
+    }
+    echo json_encode($result);
+    die();
+}
+add_action('wp_ajax_sb_theme_test_smtp_mail', 'sb_theme_test_smtp_mail_ajax_callback');
+
 function sb_theme_login_social_ajax_callback() {
     $result = array(
         'successful' => false

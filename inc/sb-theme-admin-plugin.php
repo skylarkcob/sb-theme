@@ -3,12 +3,12 @@
  * Plugin SB Clean
  */
 function sb_clean_menu() {
-    SB_Admin_Custom::add_submenu_page('SB Clean', 'sb_clean', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page('Clean', 'sb_clean', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_clean_menu');
 
 function sb_clean_tab($tabs) {
-    $tabs['sb_clean'] = array('title' => 'SB Clean', 'section_id' => 'sb_clean_section', 'type' => 'plugin');
+    $tabs['sb_clean'] = array('title' => 'Clean', 'section_id' => 'sb_clean_section', 'type' => 'plugin');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_clean_tab');
@@ -70,12 +70,12 @@ function sb_clean_sanitize($input) {
  * Plugin SB Comment
  */
 function sb_comment_menu() {
-    SB_Admin_Custom::add_submenu_page('SB Comment', 'sb_comment', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page('Discussion', 'sb_comment', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_comment_menu');
 
 function sb_comment_tab($tabs) {
-    $tabs['sb_comment'] = array('title' => 'SB Comment', 'section_id' => 'sb_comment_section', 'type' => 'plugin');
+    $tabs['sb_comment'] = array('title' => 'Discussion', 'section_id' => 'sb_comment_section', 'type' => 'plugin');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_comment_tab');
@@ -210,12 +210,12 @@ function sb_comment_sanitize($input) {
  * Plugin SB Login Page
  */
 function sb_login_page_menu() {
-    SB_Admin_Custom::add_submenu_page('SB Login Page', 'sb_login_page', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page('Login', 'sb_login_page', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_login_page_menu');
 
 function sb_login_page_tab($tabs) {
-    $tabs['sb_login_page'] = array('title' => 'SB Login Page', 'section_id' => 'sb_login_page_section', 'type' => 'plugin');
+    $tabs['sb_login_page'] = array('title' => 'Login', 'section_id' => 'sb_login_page_section', 'type' => 'plugin');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_login_page_tab');
@@ -243,8 +243,7 @@ function sb_login_page_setting_field() {
 add_action('sb_admin_init', 'sb_login_page_setting_field');
 
 function sb_login_page_use_captcha_callback() {
-    $options = SB_Option::get();
-    $value = isset($options['login_page']['use_captcha']) ? intval($options['login_page']['use_captcha']) : 1;
+    $value = absint(SB_Option::use_login_captcha());
     $args = array(
         'id' => 'sb_login_page_use_captcha',
         'name' => 'sb_options[login_page][use_captcha]',
@@ -400,18 +399,18 @@ function sb_login_page_sanitize($input) {
     $data['login_page']['logo'] = SB_Core::sanitize(isset($input['login_page']['logo']) ? $input['login_page']['logo'] : '', 'url');
     return $data;
 }
-//add_filter('sb_options_sanitize', 'sb_login_page_sanitize');
+add_filter('sb_options_sanitize', 'sb_login_page_sanitize');
 
 /*
  * Plugin SB Paginate
  */
 function sb_paginate_menu() {
-    SB_Admin_Custom::add_submenu_page('SB Paginate', 'sb_paginate', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page('Pagination', 'sb_paginate', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_paginate_menu');
 
 function sb_paginate_tab($tabs) {
-    $tabs['sb_paginate'] = array('title' => 'SB Paginate', 'section_id' => 'sb_paginate_section', 'type' => 'plugin');
+    $tabs['sb_paginate'] = array('title' => 'Pagination', 'section_id' => 'sb_paginate_section', 'type' => 'plugin');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_paginate_tab');
@@ -554,12 +553,12 @@ function sb_paginate_sanitize($input) {
  * Plugin SB Post Widget
  */
 function sb_post_widget_menu() {
-    SB_Admin_Custom::add_submenu_page('SB Post Widget', 'sb_post_widget', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page('Post Widget', 'sb_post_widget', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_post_widget_menu');
 
 function sb_post_widget_tab($tabs) {
-    $tabs['sb_post_widget'] = array('title' => 'SB Post Widget', 'section_id' => 'sb_post_widget_section', 'type' => 'plugin');
+    $tabs['sb_post_widget'] = array('title' => 'Post Widget', 'section_id' => 'sb_post_widget_section', 'type' => 'plugin');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_post_widget_tab');
@@ -588,12 +587,12 @@ function sb_post_widget_no_thumbnail_callback() {
  * Plugin SB Tab Widget
  */
 function sb_tab_widget_menu() {
-    SB_Admin_Custom::add_submenu_page('SB Tab Widget', 'sb_tab_widget', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page('Tab Widget', 'sb_tab_widget', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_tab_widget_menu');
 
 function sb_tab_widget_tab($tabs) {
-    $tabs['sb_tab_widget'] = array('title' => 'SB Tab Widget', 'section_id' => 'sb_tab_widget_section', 'type' => 'plugin');
+    $tabs['sb_tab_widget'] = array('title' => 'Tab Widget', 'section_id' => 'sb_tab_widget_section', 'type' => 'plugin');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_tab_widget_tab');

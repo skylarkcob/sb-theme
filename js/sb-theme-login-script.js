@@ -6,6 +6,22 @@
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
+    // All form
+    (function(){
+        $('.sb-theme-login form').on('submit', function(e){
+            var that = $(this),
+                captcha_code = that.find('input.captcha-code'),
+                valid = true;
+            if(captcha_code.length && !$.trim(captcha_code.val())) {
+                valid = false;
+                captcha_code.focus();
+            }
+            if(!valid) {
+                e.preventDefault();
+            }
+        })
+    })();
+
     // Login form
     (function(){
         $('#loginform').on('submit', function(e){
@@ -68,6 +84,33 @@
             var that = $(this),
                 action = sb_theme_get_param_by_name(that.attr('href'), 'action');
             that.addClass(action);
+        });
+    })();
+
+    // Change captcha image
+    (function(){
+        $('img.sb-captcha-image').on('click', function(e){
+            e.preventDefault();
+
+            var that = $(this),
+                captcha = that,
+                data = null;
+            if(that.hasClass('disabled')) {
+                return;
+            }
+            captcha.css({opacity: 0.2});
+            data = {
+                'action': 'sb_reload_captcha',
+                len: captcha.attr('data-len')
+            };
+            that.addClass('disabled');
+            $.post(sb_theme_login.ajax_url, data, function(resp){
+                if($.trim(resp)) {
+                    captcha.attr('src', resp);
+                    that.removeClass('disabled');
+                    captcha.css({opacity: 1});
+                }
+            });
         });
     })();
 

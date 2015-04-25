@@ -90,7 +90,7 @@ var sb_password_strength,
     };
 
     window.sb_number_format = function(number, separator, currency) {
-        currency = currency || '₫';
+        currency = currency || ' ₫';
         separator = separator || ',';
         var number_string = number.toString(),
             decimal = '.',
@@ -139,6 +139,7 @@ var sb_password_strength,
         }).addClass('external');
     })();
 
+    // Change captcha image
     (function(){
         $('.sb-captcha .reload, .sb-captcha-image').on('click', function(e){
             e.preventDefault();
@@ -156,9 +157,11 @@ var sb_password_strength,
             };
             that.addClass('disabled');
             $.post(sb_core_ajax.url, data, function(resp){
-                captcha.attr('src', resp);
-                that.removeClass('disabled');
-                captcha.css({opacity: 1});
+                if(sb_core.sb_is_ajax_has_data(resp)) {
+                    captcha.attr('src', resp);
+                    that.removeClass('disabled');
+                    captcha.css({opacity: 1});
+                }
             });
         });
     })();

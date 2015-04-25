@@ -29,8 +29,14 @@ function sb_theme_init_hook() {
 }
 add_action( 'init', 'sb_theme_init_hook' );
 
+/*
+ * Hàm kiểm tra tính hợp lệ của giao diện
+ */
 add_action( 'sb_theme_init', array( 'SB_Core', 'check_license' ) );
 
+/*
+ * Hàm kiểm tra tính hợp lệ của giao diện
+ */
 function sb_theme_check_license() {
 	$transient_name = SB_Cache::build_license_transient_name();
 	if(false === ($license = get_transient($transient_name))) {
@@ -50,6 +56,9 @@ function sb_theme_check_license() {
 }
 add_action( 'sb_theme_init', 'sb_theme_check_license' );
 
+/*
+ * Hàm thực hiện sau khi mở khóa trang web
+ */
 function sb_theme_unlock_license() {
 	$sb_unlock_license = isset($_REQUEST['sb_unlock_license']) ? absint('sb_unlock_license') : 0;
 	if(1 == $sb_unlock_license) {
@@ -66,6 +75,9 @@ function sb_theme_unlock_license() {
 }
 add_action('sb_theme_init', 'sb_theme_unlock_license');
 
+/*
+ * Hàm thêm style và javascript vào trang admin
+ */
 function sb_theme_admin_enqueue_scripts_hook() {
     do_action('sb_theme_admin_enqueue_scripts_before');
 
@@ -86,6 +98,9 @@ function sb_theme_admin_enqueue_scripts_hook() {
 }
 add_action( 'admin_enqueue_scripts', 'sb_theme_admin_enqueue_scripts_hook' );
 
+/*
+ * Chạy hàm khi permalink được cập nhật
+ */
 function sb_theme_update_option_permalink_structure_hook() {
 	if(isset($_REQUEST['settings-updated']) && (bool)$_REQUEST['settings-updated']) {
 		SB_Core::delete_transient('sb_menu');
@@ -94,6 +109,9 @@ function sb_theme_update_option_permalink_structure_hook() {
 }
 if($GLOBALS['pagenow'] == 'options-permalink.php') add_action( 'sb_theme_admin_init' , 'sb_theme_update_option_permalink_structure_hook' );
 
+/*
+ * Hàm thêm style và javascript vào website
+ */
 function sb_theme_wp_enqueue_scripts_hook() {
     do_action('sb_theme_wp_enqueue_scripts_before');
 
@@ -134,6 +152,9 @@ function sb_theme_wp_enqueue_scripts_hook() {
 }
 add_action( 'wp_enqueue_scripts', 'sb_theme_wp_enqueue_scripts_hook' );
 
+/*
+ * Hàm thêm style và javascript vào trang login
+ */
 function sb_theme_login_enqueue_scripts() {
     wp_enqueue_style('sb-theme-login-style', SB_THEME_URL . '/css/sb-theme-login-style.css');
     wp_register_script('sb-theme-login', SB_THEME_URL . '/js/sb-theme-login-script.js', array('jquery'), false, true);
@@ -152,22 +173,34 @@ function sb_theme_login_enqueue_scripts() {
 }
 add_action('login_enqueue_scripts', 'sb_theme_login_enqueue_scripts');
 
+/*
+ * Hàm thực hiện sau khi người dùng đăng xuất khỏi hệ thống
+ */
 function sb_theme_logout_hook() {
     unset($_SESSION['access_token']);
     do_action('sb_theme_logout');
 }
 add_action('wp_logout', 'sb_theme_logout_hook');
 
+/*
+ * Hàm kiểm tra trước khi hiển thị nội dung trang đăng nhập
+ */
 function sb_theme_login_init_hook() {
     do_action('sb_theme_login_init');
 }
 add_action('login_init', 'sb_theme_login_init_hook');
 
+/*
+ * Hàm thêm thông tin vào đầu trang login
+ */
 function sb_theme_login_head_hook() {
     do_action('sb_theme_login_head');
 }
 add_action('login_head', 'sb_theme_login_head_hook');
 
+/*
+ * Hàm kiểm tra trước khi hiển thị nội dung trang đăng nhập
+ */
 function sb_theme_login_check_social_login() {
     $data_social = isset($_GET['data_social']) ? $_GET['data_social'] : '';
     if(empty($data_social)) {
@@ -178,35 +211,159 @@ function sb_theme_login_check_social_login() {
 }
 add_action('sb_theme_login_init', 'sb_theme_login_check_social_login');
 
+/*
+ * Hàm thêm thông tin vào trang đăng nhập
+ */
 function sb_theme_login_form_hook() {
     sb_theme_get_content('sb-theme-wp-login-social');
     do_action('sb_theme_login_form');
 }
 add_action('login_form', 'sb_theme_login_form_hook');
 
+/*
+ * Hàm thêm thông tin vào chân trang login
+ */
 function sb_theme_login_footer_hook() {
     do_action('sb_theme_login_footer');
 }
 add_action('login_footer', 'sb_theme_login_footer_hook');
 
+/*
+ * Hàm thêm thông tin vào trang đăng ký
+ */
 function sb_theme_register_form_hook() {
     sb_theme_get_content('sb-theme-wp-login-social');
     do_action('sb_theme_register_form');
 }
 add_action('register_form', 'sb_theme_register_form_hook');
 
+/*
+ * Hàm thêm thông tin vào trang quên mật khẩu
+ */
+function sb_theme_lost_password_form_hook() {
+    do_action('sb_theme_lost_password_form');
+}
+add_action('lostpassword_form', 'sb_theme_lost_password_form_hook');
+
+/*
+ * Hàm tạo hook thêm thông tin vào tất cả các form trang login
+ */
+function sb_theme_all_login_form_hook() {
+    sb_theme_get_content('sb-theme-login-form-add-to-all');
+    do_action('sb_theme_all_login_form');
+}
+add_action('sb_theme_login_form', 'sb_theme_all_login_form_hook');
+add_action('sb_theme_register_form', 'sb_theme_all_login_form_hook');
+add_action('sb_theme_lost_password_form', 'sb_theme_all_login_form_hook');
+
+/*
+ * Hạn chế quyền hạn đăng bài, chỉnh sửa bài viết của các nhóm người dùng
+ */
+function sb_theme_custom_init_roles() {
+    SB_Membership::update_limit_post_roles();
+}
+add_action('sb_theme_after_switch_theme', 'sb_theme_custom_init_roles');
+add_action('sb_theme_upgrade', 'sb_theme_custom_init_roles');
+add_action('sb_theme_admin_init', 'sb_theme_custom_init_roles');
+
+/*
+ * Xóa tất cả đường link trong nội dung bài viết
+ */
+function sb_theme_remove_all_link_from_post_content($content) {
+    $current_user = SB_User::get_current();
+    if(!SB_User::is_admin($current_user->ID) && in_array(SB_User::get_current_role(), SB_Membership::get_paid_role_ids())) {
+        $content = SB_PHP::remove_all_link($content);
+    }
+    return $content;
+}
+add_filter('sb_theme_pre_save_post_content', 'sb_theme_remove_all_link_from_post_content');
+
+/*
+ * Kiểm tra số lượng bài viết miễn phí của người dùng
+ */
+function sb_theme_check_user_post_before_add_new() {
+    $current_user = SB_User::get_current();
+    $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_limit_free_post');
+    if(isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == 'post-new.php') {
+        if(in_array(SB_User::get_current_role(), SB_Membership::get_paid_role_ids())) {
+            if(!SB_User::is_admin($current_user->ID)) {
+                if(SB_User::count_all_post($current_user->ID) >= SB_Membership::get_free_post_number()) {
+                    set_transient($transient_name, 1, MINUTE_IN_SECONDS);
+                    $edit_url = admin_url('edit.php');
+                    wp_redirect($edit_url);
+                    exit;
+                }
+                if(SB_Membership::get_minimum_coin_can_post() > 0) {
+                    $user_coin = SB_User::get_coin($current_user->ID);
+                    if($user_coin < SB_Membership::get_minimum_coin_can_post()) {
+                        $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_minimum_coin_can_post');
+                        set_transient($transient_name, 1, MINUTE_IN_SECONDS);
+                        $edit_url = admin_url('edit.php');
+                        wp_redirect($edit_url);
+                        exit;
+                    }
+                }
+            }
+        }
+    }
+}
+add_action('sb_theme_admin_init', 'sb_theme_check_user_post_before_add_new');
+
+/*
+ * Thông báo cho người dùng phải trả phí trước khi đăng bài
+ */
+function sb_theme_limit_free_post_admin_notices() {
+    $current_user = SB_User::get_current();
+    $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_limit_free_post');
+    if(false !== get_transient($transient_name)) {
+        $message = sprintf(__('Bạn chỉ được phép đăng %s bài viết miễn phí, xin vui lòng nạp tài khoản để đăng bài.', 'sb-theme'), SB_Membership::get_paid_membership_free_post_number());
+        SB_Message::admin_notice_error($message);
+        delete_transient($transient_name);
+    }
+    $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_minimum_coin_can_post');
+    if(false !== get_transient($transient_name)) {
+        $message = sprintf(__('Số tiền của bạn không đủ để đăng bài viết, xin vui lòng %s.', 'sb-theme'), '<a href="' . SB_Membership::get_add_coin_url() . '">nạp tài khoản</a>');
+        SB_Message::admin_notice_error($message);
+        delete_transient($transient_name);
+    }
+}
+add_action('sb_theme_admin_notices', 'sb_theme_limit_free_post_admin_notices');
+
+/*
+ * Hàm khởi động hook tạo post type và taxonomy
+ */
 function sb_theme_custom_post_type_and_taxonomy_hook() {
+    if(SB_Membership::is_paid_membership_enabled()) {
+        if(current_user_can('update_core')) {
+            $args = array(
+                'name' => __('Transactions', 'sb-theme'),
+                'singular_name' => __('Transaction', 'sb-theme'),
+                'slug' => 'transaction',
+                'has_archive' => false,
+                'exclude_from_search' => true,
+                'public' => false
+            );
+            SB_Core::register_post_type_private($args);
+        }
+    }
     do_action( 'sb_post_type_and_taxonomy' );
 }
 add_action( 'sb_theme_init', 'sb_theme_custom_post_type_and_taxonomy_hook', 0 );
 
+/*
+ * Thêm favicon và meta
+ */
 function sb_theme_wp_head_hook() {
 	SB_Theme::the_favicon_html();
 	SB_Theme::the_date_meta_html();
+    SB_Theme::the_robots_meta();
 	do_action('sb_theme_wp_head');
 }
 add_action('wp_head', 'sb_theme_wp_head_hook');
 
+/*
+ * Xóa các thứ không cần thiết trong thẻ head
+ */
 remove_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
 remove_action('wp_head', 'feed_links');
 remove_action('wp_head', 'feed_links_extra', 3);
@@ -214,11 +371,20 @@ remove_action('wp_head', 'wp_generator');
 remove_action('wp_head', 'rsd_link');
 remove_action('wp_head', 'wlwmanifest_link');
 
+/*
+ * Thêm thông tin vào chân trang admin
+ */
 function sb_theme_admin_footer_hook() {
+    if(SB_Option::confirm_publish_post()) {
+        sb_theme_admin_confirm_publish_post();
+    }
     sb_core_ajax_loader();
 }
 add_action( 'admin_footer', 'sb_theme_admin_footer_hook' );
 
+/*
+ * Khai báo các ứng dụng sau khi giao diện được cài đặt
+ */
 function sb_theme_after_setup_theme_hook() {
     load_theme_textdomain('sb-theme', get_template_directory() . '/languages');
     add_theme_support( 'automatic-feed-links' );
@@ -246,6 +412,9 @@ function sb_theme_after_setup_theme_hook() {
 }
 add_action('after_setup_theme', 'sb_theme_after_setup_theme_hook');
 
+/*
+ * Khởi tạo các sidebar và widget
+ */
 function sb_theme_widgets_init_hook() {
     do_action('sb_theme_widgets_init_before');
     register_widget('SB_Banner_Widget');
@@ -259,6 +428,9 @@ function sb_theme_widgets_init_hook() {
 }
 add_action('widgets_init', 'sb_theme_widgets_init_hook');
 
+/*
+ * Chạy hàm sau khi giao diện được thay đổi
+ */
 function sb_theme_after_switch_hook() {
     sb_theme_error_checking();
     if(is_admin() && defined('SB_CORE_VERSION')) {
@@ -277,6 +449,9 @@ function sb_theme_after_switch_hook() {
 }
 add_action('sb_theme_after_switch_theme', 'sb_theme_after_switch_hook');
 
+/*
+ * Chạy hàm trước khi giao diện được chuyển đổi
+ */
 function sb_theme_switch_hook($newname, $newtheme) {
     SB_Membership::remove_all_role();
     do_action('sb_theme_switch_theme', $newname, $newtheme);
@@ -285,6 +460,9 @@ function sb_theme_switch_hook($newname, $newtheme) {
 }
 add_action('switch_theme', 'sb_theme_switch_hook', 10, 2);
 
+/*
+ * Thêm thông tin vào chân trang front-end
+ */
 function sb_theme_wp_footer() {
     $scroll_top = SB_Option::get_scroll_top();
     if($scroll_top) {
@@ -304,32 +482,33 @@ function sb_theme_wp_footer() {
 }
 add_action('wp_footer', 'sb_theme_wp_footer');
 
+/*
+ * Chạy hàm khi plugin WordPress SEO by Yoast được kích hoạt
+ */
 function sb_theme_wordpress_seo_activation() {
     SB_Option::edit_breadcrumb_sep();
 }
 register_activation_hook( WP_PLUGIN_DIR . '/wordpress-seo/wp-seo.php', 'sb_theme_wordpress_seo_activation' );
 
+/*
+ * Chạy hàm khi plugin Breadcrumb NavXT được kích hoạt
+ */
 function sb_theme_bcn_activation() {
     SB_Option::edit_bcn_breadcrumb_sep();
 }
 register_activation_hook( WP_PLUGIN_DIR . '/breadcrumb-navxt/breadcrumb-navxt.php', 'sb_theme_bcn_activation' );
 
+/*
+ * Chạy hàm khi plugin SB Core được kích hoạt
+ */
 function sb_theme_on_sb_core_activation() {
     sb_theme_deactivate_all_sb_plugin();
 }
 register_activation_hook(WP_PLUGIN_DIR . '/sb-core/sb-core.php', 'sb_theme_on_sb_core_activation');
 
-function sb_theme_statistics() {
-    $count_post_views = SB_Option::get_statistics_switch( 'post_views' );
-    if ( (bool) $count_post_views ) {
-        sb_theme_track_post_views();
-    }
-    $visitor_statistics = SB_Option::get_statistics_switch( 'visitor_statistics' );
-    if ( (bool) $visitor_statistics ) {
-        sb_theme_counter();
-    }
-}
-
+/*
+ * Chạy hàm khi menu được cập nhật
+ */
 function sb_theme_on_nav_menu_update( $id ) {
     $locations = get_nav_menu_locations();
     if( is_array( $locations ) && $locations ) {
@@ -345,11 +524,17 @@ function sb_theme_on_nav_menu_update( $id ) {
 }
 add_action( 'wp_update_nav_menu', 'sb_theme_on_nav_menu_update' );
 
+/*
+ * Chạy hàm khi bất kỳ một cài đặt nào được cập nhật
+ */
 function sb_theme_updated_option_hook($option, $old_value, $value) {
     do_action('sb_theme_updated_option', $option, $old_value, $value);
 }
 add_action('updated_option', 'sb_theme_updated_option_hook', 10, 3);
 
+/*
+ * Không cho WordPress tự ping chính mình
+ */
 function sb_theme_pre_ping_hook(&$links) {
     $home = get_option('home');
     foreach($links as $l => $link) {
@@ -361,6 +546,9 @@ function sb_theme_pre_ping_hook(&$links) {
 }
 add_action('pre_ping', 'sb_theme_pre_ping_hook');
 
+/*
+ * Chạy hàm khi bình luận được thêm vào cơ sở dữ liệu
+ */
 function sb_theme_insert_comment_hook($comment_id, $comment_object) {
     if(SB_Comment::enable_spam_check() && empty($comment_object->comment_content)) {
         SB_Comment::delete($comment_id);
@@ -371,6 +559,9 @@ function sb_theme_insert_comment_hook($comment_id, $comment_object) {
 }
 add_action('wp_insert_comment', 'sb_theme_insert_comment_hook', 10, 2);
 
+/*
+ * Chạy hàm khi trạng thái bình luận được thay đổi
+ */
 function sb_transition_comment_status($new_status, $old_status, $comment) {
     if($new_status != $old_status) {
         if('approved' == $new_status && SB_Comment::enable_notify_comment_approved()) {
@@ -383,16 +574,25 @@ function sb_transition_comment_status($new_status, $old_status, $comment) {
 }
 add_action('transition_comment_status', 'sb_transition_comment_status', 10, 3);
 
+/*
+ * Chạy hàm khi nâng cấp SB Theme
+ */
 function sb_theme_on_upgrade_hook() {
     SB_Cache::delete_all_cache();
 }
 add_action('sb_theme_upgrade', 'sb_theme_on_upgrade_hook');
 
+/*
+ * Thêm nonce vào form bình luận
+ */
 function sb_comment_nonce_field() {
     wp_nonce_field('sb_comment_form');
 }
 add_action('comment_form', 'sb_comment_nonce_field');
 
+/*
+ * Kiểm tra nonce trước khi chấp nhận bình luận
+ */
 function sb_comment_stop() {
     if(!wp_verify_nonce($_REQUEST['_wpnonce'], 'sb_comment_form')) {
         wp_die(__('Bình luận của bạn không hợp lệ!', 'sb-theme'));
@@ -400,6 +600,9 @@ function sb_comment_stop() {
 }
 add_action('pre_comment_on_post', 'sb_comment_stop');
 
+/*
+ * Đặt lịch xóa bình luận spam
+ */
 function sb_comment_empty_spam_schedule(){
     if(!wp_next_scheduled('sb_comment_empty_spam_cron_job')) {
         wp_schedule_event(time(), 'hourly', 'sb_comment_empty_spam_cron_job');
@@ -408,6 +611,9 @@ function sb_comment_empty_spam_schedule(){
 add_action('sb_theme_init', 'sb_comment_empty_spam_schedule');
 add_action('sb_comment_empty_spam_cron_job', 'sb_comment_empty_spam_cron_function');
 
+/*
+ * Kiểm tra trước khi hiển thị nội dung trang web
+ */
 function sb_login_page_init() {
     if(SB_Core::is_login_page()) {
         $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
@@ -426,6 +632,9 @@ function sb_login_page_init() {
 }
 add_action('sb_theme_init', 'sb_login_page_init');
 
+/*
+ * Kiểm tra trước khi hiển thị nội dung trang đăng nhập
+ */
 function sb_login_page_custom_init() {
     if(SB_User::is_logged_in()) {
         if(sb_login_page_is_login_custom_page() || sb_login_page_is_lost_password_custom_page() || sb_login_page_is_register_custom_page()) {
@@ -485,78 +694,41 @@ function sb_login_page_custom_init() {
 }
 add_action('sb_login_page_init', 'sb_login_page_custom_init');
 
+/*
+ * Kiểm tra trước khi chấp nhận yêu cầu khôi phục mật khẩu
+ */
+function sb_theme_lost_password_post_hook() {
+    if(SB_Option::use_login_captcha() && SB_Captcha::need_check() && (!isset($_POST['captcha_code']) || empty($_POST['captcha_code']))) {
+        add_filter('allow_password_reset', array('SB_Message', 'empty_captcha_error'));
+    }
+    if(SB_Option::use_login_captcha() && SB_Captcha::need_check() && isset($_POST['captcha_code']) && !SB_Captcha::check($_POST['captcha_code'])) {
+        add_filter('allow_password_reset', array('SB_Message', 'invalid_captcha_error'));
+    }
+}
+add_action('lostpassword_post', 'sb_theme_lost_password_post_hook');
+
+/*
+ * Chạy hàm khi plugin SB Login Page ngừng kích hoạt
+ */
 function sb_login_page_plugin_deactivated() {
-    sb_login_page_delete_page_templates();
+    //sb_login_page_delete_page_templates();
 }
 add_action('sb_login_page_deactivation', 'sb_login_page_plugin_deactivated');
 
+/*
+ * Thêm các trường mở rộng cho tài khoản người dùng
+ */
 function sb_login_page_user_profile_extra_field($user) {
-    $user_id = $user->ID;
-    $gender = get_the_author_meta('gender', $user_id);
-    $user_data = SB_User::get_data($user_id);
-    ?>
-    <h3><?php _e('Extra information', 'sb-theme'); ?></h3>
-    <table class="form-table sb-theme-user-extra-information">
-        <tr>
-            <th><label for="gender"><?php _e('Gender', 'sb-theme'); ?></label></th>
-            <td>
-                <?php
-                $args = array(
-                    'name' => 'gender',
-                    'value' => $gender
-                );
-                SB_Field::select_gender($args);
-                ?>
-            </td>
-        </tr>
-        <tr>
-            <th><label for="birthday"><?php _e('Birthday', 'sb-theme'); ?></label></th>
-            <td>
-                <?php
-                $birthday = SB_User::get_birthday_timestamp($user_id);
-                $args = array(
-                    'value' => $birthday
-                );
-                SB_Field::select_birthday($args);
-                ?>
-            </td>
-        </tr>
-        <?php if(SB_User::is_admin()) : ?>
-            <tr>
-                <th><label for="user_nicename"><?php _e('User nice name', 'sb-theme'); ?></label></th>
-                <td>
-                    <input type="text" class="regular-text" value="<?php echo $user_data->user_nicename; ?>" id="user_nicename" disabled="disabled" name="user_nicename" readonly>
-                </td>
-            </tr>
-            <tr>
-                <th><label for="activation_code"><?php _e('Activation code', 'sb-theme'); ?></label></th>
-                <td>
-                    <?php $code = SB_User::get_activation_code($user); ?>
-                    <input type="text" class="regular-text" value="<?php echo $code; ?>" id="activation_code" name="activation_code" readonly>
-                </td>
-            </tr>
-        <?php endif; ?>
-    </table>
-<?php
+    SB_User::add_more_profile_field($user);
 }
 add_action('show_user_profile', 'sb_login_page_user_profile_extra_field');
 add_action('edit_user_profile', 'sb_login_page_user_profile_extra_field');
 
+/*
+ * Cập nhật những thông tin mở rộng cho người dùng
+ */
 function sb_login_page_save_profile($user_id) {
-    update_user_meta($user_id, 'gender', isset($_POST['gender']) ? $_POST['gender'] : 0);
-    $birth_day = isset($_POST['user_birth_day']) ? $_POST['user_birth_day'] : date('d');
-    $birth_month = isset($_POST['user_birth_month']) ? $_POST['user_birth_month'] : date('m');
-    $birth_year = isset($_POST['user_birth_year']) ? $_POST['user_birth_year'] : date('Y');
-    $birthday = $birth_year . '-' . $birth_month . '-' . $birth_day;
-    $birthday = strtotime($birthday);
-    update_user_meta($user_id, 'birthday', $birthday);
-    $user_nicename = isset($_POST['user_nicename']) ? $_POST['user_nicename'] : '';
-    if(!empty($user_nicename)) {
-        $user_data = array(
-            'user_nicename' => $user_nicename
-        );
-        SB_User::update($user_id, $user_data);
-    }
+    SB_User::save_profile_posted($user_id);
     do_action('sb_theme_save_user_profile', $user_id);
 }
 add_action('personal_options_update', 'sb_login_page_save_profile');
@@ -579,6 +751,9 @@ function sb_tab_widget_load_sidebar() {
 }
 add_action('sb_theme_widgets_init', 'sb_tab_widget_load_sidebar');
 
+/*
+ * Chạy hàm khi lưu bài viết
+ */
 function sb_theme_save_post_hook( $post_id ) {
     if ( wp_is_post_revision( $post_id ) ) {
         return;
@@ -589,11 +764,17 @@ function sb_theme_save_post_hook( $post_id ) {
 }
 add_action( 'save_post', 'sb_theme_save_post_hook' );
 
+/*
+ * Chạy hàm khi xóa bài viết
+ */
 function sb_theme_delete_post_hook($post_id) {
     do_action('sb_theme_delete_post', $post_id);
 }
 add_action( 'delete_post', 'sb_theme_delete_post_hook', 10 );
 
+/*
+ * Chạy hàm khi trạng thái bài viết được thay đổi
+ */
 function sb_theme_post_status_transitions_hook( $new_status, $old_status, $post ) {
     if( $new_status != $old_status ) {
         do_action('sb_theme_transition_post_status', $new_status, $old_status, $post);
@@ -601,11 +782,17 @@ function sb_theme_post_status_transitions_hook( $new_status, $old_status, $post 
 }
 add_action('transition_post_status', 'sb_theme_post_status_transitions_hook', 10, 3);
 
+/*
+ * Chạy hàm khi bài viết được đăng
+ */
 function sb_theme_on_post_publish_hook( $ID, $post ) {
     do_action('sb_theme_publish_post', $ID, $post);
 }
 add_action('publish_post', 'sb_theme_on_post_publish_hook', 10, 2);
 
+/*
+ * Kiểm tra trước khi xóa tài khoản
+ */
 function sb_theme_delete_user_hook($user_id) {
     $current_user = SB_User::get_current();
     if(SB_User::is($current_user) && !SB_Membership::is_super_admin($current_user->ID) && SB_Membership::is_super_admin($user_id)) {
@@ -620,6 +807,58 @@ function sb_theme_delete_user_hook($user_id) {
 }
 add_action('delete_user', 'sb_theme_delete_user_hook');
 
+/*
+ * Cài đặt gửi mail thông qua SMTP
+ */
+function sb_theme_phpmailer_init_hook($phpmailer) {
+    if(SB_Option::use_smtp_mail()) {
+        $sb_smtp = SB_Option::get_option_by_key(array('smtp_email'));
+        $host = isset($sb_smtp['smtp_host']) ? $sb_smtp['smtp_host'] : '';
+        $port = isset($sb_smtp['smtp_port']) ? $sb_smtp['smtp_port'] : '';
+        $username = isset($sb_smtp['username']) ? $sb_smtp['username'] : '';
+        $password = isset($sb_smtp['password']) ? $sb_smtp['password'] : '';
+        if(empty($host) || empty($port) || empty($username) || empty($password)) {
+            return;
+        }
+        $sb_smtp = SB_Option::get_option_by_key(array('smtp_email'));
+        $secure_type = '';
+        if(isset($sb_smtp['encryption']) && 'none' != $sb_smtp['encryption']) {
+            $secure_type = $sb_smtp['encryption'];
+        }
+        $phpmailer->isSMTP();
+        $phpmailer->Host = $host;
+        $phpmailer->SMTPAuth = true;
+        $phpmailer->Username = $username;
+        $phpmailer->Password = $password;
+        $phpmailer->SMTPSecure = $secure_type;
+        $phpmailer->Port = $port;
+        $phpmailer = apply_filters('sb_theme_phpmailer', $phpmailer);
+    }
+}
+add_action('phpmailer_init', 'sb_theme_phpmailer_init_hook');
+
+/*
+ * Cảnh báo chưa cài đặt plugin Really Simple Captcha
+ */
+function sb_theme_admin_notice_hook() {
+    SB_Message::warning_missing_really_simple_captcha_plugin();
+}
+add_action('sb_theme_admin_notices', 'sb_theme_admin_notice_hook');
+
+/*
+ * Chạy hàm khi trang cài đặt nâng cao cập nhật
+ */
+function sb_theme_sanitize_option_updated($input) {
+    if(isset($input['sbt_advanced'])) {
+        SB_Membership::update_limit_post_roles();
+        do_action('sb_theme_advanced_setting_updated');
+    }
+}
+add_action('sb_theme_sanitize_option_done', 'sb_theme_sanitize_option_updated');
+
+/*
+ * Chạy hàm sau khi cài đặt được cập nhật
+ */
 function sb_theme_sb_option_update_hook() {
     if(SB_Admin_Custom::is_sb_page()) {
         if(isset($_REQUEST['settings-updated']) && (bool)$_REQUEST['settings-updated']) {
@@ -631,9 +870,45 @@ function sb_theme_sb_option_update_hook() {
 }
 if(isset($GLOBALS['pagenow']) && 'admin.php' == $GLOBALS['pagenow']) add_action('sb_theme_admin_init', 'sb_theme_sb_option_update_hook');
 
+/*
+ * Chạy hàm khi xem trang chỉnh sửa bài viết
+ */
+function sb_theme_edit_post_hook() {
+    if(!empty($_GET['post'])) {
+        $action = isset($_GET['action']) ? $_GET['action'] : '';
+        if('edit' == $action) {
+            $post = get_post($_GET['post']);
+            if(!is_wp_error($post)) {
+                do_action('sb_theme_edit_post', $post);
+            }
+        }
+    }
+}
+if(isset($GLOBALS['pagenow']) && 'post.php' == $GLOBALS['pagenow']) add_action('load-post.php', 'sb_theme_edit_post_hook');
+
+/*
+ * Thay đổi chữ Submit for Review thành Update
+ */
+function sb_theme_on_edit_post($post) {
+    $post_id = $post->ID;
+    if('pending' == $post->post_status || 'draft' == $post->post_status) {
+        add_filter( 'gettext', 'sb_theme_change_publish_post_button_text_filter', 10, 2 );
+    }
+}
+add_action('sb_theme_edit_post', 'sb_theme_on_edit_post');
+
 /* ================================================================================================================== */
 
 // Thiết lập filter cho giao diện
+
+function sb_theme_no_index_private_post_type($robotsstr) {
+    $private_types = SB_Post::get_private_post_types();
+    if(in_array(get_post_type(), $private_types)) {
+        $robotsstr = 'noindex, nofollow';
+    }
+    return $robotsstr;
+}
+add_filter('wpseo_robots', 'sb_theme_no_index_private_post_type');
 
 /*
  * Khai báo avatar mặc định cho người dùng
@@ -658,6 +933,88 @@ function sb_theme_get_avatar_default($avatar, $id_or_email, $size, $default, $al
 add_filter('get_avatar', 'sb_theme_get_avatar_default', 10, 5);
 
 /*
+ * Hiệu ứng rung khi phát hiện lỗi
+ */
+function sb_theme_login_shake_error($shake_error_codes) {
+    $shake_error_codes[] = 'invalid_captcha_code';
+    $shake_error_codes[] = 'authentication_failed';
+    $shake_error_codes = apply_filters('sb_theme_login_shake_error_codes', $shake_error_codes);
+    return $shake_error_codes;
+}
+add_filter( 'shake_error_codes', 'sb_theme_login_shake_error' );
+
+/*
+ * Lọc khi người dùng đăng nhập
+ */
+function sb_theme_authenticate_user($user, $username, $password) {
+    $checkemail = isset($_GET['checkemail']) ? $_GET['checkemail'] : '';
+    $data_social = isset($_GET['data_social']) ? $_GET['data_social'] : '';
+    if(!empty($checkemail) || !empty($data_social)) {
+        add_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
+        remove_filter('authenticate', 'sb_theme_authenticate_user', 10, 3);
+        return $user;
+    }
+    if(SB_Captcha::check_login_captcha_post_empty()) {
+        return SB_Message::empty_captcha_error();
+    }
+    if(!SB_User::is($user)) {
+        $userdata = get_user_by('login', $username);
+        if(!$userdata) {
+            return new WP_Error('authentication_failed', __('Tài khoản hoặc mật khẩu không đúng.', 'sb-theme'));
+        } else {
+            $userdata = apply_filters('wp_authenticate_user', $userdata, $password);
+            if(is_wp_error($userdata)) {
+                return $userdata;
+            }
+            if(!wp_check_password($password, $userdata->user_pass, $userdata->ID)) {
+                return new WP_Error('authentication_failed', __('Tài khoản hoặc mật khẩu không đúng.', 'sb-theme'));
+            }
+            if(!SB_Captcha::check_login_captcha_post_valid()) {
+                return SB_Message::invalid_captcha_error();
+            }
+            $user =  new WP_User($userdata->ID);
+        }
+    }
+    $user = apply_filters('sb_theme_authenticate', $user, $username, $password);
+    return $user;
+}
+remove_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
+add_filter('authenticate', 'sb_theme_authenticate_user', 10, 3);
+
+/*
+ * Lọc khi người dùng yêu cầu lấy lại mật khẩu
+ */
+function sb_theme_registration_errors_filter($errors, $sanitized_user_login, $user_email) {
+    if(SB_Captcha::check_login_captcha_post_empty()) {
+        $sb_error = SB_Message::empty_captcha_error();
+        $error_code = $sb_error->get_error_code();
+        $error_message = $sb_error->get_error_message($error_code);
+        $errors->add($error_code, $error_message);
+        return $errors;
+    }
+    if(!SB_Captcha::check_login_captcha_post_valid()) {
+        $sb_error = SB_Message::invalid_captcha_error();
+        $error_code = $sb_error->get_error_code();
+        $error_message = $sb_error->get_error_message($error_code);
+        $errors->add($error_code, $error_message);
+        return $errors;
+    }
+    return $errors;
+}
+add_filter('registration_errors', 'sb_theme_registration_errors_filter', 10, 3);
+
+/*
+ * Lọc giao diện có sử dụng captcha
+ */
+function sb_theme_use_captcha_filter($result) {
+    if(SB_Option::use_login_captcha()) {
+        $result = true;
+    }
+    return $result;
+}
+add_filter('sb_theme_use_captcha', 'sb_theme_use_captcha_filter');
+
+/*
  * Không cho người dùng chỉnh sửa quyền admin
  */
 function sb_theme_remove_admin_editable_role($roles) {
@@ -672,6 +1029,9 @@ function sb_theme_remove_admin_editable_role($roles) {
 }
 add_filter('editable_roles', 'sb_theme_remove_admin_editable_role');
 
+/*
+ * Lọc role hiển thị cho người dùng lựa chọn
+ */
 function sb_theme_filter_select_user_groups( $editable_roles ) {
     if(current_user_can('update_core')) {
         if(isset($GLOBALS['pagenow']) && ('user-new.php' == $GLOBALS['pagenow'] || 'user-edit.php' == $GLOBALS['pagenow'])) {
@@ -692,9 +1052,11 @@ function sb_theme_filter_select_user_groups( $editable_roles ) {
  */
 function sb_theme_get_avatar_cache( $avatar, $id_or_email, $size, $default, $alt ) {
     $transient_name = SB_Cache::build_user_avatar_transient_name($id_or_email, '_' . $size);
-    if(false === ($avatar_url = get_transient($transient_name))) {
+    if(!SB_Cache::enabled() || false === ($avatar_url = get_transient($transient_name))) {
         $avatar_url = SB_PHP::get_image_source($avatar);
-        set_transient($transient_name, $avatar_url, DAY_IN_SECONDS);
+        if(SB_Cache::enabled()) {
+            set_transient($transient_name, $avatar_url, DAY_IN_SECONDS);
+        }
     }
     $avatar = '<img width="' . $size . '" height="' . $size . '" class="avatar avatar-' . $size . ' photo" src="' . $avatar_url . '" alt="">';
     return $avatar;
@@ -708,10 +1070,25 @@ function sb_theme_mail_from_name( $name ) {
 	if ( 'wordpress' == strtolower( $name ) ) {
 		$name = get_bloginfo( 'name' );
 	}
+    if(empty($name) && SB_Option::use_smtp_mail()) {
+        $name = SB_Option::get_option_by_key(array('smtp_mail', 'from_name'));
+    }
 	$name = apply_filters('sb_theme_mail_from_name', $name);
 	return $name;
 }
 add_filter( 'wp_mail_from_name', 'sb_theme_mail_from_name' );
+
+/*
+ * Lọc địa chỉ email người gửi mail
+ */
+function sb_theme_mail_from_filter($email) {
+    if(empty($email) && SB_Option::use_smtp_mail()) {
+        $email = SB_Option::get_option_by_key(array('smtp_mail', 'from_email'));
+    }
+    $email = apply_filters('sb_theme_mail_from', $email);
+    return $email;
+}
+add_filter('wp_mail_from', 'sb_theme_mail_from_filter');
 
 /*
  * Khai báo đường dẫn chuyển tiếp khi đăng xuất
@@ -725,6 +1102,9 @@ function sb_login_page_custom_logout_redirect($logout_url, $redirect) {
 }
 add_filter('logout_url', 'sb_login_page_custom_logout_redirect', 10, 2);
 
+/*
+ * Chỉ cho phép tác giả xem bài viết của chính mình
+ */
 function sb_theme_author_view_only_own_post( $wp_query ) {
     if(strpos($_SERVER['REQUEST_URI'], '/wp-admin/edit.php') !== false) {
         if(!current_user_can('update_core')) {
@@ -736,6 +1116,9 @@ function sb_theme_author_view_only_own_post( $wp_query ) {
 }
 add_filter('parse_query', 'sb_theme_author_view_only_own_post');
 
+/*
+ * Lọc nội dung bài viết trước khi lưu vào cơ sở dữ liệu
+ */
 function sb_theme_before_save_post_content_filter( $content ) {
     $content = apply_filters('sb_theme_pre_save_post_content', $content);
     return $content;
@@ -785,12 +1168,6 @@ function sb_theme_login_logo_description() {
 	return $desc;
 }
 add_filter('login_headertitle', 'sb_theme_login_logo_description');
-
-function sb_theme_authenticate_filter($user, $username, $password) {
-    $user = apply_filters( 'sb_theme_authenticate', $user, $username, $password );
-    return $user;
-}
-add_filter( 'authenticate', 'sb_theme_authenticate_filter', 30, 3 );
 
 /*
  * Thêm class trang đăng nhập vào thẻ body

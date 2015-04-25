@@ -19,6 +19,15 @@ class SB_Core {
         return $shortcode_tags;
     }
 
+    public static function get_permalink_by_id($id) {
+        $result = '';
+        $id = absint($id);
+        if($id > 0) {
+            $result = get_permalink($id);
+        }
+        return $result;
+    }
+
     public static function get_all_sb_shortcodes() {
         $shortcodes = self::get_all_shortcodes();
         $result = array();
@@ -99,6 +108,19 @@ class SB_Core {
 
     public static function check_captcha($code) {
         return SB_Captcha::check($code);
+    }
+
+    public static function get_upload_folder_detail() {
+        $upload = wp_upload_dir();
+        $dir = isset($upload['basedir']) ? $upload['basedir'] : '';
+        $url = isset($upload['baseurl']) ? $upload['baseurl'] : '';
+        if(empty($dir)) {
+            $dir = WP_CONTENT_DIR . '/uploads';
+        }
+        if(empty($url)) {
+            $url = content_url('uploads');
+        }
+        return array('path' => $dir, 'url' => $url);
     }
 
     public static function the_captcha($args = array()) {
@@ -387,18 +409,23 @@ class SB_Core {
         $id = 'message';
         $message = isset($args['message']) ? $args['message'] : '';
         $is_error = isset($args['is_error']) ? $args['is_error'] : false;
+        $type = isset($args['type']) ? $args['type'] : 'updated';
         if(empty($message)) {
             return;
         }
         $div = new SB_HTML('div');
         $div->set_attribute('id', $id);
+        $class = 'sbt-admin-notice';
+        $class .= ' notice-' . $type;
         $pgraph_text = '';
         if ($is_error) {
-            $div->set_attribute('class', 'error');
-            $pgraph_text = '<strong>' . __('Error:', 'sb-theme') . '</strong>';
+            $class .= ' error';
+            $div->set_attribute('class', $class);
+            $pgraph_text = '<strong>' . __('Lỗi:', 'sb-theme') . '</strong>';
         }
         else {
-            $div->set_attribute('class', 'updated fade');
+            $class .= ' updated fade';
+            $div->set_attribute('class', $class);
         }
         $paragraph = new SB_HTML('p');
         $paragraph->set_text($pgraph_text . ' ' . $message);
@@ -1014,6 +1041,10 @@ class SB_Core {
         return false;
     }
 
+    public static function is_wpseo_yoast_installed() {
+        return defined('WPSEO_FILE');
+    }
+
     public static function get_blog_page() {
         return SB_Post::get_by_slug('blog', 'page');
     }
@@ -1099,6 +1130,23 @@ class SB_Core {
                 break;
         }
         return $result;
+    }
+
+    public static function register_post_type_private($args = array()) {
+        global $sb_theme_private_post_types;
+        $args['public'] = false;
+        $args['exclude_from_search'] = true;
+        $args['show_in_nav_menus'] = false;
+        $args['show_in_admin_bar'] = false;
+        $args['menu_position'] = 107;
+        $args['has_archive'] = false;
+        $args['feeds'] = false;
+        $slug = isset($args['slug']) ? $args['slug'] : '';
+        if(!empty($slug)) {
+            $sb_theme_private_post_types = (array)$sb_theme_private_post_types;
+            $sb_theme_private_post_types[] = $slug;
+        }
+        self::register_post_type($args);
     }
 
     public static function register_post_type($args = array()) {

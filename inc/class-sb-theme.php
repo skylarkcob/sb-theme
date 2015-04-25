@@ -109,6 +109,15 @@ class SB_Theme {
         }
     }
 
+    public static function the_robots_meta() {
+        if(!SB_Core::is_wpseo_yoast_installed()) {
+            $private_types = SB_Post::get_private_post_types();
+            if(in_array(get_post_type(), $private_types)) {
+                echo '<meta name="robots" content="noindex, nofollow">', "\n";
+            }
+        }
+    }
+
     public static function add_meta_box($args = array()) {
         $meta_box = new SB_Meta_Box($args);
     }
@@ -287,9 +296,11 @@ class SB_Theme {
         $menu_class = SB_PHP::add_string_with_space_before($menu_class, 'sb-menu');
         $menu_class = SB_PHP::add_string_with_space_before($menu_class, $theme_location);
         $args['menu_class'] = $menu_class;
-        if(false == ($sb_menu = get_transient($transient_name))) {
+        if(!SB_Cache::menu_cache() || false == ($sb_menu = get_transient($transient_name))) {
             $sb_menu = wp_nav_menu($args);
-            set_transient($transient_name, $sb_menu, WEEK_IN_SECONDS);
+            if(SB_Cache::menu_cache()) {
+                set_transient($transient_name, $sb_menu, WEEK_IN_SECONDS);
+            }
         }
         return $sb_menu;
     }

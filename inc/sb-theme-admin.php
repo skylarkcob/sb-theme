@@ -10,9 +10,11 @@ function is_sb_admin_page() {
 
 function sb_theme_menu() {
     SB_Admin_Custom::add_submenu_page(__('Theme Settings', 'sb-theme'), 'sb_theme', array('SB_Admin_Custom', 'setting_page_callback'));
-    SB_Admin_Custom::add_submenu_page('SB Utilities', 'sb_utilities', array('SB_Admin_Custom', 'setting_page_callback'));
-	SB_Admin_Custom::add_submenu_page('SB Statistics', 'sb_statistics', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page('Utilities', 'sb_utilities', array('SB_Admin_Custom', 'setting_page_callback'));
+	SB_Admin_Custom::add_submenu_page('Statistics', 'sb_statistics', array('SB_Admin_Custom', 'setting_page_callback'));
     SB_Admin_Custom::add_submenu_page(__('Advanced Settings', 'sb-theme'), 'sbt_advanced', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page('SMTP Email', 'sbt_smtp_email', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page(__('Checkout', 'sb-theme'), 'sbt_checkout', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_theme_menu');
 
@@ -21,6 +23,8 @@ function sb_theme_setting_tab($tabs) {
     $tabs['sb_utilities'] = array('title' => 'Utilities', 'section_id' => 'sb_utilities_section', 'type' => 'theme');
 	$tabs['sb_statistics'] = array('title' => 'Statistics', 'section_id' => 'sb_statistics_section', 'type' => 'theme');
     $tabs['sbt_advanced'] = array('title' => __('Advanced Settings', 'sb-theme'), 'section_id' => 'sb_theme_advanced_setting_section', 'type' => 'theme');
+    $tabs['sbt_smtp_email'] = array('title' => __('SMTP Email', 'sb-theme'), 'section_id' => 'sb_theme_smtp_email_setting_section', 'type' => 'theme');
+    $tabs['sbt_checkout'] = array('title' => __('Checkout', 'sb-theme'), 'section_id' => 'sb_theme_checkout_setting_section', 'type' => 'theme');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_theme_setting_tab');
@@ -30,6 +34,201 @@ function sb_theme_advanced_setting_field() {
     SB_Admin_Custom::add_setting_field('sb_theme_advanced_setting_page_content', '', 'sb_theme_advanced_setting_section', array('SB_Admin_Custom', 'row_setting_page_callback'), 'sbt_advanced');
 }
 add_action('sb_theme_option_page_init', 'sb_theme_advanced_setting_field');
+
+function sb_theme_checkout_setting_field() {
+    SB_Admin_Custom::add_section('sb_theme_checkout_setting_section', __('SB Theme Checkout Settings Page', 'sb-theme'), 'sbt_checkout');
+    SB_Admin_Custom::add_setting_field('sb_theme_checkout_setting_page_content', '', 'sb_theme_checkout_setting_section', array('SB_Admin_Custom', 'checkout_setting_page_callback'), 'sbt_checkout');
+}
+add_action('sb_theme_option_page_init', 'sb_theme_checkout_setting_field');
+
+function sb_theme_smtp_email_setting_field() {
+    SB_Admin_Custom::add_section('sb_theme_smtp_email_setting_section', __('SMTP Email Settings Page', 'sb-theme'), 'sbt_smtp_email');
+    sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_enabled', __('Gửi mail bằng SMTP', 'sb-theme'), 'sb_theme_smpt_email_enabled_callback');
+    if(SB_Option::use_smtp_mail()) {
+        sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_from_name', __('Tên người gửi', 'sb-theme'), 'sb_theme_smpt_email_from_name_callback');
+        sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_from_email', __('Email người gửi', 'sb-theme'), 'sb_theme_smpt_email_from_email_callback');
+        sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_info', __('Thông tin SMTP', 'sb-theme'), 'sb_theme_smpt_email_info_callback');
+        sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_encryption', __('Kiểu mã hóa', 'sb-theme'), 'sb_theme_smpt_email_encryption_callback');
+        sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_username', __('Tài khoản', 'sb-theme'), 'sb_theme_smpt_email_username_callback');
+        sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_password', __('Mật khẩu', 'sb-theme'), 'sb_theme_smpt_email_password_callback');
+        sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_test', __('Thử gửi mail', 'sb-theme'), 'sb_theme_smpt_email_test_callback');
+    }
+    do_action('sb_theme_smtp_email_setting_page');
+}
+add_action('sb_theme_option_page_init', 'sb_theme_smtp_email_setting_field');
+
+function sb_theme_smpt_email_test_callback() {
+    $key = 'test_smtp_mail';
+    $value = SB_Option::get_option_by_key(array('smtp_email', $key));
+
+    $args = array(
+        'id' => 'sb_theme_smtp_email_' . $key,
+        'name' => $key,
+        'value' => $value,
+        'description' => __('Nhập địa chỉ email và thử gửi mail với thiết lập của bạn bên trên.'),
+        'field_class' => 'width-medium test-field',
+        'type' => 'email',
+        'placeholder' => 'emailcuaban@gmail.com',
+        'button' => true,
+        'autocomplete' => false,
+        'button_args' => array(
+            'text' => __('Gửi', 'sb-theme'),
+            'field_class' => 'test-smtp-mail',
+            'autocomplete' => false
+        )
+    );
+    SB_Field::text($args);
+    echo '<div class="test-mail-debug"></div>';
+}
+
+function sb_theme_smpt_email_password_callback() {
+    $key = 'password';
+    $value = SB_Option::get_option_by_key(array('smtp_email', $key));
+
+    $args = array(
+        'id' => 'sb_theme_smtp_email_' . $key,
+        'name' => SB_Option::build_sb_option_name(array('smtp_email', $key)),
+        'value' => $value,
+        'description' => __('Mật khẩu đăng nhập cho tài khoản của bạn.'),
+        'field_class' => 'width-medium',
+        'type' => 'password',
+        'autocomplete' => false
+    );
+    SB_Field::text($args);
+}
+
+function sb_theme_smpt_email_username_callback() {
+    $key = 'username';
+    $value = SB_Option::get_option_by_key(array('smtp_email', $key));
+
+    $args = array(
+        'id' => 'sb_theme_smtp_email_' . $key,
+        'name' => SB_Option::build_sb_option_name(array('smtp_email', $key)),
+        'value' => $value,
+        'description' => __('Tài khoản đăng nhập vào SMTP server.'),
+        'field_class' => 'width-medium',
+        'autocomplete' => false
+    );
+    SB_Field::text($args);
+}
+
+function sb_theme_smpt_email_encryption_callback() {
+    $key = 'encryption';
+    $value = SB_Option::get_option_by_key(array('smtp_email', $key));
+    if(empty($value)) {
+        $value = 'none';
+    }
+    $args = array(
+        'id' => 'sb_theme_smtp_email_' . $key,
+        'name' => SB_Option::build_sb_option_name(array('smtp_email', $key)),
+        'value' => $value,
+        'field_class' => 'width-medium',
+        'type' => 'radio',
+        'label' => __('Không mã hóa', 'sb-theme'),
+        'option_value' => 'none'
+    );
+    SB_Field::text($args);
+
+    $args = array(
+        'id' => 'sb_theme_smtp_email_' . $key,
+        'name' => SB_Option::build_sb_option_name(array('smtp_email', $key)),
+        'value' => $value,
+        'field_class' => 'width-medium',
+        'type' => 'radio',
+        'label' => __('Mã hóa SSL', 'sb-theme'),
+        'option_value' => 'ssl',
+        'container_class' => 'margin-top-10'
+    );
+    SB_Field::text($args);
+
+    $args = array(
+        'id' => 'sb_theme_smtp_email_' . $key,
+        'name' => SB_Option::build_sb_option_name(array('smtp_email', $key)),
+        'value' => $value,
+        'field_class' => 'width-medium',
+        'type' => 'radio',
+        'label' => __('Mã hóa TLS', 'sb-theme'),
+        'option_value' => 'tls',
+        'container_class' => 'margin-top-10'
+    );
+    SB_Field::text($args);
+}
+
+function sb_theme_smpt_email_info_callback() {
+    $key = 'smtp_host';
+    $value = SB_Option::get_option_by_key(array('smtp_email', $key));
+    $args = array(
+        'id' => 'sb_theme_smtp_email_' . $key,
+        'name' => SB_Option::build_sb_option_name(array('smtp_email', $key)),
+        'value' => $value,
+        'description' => __('Địa chỉ SMTP server, ví dụ: smtp.gmail.com.'),
+        'field_class' => 'width-medium',
+        'placeholder' => 'SMTP host'
+    );
+    SB_Field::text($args);
+
+    $key = 'smtp_port';
+    $value = SB_Option::get_option_by_key(array('smtp_email', $key));
+    if(empty($value)) {
+        $value = 25;
+    }
+    $args = array(
+        'id' => 'sb_theme_smtp_email_' . $key,
+        'name' => SB_Option::build_sb_option_name(array('smtp_email', $key)),
+        'value' => $value,
+        'description' => __('Port sử dụng gửi mail bằng SMTP.'),
+        'field_class' => 'width-medium',
+        'placeholder' => 'SMTP port',
+        'container_class' => 'margin-top-10'
+    );
+    SB_Field::text($args);
+}
+
+function sb_theme_smpt_email_enabled_callback() {
+    $key = 'enabled';
+    $value = SB_Option::get_option_by_key(array('smtp_email', $key));
+    $value = SB_Option::check_switch_value($value, 0);
+    $args = array(
+        'id' => 'sb_theme_smtp_email_' . $key,
+        'name' => SB_Option::build_sb_option_name(array('smtp_email', $key)),
+        'value' => $value,
+        'description' => __('Kích hoạt chức năng gửi mail thông qua SMTP.'),
+        'field_class' => 'width-medium'
+    );
+    SB_Field::switch_button($args);
+}
+
+function sb_theme_smpt_email_from_email_callback() {
+    $key = 'from_email';
+    $value = SB_Option::get_option_by_key(array('smtp_email', $key));
+    if(empty($value)) {
+        $value = SB_Option::get_admin_email();
+    }
+    $args = array(
+        'id' => 'sb_theme_smtp_email_' . $key,
+        'name' => SB_Option::build_sb_option_name(array('smtp_email', $key)),
+        'value' => $value,
+        'description' => __('Thiết lập địa chỉ email của người gửi mail, nếu để trống thì địa chỉ email quản trị blog sẽ được sử dụng.'),
+        'field_class' => 'width-medium'
+    );
+    SB_Field::text($args);
+}
+
+function sb_theme_smpt_email_from_name_callback() {
+    $key = 'from_name';
+    $value = SB_Option::get_option_by_key(array('smtp_email', $key));
+    if(empty($value)) {
+        $value = get_bloginfo('name');
+    }
+    $args = array(
+        'id' => 'sb_theme_smtp_email_' . $key,
+        'name' => SB_Option::build_sb_option_name(array('smtp_email', $key)),
+        'value' => $value,
+        'description' => __('Thiết lập tên người gửi mail, nếu để trống thì tên của blog sẽ được sử dụng.'),
+        'field_class' => 'width-medium'
+    );
+    SB_Field::text($args);
+}
 
 function sb_theme_setting_field() {
     SB_Admin_Custom::add_section('sb_theme_setting_section', __('SB Theme options page', 'sb-theme'), 'sb_theme');
@@ -101,7 +300,7 @@ function sb_theme_default_language_callback() {
 }
 
 function sb_theme_logo_callback() {
-    $value = SB_Option::get_logo_url();
+    $value = SB_Option::get_logo_detail();
     $args = array(
         'id' => 'sb_theme_logo',
         'name' => 'sb_options[theme][logo]',
@@ -155,19 +354,46 @@ function sb_theme_favicon_callback() {
     SB_Field::media_image($args);
 }
 
+/*
+ * Thêm trường cài đặt vào tab Membership trong bảng điều khiển nâng cao
+ */
 function sb_theme_advanced_setting_membership_hook() {
-    $args = array(
-        'id' => 'sb_theme_social_login',
-        'name' => SB_Option::build_sb_theme_option_name(array('social_login')),
-    );
+    sb_theme_get_content('sb-theme-admin-advanced-setting-membership');
 }
 add_action('sb_theme_advanced_setting_membership_field', 'sb_theme_advanced_setting_membership_hook');
 
+/*
+ * Thêm trường cài đặt vào tab Membership trong bảng điều khiển nâng cao
+ */
+function sb_theme_advanced_setting_writing_hook() {
+    sb_theme_get_content('sb-theme-admin-advanced-setting-writing');
+}
+add_action('sb_theme_advanced_setting_writing_field', 'sb_theme_advanced_setting_writing_hook');
+
+/*
+ * Thêm trường cài đặt vào tab Membership trong bảng điều khiển nâng cao
+ */
+function sb_theme_advanced_setting_general_hook() {
+    sb_theme_get_content('sb-theme-admin-advanced-setting-general');
+}
+add_action('sb_theme_advanced_setting_general_field', 'sb_theme_advanced_setting_general_hook');
+
+/*
+ * Thêm trường cài đặt vào tab Social Login trong bảng điều khiển nâng cao
+ */
 function sb_theme_advanced_setting_social_login_hook() {
     sb_theme_get_content('sb-theme-admin-advanced-setting-social-login');
 }
 add_action('sb_theme_advanced_setting_social_login_field', 'sb_theme_advanced_setting_social_login_hook');
 
+function sb_theme_checkout_setting_ngan_luong_hook() {
+    sb_theme_get_content('sb-theme-admin-checkout-setting-ngan-luong');
+}
+add_action('sb_theme_checkout_setting_ngan_luong_field', 'sb_theme_checkout_setting_ngan_luong_hook');
+
+/*
+ * Thêm tab chức năng vào bảng cài đặt nâng cao
+ */
 function sb_theme_advanced_setting_tabs_filter($tabs) {
     if(SB_Option::social_login_enabled()) {
         $tabs['social_login'] = array(
@@ -178,6 +404,9 @@ function sb_theme_advanced_setting_tabs_filter($tabs) {
 }
 add_filter('sb_theme_advanced_setting_tabs', 'sb_theme_advanced_setting_tabs_filter');
 
+/*
+ * Kiểm tra thông tin cài đặt người dùng nhập trước khi lưu vào cơ sở dữ liệu
+ */
 function sb_theme_sanitize($input) {
     return $input;
 }

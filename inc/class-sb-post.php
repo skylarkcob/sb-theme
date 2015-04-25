@@ -6,7 +6,7 @@ class SB_Post {
 
     public static function get_all_media_images($post_id) {
         $transient_name = SB_Cache::build_post_media_images_transient_name($post_id);
-        if(false === ($result = get_transient($transient_name))) {
+        if(!SB_Cache::post_images_cache() || false === ($result = get_transient($transient_name))) {
             $result = array();
             $files = get_posts(array('post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image'));
             foreach($files as $file) {
@@ -15,7 +15,9 @@ class SB_Post {
                     array_push($result, $file);
                 }
             }
-            set_transient($transient_name, $result, YEAR_IN_SECONDS);
+            if(SB_Cache::post_images_cache()) {
+                set_transient($transient_name, $result, YEAR_IN_SECONDS);
+            }
         }
         return $result;
     }
@@ -29,13 +31,13 @@ class SB_Post {
             $post_id = get_the_ID();
         }
         $transient_name = SB_Cache::build_post_comment_number_transient_name($post_id);
-        if(false === ($comment_number = get_transient($transient_name))) {
+        if(!SB_Cache::post_comment_count_cache() || false === ($comment_number = get_transient($transient_name))) {
             $comment_number = get_comments_number($post_id);
             if($comment_number == 1) {
                 $comments = SB_Post::get_comments($post_id);
                 $comment_number = count($comments);
             }
-            if(!empty($post_id)) {
+            if(SB_Cache::post_comment_count_cache() && !empty($post_id)) {
                 set_transient($transient_name, $comment_number, DAY_IN_SECONDS);
             }
         }
@@ -268,7 +270,7 @@ class SB_Post {
             $transient_name = SB_Cache::build_post_thumbnail_url_transient_name($post_id, $size_key);
             $result = get_transient($transient_name);
             $cache = isset($args['cache']) ? $args['cache'] : true;
-            if(false === $result || !SB_PHP::is_image_url($result) || !$cache) {
+            if(!SB_Cache::enabled() || false === $result || !SB_PHP::is_image_url($result) || !$cache) {
                 if(has_post_thumbnail($post_id)) {
                     $thumbnail_id = self::get_thumbnail_id($post_id);
                     $image_path = self::get_file_path($thumbnail_id);
@@ -288,7 +290,7 @@ class SB_Post {
                 if(empty($result)) {
                     $result = SB_Option::get_theme_thumbnail_url();
                 }
-                if($cache && !empty($result) && SB_PHP::is_image_url($result)) {
+                if(SB_Cache::enabled() && $cache && !empty($result) && SB_PHP::is_image_url($result)) {
                     set_transient($transient_name, $result, WEEK_IN_SECONDS);
                 }
             }
@@ -322,7 +324,7 @@ class SB_Post {
             $result = get_transient($trasient_name);
             $image_source = SB_PHP::get_image_source($result);
             $cache = isset($args['cache']) ? $args['cache'] : true;
-            if(false === $result || empty($image_source) || !$cache) {
+            if(!SB_Cache::enabled() || false === $result || empty($image_source) || !$cache) {
                 $width = isset($args['width']) ? $args['width'] : '';
                 $height = isset($args['height']) ? $args['height'] : '';
                 $style = isset($args['style']) ? $args['style'] : '';
@@ -361,7 +363,7 @@ class SB_Post {
                     $thumbnail_image_class .= SB_PHP::add_string_with_space_before($thumbnail_image_class, 'wp-post-image sb-post-image img-responsive thumbnail-image');
                     $result = '<img class="' . $thumbnail_image_class . '" alt="' . get_the_title($post_id) . '" width="' . $width . '" height="' . $height . '" src="' . $thumbnail_url . '" style="' . $style . '" itemprop="image">';
                 }
-                if($cache && !empty($result)) {
+                if(SB_Cache::enabled() && $cache && !empty($result)) {
                     set_transient($trasient_name, $result, WEEK_IN_SECONDS);
                 }
             }
@@ -662,6 +664,33 @@ class SB_Post {
         self::update_meta($post_id, $meta_key, $meta_value);
     }
 
+    public static function build_meta_name($meta_key) {
+        return sb_build_meta_name($meta_key);
+    }
+
+    public static function get_transaction_by_secure_code($secure_code, $args = array()) {
+        $transient_name = SB_Cache::build_transaction_secure_code_transient_name($secure_code);
+        if(false === ($query = get_transient($transient_name))) {
+            $args['post_type'] = 'transaction';
+            $args['post_status'] = 'any';
+            $args['posts_per_page'] = 1;
+            $meta_item = array(
+                'key' => self::build_meta_name('ngan_luong_secure_code'),
+                'value' => $secure_code
+            );
+            $args = SB_Query::build_meta_query($meta_item, $args);
+            $query = SB_Query::get($args);
+            set_transient($transient_name, $query, DAY_IN_SECONDS);
+        }
+        return $query;
+    }
+
+    public static function get_private_post_types() {
+        global $sb_theme_private_post_types;
+        $sb_theme_private_post_types = (array)$sb_theme_private_post_types;
+        return apply_filters('sb_theme_private_post_types', $sb_theme_private_post_types);
+    }
+
     public static function comment_closed($post_id) {
         $result = false;
         if(!comments_open($post_id)) {
@@ -762,7 +791,7 @@ class SB_Post {
     public static function get_menu_custom_items() {
         $result = array();
         $transient_name = SB_Cache::build_custom_menu_transient_name();
-        if(false === ($result = get_transient($transient_name))) {
+        if(!SB_Cache::enabled() || false === ($result = get_transient($transient_name))) {
             $menus = wp_get_nav_menus();
             if(!is_array($menus)) {
                 return;
@@ -778,7 +807,7 @@ class SB_Post {
                     }
                 }
             }
-            if(count($result) > 0) {
+            if(SB_Cache::enabled() && count($result) > 0) {
                 set_transient($transient_name, $result, YEAR_IN_SECONDS);
             }
         }
@@ -918,11 +947,11 @@ class SB_Post {
     public static function get_tag_list_html($post_id, $before = '', $sep = ', ', $after = '') {
         $taxonomy = 'post_tag';
         $transient_name = SB_Cache::build_post_term_list_transient_name($post_id, $taxonomy);
-        if(false === ($term_list = get_transient($transient_name))) {
+        if(!SB_Cache::enabled() || false === ($term_list = get_transient($transient_name))) {
             $before = '<span class="entry-terms ' . $taxonomy . '" itemprop="keywords"><span class="entry-utility-prep">' . SB_Message::get_category() . ': </span>';
             $after = '</span>';
             $term_list = get_the_tag_list($before, ', ', $after, $post_id);
-            if(!is_wp_error($term_list)) {
+            if(SB_Cache::enabled() && !is_wp_error($term_list)) {
                 set_transient($transient_name, $term_list, 4 * WEEK_IN_SECONDS);
             }
         }
@@ -935,11 +964,11 @@ class SB_Post {
 
     public static function get_term_list_html($post_id, $taxonomy, $before = '', $sep = ', ', $after = '') {
         $transient_name = SB_Cache::build_post_term_list_transient_name($post_id, $taxonomy);
-        if(false === ($term_list = get_transient($transient_name))) {
+        if(!SB_Cache::enabled() || false === ($term_list = get_transient($transient_name))) {
             $before = '<span class="cat-links entry-terms ' . $taxonomy . '" itemprop="articleSection"><span class="entry-utility-prep">' . SB_Message::get_category() . ': </span>';
             $after = '</span>';
             $term_list = get_the_term_list($post_id, $taxonomy, $before, ', ', $after);
-            if(!is_wp_error($term_list)) {
+            if(SB_Cache::enabled() && !is_wp_error($term_list)) {
                 set_transient($transient_name, $term_list, 4 * WEEK_IN_SECONDS);
             }
         }

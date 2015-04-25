@@ -155,8 +155,8 @@ body.login div#login h1 a {
     margin-top: 10px;
 }
 
-.sb-theme-login.sb-theme-action-lostpassword #login_error {
-    padding-top: 1px;
+.sb-theme-login.sb-theme-action-lostpassword #login_error strong:before {
+    display: inline-block;
 }
 
 .sb-theme-login #login {
@@ -265,6 +265,26 @@ body.login div#login h1 a {
     box-shadow: -1px 0 0 0 #1a89a8 inset;
     margin-left: 3px;
     padding-right: 7px;
+}
+
+.sb-theme-login .sb-captcha-image {
+    cursor: pointer;
+}
+
+.sb-theme-login .sb-theme-extra {
+    overflow: hidden;
+    padding: 10px 0 15px;
+}
+
+.sb-theme-login input.captcha-code {
+    float: left;
+    font-size: 13px;
+    height: auto;
+    margin-bottom: 0;
+    margin-right: 10px;
+    margin-top: 0;
+    max-width: 150px;
+    padding: 5px 10px;
 }
 
 @media screen and (max-width:769px) {

@@ -24,6 +24,14 @@ class SB_Message {
         return '';
     }
 
+    public static function empty_captcha_error() {
+        return new WP_Error('empty_captcha_code', __('Bạn chưa nhập mã bảo mật.', 'sb-theme'));
+    }
+
+    public static function invalid_captcha_error() {
+        return new WP_Error('invalid_captcha_code', __('Mã bảo mật bạn nhập không đúng.', 'sb-theme'));
+    }
+
 	public static function get_browser_not_support_javascript() {
 		$text = __('Options page will not work if your browser doesn\'t support javascript!', 'sb-theme');
 		return apply_filters('sb_theme_browser_not_support_javascript_text', $text);
@@ -126,8 +134,12 @@ class SB_Message {
         SB_Core::admin_notices_message(array('message' => $text, 'is_error' => true));
     }
 
+    public static function admin_notices_message($args = array()) {
+        SB_Core::admin_notices_message($args);
+    }
+
     public static function login_error_message($text) {
-        return '<div id="login_error"> <strong>' . __('ERROR', 'sb-theme') . '</strong>: ' . $text . '</div>';
+        return '<div id="login_error"> <strong>' . __('Lỗi', 'sb-theme') . '</strong>: ' . $text . '</div>';
     }
 
     public static function connect_google_error() {
@@ -163,5 +175,15 @@ class SB_Message {
     public static function email_exists_please_login() {
         $message = apply_filters('sb_theme_email_exists_please_login_text', __('Địa chỉ email đã tồn tài, xin vui lòng đăng nhập.'));
         return $message;
+    }
+
+    public static function warning_missing_really_simple_captcha_plugin() {
+        if(SB_Option::use_login_captcha() && !SB_Captcha::required_plugins_installed()) {
+            $args = array(
+                'message' => sprintf(__('Để chức năng captcha được hoạt động, bạn phải cài đặt và kích hoạt plugin %s.', 'sb-theme'), '<a target="_blank" href="https://wordpress.org/plugins/really-simple-captcha/">Really Simple CAPTCHA</a>'),
+                'type' => 'warning'
+            );
+            self::admin_notices_message($args);
+        }
     }
 }

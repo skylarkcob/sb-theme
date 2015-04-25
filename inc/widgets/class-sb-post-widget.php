@@ -84,7 +84,7 @@ class SB_Post_Widget extends WP_Widget {
 	}
 	
 	public function widget($args, $instance) {
-        if(false === ($widget_html = get_transient(SB_Cache::build_widget_transient_name($this->id)))) {
+        if(!SB_Cache::enabled() || false === ($widget_html = get_transient(SB_Cache::build_widget_transient_name($this->id)))) {
             $arr_tmp = $args;
             $number = empty($instance['number']) ? $this->default_number : absint($instance['number']);
             $title  = apply_filters('widget_title', empty($instance['title']) ? '' : $instance['title'], $instance, $this->id_base);
@@ -248,7 +248,9 @@ class SB_Post_Widget extends WP_Widget {
 
                 $widget_html .= $args['after_widget'];
 
-                set_transient(SB_Cache::build_widget_transient_name($this->id), $widget_html, 4 * WEEK_IN_SECONDS);
+                if(SB_Cache::widget_cache()) {
+                    set_transient(SB_Cache::build_widget_transient_name($this->id), $widget_html, 4 * WEEK_IN_SECONDS);
+                }
             }
         }
         echo $widget_html;
