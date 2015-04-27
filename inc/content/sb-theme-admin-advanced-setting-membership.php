@@ -7,6 +7,8 @@ $args = array(
 SB_Admin_Custom::row_setting_field($args);
 
 function sb_theme_advanced_setting_membership_paid_membership() {
+    $base_id = 'advanced';
+    $base_option_name = 'sbt_advanced';
     $tab_base_option_name = 'membership';
 
     $key = 'use_paid_membership';
@@ -35,9 +37,34 @@ function sb_theme_advanced_setting_membership_paid_membership() {
         );
         SB_Field::text($args);
 
+        $key = 'post_cost_coin';
+        $value = SB_Option::get_advanced_membership_setting($key);
+        $value = absint($value);
+        $post_cost_coin = $value;
+        if($post_cost_coin < 1) {
+            $post_cost_coin = 1;
+        }
+        $args = array(
+            'id' => 'sb_theme_advanced_membership_' . $key,
+            'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
+            'label' => __('Chi phí đăng bài:', 'sb-theme'),
+            'value' => $post_cost_coin,
+            'type' => 'number',
+            'field_class' => 'width-small',
+            'attributes' => array(
+                'min' => 1
+            ),
+            'container_class' => 'margin-top-10',
+            'description' => __('Số coin được trừ vào tài khoản thành viên cho mỗi bài viết được đăng.')
+        );
+        SB_Field::text($args);
+
         $key = 'minimum_coin_can_post';
         $value = SB_Option::get_advanced_membership_setting($key);
         $value = absint($value);
+        if($value < $post_cost_coin) {
+            $value = $post_cost_coin;
+        }
         $args = array(
             'id' => 'sb_theme_advanced_membership_' . $key,
             'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
@@ -70,7 +97,7 @@ function sb_theme_advanced_setting_membership_paid_membership() {
         SB_Field::convert_rate($args);
 
         $key = 'minimum_coin_add_fund';
-        $value = SB_Membership::get_minimum_coind_add_fund($coin_rate);
+        $value = SB_Membership::get_minimum_coin_add_fund($coin_rate);
         $args = array(
             'id' => 'sb_theme_advanced_membership_' . $key,
             'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
@@ -86,5 +113,18 @@ function sb_theme_advanced_setting_membership_paid_membership() {
             'description' => __('Nhập số lượng Coin tối thiểu cho người dùng cần nạp.')
         );
         SB_Field::text($args);
+
+        $key = 'add_coin_page';
+        $value = SB_Option::get_advanced_membership_setting($key);
+        $args = array(
+            'id' => 'sb_theme_' . $base_id . '_' . $tab_base_option_name . '_' . $key,
+            'name' => SB_Option::build_sb_option_name(array($base_option_name, $tab_base_option_name, $key)),
+            'label' => __('Nạp tài khoản:', 'sb-theme'),
+            'value' => $value,
+            'field_class' => 'width-medium',
+            'container_class' => 'margin-top-10',
+            'description' => __('Trang nạp coin cho tài khoản.')
+        );
+        SB_Field::select_page($args);
     }
 }

@@ -21,7 +21,7 @@ if(sb_theme_use_old_version()) {
     }
 } else {
     /** Khai báo phiên bản hiện tại của SB Theme */
-    define( 'SB_THEME_VERSION', '1.8.8' );
+    define( 'SB_THEME_VERSION', '2.0.2' );
 
     /** Khai báo đường dẫn đến thư mục wp-admin */
     define( 'SB_THEME_WP_ADMIN_PATH', ABSPATH . 'wp-admin' );

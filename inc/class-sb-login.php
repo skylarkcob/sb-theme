@@ -85,28 +85,28 @@ class SB_Login {
         $redirect_uri = isset($this->facebook['callback_url']) ? $this->facebook['callback_url'] : '';
         $redirect_uri = esc_url(remove_query_arg(array('redirect_to'), $redirect_uri));
         if(version_compare(PHP_VERSION, '5.4', '<')) {
-            $facebook = new Facebook(
+            $sb_facebook_v3 = new Facebook(
                 array(
                     'appId' => $app_id,
                     'secret' => $app_secret,
                     'cookie' => true
                 )
             );
-            $user = $facebook->getUser();
+            $user = $sb_facebook_v3->getUser();
             if($user) {
-                $user_profile = $facebook->api('/me');
-                $this->facebook['access_token'] = $facebook->getAccessToken();
+                $user_profile = $sb_facebook_v3->api('/me');
+                $this->facebook['access_token'] = $sb_facebook_v3->getAccessToken();
                 $params = array(
                     'next' => add_query_arg(array('logout' => 1), $redirect_uri),
-                    'access_token' => $facebook->getAccessToken()
+                    'access_token' => $sb_facebook_v3->getAccessToken()
                 );
-                $this->facebook['logout_url'] = $facebook->getLogoutUrl($params);
+                $this->facebook['logout_url'] = $sb_facebook_v3->getLogoutUrl($params);
                 $this->facebook['profile'] = $user_profile;
                 $this->facebook['logged_in'] = true;
                 $this->facebook['email'] = isset($user['email']) ? $user['email'] : '';
                 $result = true;
             } else {
-                $this->facebook['login_url'] = $facebook->getLoginUrl(
+                $this->facebook['login_url'] = $sb_facebook_v3->getLoginUrl(
                     array(
                         'redirect_uri' => $redirect_uri,
                         'scope' => 'friends_likes,email,publish_stream,status_update,offline_access'

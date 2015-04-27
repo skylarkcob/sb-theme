@@ -51,7 +51,7 @@ class SB_Cache {
 
     public static function post_images_cache() {
         $key = 'post_images_cache_enabled';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::get_advanced_setting('general', $key);
         $value = SB_Option::check_switch_value($value, 0);
         return self::cache_result($value);
     }
@@ -65,28 +65,28 @@ class SB_Cache {
 
     public static function post_comment_count_cache() {
         $key = 'post_comment_count_cache_enabled';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::get_advanced_setting('general', $key);
         $value = SB_Option::check_switch_value($value, 0);
         return self::cache_result($value);
     }
 
     public static function query_cache() {
         $key = 'query_cache_enabled';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::get_advanced_setting('general', $key);
         $value = SB_Option::check_switch_value($value, 0);
         return self::cache_result($value);
     }
 
     public static function menu_cache() {
         $key = 'menu_cache_enabled';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::get_advanced_setting('general', $key);
         $value = SB_Option::check_switch_value($value, 0);
         return self::cache_result($value);
     }
 
     public static function widget_cache() {
         $key = 'widget_cache_enabled';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::get_advanced_setting('general', $key);
         $value = SB_Option::check_switch_value($value, 0);
         return self::cache_result($value);
     }

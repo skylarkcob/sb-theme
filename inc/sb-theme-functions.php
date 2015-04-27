@@ -726,6 +726,7 @@ function sb_login_page_user_signup($args = array()) {
         'email' => $email,
         'password' => $password
     );
+    $user_args = wp_parse_args($user_args, $args);
     $user_id = SB_User::add($user_args);
     if($user_id > 0) {
         $user = SB_User::get_by('id', $user_id);
@@ -986,6 +987,9 @@ function sb_theme_social_login_facebook_check_data_back() {
                     'check_activation' => false,
                     'force_login' => true
                 );
+                if(SB_Membership::is_paid_membership_enabled()) {
+                    $args['role'] = 'standard';
+                }
                 $result = sb_login_page_user_signup($args);
                 if($result) {
                     $user = SB_User::get_by('email', $user_email);

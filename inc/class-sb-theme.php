@@ -305,6 +305,24 @@ class SB_Theme {
         return $sb_menu;
     }
 
+    public static function destroy_social_login() {
+        global $sb_facebook_v3;
+        unset($_SESSION['access_token']);
+        if(is_object($sb_facebook_v3) && method_exists($sb_facebook_v3, 'destroySession')) {
+            $sb_facebook_v3->destroySession();
+        }
+        session_destroy();
+        if(isset($_SERVER['HTTP_COOKIE'])) {
+            $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+            foreach($cookies as $cookie) {
+                $parts = explode('=', $cookie);
+                $name = trim($parts[0]);
+                setcookie($name, '', time()-1000);
+                setcookie($name, '', time()-1000, '/');
+            }
+        }
+    }
+
     public static function the_mobile_menu($args = array()) {
         $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
         $locations = SB_Core::get_menu_location();

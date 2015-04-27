@@ -839,6 +839,15 @@ class SB_Core {
 	    }
     }
 
+    public static function get_admin_edit_page_url() {
+        $post_type = isset($_GET['post_type']) ? $_GET['post_type'] : '';
+        $edit_url = admin_url('edit.php');
+        if(!empty($post_type)) {
+            $edit_url = add_query_arg(array('post_type' => $post_type), $edit_url);
+        }
+        return $edit_url;
+    }
+
     public static function get_redirect_url() {
         if(is_single() || is_page()) {
             return get_permalink();

@@ -11,8 +11,27 @@ class SB_Membership {
     }
 
     public static function build_read_only_capabilities() {
-        $subscriber_role = self::get_role('subscriber');
-        return $subscriber_role->capabilities;
+        return self::get_capabilities_by_role('subscriber');
+    }
+
+    public static function get_capabilities_by_role($role_name, $check_default = true) {
+        $caps = array();
+        if($check_default) {
+            $options = SB_Option::get();
+            $wp_defaults = isset($options['wp_default']) ? $options['wp_default'] : '';
+            $roles = isset($wp_defaults['roles']) ? $wp_defaults['roles'] : '';
+            if(is_array($roles)) {
+                $role = isset($roles[$role_name]) ? $roles[$role_name] : '';
+                $caps = isset($role['capabilities']) ? $role['capabilities'] : '';
+            }
+        }
+        if(empty($caps)) {
+            $role = self::get_role($role_name);
+            if(is_object($role)) {
+                $caps = $role->capabilities;
+            }
+        }
+        return $caps;
     }
 
     public static function get_paid_membership_free_post_number() {
@@ -84,6 +103,21 @@ class SB_Membership {
         $paid_groups = self::get_paid_membership_groups();
         foreach($paid_groups as $key => $data) {
             remove_role($key);
+        }
+    }
+
+    public static function init_roles_and_capabilities() {
+        self::regenerate_roles();
+        self::update_all_role();
+    }
+
+    public static function regenerate_roles($force = false) {
+        if($force || self::need_to_regenerate_role()) {
+            self::remove_all_role();
+            if(self::is_paid_membership_enabled()) {
+                self::add_default_paid_member_group();
+            }
+            self::add_default_roles();
         }
     }
 
@@ -197,17 +231,6 @@ class SB_Membership {
         return $result;
     }
 
-    public static function init_roles_and_capabilities() {
-        if(self::need_to_regenerate_role()) {
-            self::remove_all_role();
-            if(self::is_paid_membership_enabled()) {
-                self::add_default_paid_member_group();
-            }
-            self::add_default_roles();
-        }
-        self::update_all_role();
-    }
-
     public static function update_all_role() {
 
         $editor = get_role('editor');
@@ -247,6 +270,7 @@ class SB_Membership {
                 }
             }
         }
+        self::update_limit_post_roles();
     }
 
     public static function get_free_post_number() {
@@ -263,7 +287,7 @@ class SB_Membership {
         return $value;
     }
 
-    public static function get_minimum_coind_add_fund($coin_rate = '') {
+    public static function get_minimum_coin_add_fund($coin_rate = '') {
         $key = 'minimum_coin_add_fund';
         $value = SB_Option::get_advanced_membership_setting($key);
         $value = absint($value);
@@ -292,7 +316,22 @@ class SB_Membership {
         $key = 'minimum_coin_can_post';
         $value = SB_Option::get_advanced_membership_setting($key);
         $value = absint($value);
+        $post_coin_cost = self::get_post_coin_cost();
+        if($value < $post_coin_cost) {
+            $value = $post_coin_cost;
+        }
         return apply_filters('sb_theme_paid_membership_minimum_coin_can_post', $value);
+    }
+
+    public static function can_user_write_paid_post($user_id) {
+        $minimum_coin_can_post = self::get_minimum_coin_can_post();
+        $pass_free_post = (SB_User::count_all_post($user_id) >= self::get_free_post_number()) ? true : false;
+        $user_coin = SB_User::get_coin($user_id);
+        $post_coin_cost = self::get_post_coin_cost();
+        if($pass_free_post && $user_coin < $minimum_coin_can_post && $user_coin < $post_coin_cost) {
+            return false;
+        }
+        return true;
     }
 
     public static function get_add_coin_url() {
@@ -308,6 +347,17 @@ class SB_Membership {
         }
         $url = apply_filters('sb_theme_add_coin_url', $url);
         return $url;
+    }
+
+    public static function get_post_coin_cost() {
+        $key = 'post_cost_coin';
+        $value = SB_Option::get_advanced_membership_setting($key);
+        $value = absint($value);
+        $post_cost_coin = $value;
+        if($post_cost_coin < 1) {
+            $post_cost_coin = 1;
+        }
+        return $post_cost_coin;
     }
 
     public static function prevent_delete_published_posts($roles = array()) {
@@ -328,12 +378,16 @@ class SB_Membership {
 
     public static function prevent_cap($role, $cap) {
         $role = self::get_role($role);
-        $role->remove_cap($cap);
+        if(is_object($role) && !is_wp_error($role)) {
+            $role->remove_cap($cap);
+        }
     }
     
     public static function allow_cap($role, $cap) {
         $role = self::get_role($role);
-        $role->add_cap($cap);
+        if(is_object($role) && !is_wp_error($role)) {
+            $role->add_cap($cap);
+        }
     }
 
     public static function prevent($roles = array(), $cap) {
@@ -373,6 +427,7 @@ class SB_Membership {
 
     public static function get_paid_role_ids() {
         $roles = array(
+            'standard',
             'golden',
             'emerald',
             'sapphire',
@@ -392,7 +447,7 @@ class SB_Membership {
     }
 
     public static function get_paid_membership_groups() {
-        $capabilities = self::build_read_only_capabilities();
+        $capabilities = self::get_capabilities_by_role('author');
         $default_groups = array(
             'standard' => array(
                 'name' => __('Standard', 'sb-theme'),

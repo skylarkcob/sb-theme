@@ -177,7 +177,7 @@ add_action('login_enqueue_scripts', 'sb_theme_login_enqueue_scripts');
  * Hàm thực hiện sau khi người dùng đăng xuất khỏi hệ thống
  */
 function sb_theme_logout_hook() {
-    unset($_SESSION['access_token']);
+    SB_Theme::destroy_social_login();
     do_action('sb_theme_logout');
 }
 add_action('wp_logout', 'sb_theme_logout_hook');
@@ -260,48 +260,42 @@ add_action('sb_theme_lost_password_form', 'sb_theme_all_login_form_hook');
  * Hạn chế quyền hạn đăng bài, chỉnh sửa bài viết của các nhóm người dùng
  */
 function sb_theme_custom_init_roles() {
-    SB_Membership::update_limit_post_roles();
+    SB_Membership::regenerate_roles(true);
 }
 add_action('sb_theme_after_switch_theme', 'sb_theme_custom_init_roles');
 add_action('sb_theme_upgrade', 'sb_theme_custom_init_roles');
-add_action('sb_theme_admin_init', 'sb_theme_custom_init_roles');
 
-/*
- * Xóa tất cả đường link trong nội dung bài viết
- */
-function sb_theme_remove_all_link_from_post_content($content) {
-    $current_user = SB_User::get_current();
-    if(!SB_User::is_admin($current_user->ID) && in_array(SB_User::get_current_role(), SB_Membership::get_paid_role_ids())) {
-        $content = SB_PHP::remove_all_link($content);
-    }
-    return $content;
+function sb_theme_regenerate_roles_hook() {
+    SB_Membership::regenerate_roles();
 }
-add_filter('sb_theme_pre_save_post_content', 'sb_theme_remove_all_link_from_post_content');
+add_action('sb_theme_admin_init', 'sb_theme_regenerate_roles_hook');
 
 /*
  * Kiểm tra số lượng bài viết miễn phí của người dùng
  */
 function sb_theme_check_user_post_before_add_new() {
-    $current_user = SB_User::get_current();
-    $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_limit_free_post');
     if(isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == 'post-new.php') {
         if(in_array(SB_User::get_current_role(), SB_Membership::get_paid_role_ids())) {
+            $current_user = SB_User::get_current();
             if(!SB_User::is_admin($current_user->ID)) {
-                if(SB_User::count_all_post($current_user->ID) >= SB_Membership::get_free_post_number()) {
-                    set_transient($transient_name, 1, MINUTE_IN_SECONDS);
-                    $edit_url = admin_url('edit.php');
-                    wp_redirect($edit_url);
-                    exit;
-                }
-                if(SB_Membership::get_minimum_coin_can_post() > 0) {
-                    $user_coin = SB_User::get_coin($current_user->ID);
-                    if($user_coin < SB_Membership::get_minimum_coin_can_post()) {
+                $minimum_coin_can_post = SB_Membership::get_minimum_coin_can_post();
+                $pass_free_post = (SB_User::count_all_post($current_user->ID) >= SB_Membership::get_free_post_number()) ? true : false;
+                $user_coin = SB_User::get_coin($current_user->ID);
+                if($minimum_coin_can_post > 0 && $pass_free_post) {
+                    if($user_coin < $minimum_coin_can_post) {
                         $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_minimum_coin_can_post');
                         set_transient($transient_name, 1, MINUTE_IN_SECONDS);
-                        $edit_url = admin_url('edit.php');
+                        $edit_url = SB_Core::get_admin_edit_page_url();
                         wp_redirect($edit_url);
                         exit;
                     }
+                }
+                if($pass_free_post && !SB_Membership::can_user_write_paid_post($current_user->ID)) {
+                    $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_limit_free_post');
+                    set_transient($transient_name, 1, MINUTE_IN_SECONDS);
+                    $edit_url = SB_Core::get_admin_edit_page_url();
+                    wp_redirect($edit_url);
+                    exit;
                 }
             }
         }
@@ -754,15 +748,18 @@ add_action('sb_theme_widgets_init', 'sb_tab_widget_load_sidebar');
 /*
  * Chạy hàm khi lưu bài viết
  */
-function sb_theme_save_post_hook( $post_id ) {
+function sb_theme_save_post_hook( $post_id, $post, $update ) {
+    if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
     if ( wp_is_post_revision( $post_id ) ) {
         return;
     }
     SB_Core::delete_transient('sb_theme_post_' . $post_id);
-    do_action('sb_theme_update_post', $post_id);
-    do_action('sb_theme_save_post', $post_id);
+    do_action('sb_theme_update_post', $post_id, $post, $update);
+    do_action('sb_theme_save_post', $post_id, $post, $update);
 }
-add_action( 'save_post', 'sb_theme_save_post_hook' );
+add_action( 'save_post', 'sb_theme_save_post_hook', 10, 3 );
 
 /*
  * Chạy hàm khi xóa bài viết
@@ -781,6 +778,39 @@ function sb_theme_post_status_transitions_hook( $new_status, $old_status, $post 
     }
 }
 add_action('transition_post_status', 'sb_theme_post_status_transitions_hook', 10, 3);
+
+function sb_theme_subtract_published_post_coin($post_id, $post, $update) {
+    $user = SB_User::get_by('id', $post->post_author);
+    if(SB_User::is($user) && in_array(SB_User::get_current_role($user), SB_Membership::get_paid_role_ids())) {
+        $current_user = $user;
+        if(!SB_User::is_admin($current_user->ID)) {
+            $minimum_coin_can_post = SB_Membership::get_minimum_coin_can_post();
+            $pass_free_post = (SB_User::count_all_post($current_user->ID) >= SB_Membership::get_free_post_number()) ? true : false;
+            if($minimum_coin_can_post > 0 && $pass_free_post) {
+                $user_coin = SB_User::get_coin($current_user->ID);
+                if($user_coin < $minimum_coin_can_post) {
+                    $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_minimum_coin_can_post');
+                    set_transient($transient_name, 1, MINUTE_IN_SECONDS);
+                    $edit_url = SB_Core::get_admin_edit_page_url();
+                    wp_redirect($edit_url);
+                    exit;
+                }
+            }
+            if($pass_free_post && !SB_Membership::can_user_write_paid_post($user->ID)) {
+                $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_limit_free_post');
+                set_transient($transient_name, 1, MINUTE_IN_SECONDS);
+                $edit_url = SB_Core::get_admin_edit_page_url();
+                wp_redirect($edit_url);
+                exit;
+            }
+            if('publish' == $post->post_status) {
+                $post_cost_coin = SB_Membership::get_post_coin_cost();
+                SB_User::minus_coin($user->ID, $post_cost_coin);
+            }
+        }
+    }
+}
+add_action('sb_theme_save_post', 'sb_theme_subtract_published_post_coin', 10, 3);
 
 /*
  * Chạy hàm khi bài viết được đăng
@@ -1115,6 +1145,18 @@ function sb_theme_author_view_only_own_post( $wp_query ) {
     apply_filters('sb_theme_parse_query', $wp_query);
 }
 add_filter('parse_query', 'sb_theme_author_view_only_own_post');
+
+/*
+ * Xóa tất cả đường link trong nội dung bài viết
+ */
+function sb_theme_remove_all_link_from_post_content($content) {
+    $current_user = SB_User::get_current();
+    if(!SB_User::is_admin($current_user->ID) && in_array(SB_User::get_current_role(), SB_Membership::get_paid_role_ids())) {
+        $content = SB_PHP::remove_all_link($content);
+    }
+    return $content;
+}
+add_filter('sb_theme_pre_save_post_content', 'sb_theme_remove_all_link_from_post_content');
 
 /*
  * Lọc nội dung bài viết trước khi lưu vào cơ sở dữ liệu
