@@ -16,12 +16,10 @@ function sb_theme_use_old_version_update() {
 add_action('admin_init', 'sb_theme_use_old_version_update');
 
 if(sb_theme_use_old_version()) {
-    if(file_exists(get_template_directory() . '/sb-theme/old/sb-theme.php')) {
-        require get_template_directory() . '/sb-theme/old/sb-theme.php';
-    }
+    require get_template_directory() . '/sb-theme/old/sb-theme.php';
 } else {
     /** Khai báo phiên bản hiện tại của SB Theme */
-    define( 'SB_THEME_VERSION', '2.0.2' );
+    define( 'SB_THEME_VERSION', '2.0.3' );
 
     /** Khai báo đường dẫn đến thư mục wp-admin */
     define( 'SB_THEME_WP_ADMIN_PATH', ABSPATH . 'wp-admin' );
