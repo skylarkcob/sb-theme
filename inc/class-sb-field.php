@@ -532,9 +532,12 @@ class SB_Field {
 
     public static function captcha($args = array()) {
         SB_Core::the_captcha($args);
-        $args['placeholder'] = __('Nhập mã bảo mật', 'sb-theme');
+        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : __('Nhập mã bảo mật', 'sb-theme');
+        $args['placeholder'] = $placeholder;
         $args['before'] = '';
-        $args['field_class'] = 'captcha-code';
+        $field_class = isset($args['field_class']) ? $args['field_class'] : '';
+        $field_class = SB_PHP::add_string_with_space_before($field_class, 'captcha-code');
+        $args['field_class'] = $field_class;
         self::text($args);
     }
 

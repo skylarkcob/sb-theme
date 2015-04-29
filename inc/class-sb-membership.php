@@ -14,6 +14,12 @@ class SB_Membership {
         return self::get_capabilities_by_role('subscriber');
     }
 
+    public static function use_sb_login_page() {
+        $result = sb_login_page_use_sb_login();
+        $result = apply_filters('sb_theme_use_sb_login_page', $result);
+        return $result;
+    }
+
     public static function get_capabilities_by_role($role_name, $check_default = true) {
         $caps = array();
         if($check_default) {

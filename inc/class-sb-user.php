@@ -529,7 +529,10 @@ class SB_User {
             $user = get_user_by('id', $user_id);
             self::remove_all_role($user);
             if(empty($role)) {
-                $role = 'subscriber';
+                $role = get_option('default_role');
+                if(empty($role)) {
+                    $role = 'subscriber';
+                }
             }
             $user->add_role($role);
             $result = $user_id;

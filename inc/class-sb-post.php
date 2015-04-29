@@ -22,6 +22,21 @@ class SB_Post {
         return $result;
     }
 
+    public static function get_template_name($page_id) {
+        return self::get_meta($page_id, '_wp_page_template');
+    }
+
+    public static function get_status($post_id) {
+        return get_post_status($post_id);
+    }
+
+    public static function is_published($post_id) {
+        if('publish' == self::get_status($post_id)) {
+            return true;
+        }
+        return false;
+    }
+
     public static function get_media_url($media_id) {
         return wp_get_attachment_url($media_id);
     }

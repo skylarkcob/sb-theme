@@ -584,6 +584,11 @@ input:focus:-ms-input-placeholder { color:transparent; }
 .sb-accounts .sb-captcha img.captcha-code {
     border: 1px solid #ddd;
 }
+
+img.sb-captcha-image {
+    cursor: pointer;
+}
+
 .sb-accounts .sb-captcha img.reload {
     border-radius: 5px;
     cursor: pointer;
@@ -1777,7 +1782,7 @@ ol.guides li a:hover{
 /* ================= Center ajax loading ================= */
 
 .sb-ajax-loader.center {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.65);
     height: 100%;
     left: 0;
     position: fixed;

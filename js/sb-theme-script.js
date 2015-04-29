@@ -141,23 +141,26 @@ var sb_password_strength,
 
     // Change captcha image
     (function(){
-        $('.sb-captcha .reload, .sb-captcha-image').on('click', function(e){
+        $('.sb-captcha .reload, img.sb-captcha-image').on('click', function(e){
             e.preventDefault();
 
             var that = $(this),
                 captcha = that.parent().find('.captcha-code'),
                 data = null;
+            if(that.hasClass('captcha-code')) {
+                that = captcha;
+            }
             if(that.hasClass('disabled')) {
                 return;
             }
             captcha.css({opacity: 0.2});
             data = {
-                'action': 'sb_reload_captcha',
+                action: 'sb_theme_change_captcha',
                 len: captcha.attr('data-len')
             };
             that.addClass('disabled');
             $.post(sb_core_ajax.url, data, function(resp){
-                if(sb_core.sb_is_ajax_has_data(resp)) {
+                if($.trim(resp)) {
                     captcha.attr('src', resp);
                     that.removeClass('disabled');
                     captcha.css({opacity: 1});
@@ -288,10 +291,10 @@ var sb_password_strength,
                     commentEmail = $(this).find('#email'),
                     mathCaptcha = $(this).find('#mc-input'),
                     data = {
-                        'action': 'sb_comment',
-                        'comment_body': commentBody.val(),
-                        'comment_name': commentName.val(),
-                        'comment_email': commentEmail.val()
+                        action: 'sb_comment',
+                        comment_body: commentBody.val(),
+                        comment_name: commentName.val(),
+                        comment_email: commentEmail.val()
                     };
 
                 if((commentBody.length && !commentBody.val().trim()) || (commentName.length && !commentName.val().trim()) || (commentEmail.length && !commentEmail.val().trim()) || (mathCaptcha.length && (!mathCaptcha.val().trim() || false == $.isNumeric(mathCaptcha.val())))) {
@@ -314,9 +317,9 @@ var sb_password_strength,
                     session_key = that.attr('data-session-liked-key');
                 if (!that.hasClass('disable')) {
                     data = {
-                        'action': 'sb_comment_like',
-                        'comment_id': comment_id,
-                        'session_key': session_key
+                        action: 'sb_comment_like',
+                        comment_id: comment_id,
+                        session_key: session_key
                     };
                     $.post(sb_core_ajax.url, data, function (resp) {
                         resp = parseInt(resp);
@@ -406,10 +409,10 @@ var sb_password_strength,
                             dataType: 'json',
                             url: sb_core_ajax.url,
                             data: {
-                                'action': 'sb_login_page_change_email',
-                                'id': user_id,
-                                'email': email.val(),
-                                'security': $('#security').val()
+                                action: 'sb_login_page_change_email',
+                                id: user_id,
+                                email: email.val(),
+                                security: $('#security').val()
                             },
                             success: function(response){
                                 var data = response;
@@ -442,12 +445,12 @@ var sb_password_strength,
                             dataType: 'json',
                             url: sb_core_ajax.url,
                             data: {
-                                'action': 'sb_login_page_change_password',
-                                'current_password': current_password.val(),
-                                'new_password': new_password.val(),
-                                're_new_password': re_new_password.val(),
-                                'id': user_id,
-                                'security': $('#security').val()
+                                action: 'sb_login_page_change_password',
+                                current_password: current_password.val(),
+                                new_password: new_password.val(),
+                                re_new_password: re_new_password.val(),
+                                id: user_id,
+                                security: $('#security').val()
                             },
                             success: function(response){
                                 var data = response;
@@ -497,17 +500,17 @@ var sb_password_strength,
                             dataType: 'json',
                             url: sb_core_ajax.url,
                             data: {
-                                'action': 'sb_login_page_change_personal_info',
-                                'user_name': user_name.val(),
-                                'user_gender': user_gender.val(),
-                                'user_birth_day': user_birth_day.val(),
-                                'user_birth_month': user_birth_month.val(),
-                                'user_birth_year': user_birth_year.val(),
-                                'user_phone': user_phone.val(),
-                                'user_identity': user_identity.val(),
-                                'user_address': user_address.val(),
-                                'id': user_id,
-                                'security': $('#security').val()
+                                action: 'sb_login_page_change_personal_info',
+                                user_name: user_name.val(),
+                                user_gender: user_gender.val(),
+                                user_birth_day: user_birth_day.val(),
+                                user_birth_month: user_birth_month.val(),
+                                user_birth_year: user_birth_year.val(),
+                                user_phone: user_phone.val(),
+                                user_identity: user_identity.val(),
+                                user_address: user_address.val(),
+                                id: user_id,
+                                security: $('#security').val()
                             },
                             success: function(response){
                                 window.location.href = window.location.href;
@@ -535,6 +538,7 @@ var sb_password_strength,
         // Sign up form
         (function(){
             $('.sb-signup-form').on('submit', function(e){
+                e.preventDefault();
                 var that = $(this),
                     full_name = that.find('.signup-fullname'),
                     email = that.find('.signup-email'),
@@ -578,6 +582,7 @@ var sb_password_strength,
                     if(!success_field.length || parseInt(success_field.val()) != 1) {
                         e.preventDefault();
                     }
+                    sb_core.sb_ajax_loader(true);
                     $.ajax({
                         type: 'POST',
                         dataType: 'json',
@@ -593,18 +598,22 @@ var sb_password_strength,
                             captcha: captcha_field.val()
                         },
                         success: function(response){
+                            sb_core.sb_ajax_loader(false);
                             var data = response;
-                            if(data.valid == 1) {
+                            if(parseInt(data.valid) == 1) {
                                 hidden_fields.append(data.success_field);
-                                that.submit();
+                                if($.trim(data.redirect)) {
+                                    window.location.href = data.redirect;
+                                }
                             } else {
                                 errors.html(data.message);
                                 errors.addClass('active');
                             }
+                            if($.trim(data.captcha)) {
+                                that.find('img.sb-captcha-image').attr('src', data.captcha);
+                            }
                         }
                     });
-                } else {
-                    e.preventDefault();
                 }
             });
         })();
@@ -652,7 +661,7 @@ var sb_password_strength,
                                     errors.html(data.message);
                                     errors.addClass('active');
                                     setTimeout(function(){
-                                        window.location.href = data.redirect;
+                                        //window.location.href = data.redirect;
                                     }, 3000);
                                 } else {
                                     login_email.focus();
@@ -823,10 +832,10 @@ var sb_password_strength,
                 }
                 if(valid) {
                     data = {
-                        'action': 'sb_login_page_verify_email',
-                        'code': activation_code.val(),
-                        'security': that.find('#security').val(),
-                        'id': user_id.val()
+                        action: 'sb_login_page_verify_email',
+                        code: activation_code.val(),
+                        security: that.find('#security').val(),
+                        id: user_id.val()
                     };
                     $.post(sb_core_ajax.url, data, function(resp){
                         resp = parseInt(resp);

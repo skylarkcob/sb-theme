@@ -27,8 +27,14 @@ function sb_core_get_image_url( $name ) {
     return sb_theme_get_image_url($name);
 }
 
-function sb_core_ajax_loader() {
-    echo '<div class="sb-ajax-loader center"><img src="' . sb_core_get_image_url('icon-ajax-loader.gif') . '"></div>';
+function sb_core_ajax_loader($image = '') {
+    if(empty($image)) {
+        $image = apply_filters('sb_theme_main_ajax_loader_image', $image);
+        if(empty($image)) {
+            $image = sb_core_get_image_url('icon-ajax-loader.gif');
+        }
+    }
+    echo '<div class="sb-ajax-loader center sb-theme-ajax-loader sb-theme-ajax-full-page"><img src="' . $image . '"></div>';
 }
 
 function sb_admin_need_ui() {
@@ -563,7 +569,9 @@ function sb_login_page_get_user_page_url($args = array()) {
     if($page_id > 0) {
         $template_name = get_post_meta($page_id, '_wp_page_template', true);
         if('page-templates/' . $page_template == $template_name) {
-            $url = get_permalink($page_id);
+            if(SB_Post::get_status($page_id) == 'publish') {
+                $url = get_permalink($page_id);
+            }
         }
     }
     if(empty($url)) {
@@ -620,7 +628,9 @@ function sb_login_page_get_page_account_url() {
     if($page_account_id > 0) {
         $template_name = get_post_meta($page_account_id, '_wp_page_template', true);
         if('page-templates/' . SB_LOGIN_PAGE_ACCOUNT_TEMPLATE == $template_name) {
-            $login_url = get_permalink($page_account_id);
+            if(SB_Post::get_status($page_account_id) == 'publish') {
+                $login_url = get_permalink($page_account_id);
+            }
         }
     }
     return $login_url;
@@ -721,8 +731,12 @@ function sb_login_page_can_deactivate_account() {
 function sb_login_page_user_signup($args = array()) {
     $email = isset($args['email']) ? $args['email'] : '';
     $password = isset($args['password']) ? $args['password'] : '';
+    $username = isset($args['username']) ? $args['username'] : '';
+    if(empty($username)) {
+        $username = $email;
+    }
     $user_args = array(
-        'username' => $email,
+        'username' => $username,
         'email' => $email,
         'password' => $password
     );
@@ -748,6 +762,9 @@ function sb_login_page_user_signup($args = array()) {
         $address = isset($args['address']) ? $args['address'] : '';
         SB_User::update_meta($user_id, 'address', $address);
         $check_activation = isset($args['check_activation']) ? $args['check_activation'] : true;
+        if(!isset($args['check_activation'])) {
+            $check_activation = isset($args['verify_email']) ? $args['verify_email'] : true;
+        }
         if($check_activation) {
             SB_User::update_status($user, 6);
             SB_User::generate_activation_code($user);
@@ -763,33 +780,48 @@ function sb_login_page_user_signup($args = array()) {
 }
 
 function sb_login_page_signup_ajax($args = array()) {
-    $result = array();
+    $result = array(
+        'redirect' => ''
+    );
     $email = isset($args['email']) ? trim($args['email']) : '';
     $phone = isset($args['phone']) ? trim($args['phone']) : '';
     $name = isset($args['name']) ? trim($args['name']) : '';
     $password = isset($args['password']) ? trim($args['password']) : '';
     $address = isset($args['address']) ? trim($args['address']) : '';
+    $result['successful'] = true;
     $result['valid'] = 1;
     $result['success_field'] = '<input type="hidden" value="1" class="success-field" name="singup-success">';
     $use_captcha = isset($args['use_captcha']) ? (bool)$args['use_captcha'] : true;
-    $insert = isset($args['insert']) ? (bool)$args['insert'] : false;
+
     if(!SB_PHP::is_email_valid($email)) {
+        $result['successful'] = false;
         $result['valid'] = 0;
         $result['message'] = __('Địa chỉ email của bạn không đúng', 'sb-theme');
     } elseif(email_exists($email) || username_exists($email)) {
+        $result['successful'] = false;
         $result['valid'] = 0;
         $result['message'] = __('Địa chỉ email của bạn đã tồn tại', 'sb-theme');
     } elseif(sb_login_page_signup_captcha() && $use_captcha) {
-        $captcha = isset($args['captcha']) ? $args['captcha'] : '';
-        if(sb_login_page_use_captcha() && !SB_Core::check_captcha($captcha)) {
-            $result['valid'] = 0;
-            $result['message'] = __('Mã bảo mật bạn nhập không đúng', 'sb-theme');
+        if(sb_login_page_use_captcha()) {
+            $captcha = isset($args['captcha']) ? $args['captcha'] : '';
+            if(!SB_Core::check_captcha($captcha)) {
+                $result['valid'] = 0;
+                $result['message'] = __('Mã bảo mật bạn nhập không đúng', 'sb-theme');
+                $result['successful'] = false;
+            }
+            $result['captcha'] = SB_Captcha::generate_image();
         }
-    } elseif($insert) {
+    }
+
+    $insert = isset($args['insert']) ? (bool)$args['insert'] : false;
+    if($result['successful'] && $insert) {
         $success = sb_login_page_user_signup($args);
         if(!$success) {
             $result['valid'] = 0;
             $result['message'] = __('Đã có lỗi xảy ra, xin vui lòng thử lại', 'sb-theme');
+            $result['successful'] = false;
+        } else {
+            $result['redirect'] = SB_User::get_login_url();
         }
     }
     return $result;
@@ -830,6 +862,9 @@ function sb_login_page_login_ajax($args = array()) {
             SB_User::update_logged_in_fail_cookie();
             $result['block_login'] = true;
         }
+    }
+    if(!isset($result['redirect'])) {
+        $result['redirect'] = '';
     }
     return $result;
 }

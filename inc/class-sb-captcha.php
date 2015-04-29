@@ -148,7 +148,7 @@ class SB_Captcha {
             return true;
         }
         $result = false;
-        $file_name = SB_PHP::get_session('sb_theme_captcha_image');
+        $file_name = SB_Captcha::get_captcha_session();
         if(!empty($file_name)) {
             $transient_keys = SB_Cache::build_captcha_transient_name($file_name);
             $transient_key = $transient_keys['code'];
@@ -165,9 +165,11 @@ class SB_Captcha {
     public static function the_image($args = array()) {
         $url = self::generate_image($args);
         $file_name = SB_PHP::get_file_name_without_extension($url);
+        $class = isset($args['class']) ? $args['class'] : '';
+        $class = SB_PHP::add_string_with_space_before($class, 'sb-captcha-image captcha-code captcha-code-image sb-theme-captcha-image');
         if(!empty($url)) {
             $len = isset($args['len']) ? $args['len'] : 4;
-            echo '<img class="sb-captcha-image captcha-code-image sb-theme-captcha-image" data-file="' . $file_name . '" src="' . $url . '" data-len="' . $len . '">';
+            echo '<img class="' . $class . '" data-file="' . $file_name . '" src="' . $url . '" data-len="' . $len . '">';
         }
     }
 }

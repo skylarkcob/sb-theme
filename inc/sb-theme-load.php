@@ -45,6 +45,8 @@ require SB_THEME_INC_PATH . '/class-sb-query.php';
 
 require SB_THEME_INC_PATH . '/class-sb-membership.php';
 
+require SB_THEME_PLUGIN_PATH . '/really-simple-captcha/really-simple-captcha.php';
+
 require SB_THEME_INC_PATH . '/class-sb-payment.php';
 
 require SB_THEME_INC_PATH . '/class-sb-ngan-luong.php';
@@ -111,10 +113,6 @@ if(SB_Option::social_login_enabled()) {
 }
 
 require SB_THEME_INC_PATH . '/class-sb-login.php';
-
-if(!class_exists('ReallySimpleCaptcha')) {
-    require SB_THEME_PLUGIN_PATH . '/really-simple-captcha/really-simple-captcha.php';
-}
 
 /** Load tập tin khai báo các hàm trên SB Theme */
 require SB_THEME_INC_PATH . '/sb-theme-functions.php';

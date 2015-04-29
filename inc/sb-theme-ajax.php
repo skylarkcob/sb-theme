@@ -80,14 +80,16 @@ function sb_switch_to_default_theme() {
 
 }
 
-function sb_core_captcha_reload_ajax_callback() {
+function sb_theme_change_captcha_ajax_callback() {
     $len = isset( $_POST['len'] ) ? $_POST['len'] : 4;
     $args = array( 'len' => $len, 'force' => true );
     echo SB_Captcha::generate_image($args);
     die();
 }
-add_action( 'wp_ajax_sb_reload_captcha', 'sb_core_captcha_reload_ajax_callback' );
-add_action( 'wp_ajax_nopriv_sb_reload_captcha', 'sb_core_captcha_reload_ajax_callback' );
+add_action( 'wp_ajax_sb_reload_captcha', 'sb_theme_change_captcha_ajax_callback' );
+add_action( 'wp_ajax_nopriv_sb_reload_captcha', 'sb_theme_change_captcha_ajax_callback' );
+add_action( 'wp_ajax_sb_theme_change_captcha', 'sb_theme_change_captcha_ajax_callback' );
+add_action( 'wp_ajax_nopriv_sb_theme_change_captcha', 'sb_theme_change_captcha_ajax_callback' );
 
 function sb_login_page_login_ajax_callback() {
     check_ajax_referer('sb-theme', 'security');
@@ -266,25 +268,37 @@ function sb_login_page_reset_password_ajax_callback() {
 }
 add_action('wp_ajax_nopriv_sb_login_page_reset_password', 'sb_login_page_reset_password_ajax_callback');
 
-function sb_login_page_signup_ajax_callback() {
-    check_ajax_referer('sb-signup-page', 'security');
-    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-    $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
-    $name = isset($_POST['name']) ? trim($_POST['name']) : '';
-    $password = isset($_POST['password']) ? trim($_POST['password']) : '';
-    $address = isset($_POST['address']) ? trim($_POST['address']) : '';
-    $args = array(
-        'email' => $email,
-        'phone' => $phone,
-        'name' => $name,
-        'password' => $password,
-        'address' => $address
+function sb_theme_signup_ajax_callback() {
+    $result = array(
+        'valid' => 0,
+        'successful' => false
     );
-    $result = sb_login_page_signup_ajax($args);
+    if(check_ajax_referer('sb-signup-page', 'security')) {
+        $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+        $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
+        $name = isset($_POST['name']) ? trim($_POST['name']) : '';
+        $password = isset($_POST['password']) ? trim($_POST['password']) : '';
+        $address = isset($_POST['address']) ? trim($_POST['address']) : '';
+        $captcha = isset($_POST['captcha']) ? $_POST['captcha'] : '';
+        $args = array(
+            'email' => $email,
+            'phone' => $phone,
+            'name' => $name,
+            'password' => $password,
+            'address' => $address,
+            'captcha' => $captcha,
+            'insert' => true,
+            'verify_email' => false
+        );
+        $result = sb_login_page_signup_ajax($args);
+    } else {
+        $result['message'] = __('Đã có lỗi xảy ra, xin vui lòng thử lại.', 'sb-theme');
+    }
     echo json_encode($result);
     die();
 }
-add_action('wp_ajax_nopriv_sb_login_page_signup', 'sb_login_page_signup_ajax_callback');
+add_action('wp_ajax_nopriv_sb_login_page_signup', 'sb_theme_signup_ajax_callback');
+add_action('wp_ajax_nopriv_sb_theme_signup', 'sb_theme_signup_ajax_callback');
 
 function sb_login_page_change_email_ajax_callback() {
     SB_Core::check_ajax_referer();

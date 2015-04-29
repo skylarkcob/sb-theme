@@ -12,14 +12,18 @@ do_action('sb_theme_hook_before');
  */
 function sb_theme_init_hook() {
 	do_action('sb_theme_init_before');
+    $session_started = true;
     if ( version_compare( phpversion(), '5.4.0', '>=' ) ) {
         if ( PHP_SESSION_NONE == session_status() ) {
-            session_start();
+            $session_started = false;
         }
     } else {
         if ( '' == session_id() ) {
-            session_start();
+            $session_started = false;
         }
+    }
+    if(!$session_started) {
+        session_start();
     }
     if(!current_user_can('read')) {
         show_admin_bar(false);
@@ -275,27 +279,29 @@ add_action('sb_theme_admin_init', 'sb_theme_regenerate_roles_hook');
  */
 function sb_theme_check_user_post_before_add_new() {
     if(isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == 'post-new.php') {
-        if(in_array(SB_User::get_current_role(), SB_Membership::get_paid_role_ids())) {
-            $current_user = SB_User::get_current();
-            if(!SB_User::is_admin($current_user->ID)) {
-                $minimum_coin_can_post = SB_Membership::get_minimum_coin_can_post();
-                $pass_free_post = (SB_User::count_all_post($current_user->ID) >= SB_Membership::get_free_post_number()) ? true : false;
-                $user_coin = SB_User::get_coin($current_user->ID);
-                if($minimum_coin_can_post > 0 && $pass_free_post) {
-                    if($user_coin < $minimum_coin_can_post) {
-                        $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_minimum_coin_can_post');
+        if(SB_Membership::is_paid_membership_enabled()) {
+            if(in_array(SB_User::get_current_role(), SB_Membership::get_paid_role_ids())) {
+                $current_user = SB_User::get_current();
+                if(!SB_User::is_admin($current_user->ID)) {
+                    $minimum_coin_can_post = SB_Membership::get_minimum_coin_can_post();
+                    $pass_free_post = (SB_User::count_all_post($current_user->ID) >= SB_Membership::get_free_post_number()) ? true : false;
+                    $user_coin = SB_User::get_coin($current_user->ID);
+                    if($minimum_coin_can_post > 0 && $pass_free_post) {
+                        if($user_coin < $minimum_coin_can_post) {
+                            $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_minimum_coin_can_post');
+                            set_transient($transient_name, 1, MINUTE_IN_SECONDS);
+                            $edit_url = SB_Core::get_admin_edit_page_url();
+                            wp_redirect($edit_url);
+                            exit;
+                        }
+                    }
+                    if($pass_free_post && !SB_Membership::can_user_write_paid_post($current_user->ID)) {
+                        $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_limit_free_post');
                         set_transient($transient_name, 1, MINUTE_IN_SECONDS);
                         $edit_url = SB_Core::get_admin_edit_page_url();
                         wp_redirect($edit_url);
                         exit;
                     }
-                }
-                if($pass_free_post && !SB_Membership::can_user_write_paid_post($current_user->ID)) {
-                    $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_limit_free_post');
-                    set_transient($transient_name, 1, MINUTE_IN_SECONDS);
-                    $edit_url = SB_Core::get_admin_edit_page_url();
-                    wp_redirect($edit_url);
-                    exit;
                 }
             }
         }
@@ -606,81 +612,89 @@ add_action('sb_theme_init', 'sb_comment_empty_spam_schedule');
 add_action('sb_comment_empty_spam_cron_job', 'sb_comment_empty_spam_cron_function');
 
 /*
- * Kiểm tra trước khi hiển thị nội dung trang web
+ * Kiểm tra trước khi hiển thị nội dung trang web,
+ * nếu hệ thống sử dụng trang tài khoản tùy chỉnh thì chuyển tiếp
+ * tới trang này.
  */
 function sb_login_page_init() {
-    if(SB_Core::is_login_page()) {
+    if(sb_login_page_use_sb_login() && SB_Core::is_login_page()) {
         $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
         if('logout' == $action) {
             return;
         }
-        $login_url = sb_login_page_get_page_account_url();
-        if(!empty($login_url) && !empty($action)) {
-            $login_url = add_query_arg(array('action' => $action), $login_url);
-        }
-        if(!empty($login_url)) {
-            wp_redirect($login_url);
-            exit();
+        $acc_page_id = sb_login_page_get_page_account_id();
+        if($acc_page_id > 0 && SB_Post::is_published($acc_page_id)) {
+            $login_url = sb_login_page_get_page_account_url();
+            if(!empty($login_url) && !empty($action)) {
+                $login_url = add_query_arg(array('action' => $action), $login_url);
+            }
+            if(!empty($login_url)) {
+                wp_redirect($login_url);
+                exit();
+            }
         }
     }
 }
-add_action('sb_theme_init', 'sb_login_page_init');
+add_action('sb_theme_login_init', 'sb_login_page_init');
 
 /*
  * Kiểm tra trước khi hiển thị nội dung trang đăng nhập
  */
 function sb_login_page_custom_init() {
-    if(SB_User::is_logged_in()) {
-        if(sb_login_page_is_login_custom_page() || sb_login_page_is_lost_password_custom_page() || sb_login_page_is_register_custom_page()) {
-            wp_redirect(sb_login_page_get_page_account_url());
-            exit;
-        }
-    } else {
-        if(!SB_User::can_register() && sb_login_page_is_register_custom_page()) {
-            wp_redirect(home_url('/'));
-            exit;
-        }
-        $action = isset($_REQUEST['action']) ? trim($_REQUEST['action']) : '';
-        if(sb_login_page_is_account_custom_page()) {
-            if('register' == $action && !SB_User::can_register()) {
+    $acc_page_id = sb_login_page_get_page_account_id();
+    if($acc_page_id > 0) {
+        if(SB_User::is_logged_in()) {
+            if(sb_login_page_is_login_custom_page() || sb_login_page_is_lost_password_custom_page() || sb_login_page_is_register_custom_page()) {
+                wp_redirect(sb_login_page_get_page_account_url());
+                exit;
+            }
+        } else {
+            if(!SB_User::can_register() && sb_login_page_is_register_custom_page()) {
                 wp_redirect(home_url('/'));
                 exit;
             }
-            if('login' != $action && 'register' != $action && 'lostpassword' != $action && 'verify' != $action) {
-                $account_url = sb_login_page_get_page_account_url();
-                $account_url = add_query_arg(array('action' => 'login'), $account_url);
-                wp_safe_redirect($account_url);
-                exit();
-            }
-            if('verify' == $action) {
-                $user_id = isset($_REQUEST['user_id']) ? intval($_REQUEST['user_id']) : 0;
-                if($user_id > 0) {
-                    $user = SB_User::get_by('id', $user_id);
-                    if(SB_User::is($user)) {
-                        $verify_email_session = SB_User::get_verify_email_session($user);
-                        if(1 == $verify_email_session) {
-                            SB_User::set_verify_email_cookie($user);
+            $action = isset($_REQUEST['action']) ? trim($_REQUEST['action']) : '';
+            if(sb_login_page_is_account_custom_page()) {
+                if('register' == $action && !SB_User::can_register()) {
+                    wp_redirect(home_url('/'));
+                    exit;
+                }
+                if('login' != $action && 'register' != $action && 'lostpassword' != $action && 'verify' != $action) {
+                    $account_url = sb_login_page_get_page_account_url();
+                    $account_url = add_query_arg(array('action' => 'login'), $account_url);
+                    wp_safe_redirect($account_url);
+                    exit();
+                }
+                if('verify' == $action) {
+                    $user_id = isset($_REQUEST['user_id']) ? intval($_REQUEST['user_id']) : 0;
+                    if($user_id > 0) {
+                        $user = SB_User::get_by('id', $user_id);
+                        if(SB_User::is($user)) {
+                            $verify_email_session = SB_User::get_verify_email_session($user);
+                            if(1 == $verify_email_session) {
+                                SB_User::set_verify_email_cookie($user);
+                            }
                         }
                     }
                 }
-            }
-        } elseif(sb_login_page_is_lost_password_custom_page()) {
-            $step = isset($_REQUEST['step']) ? trim($_REQUEST['step']) : '';
-            $code = isset($_REQUEST['code']) ? trim($_REQUEST['code']) : '';
-            $id = isset($_REQUEST['user_id']) ? intval($_REQUEST['user_id']) : 0;
-            if('verify' == $step && !empty($code) && $id > 0) {
-                $user = SB_User::get_by('id', $id);
-                if(!is_wp_error($user) && is_a($user, 'WP_User') && SB_User::check_activation_code($user, $code)) {
-                    $lost_password_url = SB_User::get_lost_password_verify_url($code);
-                    $lost_password_url = add_query_arg(array('step' => 'reset', 'user_id' => $id));
-                    wp_safe_redirect($lost_password_url);
-                    exit;
-                }
-            } elseif('reset' == $step) {
-                $user = SB_User::get_by('id', $id);
-                if(empty($code) || $id < 1 || 'lostpassword' != $action || !SB_User::is($user) || !SB_User::check_activation_code($user, $code)) {
-                    wp_redirect(home_url('/'));
-                    exit;
+            } elseif(sb_login_page_is_lost_password_custom_page()) {
+                $step = isset($_REQUEST['step']) ? trim($_REQUEST['step']) : '';
+                $code = isset($_REQUEST['code']) ? trim($_REQUEST['code']) : '';
+                $id = isset($_REQUEST['user_id']) ? intval($_REQUEST['user_id']) : 0;
+                if('verify' == $step && !empty($code) && $id > 0) {
+                    $user = SB_User::get_by('id', $id);
+                    if(!is_wp_error($user) && is_a($user, 'WP_User') && SB_User::check_activation_code($user, $code)) {
+                        $lost_password_url = SB_User::get_lost_password_verify_url($code);
+                        $lost_password_url = add_query_arg(array('step' => 'reset', 'user_id' => $id));
+                        wp_safe_redirect($lost_password_url);
+                        exit;
+                    }
+                } elseif('reset' == $step) {
+                    $user = SB_User::get_by('id', $id);
+                    if(empty($code) || $id < 1 || 'lostpassword' != $action || !SB_User::is($user) || !SB_User::check_activation_code($user, $code)) {
+                        wp_redirect(home_url('/'));
+                        exit;
+                    }
                 }
             }
         }
@@ -781,31 +795,33 @@ add_action('transition_post_status', 'sb_theme_post_status_transitions_hook', 10
 
 function sb_theme_subtract_published_post_coin($post_id, $post, $update) {
     $user = SB_User::get_by('id', $post->post_author);
-    if(SB_User::is($user) && in_array(SB_User::get_current_role($user), SB_Membership::get_paid_role_ids())) {
-        $current_user = $user;
-        if(!SB_User::is_admin($current_user->ID)) {
-            $minimum_coin_can_post = SB_Membership::get_minimum_coin_can_post();
-            $pass_free_post = (SB_User::count_all_post($current_user->ID) >= SB_Membership::get_free_post_number()) ? true : false;
-            if($minimum_coin_can_post > 0 && $pass_free_post) {
-                $user_coin = SB_User::get_coin($current_user->ID);
-                if($user_coin < $minimum_coin_can_post) {
-                    $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_minimum_coin_can_post');
+    if(SB_Membership::is_paid_membership_enabled()) {
+        if(SB_User::is($user) && in_array(SB_User::get_current_role($user), SB_Membership::get_paid_role_ids())) {
+            $current_user = $user;
+            if(!SB_User::is_admin($current_user->ID)) {
+                $minimum_coin_can_post = SB_Membership::get_minimum_coin_can_post();
+                $pass_free_post = (SB_User::count_all_post($current_user->ID) >= SB_Membership::get_free_post_number()) ? true : false;
+                if($minimum_coin_can_post > 0 && $pass_free_post) {
+                    $user_coin = SB_User::get_coin($current_user->ID);
+                    if($user_coin < $minimum_coin_can_post) {
+                        $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_minimum_coin_can_post');
+                        set_transient($transient_name, 1, MINUTE_IN_SECONDS);
+                        $edit_url = SB_Core::get_admin_edit_page_url();
+                        wp_redirect($edit_url);
+                        exit;
+                    }
+                }
+                if($pass_free_post && !SB_Membership::can_user_write_paid_post($user->ID)) {
+                    $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_limit_free_post');
                     set_transient($transient_name, 1, MINUTE_IN_SECONDS);
                     $edit_url = SB_Core::get_admin_edit_page_url();
                     wp_redirect($edit_url);
                     exit;
                 }
-            }
-            if($pass_free_post && !SB_Membership::can_user_write_paid_post($user->ID)) {
-                $transient_name = SB_Cache::build_user_transient_name($current_user->ID, '_limit_free_post');
-                set_transient($transient_name, 1, MINUTE_IN_SECONDS);
-                $edit_url = SB_Core::get_admin_edit_page_url();
-                wp_redirect($edit_url);
-                exit;
-            }
-            if('publish' == $post->post_status) {
-                $post_cost_coin = SB_Membership::get_post_coin_cost();
-                SB_User::minus_coin($user->ID, $post_cost_coin);
+                if('publish' == $post->post_status) {
+                    $post_cost_coin = SB_Membership::get_post_coin_cost();
+                    SB_User::minus_coin($user->ID, $post_cost_coin);
+                }
             }
         }
     }
