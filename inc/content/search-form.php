@@ -7,6 +7,9 @@ $form_class = SB_PHP::add_string_with_space_before($form_class, 'sb-search');
 $method = isset($args['method']) ? $args['method'] : 'get';
 $label = isset($args['label']) ? $args['label'] : __('Tìm kiếm theo từ khóa', 'sb-theme');
 $submit_text = isset($args['submit_text']) ? $args['submit_text'] : __('Tìm kiếm', 'sb-theme');
+if(isset($args['submit_button_text']) && !empty($args['submit_button_text'])) {
+    $submit_text = $args['submit_button_text'];
+}
 $placeholder = isset($args['placeholder']) ? $args['placeholder'] : __('Nhập từ khóa…', 'sb-theme');
 $search_field_class = isset($args['search_field_class']) ? $args['search_field_class'] : 'search-field';
 $search_field_class = SB_PHP::add_string_with_space_before($search_field_class, 'sb-search-input');

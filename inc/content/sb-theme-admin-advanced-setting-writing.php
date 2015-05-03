@@ -16,9 +16,31 @@ function sb_theme_advanced_setting_writing_confirm_publish() {
     $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
     $value = SB_Option::check_switch_value($value, 1);
     $args = array(
-        'id' => 'sb_theme_advanced_membership_' . $key,
+        'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
         'label' => __('Kích hoạt chức năng hiển thị thống báo xác nhận đăng bài?', 'sb-theme'),
+        'value' => $value
+    );
+    SB_Field::checkbox($args);
+}
+
+$args = array(
+    'title' => 'Hỗ trợ tiêu đề cho link',
+    'description' => 'Trong phiên bản 4.2 trở về sau, WordPress không hiển thị tiêu đề khi chèn link, bạn có thể dùng chức năng này để bật lại thông tin tiêu đề cho link.',
+    'callback' => 'sb_theme_advanced_setting_writing_restore_link_title'
+);
+SB_Admin_Custom::row_setting_field($args);
+
+function sb_theme_advanced_setting_writing_restore_link_title() {
+    $tab_base_option_name = 'writing';
+
+    $key = 'restore_link_title';
+    $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+    $value = SB_Option::check_switch_value($value, 1);
+    $args = array(
+        'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
+        'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
+        'label' => __('Khôi phục chức năng điền tiêu đề cho link?', 'sb-theme'),
         'value' => $value
     );
     SB_Field::checkbox($args);

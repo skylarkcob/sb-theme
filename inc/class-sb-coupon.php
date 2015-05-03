@@ -29,7 +29,7 @@ class SB_Coupon {
             'name' => __('Stores', 'sb-theme'),
             'singular_name' => __('Store', 'sb-theme'),
             'slug' => 'store',
-            'taxonomies' => array(self::get_coupon_category_slug()),
+            'taxonomies' => array(self::get_coupon_category_slug(), 'post_tag'),
             'supports' => array('thumbnail', 'excerpt', 'editor', 'comments')
         );
         SB_Core::register_post_type($args);
@@ -38,7 +38,7 @@ class SB_Coupon {
             'name' => __('Coupons', 'sb-theme'),
             'singular_name' => __('Coupon', 'sb-theme'),
             'slug' => 'coupon',
-            'taxonomies' => apply_filters('sb_theme_coupon_taxonomies', array(self::get_coupon_category_slug(), self::get_coupon_type_slug())),
+            'taxonomies' => apply_filters('sb_theme_coupon_taxonomies', array(self::get_coupon_category_slug(), self::get_coupon_type_slug(), 'post_tag')),
             'supports' => array('thumbnail', 'excerpt', 'editor', 'comments')
         );
         SB_Core::register_post_type($args);

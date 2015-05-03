@@ -700,6 +700,13 @@ class SB_Field {
 
     public static function checkbox($args = array()) {
         $args['type'] = 'checkbox';
+        $args['autocomplete'] = false;
+        self::text($args);
+    }
+
+    public static function radio($args = array()) {
+        $args['type'] = 'radio';
+        $args['autocomplete'] = false;
         self::text($args);
     }
 

@@ -187,10 +187,18 @@ class SB_Option {
     }
 
     public static function check_switch_value($result, $default) {
-        if(0 != $result && !is_numeric($result) && empty($result)) {
+        if(!is_numeric($result) && (null == $result || empty($result))) {
             $result = $default;
         }
         return (bool)$result;
+    }
+
+    public static function support_link_title() {
+        $tab_base_option_name = 'writing';
+        $key = 'restore_link_title';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::check_switch_value($value, 1);
+        return (bool)$value;
     }
 
     public static function social_login_enabled() {
@@ -261,6 +269,14 @@ class SB_Option {
         $use_captcha = self::get_option_by_key(array('login_page', 'use_captcha'));
         $use_captcha = self::check_switch_value($use_captcha, 1);
         return $use_captcha;
+    }
+
+    public static function get_current_wordpress_version() {
+        return get_bloginfo('version');
+    }
+
+    public static function get_activated_plugins() {
+        return get_option('active_plugins');
     }
 
     public static function get_by_key($args = array()) {

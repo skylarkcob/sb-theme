@@ -19,7 +19,7 @@ if(sb_theme_use_old_version()) {
     require get_template_directory() . '/sb-theme/old/sb-theme.php';
 } else {
     /** Khai báo phiên bản hiện tại của SB Theme */
-    define( 'SB_THEME_VERSION', '2.0.4' );
+    define( 'SB_THEME_VERSION', '2.0.5' );
 
     /** Khai báo đường dẫn đến thư mục wp-admin */
     define( 'SB_THEME_WP_ADMIN_PATH', ABSPATH . 'wp-admin' );
@@ -37,6 +37,8 @@ if(sb_theme_use_old_version()) {
     define( 'SB_THEME_INC_PATH', SB_THEME_PATH . '/inc' );
 
     define( 'SB_THEME_PLUGIN_PATH', SB_THEME_PATH . '/plugins' );
+
+    define( 'SB_THEME_PLUGIN_URL', SB_THEME_URL . '/plugins' );
 
     /** Load tập tin chính để khởi tạo SB Theme */
     require SB_THEME_INC_PATH . '/sb-theme-load.php';

@@ -891,6 +891,17 @@ function sb_theme_admin_notice_hook() {
 }
 add_action('sb_theme_admin_notices', 'sb_theme_admin_notice_hook');
 
+function sb_theme_add_style_and_script_to_editor() {
+    if(version_compare(SB_Option::get_current_wordpress_version(), '4.2', '>=')) {
+        if(SB_Option::support_link_title()) {
+            if(!SB_Core::is_restore_link_title_field_installed()) {
+                SB_Lib::restore_link_title();
+            }
+        }
+    }
+}
+add_action('wp_enqueue_editor', 'sb_theme_add_style_and_script_to_editor', 20);
+
 /*
  * Chạy hàm khi trang cài đặt nâng cao cập nhật
  */

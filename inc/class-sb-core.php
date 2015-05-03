@@ -1054,6 +1054,11 @@ class SB_Core {
         return defined('WPSEO_FILE');
     }
 
+    public static function is_restore_link_title_field_installed() {
+        $active_plugins = SB_Option::get_activated_plugins();
+        return in_array('restore-link-title-field/restore-link-title-field.php', $active_plugins);
+    }
+
     public static function get_blog_page() {
         return SB_Post::get_by_slug('blog', 'page');
     }

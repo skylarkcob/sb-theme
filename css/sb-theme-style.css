@@ -130,8 +130,16 @@ img {
     margin: 0;
 }
 
+.panel_footer_vgchat {
+    height: 20px;
+}
+
+#vgc_logo_msgoffline > *,
+#vgc_logo_msgoffline,
+.panel_footer_vgchat > *,
+#vgc_adv_client,
 #_atssh {
-    display: none;
+    display: none !important;
 }
 
 .disable-select {

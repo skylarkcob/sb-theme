@@ -548,6 +548,23 @@ class SB_Theme {
         sb_theme_get_content('search-form');
     }
 
+    public static function the_feedburner_form($args = array()) {
+        $name = isset($args['name']) ? $args['name'] : '';
+        $locale = isset($args['locale']) ? $args['locale'] : 'en_US';
+        $submit_button_text = isset($args['submit_button_text']) ? $args['submit_button_text'] : __('Đăng ký', 'sb-theme');
+        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : __('Nhập địa chỉ email của bạn...', 'sb-theme');
+        ?>
+        <form class="feedburner-form" action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open('https://feedburner.google.com/fb/a/mailverify?uri=<?php echo $name; ?>', 'popupwindow', 'scrollbars=yes,width=550,height=520');return true">
+            <?php do_action('sb_theme_feedburner_before'); ?>
+            <input class="email-field" type="text" placeholder="<?php echo $placeholder; ?>" name="email" autocomplete="off">
+            <input type="hidden" value="<?php echo $name; ?>" name="uri">
+            <input type="hidden" name="loc" value="<?php echo $locale; ?>">
+            <input class="btn btn-submit" type="submit" value="<?php echo $submit_button_text; ?>">
+            <?php do_action('sb_theme_feedburner_after'); ?>
+        </form>
+        <?php
+    }
+
     public static function get_loading_image($url = '') {
         if(!class_exists('SB_Core')) {
             return;

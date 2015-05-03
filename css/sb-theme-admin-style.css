@@ -1,5 +1,9 @@
 /* =================== Global =================== */
 
+.sb-option {
+    font-family: arial, lucinda, verdana, geneva, sans-serif;
+}
+
 button.sb-button {
     background-color: #0074a2;
     border: 1px solid #004f6f;

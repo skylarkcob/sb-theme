@@ -4,6 +4,70 @@ class SB_HW {
         return SB_Term::get('rcat', $args);
     }
 
+    public static function get_readable_post_types() {
+        $defaults = array(
+            'post',
+            'home',
+            'blog',
+            'guide'
+        );
+        $customs = apply_filters('sb_theme_hw_readable_post_types', array());
+        $defaults = wp_parse_args($defaults, $customs);
+        return $defaults;
+    }
+
+    public static function get_readable_posts($args = array()) {
+        $args['post_type'] = self::get_readable_post_types();
+        return SB_Query::get($args);
+    }
+
+    public static function get_recent_news($args = array()) {
+        $ids = array();
+        $query = SB_Query::get(array('posts_per_page' => -1, 'post_type' => 'post'));
+        foreach($query->posts as $my_post) {
+            $ids[] = $my_post->ID;
+        }
+        $tmp_args = array(
+            'post_type' => 'blog',
+            'posts_per_page' => -1
+        );
+        $term = SB_Term::get_by('slug', 'wp-news', 'bcat');
+        if(is_object($term)) {
+            $tmp_args['tax_query'] = array(
+                array(
+                    'taxonomy' => 'bcat',
+                    'field' => 'id',
+                    'terms' => $term->term_id
+                )
+            );
+        }
+        $query = SB_Query::get($tmp_args);
+        foreach($query->posts as $my_post) {
+            $ids[] = $my_post->ID;
+        }
+        $tmp_args = array(
+            'post_type' => 'home',
+            'posts_per_page' => -1
+        );
+        $term = SB_Term::get_by('slug', 'thong-bao', 'hcat');
+        if(is_object($term)) {
+            $tmp_args['tax_query'] = array(
+                array(
+                    'taxonomy' => 'hcat',
+                    'field' => 'id',
+                    'terms' => $term->term_id
+                )
+            );
+        }
+        $query = SB_Query::get($tmp_args);
+        foreach($query->posts as $my_post) {
+            $ids[] = $my_post->ID;
+        }
+        $args['post__in'] = $ids;
+        $args['post_type'] = self::get_readable_post_types();
+        return SB_Query::get($args);
+    }
+
     public static function get_projects($args = array()) {
         $args['post_type'] = 'project';
         $all_project = SB_Post::get_by_slug('tat-ca-du-an', 'project');
