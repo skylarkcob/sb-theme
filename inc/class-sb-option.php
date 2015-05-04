@@ -29,7 +29,33 @@ class SB_Option {
         if(empty($sb_default_language)) {
             $sb_default_language = SB_THEME_DEFAULT_LANGUAGE;
         }
+        $sb_default_language = apply_filters('sb_theme_default_language', $sb_default_language);
         return apply_filters('sb_default_language', $sb_default_language);
+    }
+
+    public static function get_page_add_post_front_end() {
+        $tab_base_option_name = 'writing';
+        $key = 'page_add_post_front_end';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        if(is_numeric($value) && $value > 0) {
+            return get_post($value);
+        }
+        return null;
+    }
+
+    public static function get_page_add_post_front_end_url() {
+        $url = '';
+        $page = self::get_page_add_post_front_end();
+        if(is_object($page) && !is_wp_error($page)) {
+            $url = get_permalink($page);
+        } else {
+            $page = SB_Post::get_by_slug('dang-tin', 'page');
+            if(is_object($page)) {
+                $url = get_permalink($page);
+            }
+        }
+        $url = apply_filters('sb_theme_page_add_post_front_end_url', $url);
+        return $url;
     }
 
     public static function update_breadcrumb_sep($value) {

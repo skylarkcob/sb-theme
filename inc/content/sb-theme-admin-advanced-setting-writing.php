@@ -47,6 +47,27 @@ function sb_theme_advanced_setting_writing_restore_link_title() {
 }
 
 $args = array(
+    'title' => 'Viết bài bên ngoài front-end',
+    'description' => 'Nếu bạn muốn cho người dùng đăng bài viết bên ngoài dashboard thì hãy lựa chọn trang bạn đã tạo bên dưới.',
+    'callback' => 'sb_theme_advanced_setting_writing_add_post_front_end'
+);
+SB_Admin_Custom::row_setting_field($args);
+
+function sb_theme_advanced_setting_writing_add_post_front_end() {
+    $tab_base_option_name = 'writing';
+
+    $key = 'page_add_post_front_end';
+    $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+    $args = array(
+        'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
+        'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
+        'label' => '',
+        'value' => $value
+    );
+    SB_Field::select_page($args);
+}
+
+$args = array(
     'title' => 'Hạn chế quyền đăng bài viết',
     'description' => 'Bạn có thể thiết lập cho thành viên thuộc các nhóm bên dưới không có quyền đăng bài viết mà chỉ được soạn nháp.',
     'callback' => 'sb_theme_advanced_setting_writing_limit_publish_post'

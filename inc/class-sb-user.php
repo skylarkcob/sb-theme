@@ -674,6 +674,9 @@ class SB_User {
         $url = '';
         if(function_exists('sb_login_page_get_page_login_url')) {
             $url = sb_login_page_get_page_login_url();
+            if(!empty($url) && !empty($redirect)) {
+                $url = add_query_arg(array('redirect_to' => $redirect), $url);
+            }
         }
         if(empty($url)) {
             $url = wp_login_url($redirect);

@@ -19,7 +19,7 @@ if(sb_theme_use_old_version()) {
     require get_template_directory() . '/sb-theme/old/sb-theme.php';
 } else {
     /** Khai báo phiên bản hiện tại của SB Theme */
-    define( 'SB_THEME_VERSION', '2.0.5' );
+    define( 'SB_THEME_VERSION', '2.0.6' );
 
     /** Khai báo đường dẫn đến thư mục wp-admin */
     define( 'SB_THEME_WP_ADMIN_PATH', ABSPATH . 'wp-admin' );

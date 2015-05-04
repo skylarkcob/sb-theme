@@ -267,17 +267,18 @@ class SB_Field {
         if($preview) {
             echo $image_preview_div;
         }
+        $field_class = isset($args['field_class']) ? $args['field_class'] : '';
         $args['name'] = $name . '[url]';
         $args['before'] = '';
         $args['description'] = '';
         $args['value'] = $value_url;
-        $args['field_class'] = 'image-url';
+        $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'image-url');
         $args['autocomplete'] = false;
         self::text($args);
 
         $args['label'] = '';
         $args['name'] = $name . '[id]';
-        $args['field_class'] = 'media-id';
+        $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'media-id');
         $args['type'] = 'hidden';
         $args['value'] = $value_id;
         self::text($args);
@@ -847,6 +848,14 @@ class SB_Field {
     }
 
     public static function select_term($args = array()) {
+        $taxonomy = isset($args['taxonomy']) ? $args['taxonomy'] : '';
+        if(empty($taxonomy)) {
+            return;
+        }
+        $tax = get_taxonomy($taxonomy);
+        if(!is_object($tax)) {
+            return;
+        }
         $container_class = isset($args['container_class']) ? $args['container_class'] : '';
         $id = isset($args['id']) ? $args['id'] : '';
         $name = isset($args['name']) ? $args['name'] : '';
@@ -855,7 +864,7 @@ class SB_Field {
         $options = isset($args['options']) ? $args['options'] : array();
         $value = isset($args['value']) ? $args['value'] : '';
         $description = isset($args['description']) ? $args['description'] : '';
-        $taxonomy = isset($args['taxonomy']) ? $args['taxonomy'] : '';
+
         $taxonomy_id = isset($args['taxonomy_id']) ? $args['taxonomy_id'] : '';
         $taxonomy_name = isset($args['taxonomy_name']) ? $args['taxonomy_name'] : '';
         $show_count = isset($args['show_count']) ? $args['show_count'] : true;
@@ -863,7 +872,8 @@ class SB_Field {
         $after = isset($args['after']) ? $args['after'] : '</p>';
         echo $before;
         self::label(array('for' => $id, 'text' => $label));
-        $all_option = '<option value="0">' . __('Choose term', 'sb-theme') . '</option>';
+
+        $all_option = '<option value="0">' . sprintf(__('Chọn %s', 'sb-theme'), SB_PHP::lowercase($tax->labels->singular_name)) . '</option>';
         $args['before'] = '';
         if(count($options) > 0) {
             foreach($options as $tax) {
@@ -887,6 +897,7 @@ class SB_Field {
             }
         }
         $args['all_option'] = $all_option;
+        $args['label'] = '';
         self::select($args);
         if(!empty($taxonomy_name)) {
             $args['id'] = $taxonomy_id;
@@ -936,12 +947,17 @@ class SB_Field {
         if(empty($textarea_row) || $textarea_row < 1) {
             $textarea_row = isset($args['row']) ? $args['row'] : 5;
         }
-        $before = isset($args['before']) ? $args['before'] : '<div id="' . esc_attr($id) . '_editor" class="sb-rich-editor">';
+        $container_class = isset($args['container_class']) ? $args['container_class'] : '';
+        $container_class = SB_PHP::add_string_with_space_before($container_class, 'sb-rich-editor editor-field');
+        $before = isset($args['before']) ? $args['before'] : '<div id="' . esc_attr($id) . '_editor" class="' . $container_class . '">';
         $after = isset($args['after']) ? $args['after'] : '</div>';
+        $editor_args = isset($args['editor_args']) ? $args['editor_args'] : array();
         $args = array(
             'textarea_name' => $name,
-            'textarea_rows' => $textarea_row
+            'textarea_rows' => $textarea_row,
+            'editor_class' => isset($args['field_class']) ? $args['field_class'] : ''
         );
+        $args = wp_parse_args($args, $editor_args);
         echo $before;
         wp_editor($value, $id, $args);
         self::the_description($description);

@@ -1004,6 +1004,11 @@ add_filter( 'shake_error_codes', 'sb_theme_login_shake_error' );
  * Lọc khi người dùng đăng nhập
  */
 function sb_theme_authenticate_user($user, $username, $password) {
+    if(!isset($_POST['wp-submit'])) {
+        remove_filter('authenticate', 'sb_theme_authenticate_user', 10, 3);
+        add_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
+        return $user;
+    }
     $checkemail = isset($_GET['checkemail']) ? $_GET['checkemail'] : '';
     $data_social = isset($_GET['data_social']) ? $_GET['data_social'] : '';
     if(!empty($checkemail) || !empty($data_social)) {
@@ -1282,11 +1287,92 @@ function sb_theme_login_body_class_filter($classes, $action) {
 }
 add_filter('login_body_class', 'sb_theme_login_body_class_filter', 10, 3);
 
-function custom_login_message($message) {
+function sb_theme_login_message_hook($message) {
     $message = apply_filters('sb_theme_login_message', $message);
     return $message;
 }
-add_filter('login_message', 'custom_login_message');
+add_filter('login_message', 'sb_theme_login_message_hook');
+
+function sb_theme_login_message_vietnamese($message) {
+    if(SB_Option::get_default_language() == 'vi') {
+        $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+        switch($action) {
+            case 'register':
+                $message = '<p class="message register">' . __('Đăng ký làm thành viên.', 'sb-theme') . '</p>';
+                break;
+            case 'lostpassword':
+                $message = '<p class="message">' . __('Hãy điền vào địa chỉ email của bạn để lấy lại mật khẩu.', 'sb-theme') . '</p>';
+                break;
+        }
+    }
+    return $message;
+}
+add_filter('sb_theme_login_message', 'sb_theme_login_message_vietnamese');
+
+function sb_theme_custom_login_error($error) {
+    if(!isset($_POST['wp-submit'])) {
+        return $error;
+    }
+    if('vi' == SB_Option::get_default_language()) {
+        if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'lostpassword') {
+            $error = '<strong>' . __('Lỗi:', 'sb-theme') . '</strong> ' . __('Xin vui lòng nhập chính xác địa chỉ email.', 'sb-theme');
+        } elseif(isset($_REQUEST['registration']) && $_REQUEST['registration'] == 'disabled') {
+            $error = '<strong>' . __('Lỗi:', 'sb-theme') . '</strong> ' . __('Hệ thống không cho phép đăng ký tài khoản.', 'sb-theme');
+        } else {
+            $error = '<strong>' . __('Lỗi:', 'sb-theme') . '</strong> ' . __('Xin vui lòng kiểm tra lại.', 'sb-theme');
+        }
+    }
+    return $error;
+}
+add_filter( 'login_errors', 'sb_theme_custom_login_error' );
+
+function sb_theme_change_login_form_text( $translation, $text ) {
+    if(SB_Core::is_login_page() && 'vi' == SB_Option::get_default_language()) {
+        switch($text) {
+            case 'Username':
+                $translation = 'Tên tài khoản';
+                break;
+            case 'Password':
+                $translation = 'Mật khẩu';
+                break;
+            case 'Remember Me':
+                $translation = 'Nhớ đăng nhập';
+                break;
+            case 'Log In':
+                $translation = 'Đăng nhập';
+                break;
+            case 'Log in':
+                $translation = 'Đăng nhập';
+                break;
+            case 'Lost your password?':
+                $translation = 'Quên mật khẩu?';
+                break;
+            case '&larr; Back to %s':
+                $translation = 'Quay lại trang chủ';
+                break;
+            case 'Register':
+                $translation = 'Đăng ký';
+                break;
+            case 'E-mail':
+                $translation = 'Địa chỉ email';
+                break;
+            case 'A password will be e-mailed to you.':
+                $translation = 'Mật khẩu sẽ được chuyển đến email của bạn.';
+                break;
+            case 'Username or E-mail:':
+                $translation = 'Tên tài khoản hoặc địa chỉ email:';
+                break;
+            case 'Get New Password':
+                $translation = 'Nhận mật khẩu mới';
+                break;
+            case 'You are now logged out.':
+                $translation = 'Bạn đã đăng xuất khỏi hệ thống.';
+                break;
+        }
+    }
+    return $translation;
+}
+add_filter( 'gettext', 'sb_theme_change_login_form_text', 10, 2 );
 
 /*
  * Thêm class của SB vào thẻ body
@@ -1356,14 +1442,16 @@ add_filter( 'excerpt_more', 'sb_theme_excerpt_more' );
  * Thêm nút vào trình soạn thảo, thanh công cụ đầu tiên
  */
 function sb_theme_more_mce_buttons_toolbar_1( $buttons ) {
-	$tmp = $buttons;
-	unset($buttons);
-	$buttons[] = 'fontselect';
-	$buttons[] = 'fontsizeselect';
-	$last = array_pop($tmp);
-	$buttons = array_merge($buttons, $tmp);
-	$buttons[] = 'styleselect';
-	$buttons[] = $last;
+	if(is_admin()) {
+        $tmp = $buttons;
+        unset($buttons);
+        $buttons[] = 'fontselect';
+        $buttons[] = 'fontsizeselect';
+        $last = array_pop($tmp);
+        $buttons = array_merge($buttons, $tmp);
+        $buttons[] = 'styleselect';
+        $buttons[] = $last;
+    }
 	return $buttons;
 }
 add_filter( 'mce_buttons', 'sb_theme_more_mce_buttons_toolbar_1' );
@@ -1372,14 +1460,16 @@ add_filter( 'mce_buttons', 'sb_theme_more_mce_buttons_toolbar_1' );
  * Thêm nút vào trình soạn thảo, thanh công cụ thứ 2
  */
 function sb_theme_more_mce_buttons_toolbar_2( $buttons ) {
-	$buttons[] = 'subscript';
-	$buttons[] = 'superscript';
-	$buttons[] = 'hr';
-	$buttons[] = 'cut';
-	$buttons[] = 'copy';
-	$buttons[] = 'paste';
-	$buttons[] = 'backcolor';
-	$buttons[] = 'newdocument';
+	if(is_admin()) {
+        $buttons[] = 'subscript';
+        $buttons[] = 'superscript';
+        $buttons[] = 'hr';
+        $buttons[] = 'cut';
+        $buttons[] = 'copy';
+        $buttons[] = 'paste';
+        $buttons[] = 'backcolor';
+        $buttons[] = 'newdocument';
+    }
 	return $buttons;
 }
 add_filter( 'mce_buttons_2', 'sb_theme_more_mce_buttons_toolbar_2' );
