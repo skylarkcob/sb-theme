@@ -94,6 +94,10 @@ if(SB_Option::use_administrative_boundaries()) {
         array(
             'name' => 'district',
             'type' => 'number'
+        ),
+        array(
+            'name' => 'ward',
+            'type' => 'number'
         )
     );
     $args = array(
@@ -207,6 +211,7 @@ function sb_theme_term_meta_street_district_edit( $term ) {
     $name = 'district';
     SB_Theme::the_term_meta_nonce();
     $value = SB_Term::get_meta($term->term_id, $term->taxonomy, $name);
+    $current_district = $value;
     $key = 'street_district';
     $args = array(
         'id' => 'sb_theme_term_meta_' . $key,
@@ -216,6 +221,35 @@ function sb_theme_term_meta_street_district_edit( $term ) {
         'taxonomy' => $name,
         'description' => __('Lựa chọn quận huyện mà đường phố hiện tại thuộc về.', 'sb-theme')
     );
+    SB_Term_Field::select_term($args);
+
+    $key = 'street_ward';
+    $name = 'ward';
+    $value = SB_Term::get_meta($term->term_id, $term->taxonomy, $name);
+    $args = array(
+        'id' => 'sb_theme_term_meta_' . $key,
+        'label' => __('Phường xã', 'sb-theme'),
+        'name' => $name,
+        'value' => $value,
+        'taxonomy' => $name,
+        'before' => '<div class="form-field term-' . $name . '-wrap">',
+        'after' => '</div>',
+        'description' => __('Lựa chọn phường xã mà đường phố hiện tại thuộc về.', 'sb-theme'),
+        'autocomplete' => true,
+        'force_empty' => true,
+        'load_item' => false
+    );
+    if($current_district > 0) {
+        $terms = SB_Term::get_ward_by_district($current_district);
+        $custom_options = '';
+        foreach($terms as $cat) {
+            if(!is_object($cat)) {
+                continue;
+            }
+            $custom_options .= SB_Field::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $name), 'selected' => $value, 'text' => $cat->name));
+        }
+        $args['custom_options'] = $custom_options;
+    }
     SB_Term_Field::select_term($args);
 }
 
@@ -234,6 +268,37 @@ function sb_theme_term_meta_street_district_create() {
         'description' => __('Lựa chọn quận huyện mà đường phố hiện tại thuộc về.', 'sb-theme'),
         'autocomplete' => true
     );
+    SB_Term_Field::select_term($args);
+
+    $key = 'street_ward';
+    $name = 'ward';
+    $args = array(
+        'id' => 'sb_theme_term_meta_' . $key,
+        'label' => __('Phường xã', 'sb-theme'),
+        'name' => $name,
+        'value' => 0,
+        'taxonomy' => $name,
+        'before' => '<div class="form-field term-' . $name . '-wrap">',
+        'after' => '</div>',
+        'description' => __('Lựa chọn phường xã mà đường phố hiện tại thuộc về.', 'sb-theme'),
+        'autocomplete' => true,
+        'force_empty' => true,
+        'load_item' => false
+    );
+    if(isset($_SESSION['sb_theme_current_district'])) {
+        $current_district = absint($_SESSION['sb_theme_current_district']);
+        if($current_district > 0) {
+            $terms = SB_Term::get_ward_by_district($current_district);
+            $custom_options = '';
+            foreach($terms as $cat) {
+                if(!is_object($cat)) {
+                    continue;
+                }
+                $custom_options .= SB_Field::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $name), 'selected' => 0, 'text' => $cat->name));
+            }
+            $args['custom_options'] = $custom_options;
+        }
+    }
     SB_Term_Field::select_term($args);
 }
 

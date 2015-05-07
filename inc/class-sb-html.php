@@ -10,8 +10,12 @@ class SB_HTML {
     }
 
     private function init() {
-        $this->self_closers = array('input', 'img', 'hr', 'br', 'meta', 'link');
+        $this->self_closers = array();
         $this->attributes = array();
+    }
+
+    public function get_self_closers() {
+        return SB_Core::get_html_self_closers();
     }
 
     public function get_attribute($attribute_name) {
@@ -41,7 +45,7 @@ class SB_HTML {
 
     public function set_attribute_array($attributes) {
         if(is_array($attributes)) {
-            $this->attributes = $attributes;
+            $this->attributes = wp_parse_args($attributes, $this->attributes);
         }
     }
 
@@ -80,7 +84,7 @@ class SB_HTML {
             }
         }
         $result .= '>';
-        if(!in_array($this->name, $this->self_closers)) {
+        if(!in_array($this->name, $this->get_self_closers())) {
             $result .= $this->get_attribute('text');
             $result .= sprintf('</%s>', $this->name);
         }

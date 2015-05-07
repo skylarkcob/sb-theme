@@ -81,6 +81,8 @@ require SB_THEME_INC_PATH . '/class-sb-admin.php';
 
 require SB_THEME_INC_PATH . '/widgets/class-sb-banner-widget.php';
 
+require SB_THEME_INC_PATH . '/class-sb-spam.php';
+
 require SB_THEME_INC_PATH . '/class-sb-comment.php';
 
 require SB_THEME_INC_PATH . '/class-sb-paginate.php';

@@ -82,6 +82,9 @@ class SB_Term_Meta {
             $sb_term_metas[$term_id]['taxonomy'] = $taxonomy;
         }
         SB_Option::update_term_metas($sb_term_metas);
+        if(SB_Option::use_administrative_boundaries()) {
+            SB_Core::delete_transient('sb_theme_administrative_boundaries');
+        }
         return $term_id;
     }
 }

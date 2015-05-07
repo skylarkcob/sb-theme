@@ -296,16 +296,16 @@ class SB_Field {
         $atts = array(
             'href' => 'javascript:;',
             'class' => $upload_button_class,
-            'title' => __('Insert image', 'sb-theme'),
-            'text' => __('Upload', 'sb-theme')
+            'title' => __('Thêm hình ảnh', 'sb-theme'),
+            'text' => __('Tải lên', 'sb-theme')
         );
         $html->set_attribute_array($atts);
         echo $html->build();
         $atts = array(
             'href' => 'javascript:;',
             'class' => $remove_button_class,
-            'title' => __('Remove image', 'sb-theme'),
-            'text' => __('Remove', 'sb-theme')
+            'title' => __('Xóa hình ảnh', 'sb-theme'),
+            'text' => __('Xóa', 'sb-theme')
         );
         $html->set_attribute_array($atts);
         echo $html->build();
@@ -614,7 +614,7 @@ class SB_Field {
         }
         $html->set_attribute_array($atts);
         $attributes = isset($args['attributes']) ? $args['attributes'] : array();
-        $html = self::set_attributes($html, $attributes);
+        $html->set_attribute_array($attributes);
         if($only) {
             echo $html->build();
         } else {
@@ -624,7 +624,7 @@ class SB_Field {
             }
             echo $html->build();
             if('checkbox' == $type || 'radio' == $type) {
-                self::label(array('text' => $label, 'for' => 'id', 'attributes' => array('class' => $type . '-label')));
+                self::label(array('text' => $label, 'for' => $id, 'attributes' => array('class' => $type . '-label')));
             }
 
             if($with_button) {
@@ -832,7 +832,7 @@ class SB_Field {
 
     public static function select_page($args = array()) {
         $pages = SB_Post::get_all('page');
-        $all_option = '<option value="0">' . __('Chọn trang', 'sb-theme') . '</option>';
+        $all_option = '<option value="0">' . __('-- Chọn trang --', 'sb-theme') . '</option>';
         $value = isset($args['value']) ? $args['value'] : '';
         while($pages->have_posts()) {
             $pages->the_post();
@@ -841,6 +841,53 @@ class SB_Field {
         }
         wp_reset_postdata();
         $args['all_option'] = $all_option;
+        self::select($args);
+    }
+
+    public static function select_post($args = array()) {
+        $post_type = isset($args['post_type']) ? $args['post_type'] : 'post';
+        $type = SB_Core::get_post_type_info($post_type);
+        $all_option = isset($args['all_option']) ? $args['all_option'] : '';
+        $value = isset($args['value']) ? $args['value'] : '';
+        if(empty($all_option)) {
+            $option_default = '';
+            if(isset($args['option_default'])) {
+                $option_default = $args['option_default'];
+            } else {
+                $default_text = isset($args['default_text']) ? $args['default_text'] : sprintf(__('-- Chọn %s --', 'sb-theme'), SB_PHP::lowercase($type->labels->singular_name));
+                $option_default = '<option value="0" data-post-type="">' . $default_text . '</option>';
+            }
+            $all_option = $option_default;
+            $load_item = isset($args['load_item']) ? $args['load_item'] : true;
+            if($load_item) {
+                $query_args = isset($args['query_args']) ? $args['query_args'] : array();
+                if(!isset($query_args['post_type'])) {
+                    $query_args['post_type'] = $post_type;
+                }
+                $query = SB_Query::get($query_args);
+                global $post;
+                $save_post = $post;
+                if($query->have_posts()) {
+                    while($query->have_posts()) {
+                        $query->the_post();
+                        $all_option .= self::get_option(array('value' => get_the_ID(), 'attributes' => array('data-post-type' => $type->name), 'selected' => $value, 'text' => get_the_title()));
+                    }
+                    wp_reset_postdata();
+                }
+                $post = $save_post;
+            }
+        }
+        $args['all_option'] = $all_option;
+        if(!isset($args['attributes']['data-post-type'])) {
+            $args['attributes']['data-post-type'] = $post_type;
+        }
+        $post_type_slug = isset($type->rewrite['slug']) ? $type->rewrite['slug'] : '';
+        if(!empty($post_type_slug)) {
+            $post_type_slug .= '-container';
+        }
+        $container_class = isset($args['container_class']) ? $args['container_class'] : '';
+        $container_class = SB_PHP::add_string_with_space_before($container_class, $post_type_slug);
+        $args['container_class'] = $container_class;
         self::select($args);
     }
 
@@ -868,11 +915,11 @@ class SB_Field {
         $taxonomy = isset($args['taxonomy']) ? $args['taxonomy'] : '';
         $options = isset($args['options']) ? $args['options'] : array();
         $force_empty = isset($args['force_empty']) ? (bool)$args['force_empty'] : false;
+        $tax = get_taxonomy($taxonomy);
         if(!$force_empty) {
             if(empty($taxonomy) && (!is_array($options) || count($options) < 1)) {
                 return;
             }
-            $tax = get_taxonomy($taxonomy);
             if(!is_object($tax) && (!is_array($options) || count($options) < 1)) {
                 return;
             }
@@ -916,6 +963,9 @@ class SB_Field {
                     if(!SB_Core::is_error($terms) && count($terms) > 0) {
                         $tmp = '<optgroup label="' . $tax->labels->singular_name . '">';
                         foreach($terms as $cat) {
+                            if(!is_object($cat)) {
+                                continue;
+                            }
                             $option_text = $cat->name . (($show_count) ? ' (' . $cat->count . ')' : '');
                             $tmp .= self::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $tax->name), 'selected' => $value, 'text' => $option_text));
                         }
@@ -928,8 +978,11 @@ class SB_Field {
                 $terms = get_terms($tax->name);
                 if(!SB_Core::is_error($terms) && count($terms) > 0) {
                     foreach($terms as $cat) {
+                        if(!is_object($cat)) {
+                            continue;
+                        }
                         $option_text = $cat->name . (($show_count) ? ' (' . $cat->count . ')' : '');
-                        $all_option .= SB_Field::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $tax->name), 'selected' => 0, 'text' => $option_text));
+                        $all_option .= self::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $tax->name), 'selected' => 0, 'text' => $option_text));
                     }
                 }
             }
@@ -938,6 +991,9 @@ class SB_Field {
                 $terms = SB_Term::get($taxonomy);
                 if(!SB_Core::is_error($terms) && count($terms) > 0) {
                     foreach($terms as $cat) {
+                        if(!is_object($cat)) {
+                            continue;
+                        }
                         $all_option .= self::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $taxonomy), 'selected' => $value, 'text' => $cat->name));
                     }
                 }

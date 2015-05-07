@@ -244,6 +244,21 @@ class SB_Option {
         return self::get_theme_advanced_option(array('keys' => array($base_option_name, $option_name)));
     }
 
+    public static function get_file_size_limit() {
+        $tab_base_option_name = 'writing';
+        $key = 'limit_file_size';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        return absint($value);
+    }
+
+    public static function get_image_type_allow() {
+        $tab_base_option_name = 'writing';
+        $key = 'allow_image_type';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_PHP::string_to_array(',', $value);
+        return SB_PHP::trim_all_array_item($value);
+    }
+
     public static function get_taxonomy_use_thumbnail() {
         $tab_base_option_name = 'general';
         $key = 'taxonomy_use_thumbnail';

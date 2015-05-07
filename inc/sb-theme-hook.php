@@ -1569,9 +1569,45 @@ add_filter('the_excerpt', 'sb_theme_shortcode_from_excerpt');
 function sb_theme_pre_upload_file( $file ){
 	$file['name'] = SB_PHP::remove_vietnamese(SB_PHP::lowercase($file['name']));
 	$file = apply_filters('sb_theme_pre_upload_file', $file);
+    $file = apply_filters('sb_theme_before_upload_file', $file);
 	return $file;
 }
 add_filter('wp_handle_upload_prefilter', 'sb_theme_pre_upload_file' );
+
+function sb_theme_check_file_size_before_upload($file) {
+    $type = $file['type'];
+    $is_image = strpos($type, 'image');
+    $size = $file['size'] / 1024;
+    $limit_size = SB_Core::get_file_size_limit();
+    $limit_count = SB_Core::get_file_count_limit();
+    if($is_image !== false) {
+        $limit_image_size = SB_Core::get_image_size_limit();
+        $limit_image_count = SB_Core::get_image_count_limit();
+        $allow_image_type = SB_Core::get_image_type_allow();
+        $user = SB_User::get_current();
+        $args = array(
+            'orderby' => 'post_date',
+            'order' => 'DESC',
+            'numberposts' => -1,
+            'post_type' => 'attachment',
+            'author' => $user->ID,
+        );
+        $attachmentsbyuser = get_posts( $args );
+
+        if($limit_image_size > 0 && $size > $limit_image_size) {
+            $file['error'] = sprintf(__('Hình ảnh không được vượt quá %s KB.', 'sb-theme'), $limit_image_size);
+        } elseif(count($allow_image_type) > 0 && !in_array($type, $allow_image_type)) {
+            $file['error'] = sprintf(__('Định dạng của hình ảnh phải là %s.', 'sb-theme'), implode(', ', $allow_image_type));
+        }
+    } else {
+        if($limit_size > 0 && $size > $limit_size) {
+            $file['error'] = sprintf(__('Tập tin không được vượt quá %s KB.', 'sb-theme'), $limit_size);
+        }
+    }
+    return $file;
+
+}
+add_filter('sb_theme_before_upload_file', 'sb_theme_check_file_size_before_upload');
 
 /*
  * Xóa các kích thước hình ảnh thumbnail mặc định

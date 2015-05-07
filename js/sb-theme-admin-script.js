@@ -899,6 +899,7 @@ var sb_ajax_loader,
 
     // Lựa chọn địa giới hành chính
     (function(){
+        // Hàm sử dụng cho meta box
         $('.administrative-boundaries .sb-term-field select').on('change', function(e){
             e.preventDefault();
             var that = $(this),
@@ -917,6 +918,86 @@ var sb_ajax_loader,
                     break;
                 case 'district':
                     hamlet.find('option:not(:first)').remove();
+                    break;
+                case 'ward':
+                    hamlet.find('option:not(:first)').remove();
+                    break;
+                case 'hamlet':
+                    break;
+            }
+            if(term >= 0) {
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: sb_theme.ajax_url,
+                    data: {
+                        action: 'sb_theme_administrative_boundaries_change',
+                        term: term,
+                        taxonomy: taxonomy
+                    },
+                    success: function(response){
+                        if(response.successful) {
+                            if($.trim(response.html_data)) {
+                                switch (taxonomy) {
+                                    case 'province':
+                                        district.html(response.html_data);
+                                        if(0 == term) {
+                                            ward.find('option:not(:first)').remove();
+                                            hamlet.find('option:not(:first)').remove();
+                                            street.find('option:not(:first)').remove();
+                                        }
+                                        break;
+                                    case 'district':
+                                        ward.html(response.html_data);
+                                        if($.trim(response.html_street)) {
+                                            street.html(response.html_street);
+                                        }
+                                        if(0 == term) {
+                                            hamlet.find('option:not(:first)').remove();
+                                        }
+                                        break;
+                                    case 'ward':
+                                        hamlet.html(response.html_data);
+                                        if($.trim(response.html_street)) {
+                                            street.html(response.html_street);
+                                        }
+                                        if(0 == term) {
+                                            hamlet.find('option:not(:first)').remove();
+                                        }
+                                        break;
+                                    case 'hamlet':
+                                        break;
+                                }
+                            }
+                        } else {
+                            container.find('select').val(0);
+                        }
+                    }
+                });
+            }
+        });
+
+        // Hàm sử dụng khi tạo và sửa chuyên mục
+        $('.edit-tags-php .wrap .form-field select.select-term').on('change', function(e){
+            e.preventDefault();
+            var that = $(this),
+                term = parseInt(that.val()),
+                container = that.closest('.wrap'),
+                taxonomy = that.attr('data-taxonomy'),
+                district = container.find('.form-field select[name="district"]'),
+                ward = container.find('.form-field select[name="ward"]'),
+                hamlet = container.find('.form-field select[name="hamlet"]'),
+                street = container.find('.form-field select[name="street"]');
+            switch (taxonomy) {
+                case 'province':
+                    ward.find('option:not(:first)').remove();
+                    hamlet.find('option:not(:first)').remove();
+                    street.find('option:not(:first)').remove();
+                    break;
+                case 'district':
+                    if(typeof hamlet != 'undefined') {
+                        hamlet.find('option:not(:first)').remove();
+                    }
                     break;
                 case 'ward':
                     hamlet.find('option:not(:first)').remove();

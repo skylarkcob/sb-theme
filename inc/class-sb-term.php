@@ -25,12 +25,29 @@ class SB_Term {
         return self::get_administrative_boundaries_by_parent($province_id, 'province', 'district');
     }
 
+    public static function get_province_of_district($district_id) {
+        $result = 0;
+        $metas = SB_Option::get_term_metas();
+        $info = isset($metas[$district_id]) ? $metas[$district_id] : array();
+        foreach($info as $key => $value) {
+            if('province' == $key) {
+                $result = $value;
+                break;
+            }
+        }
+        return $result;
+    }
+
     public static function get_ward_by_district($district_id) {
         return self::get_administrative_boundaries_by_parent($district_id, 'district', 'ward');
     }
 
     public static function get_street_by_district($district_id) {
         return self::get_administrative_boundaries_by_parent($district_id, 'district', 'street');
+    }
+
+    public static function get_street_by_ward($ward_id) {
+        return self::get_administrative_boundaries_by_parent($ward_id, 'ward', 'street');
     }
 
     public static function get_hamlet_by_ward($ward_id) {

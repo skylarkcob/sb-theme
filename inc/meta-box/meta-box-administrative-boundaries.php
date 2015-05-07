@@ -37,6 +37,7 @@ $args = array(
         'data-taxonomy' => $key
     )
 );
+
 if($province > 0) {
     $terms = SB_Term::get_district_by_province($areas['province']);
     if(is_array($terms)) {
@@ -47,6 +48,20 @@ if($province > 0) {
             }
         }
         $args['custom_options'] = $custom_options;
+    }
+} elseif($district > 0) {
+    $province = SB_Term::get_province_of_district($district);
+    if($province > 0) {
+        $terms = SB_Term::get_district_by_province($province);
+        if(is_array($terms)) {
+            $custom_options = '';
+            foreach($terms as $term) {
+                if(is_object($term)) {
+                    $custom_options .= '<option value="' . $term->term_id . '" ' . selected($term->term_id, $value, false) . '>' . $term->name . '</option>';
+                }
+            }
+            $args['custom_options'] = $custom_options;
+        }
     }
 }
 SB_Field::select_term($args);
@@ -124,8 +139,8 @@ $args = array(
         'data-taxonomy' => $key
     )
 );
-if($district > 0) {
-    $terms = SB_Term::get_street_by_district($areas['district']);
+if($ward > 0) {
+    $terms = SB_Term::get_street_by_ward($areas['ward']);
     if(is_array($terms)) {
         $custom_options = '';
         foreach($terms as $term) {
@@ -134,6 +149,17 @@ if($district > 0) {
             }
         }
         $args['custom_options'] = $custom_options;
+    } elseif($district > 0) {
+        $terms = SB_Term::get_street_by_district($areas['district']);
+        if(is_array($terms)) {
+            $custom_options = '';
+            foreach($terms as $term) {
+                if(is_object($term)) {
+                    $custom_options .= '<option value="' . $term->term_id . '" ' . selected($term->term_id, $value, false) . '>' . $term->name . '</option>';
+                }
+            }
+            $args['custom_options'] = $custom_options;
+        }
     }
 }
 SB_Field::select_term($args);

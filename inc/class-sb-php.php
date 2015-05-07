@@ -71,6 +71,10 @@ class SB_PHP {
         return false;
     }
 
+    public static function trim_all_array_item($source_array) {
+        return array_map('trim', $source_array);
+    }
+
     public static function array_to_string($delimiter, $text) {
         $datas = explode($delimiter, $text);
         $datas = array_filter($datas);
@@ -1063,6 +1067,12 @@ class SB_PHP {
     }
 
     public static function string_to_array($delimiter, $text) {
+        if(is_array($text)) {
+            return $text;
+        }
+        if(empty($text)) {
+            return array();
+        }
         $result = explode($delimiter, $text);
         $result = array_filter($result);
         return $result;

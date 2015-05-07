@@ -47,6 +47,53 @@ function sb_theme_advanced_setting_writing_restore_link_title() {
 }
 
 $args = array(
+    'title' => 'Giới hạn dung lượng tập tin',
+    'description' => 'Đối với các hosting dung lượng nhỏ, bạn có thể dùng chức năng này để giới hạn dung lượng tối đa cho phép người dùng tải tập tin lên hosting.',
+    'callback' => 'sb_theme_advanced_setting_writing_limit_file_size'
+);
+SB_Admin_Custom::row_setting_field($args);
+
+function sb_theme_advanced_setting_writing_limit_file_size() {
+    $tab_base_option_name = 'writing';
+    $key = 'limit_file_size';
+    $value = SB_Core::get_file_size_limit();
+    $args = array(
+        'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
+        'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
+        'value' => $value,
+        'label' => __('Dung lượng tập tin', 'sb-theme'),
+        'description' => __('Dung lượng tối đa cho phép tập tin được tải lên hosting, dung lượng được tính bằng KB.', 'sb-theme'),
+        'autocomplete' => false,
+        'attributes' => array(
+            'min' => 0
+        )
+    );
+    SB_Field::number($args);
+}
+
+$args = array(
+    'title' => 'Định dạng hình ảnh',
+    'description' => 'Bạn có thể lựa chọn định dạng hình ảnh cho người dùng được phép tải lên hosting, tối ưu nhất là bạn nên chọn hình ảnh định dạng jpeg. Bạn có thể xem thêm định dạng hình ảnh <a target="_blank" href="http://php.net/manual/en/function.image-type-to-mime-type.php">tại đây</a>.',
+    'callback' => 'sb_theme_advanced_setting_writing_allow_image_type'
+);
+SB_Admin_Custom::row_setting_field($args);
+
+function sb_theme_advanced_setting_writing_allow_image_type() {
+    $tab_base_option_name = 'writing';
+    $key = 'allow_image_type';
+    $value = implode(',', SB_Core::get_image_type_allow());
+    $args = array(
+        'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
+        'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
+        'value' => $value,
+        'label' => __('Đuôi hình ảnh', 'sb-theme'),
+        'description' => __('Định dạng đuôi cho hình ảnh, cách nhau bằng dấu phẩy. Ví dụ: image/jpeg,image/png.', 'sb-theme'),
+        'autocomplete' => false
+    );
+    SB_Field::text($args);
+}
+
+$args = array(
     'title' => 'Viết bài bên ngoài front-end',
     'description' => 'Nếu bạn muốn cho người dùng đăng bài viết bên ngoài dashboard thì hãy lựa chọn trang bạn đã tạo bên dưới.',
     'callback' => 'sb_theme_advanced_setting_writing_add_post_front_end'
@@ -61,7 +108,7 @@ function sb_theme_advanced_setting_writing_add_post_front_end() {
     $args = array(
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
-        'label' => '',
+        'label' => __('Trang đăng tin', 'sb-theme'),
         'value' => $value
     );
     SB_Field::select_page($args);

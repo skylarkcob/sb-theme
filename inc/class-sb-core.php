@@ -667,6 +667,37 @@ class SB_Core {
         return $kq;
     }
 
+    public static function get_file_size_limit() {
+        $limit_size = apply_filters('sb_theme_file_size_limit', SB_Option::get_file_size_limit());
+        return $limit_size;
+    }
+
+    public static function get_image_size_limit() {
+        return apply_filters('sb_theme_image_size_limit', self::get_file_size_limit());
+    }
+
+    public static function get_file_count_limit() {
+        $limit = apply_filters('sb_theme_file_count_limit', 5);
+        return $limit;
+    }
+
+    public static function get_image_count_limit() {
+        return apply_filters('sb_theme_image_count_limit', self::get_file_count_limit());
+    }
+
+    public static function get_image_type_allow() {
+        $types = SB_Option::get_image_type_allow();
+        if(count($types) < 1) {
+            $types[] = 'image/jpeg';
+            $types[] = 'image/png';
+        }
+        return apply_filters('sb_theme_allow_image_type', $types);
+    }
+
+    public static function get_html_self_closers() {
+        return apply_filters('sb_theme_html_self_closers', array('input', 'img', 'hr', 'br', 'meta', 'link'));
+    }
+
     public static function get_taxonomies_of_post_type($post_type) {
         $taxs = get_taxonomies(array('object_type' => array($post_type)), 'objects');
         return self::get_hierarchical_taxonomies($taxs);

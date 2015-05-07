@@ -998,6 +998,9 @@ var sb_password_strength,
                                         break;
                                     case 'ward':
                                         hamlet.html(response.html_data);
+                                        if($.trim(response.html_street)) {
+                                            street.html(response.html_street);
+                                        }
                                         if(0 == term) {
                                             hamlet.find('option:not(:first)').remove();
                                         }
