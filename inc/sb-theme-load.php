@@ -123,7 +123,7 @@ require SB_THEME_INC_PATH . '/class-sb-lib.php';
  * Kiểm tra nếu giao diện có hỗ trợ meta cho term hoặc tiện ích chức năng
  * meta cho term được bật thì load class cần thiết.
  */
-if(sb_theme_support_term_meta() || SB_Option::utility_enabled('term_meta')) {
+if(SB_Core::use_custom_metas()) {
 
     /*
      * Kiểm tra nếu không tồn tại class SB_Term_Meta thì load class này.
@@ -197,6 +197,8 @@ if(SB_Option::statistics_enabled()) {
 
 /** Load tập tin khai báo hook trên SB Theme */
 require SB_THEME_INC_PATH . '/sb-theme-hook.php';
+
+require SB_THEME_INC_PATH . '/sb-theme-post-types-and-taxonomies.php';
 
 require SB_THEME_INC_PATH . '/sb-theme-ajax.php';
 

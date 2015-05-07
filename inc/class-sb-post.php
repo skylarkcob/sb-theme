@@ -22,6 +22,23 @@ class SB_Post {
         return $result;
     }
 
+    public static function get_excerpt($post_id) {
+        $result = '';
+        if(is_numeric($post_id) && $post_id > 0) {
+            $my_post = get_post($post_id);
+            if(self::is($my_post)) {
+                global $post;
+                $save_post = $post;
+                $post = $my_post;
+                setup_postdata($post);
+                $result = get_the_excerpt();
+                wp_reset_postdata();
+                $post = $save_post;
+            }
+        }
+        return $result;
+    }
+
     public static function get_template_name($page_id) {
         return self::get_meta($page_id, '_wp_page_template');
     }
@@ -492,37 +509,7 @@ class SB_Post {
     }
 
     public static function the_author() {
-        $user_nicename = get_the_author_meta('user_nicename');
-
-        $author_name = new SB_HTML('span');
-        $atts = array(
-            'itemprop' => 'name',
-            'text' => $user_nicename
-        );
-        $author_name->set_attribute_array($atts);
-
-        $author_link = new SB_HTML('a');
-        $atts = array(
-            'class' => 'url fn n',
-            'itemprop' => 'url',
-            'text' => $author_name->build(),
-            'rel' => 'author',
-            'href' => esc_url( self::get_author_url()),
-            'title' => sprintf(SB_Message::get_posts_by(), $user_nicename)
-        );
-        $author_link->set_attribute_array($atts);
-
-        $span = new SB_HTML('span');
-        $atts = array(
-            'class' => 'post-author entry-author',
-            'itemtype' => 'http://schema.org/Person',
-            'itemscope' => 'itemscope',
-            'itemprop' => 'author',
-            'text' => '<i class="fa fa-user icon-left"></i> <span>' . $author_link->build() . '</span>'
-        );
-        $span->set_attribute_array($atts);
-
-        echo $span->build();
+        self::the_author_link();
     }
 
     public static function get_the_date($format = '') {
@@ -561,11 +548,11 @@ class SB_Post {
         echo $title->build();
     }
 
-    public static function the_date($date_format = '', $has_time = false, $time_format = '') {
+    public static function get_date_meta($date_format = '', $has_time = false, $time_format = '') {
         $post_date = self::get_the_date($date_format);
         $time = new SB_HTML('time');
         $date_class = apply_filters('sb_theme_date_class', '');
-        $date_class = SB_PHP::add_string_with_space_before($date_class, 'entry-published date updated');
+        $date_class = SB_PHP::add_string_with_space_before($date_class, 'entry-published date updated post-date a-post-meta');
         if($has_time) {
             $post_date = SB_PHP::add_string_with_space_before($post_date, get_the_time($time_format));
         }
@@ -576,7 +563,11 @@ class SB_Post {
             'text' => $post_date
         );
         $time->set_attribute_array($atts);
-        echo $time->build();
+        return $time->build();
+    }
+
+    public static function the_date($date_format = '', $has_time = false, $time_format = '') {
+        echo self::get_date_meta($date_format, $has_time, $time_format);
     }
 
     public static function the_date_time($date_format = '', $time_format = '') {
@@ -610,20 +601,36 @@ class SB_Post {
         self::update_meta($post_id, '_menu_item_url', $meta_value);
     }
 
-    public static function the_comment_link($post_id = 0) {
+    public static function get_comment_link_meta($post_id = 0) {
         if($post_id == 0) {
             $post_id = get_the_ID();
         }
+        $result = '';
         $comment_number = self::get_comment_number($post_id);
         $comment_link = get_comments_link($post_id);
-        if(!post_password_required() && (comments_open() || get_comments_number())) : ?>
-            <span class="comments-link post-comment">
-                <i class="fa fa-comments icon-left"></i>
-                <a class="comments-link" href="<?php echo $comment_link; ?>" itemprop="discussionURL">
-                    <?php echo '<span class="count">' . $comment_number . '</span> <span class="text">' . SB_Message::get_comment() . '</span>'; ?>
-                </a>
-            </span>
-        <?php endif;
+        if(!post_password_required() && (comments_open() || get_comments_number())) {
+            $span = new SB_HTML('span');
+            $span->set_attribute('class', 'comments-link-container post-comment a-post-meta');
+
+            $span_text = '<i class="fa fa-comments icon-left"></i>';
+
+            $link = new SB_HTML('a');
+            $link->set_attribute('class', 'comments-link');
+            $link->set_attribute('href', $comment_link);
+            $link->set_attribute('itemprop', 'discussionURL');
+            $link->set_text('<span class="count">' . $comment_number . '</span> <span class="text">' . SB_Message::get_comment() . '</span>');
+
+            $span_text .= $link->build();
+
+            $span->set_text($span_text);
+
+            $result = $span->build();
+        }
+        return $result;
+    }
+
+    public static function the_comment_link($post_id = 0) {
+        echo self::get_comment_link_meta($post_id);
     }
 
     public static function get_tag_ids($post_id) {
@@ -870,6 +877,37 @@ class SB_Post {
         self::insert($args);
     }
 
+    public static function get_administrative_boundaries($post_id) {
+        $result = array(
+            'province' => 0,
+            'district' => 0,
+            'ward' => 0,
+            'hamlet' => 0,
+            'street' => 0
+        );
+        $term = self::get_first_term($post_id, 'province');
+        if(is_object($term)) {
+            $result['province'] = $term->term_id;
+        }
+        $term = self::get_first_term($post_id, 'district');
+        if(is_object($term)) {
+            $result['district'] = $term->term_id;
+        }
+        $term = self::get_first_term($post_id, 'ward');
+        if(is_object($term)) {
+            $result['ward'] = $term->term_id;
+        }
+        $term = self::get_first_term($post_id, 'hamlet');
+        if(is_object($term)) {
+            $result['hamlet'] = $term->term_id;
+        }
+        $term = self::get_first_term($post_id, 'street');
+        if(is_object($term)) {
+            $result['street'] = $term->term_id;
+        }
+        return $result;
+    }
+
     public static function insert($args = array()) {
         $post_title = '';
         $post_content = '';
@@ -912,7 +950,37 @@ class SB_Post {
     }
 
     public static function get_author_link() {
-        return get_the_author_link();
+        $user_nicename = get_the_author_meta('user_nicename');
+
+        $author_name = new SB_HTML('span');
+        $atts = array(
+            'itemprop' => 'name',
+            'text' => $user_nicename
+        );
+        $author_name->set_attribute_array($atts);
+
+        $author_link = new SB_HTML('a');
+        $atts = array(
+            'class' => 'url fn n',
+            'itemprop' => 'url',
+            'text' => $author_name->build(),
+            'rel' => 'author',
+            'href' => esc_url( self::get_author_url()),
+            'title' => sprintf(SB_Message::get_posts_by(), $user_nicename)
+        );
+        $author_link->set_attribute_array($atts);
+
+        $span = new SB_HTML('span');
+        $atts = array(
+            'class' => 'post-author entry-author a-post-meta',
+            'itemtype' => 'http://schema.org/Person',
+            'itemscope' => 'itemscope',
+            'itemprop' => 'author',
+            'text' => '<i class="fa fa-user icon-left"></i> <span>' . $author_link->build() . '</span>'
+        );
+        $span->set_attribute_array($atts);
+
+        return $span->build();
     }
 
     public static function the_author_link() {

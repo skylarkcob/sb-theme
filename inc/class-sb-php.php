@@ -1068,6 +1068,15 @@ class SB_PHP {
         return $result;
     }
 
+    public static function to_array($needle, $filter_and_unique = true) {
+        $result = (array)$needle;
+        if($filter_and_unique) {
+            $result = array_filter($result);
+            $result = array_unique($result);
+        }
+        return $result;
+    }
+
     public static function get_cookie( $key ) {
         return isset( $_COOKIE[ $key ] ) ? $_COOKIE[ $key ] : '';
     }

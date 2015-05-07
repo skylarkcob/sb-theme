@@ -9,6 +9,7 @@ function sb_build_meta_name( $meta_name ) {
 
 function sb_meta_box_nonce() {
     wp_nonce_field( 'sb_meta_box', 'sb_meta_box_nonce' );
+    wp_nonce_field('sb_theme_meta_box', 'sb_theme_meta_box_nonce');
 }
 
 function sb_post_meta_box_nonce() {
@@ -17,6 +18,7 @@ function sb_post_meta_box_nonce() {
 
 function sb_term_meta_nonce() {
     wp_nonce_field( 'sb_term_meta', 'sb_term_meta_nonce' );
+    wp_nonce_field('sb_theme_term_meta', 'sb_theme_term_meta_nonce');
 }
 
 function sb_core_owner() {
@@ -85,6 +87,14 @@ function sb_get_template_part($slug, $name = null) {
 
 function sb_theme_get_content($slug, $name = null) {
     sb_get_template_part('content/' . $slug, $name);
+}
+
+function sb_theme_get_ajax($slug, $name = null) {
+    sb_get_template_part('ajax/' . $slug, $name);
+}
+
+function sb_theme_get_meta_box($slug, $name = null) {
+    sb_get_template_part('meta-box/' . $slug, $name);
 }
 
 function sb_theme_get_template($slug, $name = null) {

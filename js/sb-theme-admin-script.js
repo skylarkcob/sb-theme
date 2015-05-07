@@ -1,5 +1,7 @@
 window.wp = window.wp || {};
 window.sb_core = window.sb_core || {};
+window.sb_theme = window.sb_theme || {};
+
 var sb_ajax_loader,
     sb_receive_media_selected,
     sb_option_form_submit = false;
@@ -453,6 +455,7 @@ var sb_ajax_loader,
         }
     }
 
+    // Di chuyển đối tượng tới danh sách kích hoạt
     var sb_theme_sortable_move_to_include = function(selector) {
         var container = selector.closest('div'),
             sortable_source = null;
@@ -465,6 +468,7 @@ var sb_ajax_loader,
             });
     };
 
+    // Di chuyển đối tượng tới danh sách nguồn
     var sb_theme_sortable_move_to_exclude = function(selector) {
         var container = selector.closest('div'),
             sortable_active = null;
@@ -477,12 +481,21 @@ var sb_ajax_loader,
             });
     };
 
+    // Xử lý sự kiện khi người dùng nhấn chuột vào đối tượng trong danh sách kết nối
     (function(){
         $('.sb-sortable-list.click-to-connect.sortable-source > li').live('click', function(){
-            sb_theme_sortable_move_to_include($(this));
+            var that = $(this);
+            if(that.hasClass('ui-state-disabled')) {
+                return false;
+            }
+            sb_theme_sortable_move_to_include(that);
         }).trigger('click');
         $('.sb-sortable-list.click-to-connect.active-sortable > li').live('click', function(){
-            sb_theme_sortable_move_to_exclude($(this));
+            var that = $(this);
+            if(that.hasClass('ui-state-disabled')) {
+                return false;
+            }
+            sb_theme_sortable_move_to_exclude(that);
         }).trigger('click');
     })();
 
@@ -762,10 +775,11 @@ var sb_ajax_loader,
 
     // SB Post Widget
     (function(){
+        // Ẩn hoặc hiện chọn chuyên mục theo kiểu lấy bài viết
         (function(){
-            $('.post-type select').live('change', function(e){
+            $('.sb-post-widget .select-type-post').live('change', function(e){
                 var that = $(this),
-                    list_cats = that.closest('div.sb-widget').find('p.post-cat');
+                    list_cats = that.closest('div.sb-widget').find('.post-cat');
                 if('category' == that.val()) {
                     list_cats.delay(10).fadeIn();
                 } else {
@@ -774,8 +788,9 @@ var sb_ajax_loader,
             });
         })();
 
+        // Thay đổi thông tin taxonomy của chuyên mục hiện tại
         (function(){
-            $('.post-cat option').live('click', function(e){
+            $('.sb-post-widget .post-cat option').live('click', function(e){
                 var that = $(this),
                     taxonomy = that.attr('data-taxonomy'),
                     input_taxonomy = that.closest('div.sb-post-widget').find('input.taxonomy');
@@ -783,31 +798,51 @@ var sb_ajax_loader,
             });
         })();
 
+        // Hiển thị hoặc ẩn các chức năng tương xứng với tùy chọn
         (function(){
+            // Hàm điều khiển ẩn hoặc hiện các mục chức năng
             function sb_post_widget_switch_only_thumbnail(selector, value) {
                 var widget_container = selector.closest('div.sb-widget');
                 if(value) {
-                    widget_container.find('p.show-excerpt').fadeOut();
-                    widget_container.find('p.excerpt-length').fadeOut();
-                    widget_container.find('p.title-length').fadeOut();
+                    widget_container.find('.show-excerpt').fadeOut();
+                    widget_container.find('.excerpt-length').fadeOut();
+                    widget_container.find('.title-length').fadeOut();
                     widget_container.find('fieldset.post-info').fadeOut();
                 } else {
-                    widget_container.find('p.show-excerpt').fadeIn();
-                    if(widget_container.find('p.show-excerpt input').is(':checked')) {
-                        widget_container.find('p.excerpt-length').fadeIn();
+                    widget_container.find('.show-excerpt').fadeIn();
+                    if(widget_container.find('.show-excerpt input').is(':checked')) {
+                        widget_container.find('.excerpt-length').fadeIn();
                     }
-                    widget_container.find('p.title-length').fadeIn();
+                    widget_container.find('.title-length').fadeIn();
                     widget_container.find('fieldset.post-info').fadeIn();
                 }
             }
-            $('.only-thumbnail input').live('click', function(e){
-                var that = $(this);
-                sb_post_widget_switch_only_thumbnail(that, that.is(':checked'));
+
+            // Xử lý sự kiện khi người dùng nhấn chuột vào ô chỉ hiển thị hình ảnh thu nhỏ
+            $('.sb-post-widget .only-thumbnail input').live('click', function(e){
+                var that = $(this),
+                    check_result = that.is(':checked');
+                if(check_result) {
+                    $('.sb-post-widget .disable-thumbnail input').attr('checked', false);
+                }
+                sb_post_widget_switch_only_thumbnail(that, check_result);
             });
-            $('.show-excerpt input').live('click', function(e){
+
+            // Xử lý sự kiện khi người dùng nhấn chuột vào ô không hiển thị hình ảnh thu nhỏ
+            $('.sb-post-widget .disable-thumbnail input').live('click', function(e){
+                var that = $(this),
+                    check_result = that.is(':checked');
+                if(check_result) {
+                    $('.sb-post-widget .only-thumbnail input').attr('checked', false);
+                    sb_post_widget_switch_only_thumbnail(that, false);
+                }
+            });
+
+            // Xử lý sự kiện khi người dùng nhấn chuột vào ô hiển thị trích dẫn
+            $('.sb-post-widget .show-excerpt input').live('click', function(e){
                 var that = $(this),
                     widget_container = that.closest('div.sb-widget'),
-                    excerpt_length = widget_container.find('p.excerpt-length');
+                    excerpt_length = widget_container.find('.excerpt-length');
                 if(that.is(':checked')) {
                     excerpt_length.fadeIn();
                 } else {
@@ -862,4 +897,107 @@ var sb_ajax_loader,
         }
     })();
 
+    // Lựa chọn địa giới hành chính
+    (function(){
+        $('.administrative-boundaries .sb-term-field select').on('change', function(e){
+            e.preventDefault();
+            var that = $(this),
+                term = parseInt(that.val()),
+                container = that.closest('.administrative-boundaries'),
+                taxonomy = that.attr('data-taxonomy'),
+                district = container.find('.sb-term-field select[name="sbmb_district"]'),
+                ward = container.find('.sb-term-field select[name="sbmb_ward"]'),
+                hamlet = container.find('.sb-term-field select[name="sbmb_hamlet"]'),
+                street = container.find('.sb-term-field select[name="sbmb_street"]');
+            switch (taxonomy) {
+                case 'province':
+                    ward.find('option:not(:first)').remove();
+                    hamlet.find('option:not(:first)').remove();
+                    street.find('option:not(:first)').remove();
+                    break;
+                case 'district':
+                    hamlet.find('option:not(:first)').remove();
+                    break;
+                case 'ward':
+                    hamlet.find('option:not(:first)').remove();
+                    break;
+                case 'hamlet':
+                    break;
+            }
+            if(term >= 0) {
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: sb_theme.ajax_url,
+                    data: {
+                        action: 'sb_theme_administrative_boundaries_change',
+                        term: term,
+                        taxonomy: taxonomy
+                    },
+                    success: function(response){
+                        if(response.successful) {
+                            if($.trim(response.html_data)) {
+                                switch (taxonomy) {
+                                    case 'province':
+                                        district.html(response.html_data);
+                                        if(0 == term) {
+                                            ward.find('option:not(:first)').remove();
+                                            hamlet.find('option:not(:first)').remove();
+                                            street.find('option:not(:first)').remove();
+                                        }
+                                        break;
+                                    case 'district':
+                                        ward.html(response.html_data);
+                                        if($.trim(response.html_street)) {
+                                            street.html(response.html_street);
+                                        }
+                                        if(0 == term) {
+                                            hamlet.find('option:not(:first)').remove();
+                                        }
+                                        break;
+                                    case 'ward':
+                                        hamlet.html(response.html_data);
+                                        if(0 == term) {
+                                            hamlet.find('option:not(:first)').remove();
+                                        }
+                                        break;
+                                    case 'hamlet':
+                                        break;
+                                }
+                            }
+                        } else {
+                            container.find('select').val(0);
+                        }
+                    }
+                });
+            }
+        });
+    })();
+
+    // Thay đổi chuyên mục thuộc post type cho SB Post Widget
+    (function(){
+        $('.sb-post-widget .select-post-type').live('change', function(e){
+            e.preventDefault();
+            var that = $(this),
+                container = that.closest('.sb-post-widget'),
+                select_category = container.find('.select-term');
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: sb_theme.ajax_url,
+                data: {
+                    action: 'sb_theme_post_widget_change_post_type_taxonomy',
+                    post_type: that.val(),
+                    show_count: that.attr('data-show-count')
+                },
+                success: function(response){
+                    select_category.find('optgroup').remove();
+                    select_category.find('option:not(:first)').remove();
+                    if(response.successful && $.trim(response.html_data)) {
+                        select_category.append(response.html_data);
+                    }
+                }
+            });
+        });
+    })();
 })(jQuery);

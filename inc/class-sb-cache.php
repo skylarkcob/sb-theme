@@ -60,7 +60,7 @@ class SB_Cache {
         if(!self::enabled()) {
             $value = false;
         }
-        return $value;
+        return (bool)$value;
     }
 
     public static function post_comment_count_cache() {

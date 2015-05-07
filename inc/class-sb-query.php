@@ -96,6 +96,11 @@ class SB_Query {
         return self::get($args);
     }
 
+    public static function get_recent_update($args = array()) {
+        $args['orderby'] = 'modified';
+        return self::get($args);
+    }
+
     public static function get_paged() {
         return get_query_var('paged', 1);
     }

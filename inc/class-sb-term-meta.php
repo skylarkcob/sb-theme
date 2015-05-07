@@ -41,10 +41,10 @@ class SB_Term_Meta {
             return;
         }
         foreach($this->taxonomies as $tax_name) {
-            if(!empty($this->create_callback) || function_exists($this->create_callback)) {
+            if(SB_PHP::callback_exists($this->create_callback)) {
                 add_action($tax_name . '_add_form_fields', $this->create_callback);
             }
-            if(!empty($this->callback) || function_exists($this->callback)) {
+            if(SB_PHP::callback_exists($this->callback)) {
                 add_action($tax_name . '_edit_form_fields', $this->callback);
             }
             if($this->translate) {

@@ -1,3 +1,7 @@
+window.wp = window.wp || {};
+window.sb_core = window.sb_core || {};
+window.sb_theme = window.sb_theme || {};
+
 (function($){
     function sb_theme_get_param_by_name(url, name) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");

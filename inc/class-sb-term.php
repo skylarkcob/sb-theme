@@ -21,6 +21,37 @@ class SB_Term {
         return $result;
     }
 
+    public static function get_district_by_province($province_id) {
+        return self::get_administrative_boundaries_by_parent($province_id, 'province', 'district');
+    }
+
+    public static function get_ward_by_district($district_id) {
+        return self::get_administrative_boundaries_by_parent($district_id, 'district', 'ward');
+    }
+
+    public static function get_street_by_district($district_id) {
+        return self::get_administrative_boundaries_by_parent($district_id, 'district', 'street');
+    }
+
+    public static function get_hamlet_by_ward($ward_id) {
+        return self::get_administrative_boundaries_by_parent($ward_id, 'ward', 'hamlet');
+    }
+
+    public static function get_administrative_boundaries_by_parent($parent_id, $parent_key, $child_taxonomy) {
+        $result = array();
+        $trasient_name = 'sb_theme_administrative_boundaries_' . $child_taxonomy . '_of_' . $parent_key;
+        if(false === ($result = get_transient($trasient_name))) {
+            $sb_term_metas = SB_Option::get_term_metas();
+            foreach($sb_term_metas as $term_id => $data) {
+                if(isset($data[$parent_key]) && $parent_id == $data[$parent_key]) {
+                    $result[] = get_term($term_id, $child_taxonomy);
+                }
+            }
+            set_transient($trasient_name, $result, WEEK_IN_SECONDS);
+        }
+        return $result;
+    }
+
     public static function get_menus($args = array()) {
         return get_terms('nav_menu', $args);
     }

@@ -386,6 +386,14 @@ class SB_Theme {
         <?php
     }
 
+    public static function the_term_meta_nonce() {
+        sb_term_meta_nonce();
+    }
+
+    public static function the_meta_box_nonce() {
+        sb_meta_box_nonce();
+    }
+
     private static function the_menu_default($args = array()) {
         $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
         $menu_class = isset($args['menu_class']) ? $args['menu_class'] : '';

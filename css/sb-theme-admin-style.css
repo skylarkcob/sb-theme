@@ -1254,3 +1254,50 @@ div.sb-post-meta-row .image-preview {
 .sb-plugins .sub-tabs {
     color: #666;
 }
+
+.post-php .meta-box-sortables .administrative-boundaries,
+.post-new-php .meta-box-sortables .administrative-boundaries {
+    overflow: hidden;
+}
+
+.post-php .meta-box-sortables .administrative-boundaries .sb-term-field,
+.post-new-php .meta-box-sortables .administrative-boundaries .sb-term-field {
+    float: left;
+    width: 50%;
+}
+
+.post-php .meta-box-sortables .administrative-boundaries .sb-term-field select,
+.post-new-php .meta-box-sortables .administrative-boundaries .sb-term-field select {
+    width: 90%;
+}
+
+.thumbnail-size > label {
+    margin-right: 5px;
+}
+
+.thumbnail-size > span {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.sb-post-widget input[type="number"] {
+    max-width: 100px;
+}
+
+.sb-post-widget .sb-number-field > label {
+    margin-right: 5px;
+}
+
+#widgets-right .widgets-holder-wrap .sb-widget .description {
+    color: #aaa;
+    font-family: arial;
+    font-size: 12px;
+    font-style: italic;
+    margin-top: 2px;
+    padding: 0;
+}
+
+.sb-post-widget .thumbnail-info > div,
+.sb-post-widget .post-info > div {
+    margin-bottom: 2px;
+}

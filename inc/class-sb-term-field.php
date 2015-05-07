@@ -27,14 +27,32 @@ class SB_Term_Field {
         self::after();
     }
 
+    public static function is_edit_page() {
+        if(isset($GLOBALS['pagenow']) && 'edit-tags.php' == $GLOBALS['pagenow']) {
+            $action = isset($_GET['action']) ? $_GET['action'] : '';
+            if('edit' == $action) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function term_select($args = array()) {
         $id = isset($args['id']) ? $args['id'] : '';
         $label = isset($args['label']) ? $args['label'] : '';
-        self::before($id, $label);
+        if(self::is_edit_page()) {
+            $args['label'] = '';
+            self::before($id, $label);
+        }
         $args['container_class'] = isset($args['container_class']) ? $args['container_class'] . ' small' : 'small';
-        $args['label'] = '';
         SB_Field::select_term($args);
-        self::after();
+        if(self::is_edit_page()) {
+            self::after();
+        }
+    }
+
+    public static function select_term($args = array()) {
+        self::term_select($args);
     }
 
     private static function before($id, $label) { ?>

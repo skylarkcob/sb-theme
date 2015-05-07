@@ -50,6 +50,15 @@ function sb_add_ui_item_ajax_callback() {
 }
 add_action( 'wp_ajax_sb_add_ui_item', 'sb_add_ui_item_ajax_callback' );
 
+/*
+ * Chọn thông tin địa giới hành chính
+ */
+function sb_theme_administrative_boundaries_change_ajax_callback() {
+    sb_theme_get_ajax('ajax-change-administrative-boundaries');
+    die();
+}
+add_action('wp_ajax_sb_theme_administrative_boundaries_change', 'sb_theme_administrative_boundaries_change_ajax_callback');
+
 function sb_ui_reset_ajax_callback() {
     $type = isset( $_POST['data_type'] ) ? $_POST['data_type'] : '';
     switch ( $type ) {
@@ -221,6 +230,49 @@ function sb_login_page_lost_password_ajax_callback() {
     die();
 }
 add_action('wp_ajax_nopriv_sb_login_page_lost_password', 'sb_login_page_lost_password_ajax_callback');
+
+function sb_theme_post_widget_change_post_type_taxonomy_ajax_callback() {
+    $post_type = isset($_POST['post_type']) ? $_POST['post_type'] : '';
+    $result = array(
+        'successful' => false,
+        'html_data' => ''
+    );
+    if(!empty($post_type)) {
+        $taxs = SB_Core::get_taxonomies_of_post_type($post_type);
+        if($taxs && SB_PHP::is_array_has_value($taxs)) {
+            $all_option = '';
+            $show_count = isset($_POST['show_count']) ? (bool)$_POST['show_count'] : true;
+            if(count($taxs) > 1) {
+                foreach($taxs as $tax) {
+                    $terms = get_terms($tax->name);
+                    if(!SB_Core::is_error($terms) && count($terms) > 0) {
+                        $tmp = '<optgroup label="' . $tax->labels->singular_name . '">';
+                        foreach($terms as $cat) {
+                            $option_text = $cat->name . (($show_count) ? ' (' . $cat->count . ')' : '');
+                            $tmp .= SB_Field::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $tax->name), 'selected' => 0, 'text' => $option_text));
+                        }
+                        $tmp .= '</optgroup>';
+                        $all_option .= $tmp;
+                    }
+                }
+            } else {
+                $tax = array_shift($taxs);
+                $terms = get_terms($tax->name);
+                if(!SB_Core::is_error($terms) && count($terms) > 0) {
+                    foreach($terms as $cat) {
+                        $option_text = $cat->name . (($show_count) ? ' (' . $cat->count . ')' : '');
+                        $all_option .= SB_Field::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $tax->name), 'selected' => 0, 'text' => $option_text));
+                    }
+                }
+            }
+            $result['html_data'] = $all_option;
+            $result['successful'] = true;
+        }
+    }
+    echo json_encode($result);
+    die();
+}
+add_action('wp_ajax_sb_theme_post_widget_change_post_type_taxonomy', 'sb_theme_post_widget_change_post_type_taxonomy_ajax_callback');
 
 function sb_login_page_verify_activation_code_ajax_callback() {
     check_ajax_referer('sb-lost-password-page', 'security');

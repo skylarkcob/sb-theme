@@ -1,5 +1,6 @@
 window.wp = window.wp || {};
 window.sb_core = window.sb_core || {};
+window.sb_theme = window.sb_theme || {};
 
 var sb_password_strength,
     sb_refresh,
@@ -934,6 +935,83 @@ var sb_password_strength,
                 image_preview_container.removeClass('has-image');
             }
             media_container.find('.media-id').val(0);
+        });
+    })();
+
+    // Lựa chọn địa giới hành chính
+    (function(){
+        $('.administrative-boundaries .sb-term-field select').on('change', function(e){
+            e.preventDefault();
+            var that = $(this),
+                term = parseInt(that.val()),
+                container = that.closest('.administrative-boundaries'),
+                taxonomy = that.attr('data-taxonomy'),
+                district = container.find('.sb-term-field select[name="sbmb_district"]'),
+                ward = container.find('.sb-term-field select[name="sbmb_ward"]'),
+                hamlet = container.find('.sb-term-field select[name="sbmb_hamlet"]'),
+                street = container.find('.sb-term-field select[name="sbmb_street"]');
+            switch (taxonomy) {
+                case 'province':
+                    ward.find('option:not(:first)').remove();
+                    hamlet.find('option:not(:first)').remove();
+                    street.find('option:not(:first)').remove();
+                    break;
+                case 'district':
+                    hamlet.find('option:not(:first)').remove();
+                    break;
+                case 'ward':
+                    hamlet.find('option:not(:first)').remove();
+                    break;
+                case 'hamlet':
+                    break;
+            }
+            if(term >= 0) {
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: sb_theme.ajax_url,
+                    data: {
+                        action: 'sb_theme_administrative_boundaries_change',
+                        term: term,
+                        taxonomy: taxonomy
+                    },
+                    success: function(response){
+                        if(response.successful) {
+                            if($.trim(response.html_data)) {
+                                switch (taxonomy) {
+                                    case 'province':
+                                        district.html(response.html_data);
+                                        if(0 == term) {
+                                            ward.find('option:not(:first)').remove();
+                                            hamlet.find('option:not(:first)').remove();
+                                            street.find('option:not(:first)').remove();
+                                        }
+                                        break;
+                                    case 'district':
+                                        ward.html(response.html_data);
+                                        if($.trim(response.html_street)) {
+                                            street.html(response.html_street);
+                                        }
+                                        if(0 == term) {
+                                            hamlet.find('option:not(:first)').remove();
+                                        }
+                                        break;
+                                    case 'ward':
+                                        hamlet.html(response.html_data);
+                                        if(0 == term) {
+                                            hamlet.find('option:not(:first)').remove();
+                                        }
+                                        break;
+                                    case 'hamlet':
+                                        break;
+                                }
+                            }
+                        } else {
+                            container.find('select').val(0);
+                        }
+                    }
+                });
+            }
         });
     })();
 

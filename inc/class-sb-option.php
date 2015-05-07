@@ -244,6 +244,37 @@ class SB_Option {
         return self::get_theme_advanced_option(array('keys' => array($base_option_name, $option_name)));
     }
 
+    public static function get_taxonomy_use_thumbnail() {
+        $tab_base_option_name = 'general';
+        $key = 'taxonomy_use_thumbnail';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        return SB_PHP::string_to_array(',', $value);
+    }
+
+    public static function get_post_type_use_administrative_boundaries() {
+        $tab_base_option_name = 'general';
+        $key = 'post_type_use_administrative_boundaries';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        return SB_PHP::string_to_array(',', $value);
+    }
+
+    public static function use_administrative_boundaries() {
+        $tab_base_option_name = 'general';
+        $key = 'use_administrative_boundaries';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::check_switch_value($value, 0);
+        $value = apply_filters('sb_theme_use_administrative_boundaries', $value);
+        return (bool)$value;
+    }
+
+    public static function use_term_thumbnail() {
+        $tab_base_option_name = 'general';
+        $key = 'use_term_thumbnail';
+        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = SB_Option::check_switch_value($value, 0);
+        return (bool)$value;
+    }
+
     public static function confirm_publish_post() {
         $tab_base_option_name = 'writing';
         $key = 'confirm_publish';

@@ -264,6 +264,7 @@ function sb_theme_after_theme_switch_hook() {
     sb_theme_remove_all_sb_plugin();
     SB_Membership::init_roles_and_capabilities();
     do_action('sb_theme_after_switch_theme');
+    do_action('sb_theme_activation');
 }
 add_action('after_switch_theme', 'sb_theme_after_theme_switch_hook');
 

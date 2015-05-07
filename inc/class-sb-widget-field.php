@@ -14,20 +14,22 @@ class SB_Widget_Field {
             'id' => $id,
             'name' => $name,
             'value' => $value,
-            'label' => __('Title:', 'sb-theme'),
+            'label' => __('Tiêu đề:', 'sb-theme'),
         );
         self::text($args);
     }
 
     public static function select_post_type($args = array()) {
-        $options = SB_Post::get_types(array(), 'objects');
+        $field_class = isset($args['field_class']) ? $args['field_class'] : '';
+        $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'select-post-type');
+        $options = SB_Post::get_types(array('public' => true), 'objects');
         $all_option = '';
         $value = isset($args['value']) ? $args['value'] : '';
         foreach ($options as $key => $option) {
             $tmp_args = array(
                 'value' => $key,
                 'selected' => $value,
-                'text' => $option->labels->name
+                'text' => $option->labels->singular_name
             );
             $all_option .= SB_Field::get_option($tmp_args);
         }
@@ -67,7 +69,10 @@ class SB_Widget_Field {
             foreach($options as $key => $label) {
                 $tmp_args = array(
                     'label' => $label,
-                    'value' => $key
+                    'option_value' => $key,
+                    'name' => isset($args['name']) ? $args['name'] : '',
+                    'value' => isset($args['value']) ? $args['value'] : '',
+                    'autocomplete' => isset($args['autocomplete']) ? $args['autocomplete'] : false
                 );
                 self::radio($tmp_args);
             }

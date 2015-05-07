@@ -90,7 +90,17 @@ class SB_Field {
         $value = isset($args['value']) ? $args['value'] : '';
         $text = isset($args['text']) ? $args['text'] : '';
         $selected = isset($args['selected']) ? $args['selected'] : '';
-        return '<option value="' . esc_attr($value) . '" ' . selected($value, $selected, false) . '>' . $text . '</option>';
+        $option = new SB_HTML('option');
+        $option->set_attribute('value', $value);
+        $option->set_text($text);
+        $attributes = isset($args['attributes']) ? $args['attributes'] : array();
+        foreach($attributes as $data_name => $att_value) {
+            $option->set_attribute($data_name, $att_value);
+        }
+        if($selected == $value) {
+            $option->set_attribute('selected', 'selected');
+        }
+        return $option->build();
     }
 
     public static function option($args = array()) {
@@ -598,6 +608,9 @@ class SB_Field {
             if('radio' == $type) {
                 $atts['value'] = $option_value;
             }
+            if(!isset($args['autocomplete'])) {
+                $atts['autocomplete'] = 'off';
+            }
         }
         $html->set_attribute_array($atts);
         $attributes = isset($args['attributes']) ? $args['attributes'] : array();
@@ -795,6 +808,7 @@ class SB_Field {
             $select_option .= $all_option;
         }
         $html = new SB_HTML('select');
+        $attributes = isset($args['attributes']) ? SB_PHP::to_array($args['attributes']) : array();
         $atts = array(
             'id' => esc_attr($id),
             'name' => $name,
@@ -803,6 +817,9 @@ class SB_Field {
             'text' => $select_option
         );
         $html->set_attribute_array($atts);
+        foreach($attributes as $key => $value) {
+            $html->set_attribute($key, $value);
+        }
         $args = array(
             'text' => isset($args['label']) ? $args['label'] : '',
             'for' => $name
@@ -849,19 +866,25 @@ class SB_Field {
 
     public static function select_term($args = array()) {
         $taxonomy = isset($args['taxonomy']) ? $args['taxonomy'] : '';
-        if(empty($taxonomy)) {
-            return;
-        }
-        $tax = get_taxonomy($taxonomy);
-        if(!is_object($tax)) {
-            return;
+        $options = isset($args['options']) ? $args['options'] : array();
+        $force_empty = isset($args['force_empty']) ? (bool)$args['force_empty'] : false;
+        if(!$force_empty) {
+            if(empty($taxonomy) && (!is_array($options) || count($options) < 1)) {
+                return;
+            }
+            $tax = get_taxonomy($taxonomy);
+            if(!is_object($tax) && (!is_array($options) || count($options) < 1)) {
+                return;
+            }
         }
         $container_class = isset($args['container_class']) ? $args['container_class'] : '';
+        $container_class = SB_PHP::add_string_with_space_before($container_class, 'sb-term-field');
         $id = isset($args['id']) ? $args['id'] : '';
         $name = isset($args['name']) ? $args['name'] : '';
         $field_class = isset($args['field_class']) ? $args['field_class'] : '';
+        $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'select-term');
         $label = isset($args['label']) ? $args['label'] : '';
-        $options = isset($args['options']) ? $args['options'] : array();
+
         $value = isset($args['value']) ? $args['value'] : '';
         $description = isset($args['description']) ? $args['description'] : '';
 
@@ -873,31 +896,63 @@ class SB_Field {
         echo $before;
         self::label(array('for' => $id, 'text' => $label));
 
-        $all_option = '<option value="0">' . sprintf(__('Chọn %s', 'sb-theme'), SB_PHP::lowercase($tax->labels->singular_name)) . '</option>';
+        $load_item = isset($args['load_item']) ? (bool)$args['load_item'] : true;
+
+        $option_default = '';
+
+        if(isset($args['option_default'])) {
+            $option_default = $args['option_default'];
+        } else {
+            $default_text = isset($args['default_text']) ? $args['default_text'] : sprintf(__('-- Chọn %s --', 'sb-theme'), SB_PHP::lowercase($tax->labels->singular_name));
+            $option_default = '<option value="0" data-taxonomy="">' . $default_text . '</option>';
+        }
+
+        $all_option = $option_default;
         $args['before'] = '';
-        if(count($options) > 0) {
-            foreach($options as $tax) {
+        if($load_item && count($options) > 0) {
+            if(count($options) > 1) {
+                foreach($options as $tax) {
+                    $terms = get_terms($tax->name);
+                    if(!SB_Core::is_error($terms) && count($terms) > 0) {
+                        $tmp = '<optgroup label="' . $tax->labels->singular_name . '">';
+                        foreach($terms as $cat) {
+                            $option_text = $cat->name . (($show_count) ? ' (' . $cat->count . ')' : '');
+                            $tmp .= self::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $tax->name), 'selected' => $value, 'text' => $option_text));
+                        }
+                        $tmp .= '</optgroup>';
+                        $all_option .= $tmp;
+                    }
+                }
+            } else {
+                $tax = array_shift($options);
                 $terms = get_terms($tax->name);
                 if(!SB_Core::is_error($terms) && count($terms) > 0) {
-                    $tmp = '<optgroup label="' . $tax->labels->name . '">';
                     foreach($terms as $cat) {
-                        $option_text = $cat->name . ($show_count) ? ' (' . $cat->count . ')' : '';
-                        $tmp .= self::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $tax->name), 'selected' => $value, 'text' => $option_text));
+                        $option_text = $cat->name . (($show_count) ? ' (' . $cat->count . ')' : '');
+                        $all_option .= SB_Field::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $tax->name), 'selected' => 0, 'text' => $option_text));
                     }
-                    $tmp .= '</optgroup>';
-                    $all_option .= $tmp;
                 }
             }
         } else {
-            $terms = SB_Term::get($taxonomy);
-            if(!SB_Core::is_error($terms) && count($terms) > 0) {
-                foreach($terms as $cat) {
-                    $all_option .= self::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $taxonomy), 'selected' => $value, 'text' => $cat->name));
+            if($load_item) {
+                $terms = SB_Term::get($taxonomy);
+                if(!SB_Core::is_error($terms) && count($terms) > 0) {
+                    foreach($terms as $cat) {
+                        $all_option .= self::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $taxonomy), 'selected' => $value, 'text' => $cat->name));
+                    }
                 }
             }
         }
+        if(!$load_item) {
+            $custom_options = isset($args['custom_options']) ? $args['custom_options'] : '';
+            $all_option .= $custom_options;
+        }
         $args['all_option'] = $all_option;
         $args['label'] = '';
+        if(!isset($args['attributes']['data-taxonomy'])) {
+            $args['attributes']['data-taxonomy'] = $taxonomy;
+        }
+        $args['attributes']['data-show-count'] = absint($show_count);
         self::select($args);
         if(!empty($taxonomy_name)) {
             $args['id'] = $taxonomy_id;

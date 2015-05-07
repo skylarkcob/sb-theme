@@ -1555,6 +1555,48 @@ body.sb-user {
     padding: 0;
 }
 
+.sb-post-widget li.full-width .wp-post-image {
+    margin-bottom: 10px;
+    margin-right: 0;
+    max-width: 1000px !important;
+    width: 100% !important;
+}
+
+.sb-post-widget li .a-post-meta {
+    margin-right: 10px;
+}
+
+.sb-post-widget li .a-post-meta:last-child {
+    margin-right: 0;
+}
+
+.sb-post-widget li .a-post-meta .fa {
+    vertical-align: 1px;
+}
+
+.sb-post-widget li .a-post-meta.date {
+    cursor: help;
+}
+
+.sb-post-widget li .a-post-meta.date:before {
+    font-family: "FontAwesome";
+    margin-right: 5px;
+    vertical-align: 1px;
+}
+
+.sb-post-widget li .a-post-meta.date:before {
+    content: "\f073";
+}
+
+.sb-post-widget li .post-title,
+.sb-post-widget li p {
+    display: block;
+}
+
+.sb-post-widget li .post-title {
+    margin-bottom: 5px;
+}
+
 /* ==================== Hide placehoder ==================== */
 
 input:focus::-webkit-input-placeholder { color:transparent; }
@@ -2368,6 +2410,15 @@ ol.guides li a:hover{
 
 .go-top-button:hover {
     opacity: 1;
+}
+
+.administrative-boundaries {
+    overflow: hidden;
+}
+
+.administrative-boundaries .sb-term-field {
+    float: left;
+    width: 50%;
 }
 
 /* ==================== Keyframes ==================== */

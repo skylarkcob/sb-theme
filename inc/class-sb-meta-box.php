@@ -9,6 +9,7 @@ class SB_Meta_Box {
     private $context;
     private $priority;
     private $callback_args;
+    private $administrative_boundaries_names = array('sbmb_province', 'sbmb_district', 'sbmb_ward', 'sbmb_hamlet', 'sbmb_street');
 
     public function __construct($args = array()) {
         $this->extract_args($args);
@@ -81,6 +82,36 @@ class SB_Meta_Box {
             }
             $meta_value = SB_Core::sanitize($value, $type);
             SB_Post::update_meta($post_id, $name, $meta_value);
+            if(in_array($name, $this->administrative_boundaries_names)) {
+                $meta_value = absint($meta_value);
+                switch($name) {
+                    case 'sbmb_province':
+                        if($meta_value > 0) {
+                            wp_set_post_terms($post_id, array($meta_value), 'province');
+                        }
+                        break;
+                    case 'sbmb_district':
+                        if($meta_value > 0) {
+                            wp_set_post_terms($post_id, array($meta_value), 'district');
+                        }
+                        break;
+                    case 'sbmb_ward':
+                        if($meta_value > 0) {
+                            wp_set_post_terms($post_id, array($meta_value), 'ward');
+                        }
+                        break;
+                    case 'sbmb_hamlet':
+                        if($meta_value > 0) {
+                            wp_set_post_terms($post_id, array($meta_value), 'hamlet');
+                        }
+                        break;
+                    case 'sbmb_street':
+                        if($meta_value > 0) {
+                            wp_set_post_terms($post_id, array($meta_value), 'street');
+                        }
+                        break;
+                }
+            }
         }
         return $post_id;
     }
