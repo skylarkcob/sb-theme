@@ -3,13 +3,13 @@ global $sb_theme_roles;
 $sb_theme_roles = SB_Membership::get_roles();
 
 $args = array(
-    'title' => 'Xác nhận đăng bài viết',
-    'description' => 'Sẽ có đôi lúc bạn nhấn nhầm vào nút đăng bài viết thay vì lưu bài, chức năng này sẽ hiển thị thông báo xác nhận cho bạn.',
-    'callback' => 'sb_theme_advanced_setting_writing_confirm_publish'
+    'title' => 'Trang viết bài',
+    'description' => 'Các thông tin liên quan đến trang đăng bài viết và chỉnh sửa bài viết.',
+    'callback' => 'sb_theme_advanced_setting_writing_add_post_page_group'
 );
 SB_Admin_Custom::row_setting_field($args);
 
-function sb_theme_advanced_setting_writing_confirm_publish() {
+function sb_theme_advanced_setting_writing_add_post_page_group() {
     $tab_base_option_name = 'writing';
 
     $key = 'confirm_publish';
@@ -18,21 +18,10 @@ function sb_theme_advanced_setting_writing_confirm_publish() {
     $args = array(
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
-        'label' => __('Kích hoạt chức năng hiển thị thống báo xác nhận đăng bài?', 'sb-theme'),
+        'label' => __('Kích hoạt chức năng hiển thị thông báo xác nhận đăng bài?', 'sb-theme'),
         'value' => $value
     );
     SB_Field::checkbox($args);
-}
-
-$args = array(
-    'title' => 'Hỗ trợ tiêu đề cho link',
-    'description' => 'Trong phiên bản 4.2 trở về sau, WordPress không hiển thị tiêu đề khi chèn link, bạn có thể dùng chức năng này để bật lại thông tin tiêu đề cho link.',
-    'callback' => 'sb_theme_advanced_setting_writing_restore_link_title'
-);
-SB_Admin_Custom::row_setting_field($args);
-
-function sb_theme_advanced_setting_writing_restore_link_title() {
-    $tab_base_option_name = 'writing';
 
     $key = 'restore_link_title';
     $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
@@ -44,17 +33,28 @@ function sb_theme_advanced_setting_writing_restore_link_title() {
         'value' => $value
     );
     SB_Field::checkbox($args);
+
+    $key = 'page_add_post_front_end';
+    $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+    $args = array(
+        'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
+        'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
+        'label' => __('Trang đăng tin', 'sb-theme'),
+        'value' => $value
+    );
+    SB_Field::select_page($args);
 }
 
 $args = array(
-    'title' => 'Giới hạn dung lượng tập tin',
-    'description' => 'Đối với các hosting dung lượng nhỏ, bạn có thể dùng chức năng này để giới hạn dung lượng tối đa cho phép người dùng tải tập tin lên hosting.',
-    'callback' => 'sb_theme_advanced_setting_writing_limit_file_size'
+    'title' => 'Media',
+    'description' => 'Bạn có thể cài đặt giới hạn dung lượng tập tin, giới hạn dung lượng hình ảnh,... và các vấn đề liên quan đến media tại đây.',
+    'callback' => 'sb_theme_advanced_setting_writing_media_group'
 );
 SB_Admin_Custom::row_setting_field($args);
 
-function sb_theme_advanced_setting_writing_limit_file_size() {
+function sb_theme_advanced_setting_writing_media_group() {
     $tab_base_option_name = 'writing';
+
     $key = 'limit_file_size';
     $value = SB_Core::get_file_size_limit();
     $args = array(
@@ -69,17 +69,7 @@ function sb_theme_advanced_setting_writing_limit_file_size() {
         )
     );
     SB_Field::number($args);
-}
 
-$args = array(
-    'title' => 'Định dạng hình ảnh',
-    'description' => 'Bạn có thể lựa chọn định dạng hình ảnh cho người dùng được phép tải lên hosting, tối ưu nhất là bạn nên chọn hình ảnh định dạng jpeg. Bạn có thể xem thêm định dạng hình ảnh <a target="_blank" href="http://php.net/manual/en/function.image-type-to-mime-type.php">tại đây</a>.',
-    'callback' => 'sb_theme_advanced_setting_writing_allow_image_type'
-);
-SB_Admin_Custom::row_setting_field($args);
-
-function sb_theme_advanced_setting_writing_allow_image_type() {
-    $tab_base_option_name = 'writing';
     $key = 'allow_image_type';
     $value = implode(',', SB_Core::get_image_type_allow());
     $args = array(
@@ -87,31 +77,29 @@ function sb_theme_advanced_setting_writing_allow_image_type() {
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
         'value' => $value,
         'label' => __('Đuôi hình ảnh', 'sb-theme'),
-        'description' => __('Định dạng đuôi cho hình ảnh, cách nhau bằng dấu phẩy. Ví dụ: image/jpeg,image/png.', 'sb-theme'),
+        'description' => __('Những định dạng đuôi hình ảnh cho phép người dùng được tải lên hosting, mỗi định dạng được cách nhau bằng dấu phẩy. Ví dụ: image/jpeg,image/png.', 'sb-theme'),
         'autocomplete' => false
     );
     SB_Field::text($args);
-}
 
-$args = array(
-    'title' => 'Viết bài bên ngoài front-end',
-    'description' => 'Nếu bạn muốn cho người dùng đăng bài viết bên ngoài dashboard thì hãy lựa chọn trang bạn đã tạo bên dưới.',
-    'callback' => 'sb_theme_advanced_setting_writing_add_post_front_end'
-);
-SB_Admin_Custom::row_setting_field($args);
-
-function sb_theme_advanced_setting_writing_add_post_front_end() {
-    $tab_base_option_name = 'writing';
-
-    $key = 'page_add_post_front_end';
+    $key = 'media_link_to';
     $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+    $options = array(
+        'none' => __('Không dùng link', 'sb-theme'),
+        'file' => __('Đường dẫn tới tập tin', 'sb-theme'),
+        'custom' => __('Đường dẫn tùy chọn', 'sb-theme'),
+        'post' => __('Đường dẫn đến bài viết', 'sb-theme')
+    );
     $args = array(
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
-        'label' => __('Trang đăng tin', 'sb-theme'),
-        'value' => $value
+        'value' => $value,
+        'label' => __('Link cho media', 'sb-theme'),
+        'description' => __('Cài đặt link mặc định cho media khi chèn vào bài viết.', 'sb-theme'),
+        'autocomplete' => false,
+        'options' => $options
     );
-    SB_Field::select_page($args);
+    SB_Field::select($args);
 }
 
 $args = array(

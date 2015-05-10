@@ -120,7 +120,7 @@ class SB_Post_Widget extends WP_Widget {
 
             $title_length = empty($instance['title_length']) ? $this->title_length : absint($instance['title_length']);
             $disable_thumbnail = isset($instance['disable_thumbnail']) ? intval($instance['disable_thumbnail']) : 0;
-            $this->post_display = isset($instance['post_display']) ? $instance['post_display'] : '';
+            $this->post_display = isset($instance['post_display']) ? $instance['post_display'] : 'none';
             $post_type = isset($instance['post_type']) ? $instance['post_type'] : 'post';
 
             if($order_by == 'post_date') {
@@ -360,7 +360,7 @@ class SB_Post_Widget extends WP_Widget {
             $show_excerpt = false;
         }
         $post_type = isset($instance['post_type']) ? $instance['post_type'] : 'post';
-        $this->post_display = isset($instance['post_display']) ? $instance['post_display'] : '';
+        $this->post_display = isset($instance['post_display']) ? $instance['post_display'] : 'none';
         $disable_thumbnail = isset($instance['disable_thumbnail']) ? intval($instance['disable_thumbnail']) : 0;
         $this->disable_thumbnail = $disable_thumbnail;
 
@@ -549,10 +549,14 @@ class SB_Post_Widget extends WP_Widget {
             'first_last' => __('Bài đầu tiên và cuối cùng rộng bằng khung', 'sb-theme'),
             'all' => __('Tất cả bài viết rộng bằng khung', 'sb-theme')
         );
+        $value = $this->post_display;
+        if(empty($value)) {
+            $value = 'none';
+        }
         $args = array(
             'name' => $this->get_field_name('post_display'),
             'options' => $options,
-            'value' => $this->post_display,
+            'value' => $value,
             'autocomplete' => false
         );
         SB_Widget_Field::radio($args);
@@ -609,7 +613,7 @@ class SB_Post_Widget extends WP_Widget {
 		$instance['excerpt_length'] = empty($new_instance['excerpt_length']) ? $this->excerpt_length : absint($new_instance['excerpt_length']);
         $instance['title_length'] = empty($new_instance['title_length']) ? $this->title_length : absint($new_instance['title_length']);
 
-        $instance['post_display'] = isset($new_instance['post_display']) ? $new_instance['post_display'] : '';
+        $instance['post_display'] = isset($new_instance['post_display']) ? $new_instance['post_display'] : 'none';
         $instance['post_type'] = isset($new_instance['post_type']) ? $new_instance['post_type'] : 'post';
         $instance['disable_thumbnail'] = isset($new_instance['disable_thumbnail']) ? 1 : 0;
 

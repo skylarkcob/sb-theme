@@ -279,6 +279,10 @@ class SB_PHP {
         return $text;
     }
 
+	public static function replace_html_mark($search, $replace, $html_tag) {
+		$html_tag = str_replace($search, $replace, $html_tag);
+	}
+
     public static function add_punctuation_mark( $text, $punc ) {
         return self::add_punctuation( $text, $punc );
     }

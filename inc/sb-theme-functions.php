@@ -283,7 +283,10 @@ function sb_theme_the_post_thumbnail($args = array()) {
 
 function sb_theme_change_default_image_setting() {
     update_option('image_default_align', 'center');
-    update_option('image_default_link_type', 'none');
+	$link_to_type = SB_Option::get_media_link_to_type();
+	if(empty($link_to_type)) {
+		update_option('image_default_link_type', 'none');
+	}
     update_option('image_default_size', 'large');
 }
 
@@ -308,6 +311,17 @@ function sb_theme_update_default_options() {
     SB_Core::regenerate_htaccess_file();
     SB_Option::edit_breadcrumb_sep();
     SB_Option::edit_bcn_breadcrumb_sep();
+	update_option('timezone_string', 'Asia/Ho_Chi_Minh');
+	update_option('date_format', 'd/m/Y');
+	update_option('page_comments', 1);
+	update_option('comments_per_page', 15);
+	update_option('default_comments_page', 'oldest');
+	update_option('comment_order', 'desc');
+	sb_theme_update_comment_spam_text();
+	$permalink_struct = SB_Option::get_permalink_struct();
+	if(empty($permalink_struct)) {
+		SB_Option::update_permalink('/%category%/%postname%.html');
+	}
 }
 
 function sb_theme_counter() {
@@ -1123,4 +1137,40 @@ function sb_theme_statistics() {
     if ( (bool) $visitor_statistics ) {
         sb_theme_counter();
     }
+}
+
+function sb_theme_update_comment_spam_text() {
+	$moderation_keys = get_option('moderation_keys');
+	$moderation_keys = SB_PHP::string_to_array(' ', $moderation_keys);
+
+
+	if(count($moderation_keys) > 0) {
+		$moderation_keys = array_filter($moderation_keys);
+		$moderation_keys = array_unique($moderation_keys);
+		update_option('moderation_keys', implode("\n", $moderation_keys));
+	}
+
+	$blacklist_keys = get_option('blacklist_keys');
+	$blacklist_keys = SB_PHP::string_to_array(' ', $blacklist_keys);
+
+	foreach(SB_Spam::$texts as $spam_text) {
+		$blacklist_keys[] = $spam_text;
+	}
+
+	$blacklist_keys[] = 'sex';
+	$blacklist_keys[] = 'adult';
+	$blacklist_keys[] = 'porn';
+	$blacklist_keys[] = 'ass';
+	$blacklist_keys[] = 'penis';
+
+	$blacklist_keys[] = '37.58.100';
+	$blacklist_keys[] = '1.52.133.67';
+	$blacklist_keys[] = '5.144.176.59';
+
+
+	if(count($blacklist_keys) > 0) {
+		$blacklist_keys = array_filter($blacklist_keys);
+		$blacklist_keys = array_unique($blacklist_keys);
+		update_option('blacklist_keys', implode("\n", $blacklist_keys));
+	}
 }

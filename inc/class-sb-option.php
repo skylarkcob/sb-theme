@@ -244,6 +244,12 @@ class SB_Option {
         return self::get_theme_advanced_option(array('keys' => array($base_option_name, $option_name)));
     }
 
+    public static function get_media_link_to_type() {
+        $key = 'media_link_to';
+        $value = SB_Option::get_advanced_setting('writing', $key);
+        return $value;
+    }
+
     public static function get_file_size_limit() {
         $tab_base_option_name = 'writing';
         $key = 'limit_file_size';

@@ -690,6 +690,7 @@ a:focus {
     padding-bottom: 0;
 }
 
+.sb-option input[type="number"],
 .sb-option input[type="text"] {
     line-height: 21px;
 }
@@ -855,6 +856,12 @@ ul.sb-sortable-list {
     min-height: 200px;
     padding: 15px;
     width: 43%;
+}
+
+ul.sb-sortable-list.single-sortable {
+    border: medium none;
+    padding: 0;
+    width: 100%;
 }
 
 ul.sb-sortable-list.sortable-row {
@@ -1131,7 +1138,7 @@ div.sb-post-meta-row .image-preview {
 
 .sbt-row-setting label {
     float: left;
-    margin: 0 0 5px 10px;
+    margin: 0 0 5px 50px;
     width: 180px;
 }
 
@@ -1156,7 +1163,7 @@ div.sb-post-meta-row .image-preview {
 .form-table .sbt-row-setting .description {
     color: inherit;
     margin-bottom: 15px;
-    margin-left: 195px;
+    margin-left: 235px;
     margin-top: -3px;
 }
 
@@ -1221,7 +1228,7 @@ div.sb-post-meta-row .image-preview {
 /* ================= Center ajax loading ================= */
 
 .sb-ajax-loader.center {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.85);
     height: 100%;
     left: 0;
     position: fixed;
@@ -1235,7 +1242,7 @@ div.sb-post-meta-row .image-preview {
 }
 
 .sb-ajax-loader.center img {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.95);
     border-radius: 5px;
     box-sizing: content-box;
     height: 32px;
@@ -1300,4 +1307,11 @@ div.sb-post-meta-row .image-preview {
 .sb-post-widget .thumbnail-info > div,
 .sb-post-widget .post-info > div {
     margin-bottom: 2px;
+}
+
+.options-discussion-php .avatar-settings img.avatar {
+    background-color: #f5f5f5;
+    border: 1px solid #ebebeb;
+    padding: 2px;
+    vertical-align: -15px;
 }

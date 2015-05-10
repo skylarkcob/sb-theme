@@ -82,6 +82,7 @@ class SB_Meta_Box {
             }
             $meta_value = SB_Core::sanitize($value, $type);
             SB_Post::update_meta($post_id, $name, $meta_value);
+            do_action('sb_theme_post_update_meta_box', $post_id, $name, $meta_value);
             if(SB_Option::use_administrative_boundaries() && in_array($name, $this->administrative_boundaries_names)) {
                 $meta_value = absint($meta_value);
                 switch($name) {

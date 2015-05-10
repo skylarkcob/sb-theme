@@ -63,12 +63,12 @@ class SB_Message {
 	}
 
 	public static function get_save_changes() {
-		$text = __('Save changes', 'sb-theme');
+		$text = __('Lưu thiết lập', 'sb-theme');
 		return apply_filters('sb_theme_save_changes_text', $text);
 	}
 
 	public static function get_reset() {
-		$text = __('Reset', 'sb-theme');
+		$text = __('Khôi phục mặc định', 'sb-theme');
 		return apply_filters('sb_theme_reset_text', $text);
 	}
 

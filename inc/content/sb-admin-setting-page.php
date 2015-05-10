@@ -19,7 +19,7 @@
             $version = $theme->get('Version');
             $version = str_replace('-wpcom', '', $version);
             if(!empty($version)) : ?>
-                <span><?php _e('Version:', 'sb-theme'); ?> <?php echo $version; ?></span>
+                <span><?php _e('Phiên bản:', 'sb-theme'); ?> <?php echo $version; ?></span>
             <?php endif; ?>
         </div>
         <div class="sbtheme-content">

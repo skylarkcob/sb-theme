@@ -14,6 +14,13 @@ class SB_Core {
         return admin_url('admin-ajax.php');
     }
 
+	public static function is_localhost() {
+		if('localhost' == SB_PHP::get_domain_name_only(get_bloginfo('url'))) {
+			return true;
+		}
+		return false;
+	}
+
     public static function get_all_shortcodes() {
         global $shortcode_tags;
         return $shortcode_tags;
@@ -68,6 +75,25 @@ class SB_Core {
         $page_template = self::page_template_init($args);
         $page_template->copy_to_theme();
     }
+
+	public static function build_avatar_image($size, $source, $srcset = '', $alt = '') {
+		$class = 'sb-theme-avatar avatar photo avatar-' . $size;
+		$image = new SB_HTML('img');
+		$image_atts = array(
+			'class' => $class,
+			'src' => $source,
+			'width' => $size,
+			'height' => $size,
+			'alt' => $alt
+		);
+		$image->set_attribute_array($image_atts);
+		if(empty($srcset)) {
+			$srcset = add_query_arg(array('s' => 52), $source);
+			$srcset .= ' 2x';
+		}
+		$image->set_attribute('srcset', $srcset);
+		return $image->build();
+	}
 
     public static function delete_page_template($args = array()) {
         $page_template = self::page_template_init($args);
@@ -511,59 +537,7 @@ class SB_Core {
     }
 
     public static function regenerate_htaccess_file() {
-        if(!function_exists('save_mod_rewrite_rules')) {
-            if(!function_exists('mysql2date')) {
-                require ABSPATH . '/wp-includes/functions.php';
-            }
-            if(!function_exists('get_home_path')) {
-                require ABSPATH . '/wp-admin/includes/file.php';
-            }
-            require ABSPATH . '/wp-admin/includes/misc.php';
-        }
-        global $is_nginx, $wp_rewrite;
-        $home_path = get_home_path();
-        $htaccess_file = $home_path.'.htaccess';
-        if(file_exists($htaccess_file)) {
-            unlink($htaccess_file);
-        }
-        $home_path = get_home_path();
-        $iis7_permalinks = iis7_supports_permalinks();
-
-        $prefix = $blog_prefix = '';
-        if ( ! got_url_rewrite() )
-            $prefix = '/index.php';
-        if ( is_multisite() && !is_subdomain_install() && is_main_site() )
-            $blog_prefix = '/blog';
-        $permalink_structure = get_option( 'permalink_structure' );
-        $category_base       = get_option( 'category_base' );
-        $tag_base            = get_option( 'tag_base' );
-        $update_required     = false;
-
-        if ( $iis7_permalinks ) {
-            if ( ( ! file_exists($home_path . 'web.config') && win_is_writable($home_path) ) || win_is_writable($home_path . 'web.config') )
-                $writable = true;
-            else
-                $writable = false;
-        } elseif ( $is_nginx ) {
-            $writable = false;
-        } else {
-            if ( ( ! file_exists( $home_path . '.htaccess' ) && is_writable( $home_path ) ) || is_writable( $home_path . '.htaccess' ) ) {
-                $writable = true;
-            } else {
-                $writable = false;
-                $existing_rules  = array_filter( extract_from_markers( $home_path . '.htaccess', 'WordPress' ) );
-                $new_rules       = array_filter( explode( "\n", $wp_rewrite->mod_rewrite_rules() ) );
-                $update_required = ( $new_rules !== $existing_rules );
-            }
-        }
-
-        if ( $wp_rewrite->using_index_permalinks() )
-            $usingpi = true;
-        else
-            $usingpi = false;
-
-        flush_rewrite_rules();
-        save_mod_rewrite_rules();
+	    flush_rewrite_rules();
     }
 
     public static function get_current_date_time($format = SB_DATE_TIME_FORMAT) {

@@ -33,7 +33,9 @@ class SB_Comment {
         }
         $options = SB_Option::get();
         $value = isset($options['comment']['default_avatar_url']) ? $options['comment']['default_avatar_url'] : '';
-        return $value;
+	    $value = SB_Option::get_media_detail($value);
+        $result = $value['url'];
+	    return $result;
     }
 
     public static function use_default_avatar() {

@@ -477,12 +477,6 @@ function sb_theme_after_switch_hook() {
         sb_theme_update_default_options();
     }
 
-    sb_theme_clean_wp_files();
-
-    update_option('image_default_align', 'center');
-    update_option('image_default_link_type', 'none');
-    update_option('image_default_size', 'large');
-
     SB_Membership::init_roles_and_capabilities();
 
     flush_rewrite_rules();
@@ -1011,26 +1005,91 @@ function sb_theme_no_index_private_post_type($robotsstr) {
 add_filter('wpseo_robots', 'sb_theme_no_index_private_post_type');
 
 /*
- * Khai báo avatar mặc định cho người dùng
+ * Tạo filter lọc avatar cho người dùng, ngoại trừ những avatar trong trang cài đặt thảo luận
  */
-function sb_theme_get_avatar_default($avatar, $id_or_email, $size, $default, $alt) {
-	if(SB_PHP::is_string_contain($avatar, 'avatar-default') && SB_PHP::is_string_contain($avatar, 'sb-default-avatar')) {
-		$class = 'avatar avatar-default photo avatar-' . $size;
-		$image_source = SB_Comment::get_default_avatar_url();
-		if(empty($image_source)) {
-			$image_source = SB_THEME_URL . '/images/sb-default-avatar-' . $size . '.png';
-			$image_file = SB_THEME_URL . '/images/sb-default-avatar-' . $size . '.png';
-			if(!file_exists($image_file)) {
-				$image_source = SB_THEME_URL . '/images/sb-default-avatar-100.png';
-			}
-		}
-		$image_source = apply_filters('sb_theme_default_avatar_url', $image_source);
-		$avatar = '<img class="' . $class . '" src="' . $image_source . '" width="' . $size . '" height="' . $size . '" alt="' . $alt . '">';
+function sb_theme_get_avatar_filter($avatar, $id_or_email, $size, $default, $alt) {
+	if(!isset($GLOBALS['pagenow']) || (isset($GLOBALS['pagenow']) && 'options-discussion.php' != $GLOBALS['pagenow'])) {
+		$avatar = apply_filters('sb_theme_get_avatar', $avatar, $id_or_email, $size, $default, $alt);
 	}
-    $avatar = apply_filters('sb_theme_get_avatar', $avatar, $id_or_email, $size, $default, $alt);
 	return $avatar;
 }
-add_filter('get_avatar', 'sb_theme_get_avatar_default', 10, 5);
+add_filter('get_avatar', 'sb_theme_get_avatar_filter', 10, 5);
+
+/*
+ * Khai báo avatar mặc định cho người dùng, nếu người dùng chọn avatar mặc định được chọn cục bộ thì hiển thị
+ * avatar này.
+ */
+function sb_theme_get_avatar_default($avatar, $id_or_email, $size, $default, $alt) {
+	if(SB_PHP::is_string_contain($avatar, 'sb-default-avatar')) {
+		$custom_avatar_url = SB_Comment::get_default_avatar_url();
+		if(!empty($custom_avatar_url)) {
+			$avatar_src = SB_PHP::get_image_source($avatar);
+			if(!empty($avatar_src)) {
+				$default = $custom_avatar_url;
+				$is_localhost = SB_Core::is_localhost();
+				if($is_localhost) {
+					$default = 'mystery';
+				}
+				$avatar_src = add_query_arg(array('d' => $default), $avatar_src);
+			}
+			$avatar = SB_Core::build_avatar_image($size, $avatar_src);
+		}
+	}
+	return $avatar;
+}
+add_filter('sb_theme_get_avatar', 'sb_theme_get_avatar_default', 10, 5);
+
+/*
+ * Thêm avatar mặc định
+ */
+function sb_theme_default_avatar_array($avatar_defaults) {
+	$local_avatar = SB_CORE_URL . '/images/sb-default-avatar-32.png';
+	$avatar_defaults[$local_avatar] = __('Avatar mặc định tùy chọn (Không hoạt động trên localhost)', 'sb-theme');
+	$avatar_defaults = apply_filters('sb_theme_default_avatar_array', $avatar_defaults);
+	return $avatar_defaults;
+}
+add_filter('avatar_defaults', 'sb_theme_default_avatar_array');
+
+/*
+ * Thêm avatar mặc định vào trang cài đặt bình luận,
+ * hiển thị avatar mặc định mà người dụng cài đặt trong danh sách chọn avatar mặc định.
+ */
+function sb_theme_get_avatar_options_discussion($avatar, $id_or_email, $size, $default, $alt) {
+	if(isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == 'options-discussion.php') {
+		if(SB_PHP::is_string_contain($avatar, 'sb-default-avatar')) {
+			$custom_avatar_url = SB_Comment::get_default_avatar_url();
+			if(!empty($custom_avatar_url)) {
+				$avatar_src = SB_PHP::get_image_source($avatar);
+				$default = $custom_avatar_url;
+				$is_localhost = SB_Core::is_localhost();
+				if($is_localhost) {
+					$default = 'mystery';
+				}
+				if(!empty($avatar_src)) {
+					$avatar_src = add_query_arg(array('d' => $default), $avatar_src);
+				}
+				$avatar = SB_Core::build_avatar_image($size, $avatar_src);
+				$avatar = str_replace('"', '\'', $avatar);
+			}
+		}
+	}
+	return $avatar;
+}
+add_filter('get_avatar', 'sb_theme_get_avatar_options_discussion', 10, 5);
+
+/*
+ * Lưu cache avatar
+ */
+function sb_theme_get_avatar_cache( $avatar, $id_or_email, $size, $default, $alt ) {
+	$transient_name = SB_Cache::build_user_avatar_transient_name($id_or_email, '_' . $size);
+	if(true || false === ($cached_avatar = get_transient($transient_name))) {
+		$cached_avatar = $avatar;
+		set_transient($transient_name, $cached_avatar, WEEK_IN_SECONDS);
+	}
+	$avatar = $cached_avatar;
+	return $avatar;
+}
+add_filter( 'sb_theme_get_avatar' , 'sb_theme_get_avatar_cache' , 20 , 5 );
 
 /*
  * Hiệu ứng rung khi phát hiện lỗi
@@ -1151,22 +1210,6 @@ function sb_theme_filter_select_user_groups( $editable_roles ) {
     return $editable_roles;
 }
 //add_filter('sb_theme_select_roles', 'sb_theme_filter_select_user_groups');
-
-/*
- * Lưu cache avatar
- */
-function sb_theme_get_avatar_cache( $avatar, $id_or_email, $size, $default, $alt ) {
-    $transient_name = SB_Cache::build_user_avatar_transient_name($id_or_email, '_' . $size);
-    if(!SB_Cache::enabled() || false === ($avatar_url = get_transient($transient_name))) {
-        $avatar_url = SB_PHP::get_image_source($avatar);
-        if(SB_Cache::enabled()) {
-            set_transient($transient_name, $avatar_url, DAY_IN_SECONDS);
-        }
-    }
-    $avatar = '<img width="' . $size . '" height="' . $size . '" class="avatar avatar-' . $size . ' photo" src="' . $avatar_url . '" alt="">';
-    return $avatar;
-}
-add_filter( 'sb_theme_get_avatar' , 'sb_theme_get_avatar_cache' , 1 , 5 );
 
 /*
  * Thay đổi tên người gửi mail
@@ -1632,34 +1675,6 @@ add_filter('the_content', 'wpautop' , 99);
 add_filter('the_content', 'shortcode_unautop', 100);
 
 /*
- * Thêm avatar mặc định
- */
-function sb_theme_default_avatar_array($avatar_defaults) {
-	$myavatar = SB_CORE_URL . '/images/sb-default-avatar-32.png';
-	$avatar_defaults[$myavatar] = 'SB default avatar';
-    $avatar_defaults = apply_filters('sb_theme_default_avatar_array', $avatar_defaults);
-	return $avatar_defaults;
-}
-add_filter('avatar_defaults', 'sb_theme_default_avatar_array');
-
-/*
- * Thêm avatar mặc định vào trang cài đặt bình luận
- */
-function sb_theme_get_avatar_options_discussion($avatar, $id_or_email, $size, $default, $alt) {
-	if($GLOBALS['pagenow'] == 'options-discussion.php' && SB_PHP::is_string_contain($avatar, 'sb-default-avatar')) {
-		$class = 'avatar photo avatar-' . $size;
-		$avatar_url = SB_Comment::get_default_avatar_url();
-		if(empty($avatar_url)) {
-			$avatar_url = SB_THEME_URL . '/images/sb-default-avatar-32.png';
-		}
-		$avatar_url = apply_filters('sb_theme_default_avatar_url', $avatar_url);
-		$avatar = '<img class="' . $class . '" src="' . $avatar_url . '" width="' . $size . '" height="' . $size . '" alt="' . $alt . '">';
-	}
-	return $avatar;
-}
-add_filter('sb_theme_get_avatar', 'sb_theme_get_avatar_options_discussion', 10, 5);
-
-/*
  * Kiểm tra dữ liệu bình luận trước khi thêm vào cơ sở dữ liệu
  */
 function sb_theme_preprocess_comment($commentdata) {
@@ -1708,6 +1723,15 @@ function sb_theme_filter_term_slug_before_insert($value) {
     return $value;
 }
 add_filter('pre_category_nicename', 'sb_theme_filter_term_slug_before_insert');
+
+function sb_theme_filter_option_by_option($options) {
+    $media_link_to = isset($options['sbt_advanced']['writing']['media_link_to']) ? $options['sbt_advanced']['writing']['media_link_to'] : '';
+    if(!empty($media_link_to)) {
+        update_option('image_default_link_type', $media_link_to);
+    }
+    return $options;
+}
+add_filter('sb_theme_sanitize_option', 'sb_theme_filter_option_by_option');
 
 do_action('sb_theme_hook');
 

@@ -612,7 +612,7 @@ var sb_ajax_loader,
                     }
                     sb_theme_make_sb_option_unsaved_message(that);
                 }
-            }).disableSelection();
+            });
         }
     })();
 

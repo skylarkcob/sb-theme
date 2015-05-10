@@ -56,7 +56,17 @@ class SB_Term {
 
     public static function get_administrative_boundaries_by_parent($parent_id, $parent_key, $child_taxonomy) {
         $result = array();
-        $trasient_name = 'sb_theme_administrative_boundaries_' . $child_taxonomy . '_of_' . $parent_key;
+        $trasient_name = 'sb_theme_administrative_boundaries_' . $child_taxonomy . '_of_' . $parent_key . '_' . $parent_id;
+        if(false === ($result = get_transient($trasient_name))) {
+            $result = self::get_child_of_parent_in_meta($parent_id, $parent_key, $child_taxonomy);
+            set_transient($trasient_name, $result, WEEK_IN_SECONDS);
+        }
+        return $result;
+    }
+
+    public static function get_child_of_parent_in_meta($parent_id, $parent_key, $child_taxonomy) {
+        $result = array();
+        $trasient_name = 'sb_theme_term_meta_' . $child_taxonomy . '_of_' . $parent_key . '_' . $parent_id;
         if(false === ($result = get_transient($trasient_name))) {
             $sb_term_metas = SB_Option::get_term_metas();
             foreach($sb_term_metas as $term_id => $data) {

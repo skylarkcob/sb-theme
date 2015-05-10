@@ -493,15 +493,21 @@ class SB_Field {
         }
         $real_count = $count;
         $next_id = 1;
+        $out_remove = isset($args['out_remove']) ? (bool)$args['out_remove'] : true;
+        $field_class = isset($args['field_class']) ? $args['field_class'] : '';
+        $field_class = SB_PHP::add_string_with_space_before($field_class, 'sb-sortable-list single-sortable');
+        if($out_remove) {
+            $field_class = SB_PHP::add_string_with_space_before($field_class, 'out-remove');
+        }
         ?>
         <div id="<?php echo esc_attr($id); ?>" class="sb-addable rss-feed min-height relative gray-bg border padding-10 sb-ui-panel">
             <div class="item-group">
-                <ul class="sb-sortable-list" data-message-confirm="<?php echo SB_Message::get_confirm_delete_text(); ?>">
+                <ul class="<?php echo $field_class; ?>" data-message-confirm="<?php echo SB_Message::get_confirm_delete_text(); ?>">
                     <?php
                     if(0 == $count) {
                         $count++;
                         SB_Admin_Custom::set_current_rss_feed_item(array('name' => $name, 'count' => $count));
-                        sb_core_get_loop('loop-rss-feed');
+                        sb_core_get_loop('loop-admin-rss-feed');
                         $real_count = $count;
                         $order = $count;
                         $next_id++;
@@ -513,7 +519,7 @@ class SB_Field {
                             if($feed_id >= $next_id) {
                                 $next_id = $feed_id + 1;
                                 SB_Admin_Custom::set_current_rss_feed_item(array('feed' => $feed, 'count' => $new_count, 'name' => $name));
-                                sb_core_get_loop('loop-rss-feed');
+                                sb_core_get_loop('loop-admin-rss-feed');
                                 $new_count++;
                             }
                         }
@@ -561,6 +567,9 @@ class SB_Field {
         $type = isset($args['type']) ? $args['type'] : 'text';
         $id = isset($args['id']) ? $args['id'] : '';
         $name = isset($args['name']) ? $args['name'] : '';
+        if(empty($name)) {
+            $id = $name;
+        }
         $value = isset($args['value']) ? $args['value'] : '';
         $description = isset($args['description']) ? $args['description'] : '';
         $field_class = isset($args['field_class']) ? $args['field_class'] : '';
@@ -574,16 +583,16 @@ class SB_Field {
             $field_class = SB_PHP::add_string_with_space_before($field_class, 'widefat');
         }
         $label = isset($args['label']) ? $args['label'] : '';
-        $after = isset($args['after']) ? $args['after'] : '</div>';
+
         $placeholder = isset($args['placeholder']) ? $args['placeholder'] : '';
         $autocomplete = isset($args['autocomplete']) ? $args['autocomplete'] : true;
         if($with_button) {
             $container_class .= ' has-button';
         }
         $before = isset($args['before']) ? $args['before'] : '<div class="' . esc_attr($container_class) . '">';
+        $after = isset($args['after']) ? $args['after'] : '</div>';
         $only = isset($args['only']) ? $args['only'] : false;
         $html = new SB_HTML('input');
-        $option_value = isset($args['option_value']) ? $args['option_value'] : '';
 
         $atts = array(
             'type' => esc_attr($type),
@@ -597,6 +606,7 @@ class SB_Field {
             $atts['placeholder'] = $placeholder;
         }
         if('checkbox' == $type || 'radio' == $type) {
+            $option_value = isset($args['option_value']) ? $args['option_value'] : '';
             $field_value = 1;
             if(!empty($option_value)) {
                 $field_value = $option_value;
@@ -748,12 +758,12 @@ class SB_Field {
             'data-switch' => 'on',
             'class' => $class_on . ' left'
         );
-        self::label(array('text' => '<span>' . __('On', 'sb-theme') . '</span>', 'attributes' => $attributes));
+        self::label(array('text' => '<span>' . __('Bật', 'sb-theme') . '</span>', 'attributes' => $attributes));
         $attributes = array(
             'data-switch' => 'off',
             'class' => $class_off . ' right'
         );
-        self::label(array('text' => '<span>' . __('Off', 'sb-theme') . '</span>', 'attributes' => $attributes));
+        self::label(array('text' => '<span>' . __('Tắt', 'sb-theme') . '</span>', 'attributes' => $attributes));
         $args['type'] = 'hidden';
         $args['only'] = true;
         $args['field_class'] = 'checkbox checkbox-input';
@@ -789,6 +799,7 @@ class SB_Field {
         $options = isset($args['options']) ? $args['options'] : array();
         $description = isset($args['description']) ? $args['description'] : '';
         $container_class = isset($args['container_class']) ? $args['container_class'] : '';
+        $load_item = isset($args['load_item']) ? $args['load_item'] : true;
         $value = isset($args['value']) ? $args['value'] : '';
         $field_class = isset($args['field_class']) ? $args['field_class'] : '';
         if(!is_array($options) || count($options) < 1) {
@@ -800,12 +811,16 @@ class SB_Field {
         echo $before;
         $autocomplete = isset($args['autocomplete']) ? '' : 'off';
         $select_option = isset($args['default_option']) ? $args['default_option'] : '';
-        if(empty($all_option)) {
+        if($load_item && empty($all_option)) {
             foreach($options as $key => $text) {
                 $select_option .= self::get_option(array('value' => $key, 'text' => $text, 'selected' => $value));
             }
         } else {
             $select_option .= $all_option;
+        }
+        if(!$load_item) {
+            $custom_options = isset($args['custom_options']) ? $args['custom_options'] : '';
+            $select_option .= $custom_options;
         }
         $html = new SB_HTML('select');
         $attributes = isset($args['attributes']) ? SB_PHP::to_array($args['attributes']) : array();
@@ -926,9 +941,13 @@ class SB_Field {
         }
         $container_class = isset($args['container_class']) ? $args['container_class'] : '';
         $container_class = SB_PHP::add_string_with_space_before($container_class, 'sb-term-field');
+
         $id = isset($args['id']) ? $args['id'] : '';
         $name = isset($args['name']) ? $args['name'] : '';
         $field_class = isset($args['field_class']) ? $args['field_class'] : '';
+        if(is_object($tax)) {
+            $field_class = SB_PHP::add_string_with_space_before($field_class, 'select-' . $tax->rewrite['slug'] . '-terms');
+        }
         $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'select-term');
         $label = isset($args['label']) ? $args['label'] : '';
 
@@ -999,10 +1018,7 @@ class SB_Field {
                 }
             }
         }
-        if(!$load_item) {
-            $custom_options = isset($args['custom_options']) ? $args['custom_options'] : '';
-            $all_option .= $custom_options;
-        }
+
         $args['all_option'] = $all_option;
         $args['label'] = '';
         if(!isset($args['attributes']['data-taxonomy'])) {
