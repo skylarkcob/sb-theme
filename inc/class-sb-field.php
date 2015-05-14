@@ -664,6 +664,7 @@ class SB_Field {
         $autocomplete = isset($args['autocomplete']) ? $args['autocomplete'] : true;
         $before = isset($args['before']) ? $args['before'] : '<div class="' . esc_attr($container_class) . '">';
         $row = isset($args['row']) ? $args['row'] : 4;
+
         echo $before;
         $html = new SB_HTML('textarea');
         $atts = array(
@@ -676,6 +677,7 @@ class SB_Field {
             'rows' => esc_attr($row)
         );
         $html->set_attribute_array($atts);
+        self::label(array('for' => $id, 'text' => isset($args['label']) ? $args['label'] : ''));
         echo $html->build();
         self::the_description($description);
         self::the_after($before, $after);
@@ -1079,6 +1081,7 @@ class SB_Field {
         $before = isset($args['before']) ? $args['before'] : '<div id="' . esc_attr($id) . '_editor" class="' . $container_class . '">';
         $after = isset($args['after']) ? $args['after'] : '</div>';
         $editor_args = isset($args['editor_args']) ? $args['editor_args'] : array();
+        $label = isset($args['label']) ? $args['label'] : '';
         $args = array(
             'textarea_name' => $name,
             'textarea_rows' => $textarea_row,
@@ -1086,6 +1089,7 @@ class SB_Field {
         );
         $args = wp_parse_args($args, $editor_args);
         echo $before;
+        self::label(array('for' => $id, 'text' => $label));
         wp_editor($value, $id, $args);
         self::the_description($description);
         self::the_after($before, $after);

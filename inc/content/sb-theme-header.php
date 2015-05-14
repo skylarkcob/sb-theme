@@ -25,3 +25,4 @@ if(!(bool)$transform) {
 ?>
 <div id="sb-site" class="<?php echo $site_class; ?>">
     <div class="sb-blog-container sb-site-container">
+        <?php do_action('sb_theme_site_container_before'); ?>

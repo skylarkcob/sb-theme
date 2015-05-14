@@ -1082,7 +1082,7 @@ add_filter('get_avatar', 'sb_theme_get_avatar_options_discussion', 10, 5);
  */
 function sb_theme_get_avatar_cache( $avatar, $id_or_email, $size, $default, $alt ) {
 	$transient_name = SB_Cache::build_user_avatar_transient_name($id_or_email, '_' . $size);
-	if(true || false === ($cached_avatar = get_transient($transient_name))) {
+	if(false === ($cached_avatar = get_transient($transient_name))) {
 		$cached_avatar = $avatar;
 		set_transient($transient_name, $cached_avatar, WEEK_IN_SECONDS);
 	}
@@ -1635,7 +1635,8 @@ function sb_theme_check_file_size_before_upload($file) {
             'post_type' => 'attachment',
             'author' => $user->ID,
         );
-        $attachmentsbyuser = get_posts( $args );
+        $query = SB_Query::get($args);
+        $attachmentsbyuser = $query->posts;
 
         if($limit_image_size > 0 && $size > $limit_image_size) {
             $file['error'] = sprintf(__('Hình ảnh không được vượt quá %s KB.', 'sb-theme'), $limit_image_size);

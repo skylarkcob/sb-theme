@@ -461,6 +461,7 @@ class SB_PHP {
 
     public static function get_all_image_from_string( $data ) {
         preg_match_all( '/<img[^>]+>/i', $data, $matches );
+        $matches = isset($matches[0]) ? $matches[0] : array();
         return $matches;
     }
 

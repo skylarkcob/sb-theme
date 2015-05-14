@@ -1,20 +1,23 @@
 <?php
-$id = '';
-$container_class = 'slide';
 $args = SB_Theme::get_carousel_argument();
-$callback = '';
-$count = 0;
-
-extract($args, EXTR_OVERWRITE);
+$container_class = isset($args['container_class']) ? $args['container_class'] : 'slide';
+$id = isset($args['id']) ? $args['id'] : '';
+$callback = isset($args['callback']) ? $args['callback'] : '';
+$count = isset($args['count']) ? $args['count'] : 0;
 $show_control = isset($args['show_control']) ? $args['show_control'] : false;
 $count = ceil(abs($count));
 $sb_carousel_id = $id;
 $container_class = SB_PHP::add_string_with_space_before($container_class, 'carousel');
-if(empty($id) || empty($callback)) {
+$auto_slide = isset($args['auto_slide']) ? (bool)$args['auto_slide'] : true;
+if(empty($id) || !SB_PHP::callback_exists($callback)) {
     return;
 }
+$data_interval = '';
+if(!$auto_slide) {
+    $data_interval = 'false';
+}
 ?>
-<div data-ride="carousel" class="<?php echo $container_class; ?>" id="<?php echo $id; ?>">
+<div data-ride="carousel" class="<?php echo $container_class; ?>" id="<?php echo $id; ?>" data-interval="<?php echo $data_interval; ?>">
     <?php if($count > 0) : ?>
         <ol class="carousel-indicators">
             <?php $indicator_class = 'carousel-paginate'; ?>

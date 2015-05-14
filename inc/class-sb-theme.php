@@ -256,6 +256,9 @@ class SB_Theme {
 
     public static function the_menu($args = array()) {
         $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
+        if(empty($theme_location)) {
+            $theme_location = isset($args['location']) ? $args['location'] : '';
+        }
         $locations = SB_Core::get_menu_location();
 	    $menu_id = isset($locations[$theme_location]) ? $locations[$theme_location] : 0;
         $menu = wp_get_nav_menu_object($menu_id);
@@ -539,6 +542,18 @@ class SB_Theme {
     public static function carousel($args = array()) {
         self::set_carousel_argument($args);
         sb_theme_get_content('carousel');
+    }
+
+    public static function get_custom_loop($name) {
+        sb_get_custom_loop($name);
+    }
+
+    public static function get_custom_metabox($name) {
+        sb_get_custom_meta_box($name);
+    }
+
+    public static function get_custom_content($name) {
+        sb_get_custom_content($name);
     }
 
     public static function set_search_form_args($args = array()) {

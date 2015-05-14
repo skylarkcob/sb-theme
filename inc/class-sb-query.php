@@ -153,8 +153,7 @@ class SB_Query {
     }
 
     public static function get_post_by_recent_comment($args = array()) {
-        $posts_per_page = self::get_posts_per_page();
-        extract($args, EXTR_OVERWRITE);
+        $posts_per_page = isset($args['posts_per_page']) ? $args['posts_per_page'] : self::get_posts_per_page();
         $comments = SB_Comment::get();
         $posts = array();
         $count = 0;
@@ -170,8 +169,8 @@ class SB_Query {
             }
         }
         if(0 == count($posts)) {
-            $args['posts_per_page'] = $posts_per_page;
-            $posts = get_posts($args);
+            $query = SB_Query::get($args);
+            $posts = $query->posts;
         }
         return $posts;
     }

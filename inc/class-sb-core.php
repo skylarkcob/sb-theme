@@ -664,6 +664,7 @@ class SB_Core {
         if(count($types) < 1) {
             $types[] = 'image/jpeg';
             $types[] = 'image/png';
+            $types[] = 'image/x-icon';
         }
         return apply_filters('sb_theme_allow_image_type', $types);
     }
@@ -887,6 +888,10 @@ class SB_Core {
                 break;
         }
         return $result;
+    }
+
+    public static function get_qtran_enabled_languages() {
+        return qtranxf_getSortedLanguages();
     }
 
     public static function the_language_text($en_text, $vi_text) {
@@ -1187,6 +1192,18 @@ class SB_Core {
         return get_taxonomy($name);
     }
 
+    public static function get_administrative_boundaries_taxonomies() {
+        $use_taxonomies = array(
+            'province',
+            'district',
+            'ward',
+            'hamlet',
+            'street'
+        );
+        $use_taxonomies = apply_filters('sb_theme_administrative_boundaries_taxonomies', $use_taxonomies);
+        return $use_taxonomies;
+    }
+
     public static function create_administrative_boundaries_taxonomy($args = array()) {
         $support_post_type = SB_Option::get_post_type_use_administrative_boundaries();
         if(count($support_post_type) < 1) {
@@ -1195,45 +1212,57 @@ class SB_Core {
         $arg_post_type = isset($args['post_types']) ? (array)$args['post_types'] : array();
         $arg_post_type = wp_parse_args($arg_post_type, $support_post_type);
 
-        $defaults = array(
-            'name' => __('Tỉnh thành', 'sb-theme'),
-            'slug' => 'province',
-            'post_types' => $arg_post_type
-        );
-        $tmp_args = wp_parse_args($args, $defaults);
-        SB_Core::register_taxonomy($tmp_args);
+        $use_taxonomies = self::get_administrative_boundaries_taxonomies();
 
-        $defaults = array(
-            'name' => __('Quận huyện', 'sb-theme'),
-            'slug' => 'district',
-            'post_types' => $arg_post_type
-        );
-        $tmp_args = wp_parse_args($args, $defaults);
-        SB_Core::register_taxonomy($tmp_args);
+        if(in_array('province', $use_taxonomies)) {
+            $defaults = array(
+                'name' => __('Tỉnh thành', 'sb-theme'),
+                'slug' => 'province',
+                'post_types' => $arg_post_type
+            );
+            $tmp_args = wp_parse_args($args, $defaults);
+            SB_Core::register_taxonomy($tmp_args);
+        }
 
-        $defaults = array(
-            'name' => __('Phường xã', 'sb-theme'),
-            'slug' => 'ward',
-            'post_types' => $arg_post_type
-        );
-        $tmp_args = wp_parse_args($args, $defaults);
-        SB_Core::register_taxonomy($tmp_args);
+        if(in_array('district', $use_taxonomies)) {
+            $defaults = array(
+                'name' => __('Quận huyện', 'sb-theme'),
+                'slug' => 'district',
+                'post_types' => $arg_post_type
+            );
+            $tmp_args = wp_parse_args($args, $defaults);
+            SB_Core::register_taxonomy($tmp_args);
+        }
 
-        $defaults = array(
-            'name' => __('Thôn xóm', 'sb-theme'),
-            'slug' => 'hamlet',
-            'post_types' => $arg_post_type
-        );
-        $tmp_args = wp_parse_args($args, $defaults);
-        SB_Core::register_taxonomy($tmp_args);
+        if(in_array('ward', $use_taxonomies)) {
+            $defaults = array(
+                'name' => __('Phường xã', 'sb-theme'),
+                'slug' => 'ward',
+                'post_types' => $arg_post_type
+            );
+            $tmp_args = wp_parse_args($args, $defaults);
+            SB_Core::register_taxonomy($tmp_args);
+        }
 
-        $defaults = array(
-            'name' => __('Đường phố', 'sb-theme'),
-            'slug' => 'street',
-            'post_types' => $arg_post_type
-        );
-        $tmp_args = wp_parse_args($args, $defaults);
-        SB_Core::register_taxonomy($tmp_args);
+        if(in_array('hamlet', $use_taxonomies)) {
+            $defaults = array(
+                'name' => __('Thôn xóm', 'sb-theme'),
+                'slug' => 'hamlet',
+                'post_types' => $arg_post_type
+            );
+            $tmp_args = wp_parse_args($args, $defaults);
+            SB_Core::register_taxonomy($tmp_args);
+        }
+
+        if(in_array('street', $use_taxonomies)) {
+            $defaults = array(
+                'name' => __('Đường phố', 'sb-theme'),
+                'slug' => 'street',
+                'post_types' => $arg_post_type
+            );
+            $tmp_args = wp_parse_args($args, $defaults);
+            SB_Core::register_taxonomy($tmp_args);
+        }
     }
 
     public static function use_custom_metas() {
@@ -1338,7 +1367,8 @@ class SB_Core {
             'rewrite' => $rewrite,
             'capability_type' => $capability_type
         );
-        register_post_type($slug, $args);
+        $post_type = isset($args['post_type']) ? $args['post_type'] : $slug;
+        register_post_type($post_type, $args);
     }
 
     public static function register_taxonomy($args = array()) {
@@ -1400,6 +1430,7 @@ class SB_Core {
             'update_count_callback' => $update_count_callback,
             'capabilities' => $capabilities
         );
-        register_taxonomy($slug, $post_types, $args);
+        $taxonomy = isset($args['taxonomy']) ? $args['taxonomy'] : $slug;
+        register_taxonomy($taxonomy, $post_types, $args);
     }
 }

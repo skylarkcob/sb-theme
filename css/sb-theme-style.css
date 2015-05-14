@@ -1730,6 +1730,10 @@ ol.guides li a:hover{
     animation-name: reveal;
 }
 
+.metaslider .flexslider {
+    margin-bottom: 0 !important;
+}
+
 /* ==================== Strength indicator ==================== */
 
 .sb-password-strength-indicator {

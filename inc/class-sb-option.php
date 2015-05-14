@@ -687,7 +687,7 @@ class SB_Option {
             $number = self::get_theme_option(array('keys' => array('rss_feed', $i, 'number')));
             $url = self::get_theme_option(array('keys' => array('rss_feed', $i, 'url')));
             $id = self::get_theme_option(array('keys' => array('rss_feed', $i, 'id')));
-            if((empty($number) || empty($url)) || (empty($title) && empty($id))) {
+            if(empty($number) || empty($url) || (empty($title) && empty($id))) {
                 continue;
             }
             $feed = array('title' => $title, 'number' => $number, 'url' => $url, 'id' => $id);

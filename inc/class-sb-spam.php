@@ -22,7 +22,25 @@ class SB_Spam {
         'loralaplante',
         'coach outlet',
         'rolka',
-        'zqcgcmmmjrut'
+        'zqcgcmmmjrut',
+        'maillot',
+        'Louis',
+        'ray ban',
+        'wayfarers loose',
+        'new balance',
+        'deia Louis',
+        'studdedic behavior',
+        'cross body bag',
+        'urge to merge',
+        'temperate and cool regions'
+    );
+
+    public static $ips = array(
+        '27.150.209.24',
+        '117.26.252.135',
+        '117.26.252.135',
+        '27.159.254.106',
+        '27.153.231.54'
     );
 
     public static function check($content) {

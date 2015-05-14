@@ -42,20 +42,26 @@ if(SB_Option::use_term_thumbnail()) {
  * Tạo mối liên hệ giữa các địa giới hành chính
  */
 if(SB_Option::use_administrative_boundaries()) {
-    $fields = array(
-        array(
-            'name' => 'province',
-            'type' => 'number'
-        )
-    );
-    $args = array(
-        'taxonomies' => array('district'),
-        'callback' => 'sb_theme_term_meta_district_province_edit',
-        'create_callback' => 'sb_theme_term_meta_district_province_create',
-        'fields' => $fields
-    );
-    $term_meta = new SB_Term_Meta($args);
+    $use_taxonomies = SB_Core::get_administrative_boundaries_taxonomies();
 
+    // Quận huyện thuộc tỉnh thành
+    if(in_array('province', $use_taxonomies)) {
+        $fields = array(
+            array(
+                'name' => 'province',
+                'type' => 'number'
+            )
+        );
+        $args = array(
+            'taxonomies' => array('district'),
+            'callback' => 'sb_theme_term_meta_district_province_edit',
+            'create_callback' => 'sb_theme_term_meta_district_province_create',
+            'fields' => $fields
+        );
+        $term_meta = new SB_Term_Meta($args);
+    }
+
+    // Phường xã thuộc quận huyện
     $key = 'ward_district';
 
     $fields = array(
@@ -72,9 +78,14 @@ if(SB_Option::use_administrative_boundaries()) {
     );
     $term_meta = new SB_Term_Meta($args);
 
+    // Thôn xóm thuộc phường xã, thôn xóm thuộc quận huyện
     $key = 'hamlet_ward';
 
     $fields = array(
+        array(
+            'name' => 'district',
+            'type' => 'number'
+        ),
         array(
             'name' => 'ward',
             'type' => 'number'
@@ -88,6 +99,7 @@ if(SB_Option::use_administrative_boundaries()) {
     );
     $term_meta = new SB_Term_Meta($args);
 
+    // Đường phố thuộc quận huyện, đường phố thuộc xã phường
     $key = 'street_district';
 
     $fields = array(
@@ -109,6 +121,7 @@ if(SB_Option::use_administrative_boundaries()) {
     $term_meta = new SB_Term_Meta($args);
 }
 
+// Lựa chọn tỉnh thành cho quận huyện khi chỉnh sửa
 function sb_theme_term_meta_district_province_edit( $term ) {
     SB_Theme::the_term_meta_nonce();
     $value = SB_Term::get_meta($term->term_id, $term->taxonomy, 'province');
@@ -123,6 +136,7 @@ function sb_theme_term_meta_district_province_edit( $term ) {
     SB_Term_Field::select_term($args);
 }
 
+// Lựa chọn tỉnh thành cho quận huyện khi tạo
 function sb_theme_term_meta_district_province_create() {
     SB_Theme::the_term_meta_nonce();
     $args = array(
@@ -139,11 +153,11 @@ function sb_theme_term_meta_district_province_create() {
     SB_Term_Field::select_term($args);
 }
 
+// Lựa chọn quận huyện cho phường xã khi chỉnh sửa
 function sb_theme_term_meta_ward_district_edit( $term ) {
     $name = 'district';
-    SB_Theme::the_term_meta_nonce();
     $value = SB_Term::get_meta($term->term_id, $term->taxonomy, $name);
-    $key = 'district_province';
+    $key = 'ward_district';
     $args = array(
         'id' => 'sb_theme_term_meta_' . $key,
         'label' => __('Quận huyện', 'sb-theme'),
@@ -155,6 +169,7 @@ function sb_theme_term_meta_ward_district_edit( $term ) {
     SB_Term_Field::select_term($args);
 }
 
+// Lựa chọn quận huyện cho phường xã khi tạo
 function sb_theme_term_meta_ward_district_create() {
     $key = 'ward_district';
     $name = 'district';
@@ -173,9 +188,23 @@ function sb_theme_term_meta_ward_district_create() {
     SB_Term_Field::select_term($args);
 }
 
+// Lựa chọn quận huyện và phường xã cho thôn xóm khi chỉnh sửa
 function sb_theme_term_meta_hamlet_ward_edit( $term ) {
-    $name = 'ward';
+    $name = 'district';
     SB_Theme::the_term_meta_nonce();
+    $value = SB_Term::get_meta($term->term_id, $term->taxonomy, $name);
+    $key = 'hamlet_district';
+    $args = array(
+        'id' => 'sb_theme_term_meta_' . $key,
+        'label' => __('Quận huyện', 'sb-theme'),
+        'name' => $name,
+        'value' => $value,
+        'taxonomy' => $name,
+        'description' => __('Lựa chọn quận huyện mà thôn xóm hiện tại thuộc về.', 'sb-theme')
+    );
+    SB_Term_Field::select_term($args);
+
+    $name = 'ward';
     $value = SB_Term::get_meta($term->term_id, $term->taxonomy, $name);
     $key = 'hamlet_ward';
     $args = array(
@@ -189,10 +218,26 @@ function sb_theme_term_meta_hamlet_ward_edit( $term ) {
     SB_Term_Field::select_term($args);
 }
 
+// Lựa chọn quận huyện và phường xã cho thôn xóm khi tạo
 function sb_theme_term_meta_hamlet_ward_create() {
+    $key = 'hamlet_district';
+    $name = 'district';
+    SB_Theme::the_term_meta_nonce();
+    $args = array(
+        'id' => 'sb_theme_term_meta_' . $key,
+        'label' => __('Quận huyện', 'sb-theme'),
+        'name' => $name,
+        'value' => 0,
+        'taxonomy' => $name,
+        'before' => '<div class="form-field term-' . $name . '-wrap">',
+        'after' => '</div>',
+        'description' => __('Lựa chọn quận huyện mà thôn xóm hiện tại thuộc về.', 'sb-theme'),
+        'autocomplete' => true
+    );
+    SB_Term_Field::select_term($args);
+
     $key = 'hamlet_ward';
     $name = 'ward';
-    SB_Theme::the_term_meta_nonce();
     $args = array(
         'id' => 'sb_theme_term_meta_' . $key,
         'label' => __('Phường xã', 'sb-theme'),
@@ -207,6 +252,7 @@ function sb_theme_term_meta_hamlet_ward_create() {
     SB_Term_Field::select_term($args);
 }
 
+// Lựa chọn quận huyện và phường xã cho đường phố khi chỉnh sửa
 function sb_theme_term_meta_street_district_edit( $term ) {
     $name = 'district';
     SB_Theme::the_term_meta_nonce();
@@ -253,6 +299,7 @@ function sb_theme_term_meta_street_district_edit( $term ) {
     SB_Term_Field::select_term($args);
 }
 
+// Lựa chọn quận huyện và phường xã cho đường phố khi tạo
 function sb_theme_term_meta_street_district_create() {
     $key = 'street_district';
     $name = 'district';
@@ -306,31 +353,14 @@ function sb_theme_term_meta_street_district_create() {
  * Tạo meta box cho post type, người dùng chọn thông tin địa giới hành chính
  */
 if(SB_Option::use_administrative_boundaries()) {
+    $use_taxonomies = SB_Core::get_administrative_boundaries_taxonomies();
     $post_types = SB_Option::get_post_type_use_administrative_boundaries();
     $post_type = SB_Core::get_add_new_post_type();
     if(in_array($post_type, $post_types)) {
-        $fields = array(
-            array(
-                'name' => 'province',
-                'type' => 'number'
-            ),
-            array(
-                'name' => 'district',
-                'type' => 'number'
-            ),
-            array(
-                'name' => 'ward',
-                'type' => 'number'
-            ),
-            array(
-                'name' => 'hamlet',
-                'type' => 'number'
-            ),
-            array(
-                'name' => 'street',
-                'type' => 'number'
-            )
-        );
+        $fields = array();
+        foreach($use_taxonomies as $tax_id) {
+            $fields[] = array('name' => $tax_id, 'type' => 'number');
+        }
         $args = array(
             'title' => apply_filters('sb_theme_meta_box_administrative_boundaries_title', __('Thông tin địa giới hành chính', 'sb-theme')),
             'id' => 'sb_theme_metabox_administrative_boundaries',

@@ -8,7 +8,8 @@ class SB_Post {
         $transient_name = SB_Cache::build_post_media_images_transient_name($post_id);
         if(!SB_Cache::post_images_cache() || false === ($result = get_transient($transient_name))) {
             $result = array();
-            $files = get_posts(array('post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image'));
+            $query = SB_Query::get(array('post_parent' => $post_id, 'post_type' => 'attachment', 'post_mime_type' => 'image'));
+            $files = $query->posts;
             foreach($files as $file) {
                 $image_file = get_attached_file($file->ID);
                 if(file_exists($image_file)) {
@@ -20,6 +21,31 @@ class SB_Post {
             }
         }
         return $result;
+    }
+
+    public static function get_page_children($page_id, $posts_per_page = -1) {
+        $query = SB_Query::get(array('post_type' => 'page', 'posts_per_page' => -1, 'orderby' => 'rand'));
+        $child_pages = get_page_children($page_id, $query->posts);
+        $page_number = count($child_pages);
+        if($page_number > 1 && $page_number > $posts_per_page && $posts_per_page > 1) {
+            $child_pages = array_slice($child_pages, 0, $posts_per_page);
+        }
+        return $child_pages;
+    }
+
+    public static function go_to_child_page_if_empty_content() {
+        if(is_page()) {
+            $post_id = get_the_ID();
+            $current_page = get_post($post_id);
+            $content = $current_page->post_content;
+            if(empty($content)) {
+                $childs = self::get_page_children($post_id);
+                foreach($childs as $page) {
+                    wp_redirect(get_permalink($page));
+                    die();
+                }
+            }
+        }
     }
 
     public static function get_excerpt($post_id) {
@@ -122,7 +148,12 @@ class SB_Post {
         $image = self::get_first_image($post_id);
         $url = '';
         if($image && !is_wp_error($image)) {
-            $url = wp_get_attachment_url($image->id);
+            $atts = wp_get_attachment_image_src($image->ID, 'full');
+            if(is_array($atts) && isset($atts[0])) {
+                $url = $atts[0];
+            } else {
+                $url = $image->guid;
+            }
         } else {
             $post = get_post($post_id);
             $url = SB_PHP::get_first_image($post->post_content);
@@ -527,12 +558,22 @@ class SB_Post {
     }
 
     public static function the_title($args = array()) {
+        $post_id = isset($args['post_id']) ? $args['post_id'] : get_the_ID();
         $link = isset($args['link']) ? $args['link'] : true;
-        $headline = isset($args['headline']) ? $args['headline'] : 'h2';
+        $headline = isset($args['headline']) ? $args['headline'] : '';
+        if(empty($headline) && (is_singular() || is_page())) {
+            $current_id = get_the_ID();
+            if($current_id == $post_id) {
+                $headline = 'h1';
+            }
+        }
+        if(empty($headline)) {
+            $headline = 'h2';
+        }
         $title = new SB_HTML($headline);
         $title->set_attribute('class', 'entry-title');
         $title->set_attribute('itemprop', 'headline');
-        $post_id = isset($args['post_id']) ? $args['post_id'] : get_the_ID();
+
         $title_text = '';
         if($link) {
             $post_link = new SB_HTML('a');
@@ -588,7 +629,10 @@ class SB_Post {
 
     public static function get_first_term($post_id, $taxonomy) {
         $terms = self::get_terms($post_id, $taxonomy);
-        $first_term = array_shift($terms);
+        $first_term = new WP_Error();
+        if(is_array($terms) && count($terms) > 0) {
+            $first_term = array_shift($terms);
+        }
         return $first_term;
     }
 
@@ -886,23 +930,23 @@ class SB_Post {
             'street' => 0
         );
         $term = self::get_first_term($post_id, 'province');
-        if(is_object($term)) {
+        if(is_object($term) && !is_wp_error($term)) {
             $result['province'] = $term->term_id;
         }
         $term = self::get_first_term($post_id, 'district');
-        if(is_object($term)) {
+        if(is_object($term) && !is_wp_error($term)) {
             $result['district'] = $term->term_id;
         }
         $term = self::get_first_term($post_id, 'ward');
-        if(is_object($term)) {
+        if(is_object($term) && !is_wp_error($term)) {
             $result['ward'] = $term->term_id;
         }
         $term = self::get_first_term($post_id, 'hamlet');
-        if(is_object($term)) {
+        if(is_object($term) && !is_wp_error($term)) {
             $result['hamlet'] = $term->term_id;
         }
         $term = self::get_first_term($post_id, 'street');
-        if(is_object($term)) {
+        if(is_object($term) && !is_wp_error($term)) {
             $result['street'] = $term->term_id;
         }
         return $result;
