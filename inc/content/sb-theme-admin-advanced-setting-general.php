@@ -35,6 +35,7 @@ function sb_theme_advanced_setting_general_term_thumbnail() {
 function sb_theme_advanced_setting_general_taxonomy_use_thumbnail() {
     $tab_base_option_name = 'general';
     $key = 'taxonomy_use_thumbnail';
+	$actives = SB_Option::get_taxonomy_use_thumbnail();
     $args = array(
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
@@ -44,7 +45,8 @@ function sb_theme_advanced_setting_general_taxonomy_use_thumbnail() {
         'sortable_active_description' => __('Taxonomy được hỗ trợ cho phép term hiển thị ảnh thumbnail.', 'sb-theme'),
         'before' => '',
         'field_class' => 'display-inline',
-        'click_to_connect' => true
+        'click_to_connect' => true,
+	    'value' => implode(',', $actives)
     );
     SB_Field::sortable_ui_connect_row($args);
 }
@@ -113,6 +115,7 @@ function sb_theme_advanced_setting_general_administrative_boundaries() {
 function sb_theme_advanced_setting_general_post_type_use_administrative_boundaries() {
     $tab_base_option_name = 'general';
     $key = 'post_type_use_administrative_boundaries';
+	$actives = SB_Option::get_post_type_use_administrative_boundaries();
     $args = array(
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
@@ -122,7 +125,8 @@ function sb_theme_advanced_setting_general_post_type_use_administrative_boundari
         'sortable_active_description' => __('Post type được hỗ trợ cho phép sử dụng thông tin địa giới hành chính.', 'sb-theme'),
         'before' => '',
         'field_class' => 'display-inline',
-        'click_to_connect' => true
+        'click_to_connect' => true,
+	    'value' => implode(',', $actives)
     );
     SB_Field::sortable_ui_connect_row($args);
 }

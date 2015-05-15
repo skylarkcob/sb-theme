@@ -645,6 +645,10 @@ class SB_Post {
         self::update_meta($post_id, '_menu_item_url', $meta_value);
     }
 
+    public static function get_comment_link($post_id) {
+        return get_comments_link($post_id);
+    }
+
     public static function get_comment_link_meta($post_id = 0) {
         if($post_id == 0) {
             $post_id = get_the_ID();

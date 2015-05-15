@@ -111,7 +111,8 @@ class SB_Admin {
     }
 
     public function sanitize($input) {
-        $options = SB_Option::get();
+        //$options = get_option('sb_options');
+	    $options = SB_Option::get();
         $input = wp_parse_args($input, $options);
         $input = apply_filters('sb_options_sanitize', $input);
 	    $input = apply_filters('sb_theme_sanitize_option', $input);

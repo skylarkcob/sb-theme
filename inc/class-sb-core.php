@@ -665,6 +665,7 @@ class SB_Core {
             $types[] = 'image/jpeg';
             $types[] = 'image/png';
             $types[] = 'image/x-icon';
+	        $types[] = 'image/gif';
         }
         return apply_filters('sb_theme_allow_image_type', $types);
     }
@@ -1204,6 +1205,38 @@ class SB_Core {
         return $use_taxonomies;
     }
 
+    public static function is_street_of_ward() {
+        $value = true;
+        $value = apply_filters('sb_theme_street_of_ward', $value);
+        return $value;
+    }
+
+    public static function is_hamlet_of_ward() {
+        $value = true;
+        $value = apply_filters('sb_theme_hamlet_of_ward', $value);
+        return $value;
+    }
+
+    public static function is_edit_post_page() {
+        $result = false;
+        if(isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == 'post.php') {
+            $action = isset($_GET['action']) ? $_GET['action'] : '';
+            $post_id = isset($_GET['post']) ? $_GET['post'] : '';
+            $post_id = absint($post_id);
+            if('edit' == $action && 0 < $post_id) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    public static function is_add_post_page() {
+        if(isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == 'post-new.php') {
+            return true;
+        }
+        return false;
+    }
+
     public static function create_administrative_boundaries_taxonomy($args = array()) {
         $support_post_type = SB_Option::get_post_type_use_administrative_boundaries();
         if(count($support_post_type) < 1) {
@@ -1308,6 +1341,7 @@ class SB_Core {
         $pages = isset($args['pages']) ? $args['pages'] : true;
         $feeds = isset($args['feeds']) ? $args['feeds'] : true;
         $query_var = isset($args['query_var']) ? $args['query_var'] : '';
+        $capabilities = isset($args['capabilities']) ? $args['capabilities'] : array();
 
         if(empty($singular_name)) {
             $singular_name = $name;
@@ -1367,6 +1401,9 @@ class SB_Core {
             'rewrite' => $rewrite,
             'capability_type' => $capability_type
         );
+        if(count($capabilities) > 0 ) {
+            $args['capabilities'] = $capabilities;
+        }
         $post_type = isset($args['post_type']) ? $args['post_type'] : $slug;
         register_post_type($post_type, $args);
     }
@@ -1430,6 +1467,7 @@ class SB_Core {
             'update_count_callback' => $update_count_callback,
             'capabilities' => $capabilities
         );
+
         $taxonomy = isset($args['taxonomy']) ? $args['taxonomy'] : $slug;
         register_taxonomy($taxonomy, $post_types, $args);
     }

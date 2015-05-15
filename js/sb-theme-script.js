@@ -224,7 +224,12 @@ var sb_password_strength,
         }
     };
 
-    // Scroll top button
+    sb_theme.go_to_top = function() {
+        $('html, body').animate({scrollTop : 0},800);
+        return false;
+    };
+
+    // Scroll top button, di chuyển về đầu trang
     (function(){
         var scrollToTop = $( '#sb-scroll-top'),
             scrollPositionShown = 100,
@@ -248,8 +253,7 @@ var sb_password_strength,
             });
 
             scrollToTop.click(function(){
-                $('html, body').animate({scrollTop : 0},800);
-                return false;
+                sb_theme.go_to_top();
             });
 
         }

@@ -593,8 +593,8 @@ class SB_Post_Widget extends WP_Widget {
 
 	public function update($new_instance, $instance) {
 		$instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
-		$instance['type'] = $new_instance['type'];
-		$instance['category'] = $new_instance['category'];
+		$instance['type'] = isset($new_instance['type']) ? $new_instance['type'] : '';
+		$instance['category'] = isset($new_instance['category']) ? $new_instance['category'] : 0;
 		$instance['number'] = empty($new_instance['number']) ? $this->default_number : absint($new_instance['number']);
 		$instance['taxonomy'] = $new_instance['taxonomy'];
 		$instance['only_thumbnail'] = isset($new_instance['only_thumbnail']) ? 1 : 0;

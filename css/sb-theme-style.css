@@ -695,6 +695,36 @@ input:focus:-ms-input-placeholder { color:transparent; }
     font-style: normal;
 }
 
+.widget .list-recent-comments,
+.list-recent-comments {
+    list-style: outside none none;
+    margin: 0;
+    padding: 0;
+}
+
+.list-recent-comments li {
+    margin: 0 0 8px;
+    min-height: 40px;
+    padding: 0 0 9px;
+}
+
+.list-recent-comments .avatar {
+    background-color: #fff;
+    border: 1px solid #c6c6c6;
+    border-radius: 50%;
+    float: left;
+    height: 60px;
+    margin-right: 8px;
+    padding: 4px;
+    width: 60px;
+}
+
+.list-recent-comments li::after {
+    clear: both;
+    content: "";
+    display: block;
+}
+
 @media only screen and (max-width: 800px) {
     .sb-comment-area .comment-respond textarea {
         width: 100%;

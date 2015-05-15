@@ -40,6 +40,18 @@ class SB_Theme {
         echo '<div class="clear"></div>';
     }
 
+    public static function enqueue_password_strength_meter() {
+        wp_enqueue_script('password-strength-meter');
+        wp_localize_script('password-strength-meter', 'pwsL10n', array(
+            'empty' => SB_Message::get_password_strength(),
+            'short' => SB_Message::get_password_strength_short(),
+            'bad' => SB_Message::get_password_strength_bad(),
+            'good' => SB_Message::get_password_strength_good(),
+            'strong' => SB_Message::get_password_strength_strong(),
+            'mismatch' => SB_Message::get_password_strength_mismatch()
+        ));
+    }
+
 	public static function enqueue_custom_responsive_style($handle, $name, $max_width = 1024) {
 		$file_path = SB_THEME_CUSTOM_URL . '/css/' . $name . '.css';
 		wp_enqueue_style($handle, $file_path, array(), false, 'screen and (max-width: ' . $max_width . 'px)');
@@ -51,9 +63,133 @@ class SB_Theme {
         }
     }
 
+	public static function add_theme_support_woocommerce() {
+		add_theme_support( 'woocommerce' );
+	}
+
     public static function container_class($class = '') {
         $class = SB_PHP::add_string_with_space_before($class, 'sb-container sb-wrap container');
         echo $class;
+    }
+
+    public static function the_recent_comment_list($comments, $args = array()) {
+        $avatar_size = isset($args['avatar_size']) ? absint($args['avatar_size']) : 116;
+        $content_length = isset($args['content_length']) ? absint($args['content_length']) : 80;
+        ?>
+        <ul class="list-unstyled list-recent-comments">
+            <?php foreach($comments as $comment) : ?>
+                <?php
+                $author_url = $comment->comment_author_url;
+                $post_comment_url = SB_Post::get_comment_link($comment->post_id);
+                ?>
+                <li class="a-comment">
+                    <?php echo get_avatar($comment->comment_author_email, $avatar_size); ?>
+                    <b>
+                        <?php if(!empty($author_url)) : ?>
+                            <a itemprop="url" class="url fn n" href="<?php echo $author_url; ?>">
+                                <span itemprop="name"><?php echo $comment->comment_author; ?></span>
+                            </a>
+                        <?php else : ?>
+                            <span itemprop="name"><?php echo $comment->comment_author; ?></span>
+                        <?php endif; ?>
+                    </b>
+                    : <?php echo SB_PHP::substr($comment->comment_content, $content_length); ?> <a href="<?php echo $post_comment_url; ?>">»</a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+        <?php
+    }
+
+    public static function the_widget_recent_post_most_views($args = array(), &$exclude_ids = array()) {
+        $posts_per_page = isset($args['posts_per_page']) ? $args['posts_per_page'] : '';
+        if(empty($posts_per_page)) {
+            $posts_per_page = SB_Query::get_posts_per_page();
+        }
+        $post_type = isset($args['post_type']) ? $args['post_type'] : 'post';
+        $post_not_in = isset($args['post__not_in']) ? $args['post__not_in'] : $exclude_ids;
+        $widget_title = isset($args['widget_title']) ? $args['widget_title'] : __('Được xem nhiều', 'sb-theme');
+        $thumbnail_size = isset($args['thumbnail_size']) ? $args['thumbnail_size'] : array(85, 64);
+        $thumbnail_width = isset($thumbnail_size[0]) ? $thumbnail_size[0] : 85;
+        $thumbnail_height = isset($thumbnail_size[1]) ? $thumbnail_size[1] : 64;
+        $title_length = isset($args['title_length']) ? $args['title_length'] : 40;
+        $transient_name = 'sb_theme_query_recent_post_by_view';
+        if(false === ($query = get_transient($transient_name))) {
+            $args = array(
+                'posts_per_page' => $posts_per_page,
+                'post_type' => $post_type,
+                'post__not_in' => $post_not_in
+            );
+            $query = SB_Query::get_recent_post_by_view($args);
+            set_transient($transient_name, $query, DAY_IN_SECONDS);
+        }
+        if($query->have_posts()) : ?>
+            <section class="widget slide-posts recent-most-views widget-posts">
+                <h4 class="widget-title"><?php echo $widget_title; ?></h4>
+                <div class="sb-post-widget">
+                    <div class="sb-post-widget-inner">
+                        <ol class="list-unstyled list-posts" data-count="<?php echo $query->post_count; ?>">
+                            <?php while($query->have_posts()) : $query->the_post();
+                                $exclude_ids[] = get_the_ID();
+                                if('' == get_the_content()) {
+                                    continue;
+                                }
+                                ?>
+                                <li class="sb-post">
+                                    <?php SB_Post::the_thumbnail_crop_only_link_image_html($thumbnail_width, $thumbnail_height); ?>
+                                    <h3 class="post-title"><a href="<?php the_permalink(); ?>"><?php echo SB_PHP::substr(get_the_title(), $title_length); ?></a></h3>
+                                </li>
+                            <?php endwhile; wp_reset_postdata(); ?>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+        <?php endif;
+    }
+
+    public static function the_widget_recent_post_most_view_in_week($args = array(), &$exclude_ids = array()) {
+        $posts_per_page = isset($args['posts_per_page']) ? $args['posts_per_page'] : '';
+        $post_type = isset($args['post_type']) ? $args['post_type'] : 'post';
+        $widget_title = isset($args['widget_title']) ? $args['widget_title'] : __('Nổi bật trong tuần', 'sb-theme');
+        $post_not_in = isset($args['post__not_in']) ? $args['post__not_in'] : $exclude_ids;
+        if(empty($posts_per_page)) {
+            $posts_per_page = SB_Query::get_posts_per_page();
+        }
+        $thumbnail_size = isset($args['thumbnail_size']) ? $args['thumbnail_size'] : array(85, 64);
+        $thumbnail_width = isset($thumbnail_size[0]) ? $thumbnail_size[0] : 85;
+        $thumbnail_height = isset($thumbnail_size[1]) ? $thumbnail_size[1] : 64;
+        $title_length = isset($args['title_length']) ? $args['title_length'] : 40;
+        $transient_name = 'sb_theme_query_most_view_of_week';
+        if(false === ($query = get_transient($transient_name))) {
+            $args = array(
+                'posts_per_page' => $posts_per_page,
+                'post_type' => $post_type,
+                'post__not_in' => $post_not_in
+            );
+            $query = SB_Query::get_most_view_of_week($args);
+            set_transient($transient_name, $query, DAY_IN_SECONDS);
+        }
+        if($query->have_posts()) : ?>
+            <section class="widget slide-posts most-views-week widget-posts">
+                <h4 class="widget-title"><?php echo $widget_title; ?></h4>
+                <div class="sb-post-widget">
+                    <div class="sb-post-widget-inner">
+                        <ol class="list-unstyled list-posts week-views" data-count="<?php echo $query->post_count; ?>">
+                            <?php while($query->have_posts()) : $query->the_post();
+                                array_push($exclude_ids, get_the_ID());
+                                if('' == get_the_content()) {
+                                    continue;
+                                }
+                                ?>
+                                <li class="sb-post">
+                                    <?php SB_Post::the_thumbnail_crop_only_link_image_html($thumbnail_width, $thumbnail_height); ?>
+                                    <h3 class="post-title"><a href="<?php the_permalink(); ?>"><?php echo SB_PHP::substr(get_the_title(), $title_length); ?></a></h3>
+                                </li>
+                            <?php endwhile; wp_reset_postdata(); ?>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+        <?php endif;
     }
 
     public static function the_favicon_html() {
@@ -554,6 +690,10 @@ class SB_Theme {
 
     public static function get_custom_content($name) {
         sb_get_custom_content($name);
+    }
+
+    public static function get_custom_module($name) {
+        sb_get_custom_module($name);
     }
 
     public static function set_search_form_args($args = array()) {

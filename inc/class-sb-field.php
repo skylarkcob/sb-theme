@@ -1003,7 +1003,7 @@ class SB_Field {
                             continue;
                         }
                         $option_text = $cat->name . (($show_count) ? ' (' . $cat->count . ')' : '');
-                        $all_option .= self::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $tax->name), 'selected' => 0, 'text' => $option_text));
+                        $all_option .= self::get_option(array('value' => $cat->term_id, 'attributes' => array('data-taxonomy' => $tax->name), 'selected' => $value, 'text' => $option_text));
                     }
                 }
             }

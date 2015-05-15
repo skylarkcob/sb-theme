@@ -408,6 +408,8 @@ add_filter('sb_theme_advanced_setting_tabs', 'sb_theme_advanced_setting_tabs_fil
  * Kiểm tra thông tin cài đặt người dùng nhập trước khi lưu vào cơ sở dữ liệu
  */
 function sb_theme_sanitize($input) {
+	//$options = get_option('sb_options');
+	//$input = wp_parse_args($input, $options);
     return $input;
 }
 add_filter('sb_options_sanitize', 'sb_theme_sanitize');
