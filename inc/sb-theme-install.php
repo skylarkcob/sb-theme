@@ -244,7 +244,9 @@ function sb_theme_not_support_sb_core_message() {
     unset($_GET['activate']);
     unset($_GET['error']);
     ?>
-    <div class="updated" id="message"><p><strong>Note:</strong> Plugin <strong>SB Core</strong> has been deactivated because current theme doesn't need it any more.</p></div>
+    <div class="updated" id="message">
+        <p><strong><?php _e('Chú ý:', 'sb-theme'); ?></strong> <?php printf(__('%s đã được ngừng kích hoạt vì giao diện không cần dùng đến nó nữa.', 'sb-theme'), 'Plugin <strong>SB Core</strong>'); ?></p>
+    </div>
     <?php
     sb_theme_deactivate_all_sb_plugin();
 }

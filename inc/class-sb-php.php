@@ -13,6 +13,10 @@ class SB_PHP {
         return number_format( $number, 0, '.', ',' ) . $suffix;
     }
 
+    public static function format_number_vietnamese($price, $decimals = 0, $decimal_separator = ',', $thousand_separator = '.') {
+        return number_format($price, $decimals, $decimal_separator, $thousand_separator);
+    }
+
     public static function encrypt($key, $string) {
         $encrypted = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $string, MCRYPT_MODE_CBC, md5(md5($key))));
         return $encrypted;
@@ -21,6 +25,13 @@ class SB_PHP {
     public static function decrypt($key, $encrypted) {
         $decrypted = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($encrypted), MCRYPT_MODE_CBC, md5(md5($key))), '\0');
         return $decrypted;
+    }
+
+    public static function get_html_tag_content($tag, $html) {
+        $dom = new DOMDocument;
+        $dom->loadHTML($html);
+        $result = $dom->getElementsByTagName($tag)->item(0)->nodeValue;
+        return $result;
     }
 
     public static function object_to_array($object) {
@@ -261,11 +272,7 @@ class SB_PHP {
     }
 
     public static function get_input_number( $value ) {
-        $result = 0;
-        if ( is_numeric( $value ) ) {
-            $result = absint( intval( $value ) );
-        }
-        return $result;
+        return intval($value);
     }
 
     public static function add_punctuation( $text, $punc ) {
@@ -324,8 +331,8 @@ class SB_PHP {
     }
 
     public static function get_punctuation( $str ) {
-        $punctuation = SB_PHP::get_last_char( $str );
-        if ( ! SB_PHP::is_punctuation( $punctuation ) ) {
+        $punctuation = self::get_last_char( $str );
+        if ( ! self::is_punctuation( $punctuation ) ) {
             $punctuation = '';
         }
         return $punctuation;
@@ -376,6 +383,16 @@ class SB_PHP {
     public static function get_current_date( $format = 'd-m-Y' ) {
         self::timezone_hcm();
         return date( $format );
+    }
+
+    public static function get_last_date_of_month() {
+        return date('Y-m-t');
+    }
+
+    public static function get_lastday_of_month_timestamp() {
+        $lastday = self::get_last_date_of_month();
+        $lastday_timestamp = strtotime($lastday);
+        return $lastday_timestamp;
     }
 
     public static function get_current_url() {

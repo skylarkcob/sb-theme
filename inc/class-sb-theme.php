@@ -63,6 +63,12 @@ class SB_Theme {
         }
     }
 
+    public static function add_theme_setting_field($id, $title, $callback) {
+        if(SB_PHP::callback_exists($callback)) {
+            sb_theme_add_setting_field($id, $title, $callback);
+        }
+    }
+
 	public static function add_theme_support_woocommerce() {
 		add_theme_support( 'woocommerce' );
 	}
@@ -281,6 +287,9 @@ class SB_Theme {
             printf( __( 'Lưu trữ tháng %s' ), get_the_date('F Y') );
         } elseif(is_year()) {
             printf( __( 'Lưu trữ năm %s' ), get_the_date('Y') );
+        } elseif(is_tax()) {
+            $term = SB_Term::get_single();
+            echo $term->name;
         } else {
             _e('Lưu trữ', 'sb-theme');
         }
@@ -473,12 +482,14 @@ class SB_Theme {
         $class = SB_PHP::add_string_with_space_before($class, $theme_location);
         $button_text = isset($args['button_text']) ? trim($args['button_text']) : '';
         $search = isset($args['search']) ? (bool)$args['search'] : false;
-        $search_args = array(
-            ''
-        );
+        $search_args = isset($args['search_args']) ? $args['search_args'] : array();
+        if(!$search) {
+            $search = isset($args['with_search']) ? $args['with_search'] : false;
+        }
         if($search) {
             $class = SB_PHP::add_string_with_space_before($class, 'search');
         }
+        $search_args['search_icon'] = true;
         if(!SB_Core::is_error($menu)) {
             echo '<div class="' . $class . '">';
             self::the_mobile_menu_button($button_text);
@@ -567,6 +578,10 @@ class SB_Theme {
             </ul>
         </div>
         <?php
+    }
+
+    public static function support($feature) {
+        return (bool)current_theme_supports($feature);
     }
 
     public static function register_sidebar($sidebar_id, $sidebar_name, $sidebar_description) {
@@ -678,6 +693,18 @@ class SB_Theme {
     public static function carousel($args = array()) {
         self::set_carousel_argument($args);
         sb_theme_get_content('carousel');
+    }
+
+    public static function get_woocommerce_template($slug, $name = '') {
+        wc_get_template_part($slug, $name);
+    }
+
+    public static function get_content_woocommerce($name) {
+        self::get_content('woocommerce/' . $name);
+    }
+
+    public static function get_content($name) {
+        sb_theme_get_content($name);
     }
 
     public static function get_custom_loop($name) {

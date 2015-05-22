@@ -30,7 +30,7 @@ function sb_utilities_jquery_snowfall_callback() {
 }
 
 function sb_utilities_setting_field_facebook_fanpage() {
-    sb_theme_add_utilities_setting_field('sb_utilities_facebook_fanpage', 'Facebook Fanpage', 'sb_utilities_facebook_fanpage_callback');
+    sb_theme_add_utilities_setting_field('sb_utilities_facebook_fanpage', 'Facebook fanpage', 'sb_utilities_facebook_fanpage_callback');
 }
 
 function sb_utilities_facebook_fanpage_callback() {
@@ -39,13 +39,13 @@ function sb_utilities_facebook_fanpage_callback() {
         'id' => 'sb_utilities_facebook_fanpage',
         'name' => 'sb_options[utilities][facebook_fanpage]',
         'value' => $value,
-        'description' => __('Turn on or turn off the function to load Facebook Fanpage.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép bạn nhập Facebook fanpage sử dụng trên website của bạn.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
 
 function sb_utilities_setting_field_footer_text() {
-    sb_theme_add_utilities_setting_field('sb_utilities_footer_text', __('Footer text', 'sb-theme'), 'sb_utilities_footer_text_callback');
+    sb_theme_add_utilities_setting_field('sb_utilities_footer_text', __('Chữ dưới footer', 'sb-theme'), 'sb_utilities_footer_text_callback');
 }
 
 function sb_utilities_footer_text_callback() {
@@ -54,13 +54,13 @@ function sb_utilities_footer_text_callback() {
         'id' => 'sb_utilities_footer_text',
         'name' => 'sb_options[utilities][footer_text]',
         'value' => $value,
-        'description' => __('Turn on or turn off the function to show copyright text at footer.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép bạn nhập thông tin chữ hiển thị dưới chân trang web.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
 
 function sb_utilities_setting_field_social() {
-    sb_theme_add_utilities_setting_field('sb_utilities_social', __('Social settings', 'sb-theme'), 'sb_utilities_social_callback');
+    sb_theme_add_utilities_setting_field('sb_utilities_social', __('Mạng xã hội', 'sb-theme'), 'sb_utilities_social_callback');
 }
 
 function sb_utilities_social_callback() {
@@ -69,7 +69,7 @@ function sb_utilities_social_callback() {
         'id' => 'sb_utilities_social',
         'name' => 'sb_options[utilities][social]',
         'value' => $value,
-        'description' => __('Turn on or turn off the function to social settings on your site.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép bạn cài đặt thông tin các trang mạng xã hội.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
@@ -90,7 +90,7 @@ function sb_utilities_category_widget_callback() {
 }
 
 function sb_utilities_setting_field_default_thumbnail() {
-    sb_theme_add_utilities_setting_field('sb_utilities_default_thumbnail', __('Default thumbnail settings', 'sb-theme'), 'sb_utilities_default_thumbnail_callback');
+    sb_theme_add_utilities_setting_field('sb_utilities_default_thumbnail', __('Ảnh thumbnail mặc định', 'sb-theme'), 'sb_utilities_default_thumbnail_callback');
 }
 
 function sb_utilities_default_thumbnail_callback() {
@@ -99,7 +99,7 @@ function sb_utilities_default_thumbnail_callback() {
         'id' => 'sb_utilities_default_thumbnail',
         'name' => 'sb_options[utilities][default_thumbnail]',
         'value' => $value,
-        'description' => __('Turn on or turn off the function to setup default thumbnail image.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cài đặt hình ảnh thumbnail mặc định cho bài viết.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
@@ -129,7 +129,7 @@ function sb_utilities_addthis_callback() {
         'id' => 'sb_utilities_addthis',
         'name' => 'sb_options[utilities][addthis]',
         'value' => $value,
-        'description' => __('Turn on or turn off the function to use AddThis share buttons on your website.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng sử dụng các nút chia sẻ của AddThis.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
@@ -144,7 +144,7 @@ function sb_utilities_sharethis_callback() {
         'id' => 'sb_utilities_sharethis',
         'name' => 'sb_options[utilities][sharethis]',
         'value' => $value,
-        'description' => __('Turn on or turn off the function to use ShareThis share buttons on your website.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng sử dụng các nút chia sẻ của ShareThis.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
@@ -225,7 +225,7 @@ function sb_utilities_leaderboard_ads_callback() {
 }
 
 function sb_utilities_setting_field_scroll_top() {
-    sb_theme_add_utilities_setting_field('sb_utilities_scroll_top', __('Scroll top', 'sb-theme'), 'sb_utilities_scroll_top_callback');
+    sb_theme_add_utilities_setting_field('sb_utilities_scroll_top', __('Nút về đầu trang', 'sb-theme'), 'sb_utilities_scroll_top_callback');
 }
 
 function sb_utilities_scroll_top_callback() {
@@ -234,7 +234,7 @@ function sb_utilities_scroll_top_callback() {
         'id' => 'sb_utilities_scroll_top',
         'name' => SB_Option::build_sb_utility_option_name(array('scroll_top')),
         'value' => $value,
-        'description' => __('Turn on or turn off the scroll top button on your site.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng hiển thị nút quay về đầu trang trên website của bạn.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
@@ -264,13 +264,13 @@ function sb_utilities_google_analytics_callback() {
         'id' => 'sb_utilities_google_analytics',
         'name' => SB_Option::build_sb_utility_option_name(array('google_analytics')),
         'value' => $value,
-        'description' => __('Turn on or turn off function to add Gooogle Analytics tracking code.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng chèn code thống kê của Google Analytics vào website của bạn.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
 
 function sb_utilities_setting_field_add_to_head() {
-    sb_theme_add_utilities_setting_field('sb_utilities_add_to_head', __('Add to head', 'sb-theme'), 'sb_utilities_add_to_head_callback');
+    sb_theme_add_utilities_setting_field('sb_utilities_add_to_head', __('Thêm vào thẻ head', 'sb-theme'), 'sb_utilities_add_to_head_callback');
 }
 
 function sb_utilities_add_to_head_callback() {
@@ -279,7 +279,7 @@ function sb_utilities_add_to_head_callback() {
         'id' => 'sb_utilities_add_to_head',
         'name' => SB_Option::build_sb_utility_option_name(array('add_to_head')),
         'value' => $value,
-        'description' => __('Turn on or turn off function to add content between head tag.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép bạn thêm thông tin vào giữa thẻ head.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
@@ -287,20 +287,20 @@ function sb_utilities_add_to_head_callback() {
 function sb_utilities_setting_field_callback() {
     sb_utilities_setting_field_add_to_head();
     sb_utilities_setting_field_google_analytics();
-	sb_utilities_setting_field_responsive();
+	//sb_utilities_setting_field_responsive();
 
     sb_utilities_setting_field_default_thumbnail();
-    sb_utilities_setting_field_term_meta();
-    sb_utilities_setting_field_shop();
+    //sb_utilities_setting_field_term_meta();
+    //sb_utilities_setting_field_shop();
     sb_utilities_setting_field_sharethis();
     sb_utilities_setting_field_addthis();
-    sb_utilities_setting_field_jquery_snowfall();
-    sb_utilities_setting_field_jquery_marquee();
-    sb_utilities_setting_field_facebook_php_sdk();
+    //sb_utilities_setting_field_jquery_snowfall();
+    //sb_utilities_setting_field_jquery_marquee();
+    //sb_utilities_setting_field_facebook_php_sdk();
     sb_utilities_setting_field_facebook_fanpage();
-    sb_utilities_setting_field_category_widget();
-    sb_utilities_setting_field_leaderboard_ads();
-    sb_utilities_setting_field_float_ads();
+    //sb_utilities_setting_field_category_widget();
+    //sb_utilities_setting_field_leaderboard_ads();
+    //sb_utilities_setting_field_float_ads();
     sb_utilities_setting_field_social();
     sb_utilities_setting_field_scroll_top();
     sb_utilities_setting_field_footer_text();

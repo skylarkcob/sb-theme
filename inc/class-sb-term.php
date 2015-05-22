@@ -9,6 +9,10 @@ class SB_Term {
         return get_term_link($term);
     }
 
+    public static function get_nav_menu_items($menu_id) {
+        return wp_get_nav_menu_items($menu_id);
+    }
+
     public static function get_links($taxonomy, $args = array()) {
         $separator = ', ';
         $terms = self::get($taxonomy, $args);
@@ -182,6 +186,35 @@ class SB_Term {
 
     public static function get_thumbnail_url($term_id, $taxonomy) {
         return self::get_meta($term_id, $taxonomy, 'thumbnail');
+    }
+
+    public static function the_thumbnail_link($args = array()) {
+        $term_id = isset($args['term_id']) ? $args['term_id'] : 0;
+        $taxonomy = isset($args['taxonomy']) ? $args['taxonomy'] : '';
+        $url = self::get_thumbnail_url($term_id, $taxonomy);
+        $data = SB_Option::get_media_detail($url);
+        $url = $data['url'];
+        $term = get_term($term_id, $taxonomy);
+        $term_name = '';
+        $term_permalink = '';
+        if(is_object($term) && !is_wp_error($term)) {
+            $term_name = $term->name;
+            $term_permalink = self::get_permalink($term);
+        }
+        if(!empty($term_permalink)) {
+            $link = new SB_HTML('a');
+            $link->set_attribute('href', $term_permalink);
+            $link->set_attribute('title', $term_name);
+            $link->set_attribute('class', 'term-link');
+
+            $image = new SB_HTML('img');
+            $image->set_attribute('src', $url);
+            $image->set_attribute('alt', $term_name);
+            $image->set_attribute('class', 'wp-post-image term-thumbnail');
+
+            $link->set_text($image->build());
+            echo $link->build();
+        }
     }
 
     public static function get_category_thumbnail_url($term_id) {

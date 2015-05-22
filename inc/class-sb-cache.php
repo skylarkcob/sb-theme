@@ -12,6 +12,10 @@ class SB_Cache {
         return self::build_theme_transient_name($name . '_query');
     }
 
+    public static function build_last_date_of_month_transient_name() {
+        return 'sb_theme_check_last_date_of_month';
+    }
+
     public static function build_transaction_secure_code_transient_name($secure_code) {
         return self::build_query_transient_name('_transaction_secure_code_' . $secure_code);
     }

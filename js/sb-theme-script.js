@@ -265,17 +265,38 @@ var sb_password_strength,
             var that = $(this),
                 mobile_menu_container = that.closest('div.sb-mobile-menu'),
                 sb_site = body.find('div.sb-site'),
-                sb_site_container = sb_site.find('.sb-site-container');
+                sb_site_container = sb_site.find('.sb-site-container'),
+                is_left = true;
             mobile_menu_container.toggleClass('active');
             if(mobile_menu_container.hasClass('right')) {
-                sb_site.removeClass('move-right');
-                sb_site.toggleClass('move-left');
+                sb_site_container.css({left: 'auto'});
+                is_left = false;
             } else {
+                sb_site_container.css({right: 'auto'});
+                is_left = true;
+            }
+            if(is_left) {
                 sb_site.removeClass('move-left');
                 sb_site.toggleClass('move-right');
+            } else {
+                sb_site.removeClass('move-right');
+                sb_site.toggleClass('move-left');
             }
             sb_site.toggleClass('moved');
             sb_site_container.toggleClass('moved');
+            if(!is_left) {
+                if(sb_site_container.hasClass('moved')) {
+                    sb_site_container.css({right: '250px'});
+                } else {
+                    sb_site_container.css({right: '0'});
+                }
+            } else {
+                if(sb_site_container.hasClass('moved')) {
+                    sb_site_container.css({left: '250px'});
+                } else {
+                    sb_site_container.css({left: '0'});
+                }
+            }
         });
 
         $('.an-aside-mobile-menu > div').on('click', function(e){

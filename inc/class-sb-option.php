@@ -411,6 +411,18 @@ class SB_Option {
         return $result;
     }
 
+    public static function get_last_date_of_month() {
+        return absint(get_option('sb_theme_last_date_of_month'));
+    }
+
+    public static function set_last_date_of_month($value) {
+        update_option('sb_theme_last_date_of_month', $value);
+    }
+
+    public static function update_last_date_of_month($value) {
+        self::set_last_date_of_month($value);
+    }
+
     public static function build_sb_theme_option_name($key_array) {
         array_unshift($key_array, 'theme');
         $key_name = self::build_sb_option_name($key_array);

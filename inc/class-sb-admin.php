@@ -5,6 +5,7 @@ class SB_Admin {
     private $tabs = array();
     private $advanced_tabs = array();
     private $checkout_tabs = array();
+    private $store_tabs = array();
 
     public function __construct() {
         if($this->has_sb_admin()) {
@@ -32,6 +33,7 @@ class SB_Admin {
         add_filter('sb_admin_tabs', array($this, 'option_tab'));
         add_filter('sb_theme_advanced_setting_tabs', array($this, 'advanced_setting_tabs'));
         add_filter('sb_theme_checkout_setting_tabs', array($this, 'checkout_setting_tabs'));
+        add_filter('sb_theme_store_setting_tabs', array($this, 'store_setting_tabs'));
     }
 
     private function filter() {
@@ -51,25 +53,38 @@ class SB_Admin {
     public function advanced_setting_tabs($tabs) {
         $defaults = array(
             'general' => array(
-                'name' => __('General', 'sb-theme')
+                'name' => __('Tổng quan', 'sb-theme')
             ),
             'writing' => array(
-                'name' => __('Writing', 'sb-theme')
+                'name' => __('Viết', 'sb-theme')
             ),
             'reading' => array(
-                'name' => __('Reading', 'sb-theme')
+                'name' => __('Đọc', 'sb-theme')
             ),
             'discussion' => array(
-                'name' => __('Discussion', 'sb-theme')
+                'name' => __('Thảo luận', 'sb-theme')
             ),
             'media' => array(
-                'name' => __('Media', 'sb-theme')
+                'name' => __('Tập tin', 'sb-theme')
             ),
             'permalinks' => array(
-                'name' => __('Permalinks', 'sb-theme')
+                'name' => __('Đường dẫn tĩnh', 'sb-theme')
             ),
             'membership' => array(
-                'name' => __('Membership', 'sb-theme')
+                'name' => __('Thành viên', 'sb-theme')
+            )
+        );
+        $tabs = wp_parse_args($tabs, $defaults);
+        return $tabs;
+    }
+
+    public function store_setting_tabs($tabs) {
+        $defaults = array(
+            'general' => array(
+                'name' => __('Tổng quan', 'sb-theme')
+            ),
+            'text' => array(
+                'name' => __('Chữ hiển thị', 'sb-theme')
             )
         );
         $tabs = wp_parse_args($tabs, $defaults);
@@ -78,6 +93,10 @@ class SB_Admin {
 
     public function get_advanced_setting_tabs() {
         return apply_filters('sb_theme_advanced_setting_tabs', $this->advanced_tabs);
+    }
+
+    public function get_store_setting_tabs() {
+        return apply_filters('sb_theme_store_setting_tabs', $this->store_tabs);
     }
 
     public function get_checkout_setting_tabs() {
@@ -127,7 +146,7 @@ class SB_Admin {
 
     private function add_sb_options_section() {
         if(SB_Admin_Custom::is_about_page()) {
-            add_settings_section('sb_options_section', __('About SB', 'sb-theme'), array($this, 'print_section_info'), 'sb_options');
+            add_settings_section('sb_options_section', __('Giới thiệu SB', 'sb-theme'), array($this, 'print_section_info'), 'sb_options');
         }
     }
 
@@ -156,7 +175,7 @@ class SB_Admin {
 
     private function sb_tab_init() {
         $this->tab_filter();
-        $this->add_tab('sb_options', __('About SB', 'sb-theme'), 'sb_options_section');
+        $this->add_tab('sb_options', __('Giới thiệu SB', 'sb-theme'), 'sb_options_section');
     }
 
     private function add_tab($key, $title, $section_id) {
@@ -187,7 +206,7 @@ class SB_Admin {
 
     public function add_submenu_page() {
         if(!$this->submenu_exists('sb_options')) {
-            add_submenu_page('sb_options', __('About SB', 'sb-theme'), __('About SB', 'sb-theme'), 'manage_options', 'sb_options', array($this, 'settings_page'));
+            add_submenu_page('sb_options', __('Giới thiệu SB', 'sb-theme'), __('Giới thiệu SB', 'sb-theme'), 'manage_options', 'sb_options', array($this, 'settings_page'));
         }
         do_action('sb_theme_add_submenu_page');
     }

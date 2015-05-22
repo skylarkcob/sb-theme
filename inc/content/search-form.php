@@ -16,6 +16,11 @@ $search_field_class = SB_PHP::add_string_with_space_before($search_field_class, 
 $search_submit_class = isset($args['search_submit_class']) ? $args['search_submit_class'] : '';
 $search_submit_class = SB_PHP::add_string_with_space_before($search_submit_class, 'sb-submit-button search-submit');
 $font_awesome = isset($args['font_awesome']) ? $args['font_awesome'] : false;
+$search_icon = isset($args['search_icon']) ? $args['search_icon'] : false;
+if($search_icon) {
+    $font_awesome = true;
+    $submit_text = '&#xf002;';
+}
 if((bool)$font_awesome) {
     $search_submit_class = SB_PHP::add_string_with_space_before($search_submit_class, 'font-awesome');
 }
@@ -23,9 +28,9 @@ $fields = isset($args['fields']) ? $args['fields'] : array();
 ?>
 <form action="<?php echo $action; ?>" class="<?php echo $form_class; ?>" method="<?php echo $method; ?>" role="search">
     <span class="screen-reader-text"><?php echo $label; ?></span>
-    <input type="search" title="<?php echo $label; ?>" name="s" value="" placeholder="<?php echo $placeholder; ?>" class="<?php echo $search_field_class; ?>">
+    <input type="search" title="<?php echo esc_attr($label); ?>" name="s" value="" data-placeholder="<?php echo esc_attr($placeholder); ?>" placeholder="<?php echo esc_attr($placeholder); ?>" class="<?php echo esc_attr($search_field_class); ?>">
     <?php foreach($fields as $field) : ?>
         <?php echo $field; ?>
     <?php endforeach; ?>
-    <input type="submit" value="<?php echo $submit_text; ?>" class="<?php echo $search_submit_class; ?>">
+    <input type="submit" value="<?php echo esc_attr($submit_text); ?>" class="<?php echo esc_attr($search_submit_class); ?>">
 </form>

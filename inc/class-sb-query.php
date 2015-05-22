@@ -19,6 +19,12 @@ class SB_Query {
         return $query;
     }
 
+    public static function get_most_comment_this_month_posts($args = array()) {
+        $args['orderby'] = 'meta_value_num';
+        $args['meta_key'] = 'count_comment_this_month';
+        return self::get($args);
+    }
+
     public static function count_product() {
         $products = self::get(array('post_type' => 'product', 'posts_per_page' => -1));
         return $products->post_count;

@@ -160,6 +160,10 @@ class SB_Admin_Custom {
         sb_theme_get_content('sb-admin-row-setting-page');
     }
 
+    public static function store_row_setting_page_callback() {
+        SB_Theme::get_content('sb-admin-store-row-setting-page');
+    }
+
     public static function checkout_setting_page_callback() {
         sb_theme_get_content('sb-admin-setting-checkout-page');
     }

@@ -452,9 +452,10 @@ function sb_theme_widgets_init_hook() {
     register_widget('SB_Banner_Widget');
     register_widget('SB_Post_Widget');
     register_widget('SB_Tab_Widget');
-    sb_theme_register_sidebar('primary', 'Primary Sidebar', __('Main sidebar on your site.', 'sb-theme'));
-    sb_theme_register_sidebar('secondary', 'Secondary Sidebar', __('Secondary sidebar on your site.', 'sb-theme'));
-    sb_theme_register_sidebar('footer', 'Footer Widget Area', __('Appears in the footer section of the site.', 'sb-theme'));
+    register_widget('SB_Menu_Widget');
+    sb_theme_register_sidebar('primary', __('Sidebar chính', 'sb-theme'), __('Sidebar chính trên website của bạn.', 'sb-theme'));
+    sb_theme_register_sidebar('secondary', __('Sidebar phụ', 'sb-theme'), __('Sidebar phụ trên website của bạn.', 'sb-theme'));
+    sb_theme_register_sidebar('footer', __('Sidebar dưới chân trang', 'sb-theme'), __('Sidebar chứa các widget dưới chân trang web.', 'sb-theme'));
     do_action('sb_theme_widgets_init');
     do_action('sb_theme_widgets_init_after');
 }
@@ -518,6 +519,40 @@ function sb_theme_wordpress_seo_activation() {
     SB_Option::edit_breadcrumb_sep();
 }
 register_activation_hook( WP_PLUGIN_DIR . '/wordpress-seo/wp-seo.php', 'sb_theme_wordpress_seo_activation' );
+
+// Chạy hàm khi plugin WooCommerce được kích hoạt
+function sb_theme_on_woocommerce_activation() {
+    $base_location = get_option('woocommerce_default_country');
+    if('VN' != $base_location) {
+        update_option('woocommerce_default_country', 'VN');
+        update_option('woocommerce_currency', 'VND');
+        update_option('woocommerce_currency_pos', 'right');
+        update_option('woocommerce_price_thousand_sep', '.');
+        update_option('woocommerce_price_decimal_sep', ',');
+        update_option('woocommerce_price_num_decimals', 0);
+        update_option('woocommerce_cod_enabled', '1');
+        update_option('woocommerce_bacs_title', 'Chuyển khoản ngân hàng');
+        $checkout_bacs_guide = 'Gửi thanh toán của bạn trực tiếp qua tài khoản ngân hàng của chúng tôi. Xin vui lòng sử dụng mã ID của đơn hàng để làm đối chiếu thanh toán. Hàng hóa sẽ không được vận chuyển cho đến khi chúng tôi nhận được thanh toán.';
+        update_option('woocommerce_bacs_description', $checkout_bacs_guide);
+        update_option('woocommerce_bacs_instructions', $checkout_bacs_guide);
+
+        update_option('woocommerce_cheque_title', 'Thanh toán bằng Séc');
+        $desc = 'Xin vui lòng gửi thông tin thanh toán bằng Séc của bạn đến địa chỉ của cửa hàng.';
+        update_option('woocommerce_cheque_description', $desc);
+        update_option('woocommerce_cheque_instructions', $desc);
+
+        update_option('woocommerce_cod_title', 'Thanh toán khi nhận hàng');
+        $desc = 'Thanh toán khi nhận hàng.';
+        update_option('woocommerce_cod_description', $desc);
+        update_option('woocommerce_cod_instructions', $desc);
+    }
+    $permalink_struct = get_option('product_permalink_structure');
+    if(empty($permalink_struct)) {
+        $permalink_struct = '/product';
+        update_option('product_permalink_structure', $permalink_struct);
+    }
+}
+register_activation_hook(WP_PLUGIN_DIR . '/woocommerce/woocommerce.php', 'sb_theme_on_woocommerce_activation');
 
 /*
  * Chạy hàm khi plugin Breadcrumb NavXT được kích hoạt
@@ -587,6 +622,29 @@ function sb_theme_insert_comment_hook($comment_id, $comment_object) {
     do_action('sb_theme_insert_comment', $comment_id, $comment_object);
 }
 add_action('wp_insert_comment', 'sb_theme_insert_comment_hook', 10, 2);
+
+function sb_theme_update_last_date_of_month() {
+    $transient_name = SB_Cache::build_last_date_of_month_transient_name();
+    if(false === ($checked = get_transient($transient_name))) {
+        $today_timestamp = SB_Core::get_today_timestamp();
+        $lastday_timestamp = SB_PHP::get_lastday_of_month_timestamp();
+        $lastday_timestamp_saved = SB_Option::get_last_date_of_month();
+        if($today_timestamp > $lastday_timestamp_saved) {
+            SB_Option::update_last_date_of_month($lastday_timestamp);
+        }
+        set_transient($transient_name, '1', DAY_IN_SECONDS);
+    }
+}
+add_action('sb_theme_init', 'sb_theme_update_last_date_of_month');
+
+/*
+ * Đếm bình luận hàng tháng cho bài viết
+ */
+function sb_theme_count_post_comment_this_month($comment_id, $comment_object) {
+    $post_id = $comment_object->comment_post_ID;
+    SB_Post::count_comment_this_month($post_id);
+}
+add_action('sb_theme_insert_comment', 'sb_theme_count_post_comment_this_month', 10, 2);
 
 /*
  * Chạy hàm khi trạng thái bình luận được thay đổi
@@ -775,7 +833,7 @@ add_action('edit_user_profile_update', 'sb_login_page_save_profile');
  * Tạo tabber sidebar
  */
 function sb_tab_widget_load_sidebar() {
-	SB_Core::register_sidebar('sb-tabber', 'Tabber Widgets', __( 'Display widgets as tabber.', 'sb-theme' ));
+	SB_Core::register_sidebar('sb-tabber', 'Tabber Widgets', __( 'Hiển thị các widget dưới dạng tab.', 'sb-theme' ));
     $list_sidebars = sb_tab_widget_get_sidebars();
     foreach($list_sidebars as $sidebar) {
         $sidebar_id = $sidebar['id'];
@@ -1469,6 +1527,375 @@ function sb_theme_change_login_form_text( $translation, $text ) {
 }
 add_filter( 'gettext', 'sb_theme_change_login_form_text', 10, 2 );
 
+function sb_theme_change_woocommerce_text($translation, $text) {
+    if(SB_Theme::support('woocommerce') && (!is_admin() || (is_admin() && defined('DOING_AJAX')))) {
+        switch($text) {
+            case 'View Cart':
+                $translation = SB_Text::get_view_cart();
+                break;
+            case 'Apply Coupon':
+                $translation = 'Áp dụng mã giảm giá';
+                break;
+            case 'Coupon code':
+                $translation = 'Mã giảm giá';
+                break;
+            case 'Product':
+                $translation = 'Sản phẩm';
+                break;
+            case 'Price':
+                $translation = 'Giá';
+                break;
+            case 'Quantity':
+                $translation = 'Số lượng';
+                break;
+            case 'Total':
+                $translation = 'Tổng cộng';
+                break;
+            case 'Remove this item':
+                $translation = 'Xóa đối tượng này';
+                break;
+            case 'Update Cart':
+                $translation = 'Cập nhật giỏ hàng';
+                break;
+            case 'Cart Totals':
+                $translation = 'Tổng số trong giỏ';
+                break;
+            case 'Subtotal':
+                $translation = 'Tạm tính';
+                break;
+            case 'Shipping':
+                $translation = 'Vận chuyển';
+                break;
+            case 'Free Shipping':
+                $translation = 'Miễn phí vận chuyển';
+                break;
+            case 'Calculate Shipping':
+                $translation = 'Tính phí vận chuyển';
+                break;
+            case 'Proceed to Checkout':
+                $translation = 'Tiến hành thanh toán';
+                break;
+            case 'Update Totals':
+                $translation = 'Cập nhật tổng';
+                break;
+            case 'Postcode / Zip':
+                $translation = 'Mã bưu điện';
+                break;
+            case 'Have a coupon?':
+                $translation = 'Bạn có mã giảm giá?';
+                break;
+            case 'Click here to enter your code':
+                $translation = 'Nhấn vào đây để nhập mã của bạn';
+                break;
+            case 'Billing Details':
+                $translation = 'Thông tin thanh toán';
+                break;
+            case 'Ship to a different address?':
+                $translation = 'Giao hàng tới địa chỉ khác?';
+                break;
+            case 'Country':
+                $translation = 'Quốc gia';
+                break;
+            case 'First Name':
+                $translation = 'Tên';
+                break;
+            case 'Last Name':
+                $translation = 'Họ';
+                break;
+            case 'Company Name':
+                $translation = 'Tên công ty / doanh nghiệp';
+                break;
+            case 'Address':
+                $translation = 'Địa chỉ';
+                break;
+            case 'Order Notes':
+                $translation = 'Ghi chú';
+                break;
+            case 'Notes about your order, e.g. special notes for delivery.':
+                $translation = 'Ghi chú về đơn hàng của bạn, ví dụ: lưu ý khi giao hàng.';
+                break;
+            case 'Town / City':
+                $translation = 'Quận huyện / Thành phố';
+                break;
+            case 'Email Address':
+                $translation = 'Địa chỉ email';
+                break;
+            case 'Phone':
+                $translation = 'Số điện thoại';
+                break;
+            case 'Your order':
+                $translation = 'Đơn hàng của bạn';
+                break;
+            case 'Direct Bank Transfer':
+                $translation = 'Chuyển khoản ngân hàng';
+                break;
+            case 'Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won’t be shipped until the funds have cleared in our account.':
+                $translation = 'Cập nhật tổng';
+                break;
+            case 'Cheque Payment':
+                $translation = 'Thanh toán bằng Séc';
+                break;
+            case 'Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode.':
+                $translation = 'Xin vui lòng gửi thông tin thanh toán bằng Séc của bạn đến địa chỉ của cửa hàng.';
+                break;
+            case 'Place order':
+                $translation = 'Đặt hàng';
+                break;
+            case 'Free':
+                $translation = 'Miễn phí';
+                break;
+            case 'Order Received':
+                $translation = 'Ghi nhận đơn hàng';
+                break;
+            case 'Thank you. Your order has been received.':
+                $translation = 'Cảm ơn bạn đã đặt hàng, đơn hàng của bạn đã được lưu vào hệ thống.';
+                break;
+            case 'Order Number:':
+                $translation = 'Mã đơn hàng:';
+                break;
+            case 'Date:':
+                $translation = 'Ngày tháng:';
+                break;
+            case 'Total:':
+                $translation = 'Tổng cộng:';
+                break;
+            case 'Payment Method:':
+                $translation = 'Phương thức thanh toán:';
+                break;
+            case 'Our Bank Details':
+                $translation = 'Thông tin ngân hàng của chúng tôi';
+                break;
+            case 'Order Details':
+                $translation = 'Thông tin đơn hàng';
+                break;
+            case 'Subtotal:':
+                $translation = 'Tạm tính:';
+                break;
+            case 'Shipping:':
+                $translation = 'Vận chuyển:';
+                break;
+            case 'Payment Method:':
+                $translation = 'Phương thức thanh toán:';
+                break;
+            case 'Total:':
+                $translation = 'Tổng cộng:';
+                break;
+            case 'Customer details':
+                $translation = 'Thông tin khách hàng';
+                break;
+            case 'Email:':
+                $translation = 'Địa chỉ email:';
+                break;
+            case 'Telephone:':
+                $translation = 'Số điện thoại:';
+                break;
+            case 'Billing Address':
+                $translation = 'Địa chỉ thanh toán';
+                break;
+            case 'Shipping Address':
+                $translation = 'Địa chỉ nhận hàng';
+                break;
+            case 'Cart updated.':
+                $translation = 'Giỏ hàng đã được cập nhật thành công.';
+                break;
+            case '%s removed.':
+                $translation = '%s đã được xóa.';
+                break;
+            case 'Undo?':
+                $translation = 'Phục hồi?';
+                break;
+            case '%s removed. %sUndo?%s':
+                $translation = '%s đã được xóa. %sPhục hồi?%s';
+                break;
+            case 'Your cart is currently empty.':
+                $translation = 'Hiện không có sản phẩm nào được đặt vào giỏ hàng.';
+                break;
+            case 'Return To Shop':
+                $translation = 'Quay trở lại cửa hàng';
+                break;
+            case 'Returning customer?':
+                $translation = 'Bạn đã có tài khoản?';
+                break;
+            case 'Click here to login':
+                $translation = 'Nhấn vào đây để đăng nhập';
+                break;
+            case 'If you have shopped with us before, please enter your details in the boxes below. If you are a new customer please proceed to the Billing & Shipping section.':
+                $translation = 'Nếu bạn đã từng mua hàng với chúng tôi trước đây, xin vui lòng nhập thông tin của bạn vào ô bên dưới. Nếu bạn là khách hàng mới, xin vui lòng nhập địa chỉ thanh toán và địa chỉ nhận hàng vào các ô bên dưới.';
+                break;
+            case 'If you have shopped with us before, please enter your details in the boxes below. If you are a new customer please proceed to the Billing &amp; Shipping section.':
+                $translation = 'Nếu bạn đã từng mua hàng với chúng tôi trước đây, xin vui lòng nhập thông tin của bạn vào ô bên dưới. Nếu bạn là khách hàng mới, xin vui lòng nhập địa chỉ thanh toán và địa chỉ nhận hàng vào các ô bên dưới.';
+                break;
+            case 'Username or email':
+                $translation = 'Tài khoản hoặc email';
+                break;
+            case 'Password':
+                $translation = 'Mật khẩu';
+                break;
+            case 'Remember me':
+                $translation = 'Ghi nhớ đăng nhập';
+                break;
+            case 'Login':
+                $translation = 'Đăng nhập';
+                break;
+            case 'Lost your password?':
+                $translation = 'Bạn quên mật khẩu?';
+                break;
+            case 'Street address':
+                $translation = 'Địa chỉ đường phố';
+                break;
+            case 'Create an account?':
+                $translation = 'Tạo tài khoản mới?';
+                break;
+            case '%s is a required field.':
+                $translation = '%s là mục bắt buộc nhập.';
+                break;
+            case 'is a required field.':
+                $translation = 'là mục bắt buộc nhập.';
+                break;
+            case 'Please enter a coupon code.':
+                $translation = 'Xin vui lòng nhập vào mã giảm giá.';
+                break;
+            case 'Coupon does not exist!':
+                $translation = 'Mã giảm giá không tồn tại!';
+                break;
+            case 'Coupon code applied successfully.':
+                $translation = 'Mã giảm giá đã được áp dụng thành công.';
+                break;
+            case 'Sorry, it seems the coupon "%s" is invalid - it has now been removed from your order.':
+                $translation = 'Xin lỗi, mã giảm giá "%s" không đúng - hệ thống đã xóa mã giảm giá ra khỏi đơn hàng của bạn.';
+                break;
+            case 'Return To Cart':
+                $translation = 'Quay trở lại giỏ hàng';
+                break;
+            case 'There are some issues with the items in your cart (shown above). Please go back to the cart page and resolve these issues before checking out.':
+                $translation = 'Có một vài vấn đề xảy ra với giỏ hàng của bạn (xem thông báo bên trên). Xin vui lòng quay trở lại giỏ hàng và khắc phục các sự cố này trước khi thanh toán.';
+                break;
+            case 'This coupon has expired.':
+                $translation = 'Mã giảm giá đã hết hạn sử dụng.';
+                break;
+            case 'Add to cart':
+                $translation = SB_Text::get_add_to_cart();
+                break;
+            case 'Shipping costs updated.':
+                $translation = 'Phí vận chuyển đã được cập nhật.';
+                break;
+            case 'Description':
+                $translation = 'Mô tả';
+                break;
+            case '%s review for %s':
+                $translation = '%s đánh giá cho %s';
+                break;
+            case '%s reviews for %s':
+                $translation = '%s đánh giá cho %s';
+                break;
+            case 'Reviews (%d)':
+                $translation = 'Đánh giá (%d)';
+                break;
+            case 'Additional Information':
+                $translation = 'Thông tin thêm';
+                break;
+            case 'Add a review':
+                $translation = 'Thêm nhận xét';
+                break;
+            case 'Your Rating':
+                $translation = 'Đánh giá của bạn';
+                break;
+            case 'Your Review':
+                $translation = 'Nhận xét của bạn';
+                break;
+            case '(%d customer review)':
+                $translation = '(%d nhận xét)';
+                break;
+            case 'Submit':
+                $translation = 'Gửi';
+                break;
+            case '%s customer reviews':
+                $translation = '% nhận xét';
+                break;
+            case '%s customer review':
+                $translation = '% nhận xét';
+                break;
+            case 'Be the first to review':
+                $translation = 'Trở thành người đầu tiên đánh giá';
+                break;
+            case 'There are no reviews yet.':
+                $translation = 'Hiện chưa có đánh giá nào.';
+                break;
+            case 'Please select a rating':
+                $translation = 'Xin vui lòng chọn đánh giá của bạn!';
+                break;
+            case '&quot;%s&quot; was successfully added to your cart.':
+                $translation = '&quot;%s&quot; đã được thêm vào giỏ hàng thành công.';
+                break;
+            case 'Name':
+                $translation = 'Tên';
+                break;
+            case 'Your comment is awaiting approval':
+                $translation = 'Bình luận của bạn đang được đợi để xét duyệt.';
+                break;
+        }
+    }
+    return $translation;
+}
+add_filter('gettext', 'sb_theme_change_woocommerce_text', 10, 2);
+
+function sb_theme_change_woocommerce_text_with_context($translations, $text, $context, $domain = 'default') {
+    if(SB_Theme::support('woocommerce') && (!is_admin() || (is_admin() && defined('DOING_AJAX')))) {
+        switch($text) {
+            case 'Notes about your order, e.g. special notes for delivery.':
+                $translations = 'Ghi chú về đơn hàng của bạn, ví dụ: lưu ý khi giao hàng.';
+                break;
+            case 'Street address':
+                $translations = 'Địa chỉ đường phố';
+                break;
+            case '%s review for %s':
+                $translations = '%s nhận xét cho %s';
+                break;
+            case '%s reviews for %s':
+                $translations = '%s nhận xét cho %s';
+                break;
+            case '%s customer reviews':
+                $translations = '% nhận xét';
+                break;
+        }
+    }
+    return $translations;
+}
+add_filter('gettext_with_context', 'sb_theme_change_woocommerce_text_with_context', 10, 3, 2);
+
+function sb_theme_change_woocommerce_template_path($template, $template_name, $template_path) {
+    $woocommerce_template_path  = trailingslashit(SB_THEME_CONTENT_WOOCOMMERCE_PATH);
+    $file_path = $woocommerce_template_path . $template_name;
+    if(file_exists($file_path)) {
+        $template = $file_path;
+    }
+    return $template;
+}
+add_filter('woocommerce_locate_template', 'sb_theme_change_woocommerce_template_path', 10, 3);
+
+function sb_theme_woocommerce_template_part_filter($template, $slug, $name) {
+    $woocommerce_template_path  = trailingslashit(SB_THEME_CONTENT_WOOCOMMERCE_PATH);
+    if(!empty($name)) {
+        $file_name = "{$slug}-{$name}.php";
+    } else {
+        $file_name = "{$slug}.php";
+    }
+    $file_path = $woocommerce_template_path . $file_name;
+    if(file_exists($file_path)) {
+        $template = $file_path;
+    }
+    return $template;
+}
+add_filter('wc_get_template_part', 'sb_theme_woocommerce_template_part_filter', 10, 3);
+
+function sb_theme_cart_shipping_method_filter($label, $method) {
+    if(is_object($method) && $method->id == 'free_shipping') {
+        $label = 'Miễn phí vận chuyển';
+    }
+    return $label;
+}
+add_filter('woocommerce_cart_shipping_method_full_label', 'sb_theme_cart_shipping_method_filter', 10, 3);
+
 /*
  * Thêm class của SB vào thẻ body
  */
@@ -1742,6 +2169,17 @@ function sb_theme_filter_option_by_option($options) {
     return $options;
 }
 add_filter('sb_theme_sanitize_option', 'sb_theme_filter_option_by_option');
+
+function sb_theme_add_to_cart_text_filter() {
+    $woocommerce_version = SB_Core::get_woocommerce_version();
+    $text = SB_Text::get_add_to_cart();
+    if(version_compare($woocommerce_version, '2.1', '>=')) {
+
+    }
+    return $text;
+}
+add_filter('add_to_cart_text', 'sb_theme_add_to_cart_text_filter');
+add_filter('woocommerce_product_add_to_cart_text', 'sb_theme_add_to_cart_text_filter', 10);
 
 do_action('sb_theme_hook');
 

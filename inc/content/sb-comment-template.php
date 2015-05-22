@@ -76,7 +76,9 @@ if(!function_exists('sb_comment_callback')) {
             <span class="comment-count">
                 <?php
                 $int_count = SB_Post::get_comment_number($post_id);
-                printf(_n('1 bình luận', '%1$s bình luận', $int_count, 'sb-theme' ), number_format_i18n($int_count));
+                $comment_title = sprintf(_n('1 bình luận', '%1$s bình luận', $int_count, 'sb-theme' ), number_format_i18n($int_count));
+                $comment_title = apply_filters('sb_theme_comment_title', $comment_title, $int_count);
+                echo $comment_title;
                 ?>
             </span>
             <span class="yours"><a href="<?php the_permalink(); ?>#leaveyourcomment"><?php _e('Thêm bình luận', 'sb-theme'); ?></a></span>

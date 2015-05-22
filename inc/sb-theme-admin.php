@@ -9,40 +9,60 @@ function is_sb_admin_page() {
 }
 
 function sb_theme_menu() {
-    SB_Admin_Custom::add_submenu_page(__('Theme Settings', 'sb-theme'), 'sb_theme', array('SB_Admin_Custom', 'setting_page_callback'));
-    SB_Admin_Custom::add_submenu_page('Utilities', 'sb_utilities', array('SB_Admin_Custom', 'setting_page_callback'));
-	SB_Admin_Custom::add_submenu_page('Statistics', 'sb_statistics', array('SB_Admin_Custom', 'setting_page_callback'));
-    SB_Admin_Custom::add_submenu_page(__('Advanced Settings', 'sb-theme'), 'sbt_advanced', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page(__('Cài đặt giao diện', 'sb-theme'), 'sb_theme', array('SB_Admin_Custom', 'setting_page_callback'));
+    SB_Admin_Custom::add_submenu_page('Tiện ích', 'sb_utilities', array('SB_Admin_Custom', 'setting_page_callback'));
+	if(SB_Theme::support('sb_statistics')) {
+        SB_Admin_Custom::add_submenu_page('Thống kê', 'sb_statistics', array('SB_Admin_Custom', 'setting_page_callback'));
+    }
+    SB_Admin_Custom::add_submenu_page(__('Cài đặt nâng cao', 'sb-theme'), 'sbt_advanced', array('SB_Admin_Custom', 'setting_page_callback'));
     SB_Admin_Custom::add_submenu_page('SMTP Email', 'sbt_smtp_email', array('SB_Admin_Custom', 'setting_page_callback'));
-    SB_Admin_Custom::add_submenu_page(__('Checkout', 'sb-theme'), 'sbt_checkout', array('SB_Admin_Custom', 'setting_page_callback'));
+    if(SB_Theme::support('sb_checkout')) {
+        SB_Admin_Custom::add_submenu_page(__('Thanh toán', 'sb-theme'), 'sbt_checkout', array('SB_Admin_Custom', 'setting_page_callback'));
+    }
+    if(SB_Theme::support('woocommerce')) {
+        SB_Admin_Custom::add_submenu_page(__('Cửa hàng', 'sb-theme'), 'sbt_store', array('SB_Admin_Custom', 'setting_page_callback'));
+    }
 }
 add_action('sb_admin_menu', 'sb_theme_menu');
 
 function sb_theme_setting_tab($tabs) {
-    $tabs['sb_theme'] = array('title' => __('Theme Settings', 'sb-theme'), 'section_id' => 'sb_theme_setting_section', 'type' => 'theme');
-    $tabs['sb_utilities'] = array('title' => 'Utilities', 'section_id' => 'sb_utilities_section', 'type' => 'theme');
-	$tabs['sb_statistics'] = array('title' => 'Statistics', 'section_id' => 'sb_statistics_section', 'type' => 'theme');
-    $tabs['sbt_advanced'] = array('title' => __('Advanced Settings', 'sb-theme'), 'section_id' => 'sb_theme_advanced_setting_section', 'type' => 'theme');
+    $tabs['sb_theme'] = array('title' => __('Cài đặt giao diện', 'sb-theme'), 'section_id' => 'sb_theme_setting_section', 'type' => 'theme');
+    $tabs['sb_utilities'] = array('title' => 'Tiện ích', 'section_id' => 'sb_utilities_section', 'type' => 'theme');
+	if(SB_Theme::support('sb_statistics')) {
+        $tabs['sb_statistics'] = array('title' => 'Thống kê', 'section_id' => 'sb_statistics_section', 'type' => 'theme');
+    }
+    $tabs['sbt_advanced'] = array('title' => __('Cài đặt nâng cao', 'sb-theme'), 'section_id' => 'sb_theme_advanced_setting_section', 'type' => 'theme');
     $tabs['sbt_smtp_email'] = array('title' => __('SMTP Email', 'sb-theme'), 'section_id' => 'sb_theme_smtp_email_setting_section', 'type' => 'theme');
-    $tabs['sbt_checkout'] = array('title' => __('Checkout', 'sb-theme'), 'section_id' => 'sb_theme_checkout_setting_section', 'type' => 'theme');
+    if(SB_Theme::support('sb_checkout')) {
+        $tabs['sbt_checkout'] = array('title' => __('Thanh toán', 'sb-theme'), 'section_id' => 'sb_theme_checkout_setting_section', 'type' => 'theme');
+    }
+    if(SB_Theme::support('woocommerce')) {
+        $tabs['sbt_store'] = array('title' => __('Cửa hàng', 'sb-theme'), 'section_id' => 'sb_theme_store_setting_section', 'type' => 'theme');
+    }
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_theme_setting_tab');
 
 function sb_theme_advanced_setting_field() {
-    SB_Admin_Custom::add_section('sb_theme_advanced_setting_section', __('SB Theme Advanced Settings Page', 'sb-theme'), 'sbt_advanced');
+    SB_Admin_Custom::add_section('sb_theme_advanced_setting_section', __('Trang cài đặt các tùy chọn nâng cao', 'sb-theme'), 'sbt_advanced');
     SB_Admin_Custom::add_setting_field('sb_theme_advanced_setting_page_content', '', 'sb_theme_advanced_setting_section', array('SB_Admin_Custom', 'row_setting_page_callback'), 'sbt_advanced');
 }
 add_action('sb_theme_option_page_init', 'sb_theme_advanced_setting_field');
 
+function sb_theme_store_setting_field() {
+    SB_Admin_Custom::add_section('sb_theme_store_setting_section', __('Trang cài đặt các tùy chọn cho cửa hàng', 'sb-theme'), 'sbt_store');
+    SB_Admin_Custom::add_setting_field('sb_theme_store_setting_page_content', '', 'sb_theme_store_setting_section', array('SB_Admin_Custom', 'store_row_setting_page_callback'), 'sbt_store');
+}
+add_action('sb_theme_option_page_init', 'sb_theme_store_setting_field');
+
 function sb_theme_checkout_setting_field() {
-    SB_Admin_Custom::add_section('sb_theme_checkout_setting_section', __('SB Theme Checkout Settings Page', 'sb-theme'), 'sbt_checkout');
+    SB_Admin_Custom::add_section('sb_theme_checkout_setting_section', __('Trang cài đặt tùy chọn cho thanh toán', 'sb-theme'), 'sbt_checkout');
     SB_Admin_Custom::add_setting_field('sb_theme_checkout_setting_page_content', '', 'sb_theme_checkout_setting_section', array('SB_Admin_Custom', 'checkout_setting_page_callback'), 'sbt_checkout');
 }
 add_action('sb_theme_option_page_init', 'sb_theme_checkout_setting_field');
 
 function sb_theme_smtp_email_setting_field() {
-    SB_Admin_Custom::add_section('sb_theme_smtp_email_setting_section', __('SMTP Email Settings Page', 'sb-theme'), 'sbt_smtp_email');
+    SB_Admin_Custom::add_section('sb_theme_smtp_email_setting_section', __('Trang cài đặt tùy chọn cho SMTP Email', 'sb-theme'), 'sbt_smtp_email');
     sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_enabled', __('Gửi mail bằng SMTP', 'sb-theme'), 'sb_theme_smpt_email_enabled_callback');
     if(SB_Option::use_smtp_mail()) {
         sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_from_name', __('Tên người gửi', 'sb-theme'), 'sb_theme_smpt_email_from_name_callback');
@@ -231,8 +251,8 @@ function sb_theme_smpt_email_from_name_callback() {
 }
 
 function sb_theme_setting_field() {
-    SB_Admin_Custom::add_section('sb_theme_setting_section', __('SB Theme options page', 'sb-theme'), 'sb_theme');
-    SB_Admin_Custom::add_setting_field('sb_theme_default_language', __('Language', 'sb-theme'), 'sb_theme_setting_section', 'sb_theme_default_language_callback', 'sb_theme');
+    SB_Admin_Custom::add_section('sb_theme_setting_section', __('Trang cài đặt tùy chọn cho giao diện', 'sb-theme'), 'sb_theme');
+    SB_Admin_Custom::add_setting_field('sb_theme_default_language', __('Ngôn ngữ', 'sb-theme'), 'sb_theme_setting_section', 'sb_theme_default_language_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_logo', 'Logo', 'sb_theme_setting_section', 'sb_theme_logo_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_favicon', 'Favicon', 'sb_theme_setting_section', 'sb_theme_favicon_callback', 'sb_theme');
     if(SB_Option::utility_enabled('add_to_head')) {
@@ -271,13 +291,13 @@ function sb_theme_setting_field() {
 add_action('sb_admin_init', 'sb_theme_setting_field');
 
 function sb_utilities_setting_field() {
-    SB_Admin_Custom::add_section('sb_utilities_section', __('SB Utilities options page', 'sb-theme'), 'sb_utilities');
+    SB_Admin_Custom::add_section('sb_utilities_section', __('Trang cài đặt tùy chọn cho các tiện ích', 'sb-theme'), 'sb_utilities');
     do_action('sb_utilities_setting_field');
 }
 add_action('sb_admin_init', 'sb_utilities_setting_field');
 
 function sb_statistics_setting_field() {
-    SB_Admin_Custom::add_section('sb_statistics_section', __('SB Statistics options page', 'sb-theme'), 'sb_statistics');
+    SB_Admin_Custom::add_section('sb_statistics_section', __('Trang cài đặt tùy chọn cho thống kê', 'sb-theme'), 'sb_statistics');
     do_action('sb_statistics_setting_field');
 	do_action('sb_theme_statistics_setting_page');
 }
@@ -286,7 +306,7 @@ add_action('sb_admin_init', 'sb_statistics_setting_field');
 function sb_theme_default_language_callback() {
     $lang = SB_Option::get_default_language();
     $options = array(
-        'vi' => __('Vietnamese', 'sb-theme'),
+        'vi' => __('Tiếng Việt', 'sb-theme'),
         'en' => __('English', 'sb-theme')
     );
     $args = array(
@@ -294,7 +314,7 @@ function sb_theme_default_language_callback() {
         'name' => 'sb_options[theme][default_language]',
         'value' => $lang,
         'options' => $options,
-        'description' => __('Choose language to use on front-end.', 'sb-theme')
+        'description' => __('Lựa chọn ngôn ngữ sử dụng bên ngoài front-end.', 'sb-theme')
     );
     SB_Field::select($args);
 }
@@ -311,9 +331,9 @@ function sb_theme_logo_callback() {
     SB_Field::media_image($args);
     $value = SB_Option::get_logo_type();
     $list_options = array(
-        'background' => __('Background image', 'sb-theme'),
-        'image' => __('Image', 'sb-theme'),
-        'text' => __('Text', 'sb-theme')
+        'background' => __('Hình nền', 'sb-theme'),
+        'image' => __('Hình ảnh', 'sb-theme'),
+        'text' => __('Chữ', 'sb-theme')
     );
     $args = array(
         'id' => 'sb_theme_logo_type',
@@ -322,7 +342,7 @@ function sb_theme_logo_callback() {
         'list_options' => $list_options,
         'container_class' => 'margin-bottom',
         'field_class' => 'logo-type',
-        'description' => __('Choose the way you want logo to be displayed.', 'sb-theme')
+        'description' => __('Lựa chọn kiểu hiển thị cho logo.', 'sb-theme')
     );
     SB_Field::select($args);
     $container_class = 'hidden';
@@ -353,6 +373,16 @@ function sb_theme_favicon_callback() {
     );
     SB_Field::media_image($args);
 }
+
+function sb_theme_store_setting_general_hook() {
+    SB_Theme::get_content('sb-theme-admin-store-setting-general');
+}
+add_action('sb_theme_store_setting_general_field', 'sb_theme_store_setting_general_hook');
+
+function sb_theme_store_setting_text_hook() {
+    SB_Theme::get_content('sb-theme-admin-store-setting-text');
+}
+add_action('sb_theme_store_setting_text_field', 'sb_theme_store_setting_text_hook');
 
 /*
  * Thêm trường cài đặt vào tab Membership trong bảng điều khiển nâng cao
@@ -397,7 +427,7 @@ add_action('sb_theme_checkout_setting_ngan_luong_field', 'sb_theme_checkout_sett
 function sb_theme_advanced_setting_tabs_filter($tabs) {
     if(SB_Option::social_login_enabled()) {
         $tabs['social_login'] = array(
-            'name' => __('Social login', 'sb-theme')
+            'name' => __('Đăng nhập mạng xã hội', 'sb-theme')
         );
     }
     return $tabs;

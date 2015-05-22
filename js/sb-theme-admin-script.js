@@ -852,6 +852,15 @@ var sb_ajax_loader,
         })();
     })();
 
+    // Thêm css cho trang cài đặt dưới dạng dòng
+    (function(){
+        var sb_theme_row_setting = $('div.sbt-row-setting'),
+            setting_table = sb_theme_row_setting.closest('table.form-table');
+        if(sb_theme_row_setting.length) {
+            setting_table.addClass('row-setting-table');
+        }
+    })();
+
     // SB Theme row Settings tab
     (function(){
         $('.sbt-row-setting .nav-tab-wrapper .nav-tab').on('click', function(e){

@@ -1,10 +1,15 @@
 <?php
 class SB_Banner_Widget extends WP_Widget {
 	public function __construct() {
-		parent::__construct('sb_banner_widget', 'SB Banner', array(
-			'classname'   => 'widget_sb_banner',
-			'description' => __('Show image banner on sidebar.', 'sb-theme' ),
-		));
+		parent::__construct('sb_banner_widget', 'SB Banner',
+            array(
+                'classname' => 'widget_sb_banner',
+                'description' => __('Hiển thị hình ảnh trên sidebar.', 'sb-theme' ),
+            ),
+            array(
+                'width' => 400
+            )
+        );
 	}
 	
 	public function widget($args, $instance) {
@@ -51,7 +56,7 @@ class SB_Banner_Widget extends WP_Widget {
             'id' => $this->get_field_id('banner_image'),
             'name' => $this->get_field_name('banner_image'),
             'value' => $banner_image,
-            'label' => __('Image url:', 'sb-theme')
+            'label' => __('Đường dẫn hình ảnh:', 'sb-theme')
         );
         SB_Widget_Field::media_upload($args);
 
@@ -59,7 +64,7 @@ class SB_Banner_Widget extends WP_Widget {
             'id' => $this->get_field_id('banner_url'),
             'name' => $this->get_field_name('banner_url'),
             'value' => $banner_url,
-            'label' => __('Image link:', 'sb-theme')
+            'label' => __('Đường link cho hình ảnh:', 'sb-theme')
         );
         SB_Widget_Field::text($args);
 
@@ -67,7 +72,7 @@ class SB_Banner_Widget extends WP_Widget {
             'id' => $this->get_field_id('use_title'),
             'name' => $this->get_field_name('use_title'),
             'value' => $show_title,
-            'label' => __('Show title', 'sb-theme')
+            'label' => __('Hiển thị tiêu đề?', 'sb-theme')
         );
         SB_Widget_Field::checkbox($args);
         SB_Widget_Field::after();

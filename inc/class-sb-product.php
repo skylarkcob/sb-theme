@@ -22,14 +22,23 @@ class SB_Product {
         return $this->product->get_sku();
     }
 
+    public static function get_featured($args = array()) {
+        $args['meta_key'] = '_featured';
+        $args['meta_value'] = 'yes';
+        return self::get($args);
+    }
+
     public function get_add_to_cart_button($args = array()) {
         $defaults = array('id' => $this->product->id, 'sku' => $this->get_sku());
-        extract( $defaults, EXTR_SKIP );
+        $args = wp_parse_args($args, $defaults);
         if(empty($id) || !is_numeric($id)) {
-            $id = get_the_ID();
+            $id = isset($args['post_id']) ? $args['post_id'] : '';
+            if(empty($id)) {
+                $id = get_the_ID();
+            }
         }
         if(!empty($id) && is_numeric($id)) {
-            $price = $this->get_price(array('id' => $id));
+            $price = $this->get_price();
             $style = '';
             if($price == 0) {
                 $style = ' pointer-events: none; cursor: default;';
@@ -42,6 +51,34 @@ class SB_Product {
             return '<div class="custom-add-to-cart'.$class.'">'.do_shortcode('[add_to_cart id="'.$id.'" sku="'.$sku.'" style="'.$style.'"]').'</div>';
         }
         return '';
+    }
+
+    public static function get_sku_number($post_id) {
+        $product = self::get_product_object($post_id);
+        return $product->get_sku();
+    }
+
+    public static function get_add_to_cart($args = array()) {
+        $post_id = isset($args['post_id']) ? absint($args['post_id']) : get_the_ID();
+        $sku = isset($args['sku']) ? $args['sku'] : self::get_sku_number($post_id);
+        $style = isset($args['style']) ? $args['style'] : '';
+        $prices = self::get_prices($post_id);
+        $price = $prices['price'];
+        $container_class = isset($args['container_class']) ? $args['container_class'] : '';
+        $container_class = SB_PHP::add_string_with_space_before($container_class, 'custom-add-to-cart sb-theme-add-to-cart sb-theme-atc-button sb-theme-catcb');
+        if(0 == $price) {
+            $container_class = SB_PHP::add_string_with_space_before($container_class, 'please-call');
+        }
+        $field_class = isset($args['field_class']) ? $args['field_class'] : '';
+        $quantity = isset($args['quantity']) ? absint($args['quantity']) : 1;
+        $show_price = isset($args['show_price']) ? (bool)$args['show_price'] : true;
+        $show_price = ($show_price) ? 'true' : 'false';
+        $shortcode = do_shortcode('[add_to_cart id="' . $post_id . '" sku="' . $sku . '" style="' . $style . '" class="' . $field_class . '" show_price="' . $show_price . '" quantity="' . $quantity . '"]');
+        return '<div class="'. $container_class .'">' . $shortcode . '</div>';
+    }
+
+    public static function the_add_to_cart($args = array()) {
+        echo self::get_add_to_cart($args);
     }
 
     public function the_add_to_cart_button($args = array()) {
@@ -74,8 +111,88 @@ class SB_Product {
         echo '</div>';
     }
 
+    public static function get_currency_symbol() {
+        return apply_filters('sb_theme_product_currency_symbol', get_woocommerce_currency_symbol());
+    }
+
+    public static function get_price_format() {
+        return apply_filters('sb_theme_product_price_format', get_woocommerce_price_format());
+    }
+
+    public static function get_currency_symbol_html() {
+        return apply_filters('sb_theme_product_currency_symbol_html', '<span class="currency-symbol">' . self::get_currency_symbol() . '</span>');
+    }
+
+    public static function get_product_object($post_id) {
+        return new WC_Product($post_id);
+    }
+
+    public static function get_prices($post_id) {
+        $product = self::get_product_object($post_id);
+        $result = array(
+            'price' => $product->get_price(),
+            'regular_price' => $product->get_regular_price(),
+            'sale_price' => $product->get_sale_price()
+        );
+        return $result;
+    }
+
+    public static function get_no_price_text() {
+        return apply_filters('sb_theme_no_price_text', __('Xin vui lòng liên hệ', 'sb-theme'));
+    }
+
+    public static function get_formatted_price($post_id, $show_sale_price = true) {
+        $result = '<span class="amount no-price">' . self::get_no_price_text() . '</span>';
+        $prices = self::get_prices($post_id);
+        $product_price = $prices['regular_price'];
+        $negative = (bool)($product_price < 0);
+        if(is_numeric($product_price) && $product_price > 0) {
+            $price_format = self::get_price_format();
+            $currency_symbol = self::get_currency_symbol_html();
+            $price_decimal = self::get_price_decimals();
+            $price_decimal_separator = self::get_price_decimal_separator();
+            $price_thousand_separator = self::get_price_thousand_separator();
+            $formatted_price = SB_PHP::format_number_vietnamese($product_price, $price_decimal, $price_decimal_separator, $price_thousand_separator);
+            $formatted_price = ($negative ? '-' : '') . sprintf($price_format, $currency_symbol, $formatted_price);
+            $formatted_price = '<span class="amount">' . $formatted_price . '</span>';
+            $result = $formatted_price;
+            if($show_sale_price) {
+                $sale_price = $prices['sale_price'];
+                if(is_numeric($sale_price) && $sale_price < $product_price) {
+                    $paragraph = new SB_HTML('p');
+                    $paragraph->set_attribute('class', 'price sb-product-price');
+                    $ins = '<ins>' . $result . '</ins>';
+                    $formatted_price = SB_PHP::format_number_vietnamese($sale_price, $price_decimal, $price_decimal_separator, $price_thousand_separator);
+                    $formatted_price = sprintf($price_format, $currency_symbol, $formatted_price);
+                    $formatted_price = '<span class="amount">' . $formatted_price . '</span>';
+                    $del = '<del>' . $formatted_price . '</del>';
+                    $paragraph->set_text($ins . $del);
+                    $result = $paragraph->build();
+                }
+            }
+        }
+        return apply_filters('sb_theme_product_formatted_price_html', $result, $post_id);
+    }
+
+    public static function the_formatted_price($post_id, $show_sale_price = true) {
+        echo self::get_formatted_price($post_id, $show_sale_price);
+    }
+
     public function the_price() {
-        echo SB_PHP::currency_format_vietnamese($this->get_price());
+        $product = $this->product;
+        echo self::get_formatted_price($product->id);
+    }
+
+    public static function get_price_decimals() {
+        return apply_filters('sb_theme_product_price_decimal', wc_get_price_decimals());
+    }
+
+    public static function get_price_thousand_separator() {
+        return apply_filters('sb_theme_product_price_thousand_separator', wc_get_price_thousand_separator());
+    }
+
+    public static function get_price_decimal_separator() {
+        return apply_filters('sb_theme_product_price_decimal_separator', wc_get_price_decimal_separator());
     }
 
     public function get_attribute($name) {
@@ -92,7 +209,7 @@ class SB_Product {
         return $woocommerce->cart->get_cart_total();
     }
 
-    public function get_price($type = "price") {
+    public function get_price($type = 'price') {
         $product = $this->product;
         $price = 0;
         switch($type) {
@@ -105,10 +222,7 @@ class SB_Product {
             default:
                 $price = $product->price;
         }
-        if(!is_numeric($price)) {
-            $price = 0;
-        }
-        return $price;
+        return floatval($price);
     }
 
     public function price() {
@@ -157,14 +271,15 @@ class SB_Product {
     }
 
     public static function get_product($args = array()) {
-        $defaults = array('posts_per_page' => 8, 'offset' => 0, 'type' => 'recent', 'params' => array());
-        $args = wp_parse_args($args, $defaults);
-        extract($args, EXTR_SKIP);
         $defaults = array(
-            'post_type'			=> 'product',
-            'posts_per_page'	=> $posts_per_page,
-            'offset'			=> $offset
+            'offset' => 0,
+            'type' => 'recent',
+            'params' => array(),
+            'post_type' => 'product'
         );
+        $args = wp_parse_args($args, $defaults);
+        $type = isset($args['type']) ? $args['type'] : 'recent';
+        $tmp_args = $args;
         switch($type) {
             case 'most_view':
                 $args = array(
@@ -224,9 +339,10 @@ class SB_Product {
             default:
                 $args = array();
         }
-        $args = array_merge($defaults, $args);
-        if(count($params) > 0) {
-            $args = array_merge($params, $args);
+        $args = wp_parse_args($args, $tmp_args);
+        $params = isset($args['params']) ? $args['params'] : array();
+        if(SB_PHP::is_array_has_value($params)) {
+            $args = wp_parse_args($params, $args);
         }
         return SB_Query::get($args);
     }
@@ -241,6 +357,10 @@ class SB_Product {
 
     public static function get_store_uri() {
         return get_permalink( woocommerce_get_page_id( 'shop' ) );
+    }
+
+    public static function get_shop_url() {
+        return self::get_store_uri();
     }
 
     public static function get_payment_uri() {

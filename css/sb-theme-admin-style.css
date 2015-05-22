@@ -1107,6 +1107,7 @@ div.sb-post-meta-row .image-preview {
 }
 
 /* ================= Advanced Settings ================= */
+
 .form-table td .sbt-row-setting p,
 .sbt-row-setting p,
 .sbt-row-setting {
@@ -1117,21 +1118,25 @@ div.sb-post-meta-row .image-preview {
 
 }
 
+.form-table.row-setting-table th,
 .sb-theme-checkout-setting-section .form-table th,
 .sb-theme-advanced-setting-section .form-table th {
     display: none;
 }
 
+.row-setting-table.form-table td,
 .sb-theme-checkout-setting-section .form-table td,
 .sb-theme-advanced-setting-section .form-table td {
     padding-left: 0;
     padding-right: 0;
 }
 
+.form-table.row-setting-table .tab-content-item,
 .sb-theme-advanced-setting-section .tab-content-item {
     display: none;
 }
 
+.form-table.row-setting-table .tab-content-item.active,
 .sb-theme-advanced-setting-section .tab-content-item.active {
     display: block;
 }

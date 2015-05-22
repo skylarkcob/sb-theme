@@ -56,3 +56,5 @@ define( 'SB_THEME_FACEBOOK', 'https://www.facebook.com/skylarkcob' );
 define( 'SB_THEME_TWITTER', 'https://twitter.com/skylarkcob' );
 
 define( 'SB_THEME_LICENSE_REDIRECT', SB_THEME_WEBSITE );
+
+define('SB_THEME_CONTENT_WOOCOMMERCE_PATH', SB_THEME_INC_PATH . '/content/woocommerce');

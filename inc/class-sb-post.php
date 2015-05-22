@@ -84,6 +84,39 @@ class SB_Post {
         return wp_get_attachment_url($media_id);
     }
 
+    public static function get_comment_count_last_month($post_id) {
+        return absint(self::get_meta($post_id, 'count_comment_last_month'));
+    }
+
+    public static function update_comment_count_last_month($post_id, $value) {
+        self::update_meta($post_id, 'count_comment_last_month', $value);
+    }
+
+    public static function get_comment_count_this_month($post_id) {
+        return absint(self::get_meta($post_id, 'count_comment_this_month'));
+    }
+
+    public static function update_comment_count_this_month($post_id, $value) {
+        self::update_meta($post_id, 'count_comment_this_month', $value);
+    }
+
+    public static function count_comment_this_month($post_id) {
+        $lastday_timestamp = SB_Option::get_last_date_of_month();
+        $today_timestamp = SB_Core::get_today_timestamp();
+        $count_comment_this_month = self::get_comment_count_this_month($post_id);
+        if($today_timestamp > $lastday_timestamp) {
+            $transient_name = SB_Cache::build_last_date_of_month_transient_name();
+            delete_transient($transient_name);
+            $lastday_timestamp = SB_PHP::get_lastday_of_month_timestamp();
+            self::update_comment_count_last_month($post_id, $count_comment_this_month);
+            $count_comment_this_month = 0;
+            SB_Option::update_last_date_of_month($lastday_timestamp);
+            set_transient($transient_name, '1', DAY_IN_SECONDS);
+        }
+        $count_comment_this_month++;
+        self::update_comment_count_this_month($post_id, $count_comment_this_month);
+    }
+
     public static function get_comment_number($post_id = '') {
         if(empty($post_id)) {
             $post_id = get_the_ID();
@@ -92,7 +125,7 @@ class SB_Post {
         if(!SB_Cache::post_comment_count_cache() || false === ($comment_number = get_transient($transient_name))) {
             $comment_number = get_comments_number($post_id);
             if($comment_number == 1) {
-                $comments = SB_Post::get_comments($post_id);
+                $comments = self::get_comments($post_id);
                 $comment_number = count($comments);
             }
             if(SB_Cache::post_comment_count_cache() && !empty($post_id)) {
@@ -794,7 +827,7 @@ class SB_Post {
 
     public static function the_temperature_html($post_id) {
         $class = 'item-temp';
-        $temp = SB_Post::get_temperature($post_id);
+        $temp = self::get_temperature($post_id);
         if($temp < 50) {
             $class = SB_PHP::add_string_with_space_before($class, 'temp-50');
         } elseif($temp >= 50 && $temp < 250) {
@@ -807,7 +840,7 @@ class SB_Post {
             $class = SB_PHP::add_string_with_space_before($class, 'temp-1000');
         }
         ?>
-        <div class="<?php echo $class; ?>"><?php SB_Post::the_temperature($post_id); ?></div>
+        <div class="<?php echo $class; ?>"><?php self::the_temperature($post_id); ?></div>
         <?php
     }
 
@@ -912,7 +945,7 @@ class SB_Post {
             if('trang-chu' == $item->post_name || 'home' == $item->post_name) {
                 $item_url = $item->url;
                 $item_url = mb_ereg_replace($url, $site_url, $item_url);
-                SB_Post::update_custom_menu_url($item->ID, $item_url);
+                self::update_custom_menu_url($item->ID, $item_url);
             }
         }
     }

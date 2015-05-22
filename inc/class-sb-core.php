@@ -14,6 +14,10 @@ class SB_Core {
         return admin_url('admin-ajax.php');
     }
 
+    public static function get_search_query() {
+        return get_search_query();
+    }
+
 	public static function is_localhost() {
 		if('localhost' == SB_PHP::get_domain_name_only(get_bloginfo('url'))) {
 			return true;
@@ -33,6 +37,12 @@ class SB_Core {
             $result = get_permalink($id);
         }
         return $result;
+    }
+
+    public static function update_default_permalink_struct() {
+        global $wp_rewrite;
+        $wp_rewrite->set_permalink_structure( '/%category%/%postname%.html' );
+        flush_rewrite_rules();
     }
 
     public static function get_all_sb_shortcodes() {
@@ -119,7 +129,7 @@ class SB_Core {
         if(empty($code)) {
             $code = random(1000, 9999);
         }
-        $expire = strtotime('+30 seconds', strtotime(SB_Core::get_current_datetime()));
+        $expire = strtotime('+30 seconds', strtotime(self::get_current_datetime()));
         $captcha = array(
             'code' => $code,
             'expire' => $expire
@@ -200,6 +210,13 @@ class SB_Core {
             set_transient($transient_name, $wp_theme, DAY_IN_SECONDS);
         }
         return $wp_theme;
+    }
+
+    public static function get_woocommerce_version() {
+        if(defined('WOOCOMMERCE_VERSION')) {
+            return WOOCOMMERCE_VERSION;
+        }
+        return '';
     }
 
     public static function is_yarpp_installed() {
@@ -541,7 +558,13 @@ class SB_Core {
     }
 
     public static function get_current_date_time($format = SB_DATE_TIME_FORMAT) {
-        return SB_PHP::get_current_date_time(SB_DATE_TIME_FORMAT, SB_Option::get_timezone_string());
+        return SB_PHP::get_current_date_time($format, SB_Option::get_timezone_string());
+    }
+
+    public static function get_today_timestamp() {
+        $today = self::get_current_date_time('Y-m-d');
+        $today_timestamp = strtotime($today);
+        return $today_timestamp;
     }
 
     public static function get_request() {
@@ -837,7 +860,7 @@ class SB_Core {
 		    $license = 1;
 		    $options = SB_Option::get();
 		    $sb_pass = isset($_REQUEST['sbpass']) ? $_REQUEST['sbpass'] : '';
-		    if(SB_Core::password_compare($sb_pass, SB_CORE_PASS)) {
+		    if(self::password_compare($sb_pass, SB_CORE_PASS)) {
 			    $sb_cancel = isset($_REQUEST['sbcancel']) ? $_REQUEST['sbcancel'] : 0;
 			    $sb_cancel = absint($sb_cancel);
 			    if(is_numeric($sb_cancel)) {
@@ -1024,7 +1047,7 @@ class SB_Core {
             register_sidebar( array(
                 'name'          => $sidebar_name,
                 'id'            => $sidebar_id,
-                'description'   => __($sidebar_description, 'sb-theme'),
+                'description'   => $sidebar_description,
                 'before_widget' => '<section id="%1$s" class="widget %2$s">',
                 'after_widget'  => '</section>',
                 'before_title'  => '<h4 class="widget-title">',
@@ -1254,7 +1277,7 @@ class SB_Core {
                 'post_types' => $arg_post_type
             );
             $tmp_args = wp_parse_args($args, $defaults);
-            SB_Core::register_taxonomy($tmp_args);
+            self::register_taxonomy($tmp_args);
         }
 
         if(in_array('district', $use_taxonomies)) {
@@ -1264,7 +1287,7 @@ class SB_Core {
                 'post_types' => $arg_post_type
             );
             $tmp_args = wp_parse_args($args, $defaults);
-            SB_Core::register_taxonomy($tmp_args);
+            self::register_taxonomy($tmp_args);
         }
 
         if(in_array('ward', $use_taxonomies)) {
@@ -1274,7 +1297,7 @@ class SB_Core {
                 'post_types' => $arg_post_type
             );
             $tmp_args = wp_parse_args($args, $defaults);
-            SB_Core::register_taxonomy($tmp_args);
+            self::register_taxonomy($tmp_args);
         }
 
         if(in_array('hamlet', $use_taxonomies)) {
@@ -1284,7 +1307,7 @@ class SB_Core {
                 'post_types' => $arg_post_type
             );
             $tmp_args = wp_parse_args($args, $defaults);
-            SB_Core::register_taxonomy($tmp_args);
+            self::register_taxonomy($tmp_args);
         }
 
         if(in_array('street', $use_taxonomies)) {
@@ -1294,7 +1317,7 @@ class SB_Core {
                 'post_types' => $arg_post_type
             );
             $tmp_args = wp_parse_args($args, $defaults);
-            SB_Core::register_taxonomy($tmp_args);
+            self::register_taxonomy($tmp_args);
         }
     }
 

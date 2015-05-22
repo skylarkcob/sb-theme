@@ -47,6 +47,10 @@ require SB_THEME_INC_PATH . '/class-sb-membership.php';
 
 require SB_THEME_PLUGIN_PATH . '/really-simple-captcha/really-simple-captcha.php';
 
+require SB_THEME_INC_PATH . '/class-sb-menu-walker.php';
+
+do_action('sb_theme_load_middle');
+
 require SB_THEME_INC_PATH . '/class-sb-payment.php';
 
 require SB_THEME_INC_PATH . '/class-sb-ngan-luong.php';
@@ -90,6 +94,8 @@ require SB_THEME_INC_PATH . '/class-sb-paginate.php';
 require SB_THEME_INC_PATH . '/widgets/class-sb-post-widget.php';
 
 require SB_THEME_INC_PATH . '/widgets/class-sb-tab-widget.php';
+
+require SB_THEME_INC_PATH . '/widgets/class-sb-menu-widget.php';
 
 if(SB_Option::social_login_enabled()) {
     $facebook = SB_Option::get_social_login_app('facebook');

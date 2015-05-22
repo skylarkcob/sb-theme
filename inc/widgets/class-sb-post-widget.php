@@ -22,7 +22,7 @@ class SB_Post_Widget extends WP_Widget {
 		parent::__construct( 'sb_post_widget', 'SB Post',
             array(
                 'classname'   => 'widget_sb_post',
-                'description' => __( 'Show custom post on sidebar.', 'sb-theme' ),
+                'description' => __( 'Show custom post on sidebar.', 'sb-theme' )
             ),
             array(
                 'width' => 400
@@ -91,6 +91,7 @@ class SB_Post_Widget extends WP_Widget {
 	}
 	
 	public function widget($args, $instance) {
+        $widget_html = '';
         if(!SB_Cache::enabled() || false === ($widget_html = get_transient(SB_Cache::build_widget_transient_name($this->id)))) {
             $arr_tmp = $args;
             $number = isset($instance['number']) ? absint($instance['number']) : 0;

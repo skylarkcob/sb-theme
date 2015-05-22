@@ -38,7 +38,7 @@ class SB_Message {
 	}
 
 	public static function get_changes_saved_successfully() {
-		$text = __('All your changes have been saved successfully.', 'sb-theme');
+		$text = __('Tất cả thiết lập của bạn đã được lưu thành công.', 'sb-theme');
 		return apply_filters('sb_theme_all_changes_saved_successfully_text', $text);
 	}
 
@@ -53,12 +53,12 @@ class SB_Message {
 	}
 
 	public static function get_created_by() {
-		$text = __('Created by %s.', 'sb-theme');
+		$text = __('Được tạo bởi %s.', 'sb-theme');
 		return apply_filters('sb_theme_created_by_text', $text);
 	}
 
 	public static function get_ask_question_via_email() {
-		$text = __('If you have any question, please send us an email via: %s', 'sb-theme');
+		$text = __('Nếu bạn có bất kỳ câu hỏi nào, xin vui lòng gửi thư về địa chỉ: %s', 'sb-theme');
 		return apply_filters('sb_theme_ask_question_via_email_text', $text);
 	}
 

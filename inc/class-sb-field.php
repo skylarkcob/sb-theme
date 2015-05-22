@@ -321,11 +321,11 @@ class SB_Field {
         ?>
         <div id="<?php echo $id; ?>" class="sb-theme-sidebar">
             <div class="sb-sidebar-group">
-                <ul id="sb-sortable-sidebar" class="sb-sortable-list" data-icon-drag="<?php echo SB_CORE_URL . '/images/icon-drag-16.png'; ?>" data-icon-delete="<?php echo SB_CORE_URL . '/images/icon-delete-16.png'; ?>" data-sidebar="<?php echo count($list_sidebars); ?>" data-message-confirm="<?php _e('Are you sure you want to delete?', 'sb-theme'); ?>" data-name="<?php echo $name; ?>">
+                <ul id="sb-sortable-sidebar" class="sb-sortable-list" data-icon-drag="<?php echo SB_CORE_URL . '/images/icon-drag-16.png'; ?>" data-icon-delete="<?php echo SB_CORE_URL . '/images/icon-delete-16.png'; ?>" data-sidebar="<?php echo count($list_sidebars); ?>" data-message-confirm="<?php _e('Bạn có muốn xóa hay không?', 'sb-theme'); ?>" data-name="<?php echo $name; ?>">
                     <li class="ui-state-disabled sb-default-sidebar">
                         <div class="sb-sidebar-line">
-                            <input type="text" name="sidebar_default_0_name" value="<?php _e('Sidebar name', 'sb-theme'); ?>" autocomplete="off" disabled>
-                            <input type="text" name="sidebar_default_0_description" value="<?php _e('Sidebar description', 'sb-theme'); ?>" autocomplete="off" disabled>
+                            <input type="text" name="sidebar_default_0_name" value="<?php _e('Tên sidebar', 'sb-theme'); ?>" autocomplete="off" disabled>
+                            <input type="text" name="sidebar_default_0_description" value="<?php _e('Mô tả cho sidebar', 'sb-theme'); ?>" autocomplete="off" disabled>
                             <input type="text" name="sidebar_default_0_id" value="<?php _e('Sidebar id', 'sb-theme'); ?>" autocomplete="off" disabled>
                         </div>
                         <img class="sb-icon-drag" src="<?php echo SB_CORE_URL . '/images/icon-drag-16.png'; ?>">
@@ -356,7 +356,7 @@ class SB_Field {
                 </ul>
                 <input type="hidden" name="<?php echo $name; ?>[count]" value="<?php echo count($list_sidebars); ?>" class="sb-sidebar-count">
             </div>
-            <button class="button sb-add-sidebar"><?php _e('Add new sidebar', 'sb-theme'); ?></button>
+            <button class="button sb-add-sidebar"><?php _e('Thêm sidebar mới', 'sb-theme'); ?></button>
         </div>
         <?php
     }
