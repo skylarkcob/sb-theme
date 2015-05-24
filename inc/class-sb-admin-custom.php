@@ -60,6 +60,10 @@ class SB_Admin_Custom {
         SB_Field::text( $args );
     }
 
+	public static function setting_field_category_sortable_connect() {
+		sb_theme_setting_field_category_widget();
+	}
+
     public static function add_recaptcha_setting_field( $section_id, $page_id ) {
         self::add_setting_field( 'sb_theme_global_recaptcha_key', 'reCAPTCHA', $section_id, array( 'SB_Admin_Custom', 'add_recaptcha_setting_field_callback' ), $page_id );
     }

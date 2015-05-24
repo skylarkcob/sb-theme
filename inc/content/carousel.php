@@ -12,7 +12,7 @@ $auto_slide = isset($args['auto_slide']) ? (bool)$args['auto_slide'] : true;
 if(empty($id) || !SB_PHP::callback_exists($callback)) {
     return;
 }
-$data_interval = '';
+$data_interval = '6000';
 if(!$auto_slide) {
     $data_interval = 'false';
 }

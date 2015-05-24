@@ -132,18 +132,47 @@ class SB_Query {
             }
             $temp_posts = SB_PHP::array_sort($temp_posts, 'views', 'DESC');
             $count = 0;
-            foreach($temp_posts as $temp) {
+            foreach($temp_posts as $key => $temp) {
                 if($count >= $posts_per_page) {
                     break;
                 }
                 array_push($post_ids, $temp['id']);
                 $count++;
+                unset($temp_posts[$key]);
+            }
+            if(count($post_ids) < $posts_per_page) {
+                $get_enough = isset($args['get_enough']) ? (bool)$args['get_enough'] : false;
+                if($get_enough) {
+                    $get_more = $posts_per_page - count($post_ids);
+                    $count = 0;
+                    foreach($temp_posts as $key => $temp) {
+                        if($count >= $get_more) {
+                            break;
+                        }
+                        array_push($post_ids, $temp['id']);
+                        $count++;
+                    }
+                }
             }
             if(count($post_ids) > 0) {
                 $args['post__in'] = $post_ids;
             }
             $args['orderby'] = 'meta_value_num';
             $args['meta_key'] = 'views';
+            $meta_item = array(
+                'key' => 'views',
+                'value' => 0,
+                'compare' => '>=',
+                'type' => 'NUMERIC'
+            );
+            $args = SB_Query::build_meta_query($meta_item, $args);
+            $meta_item = array(
+                'key' => 'sb_theme_temp_key',
+                'value' => 'not_has_value',
+                'compare' => 'NOT EXISTS',
+                'type' => 'CHAR'
+            );
+            $args = SB_Query::build_meta_query($meta_item, $args);
             $query = self::get($args);
         }
         return $query;
@@ -266,6 +295,9 @@ class SB_Query {
 
     public static function build_meta_query($meta_item, $args) {
         if(is_array($args)) {
+            if(!isset($args['meta_query']['relation'])) {
+                $args['meta_query']['relation'] = 'OR';
+            }
             if(isset($args['meta_query'])) {
                 array_push($args['meta_query'], $meta_item);
             } else {

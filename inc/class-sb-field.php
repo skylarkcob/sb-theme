@@ -478,7 +478,7 @@ class SB_Field {
         </div>
         <div style="clear: both"></div>
         <?php
-        self::the_description(__('Drag and drop the widget into right box to active it.', 'sb-theme'));
+        self::the_description(__('Kéo và thả đối tượng sang ô bên phải để kích hoạt.', 'sb-theme'));
     }
 
     public static function rss_feed($args = array()) {

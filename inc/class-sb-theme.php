@@ -18,6 +18,14 @@ class SB_Theme {
         }
     }
 
+    public static function get_rss_feed_url() {
+        $url = '';
+        if(empty($url)) {
+            $url = get_bloginfo('rss2_url');
+        }
+        return $url;
+    }
+
     public static function created_by() {
         printf('Giao diện được tạo bởi <a href="%1$s">%2$s</a>', SB_THEME_WEBSITE, SB_THEME_AUTHOR);
     }
@@ -395,6 +403,10 @@ class SB_Theme {
         }
     }
 
+    public static function run_statistics() {
+        sb_theme_statistics();
+    }
+
     public static function the_logo() {
         sb_theme_the_logo();
     }
@@ -736,6 +748,10 @@ class SB_Theme {
     public static function the_search_form($args = array()) {
         self::set_search_form_args($args);
         sb_theme_get_content('search-form');
+    }
+
+    public static function the_search_query_text() {
+        echo get_search_query();
     }
 
     public static function the_feedburner_form($args = array()) {

@@ -193,7 +193,7 @@ require SB_THEME_INC_PATH . '/sb-utilities-setting-callback.php';
  * Kiểm tra nếu chức năng thống kê được kích hoạt thì load các hàm callback, load
  * widget hiển thị thống kê.
  */
-if(SB_Option::statistics_enabled()) {
+if(SB_Option::statistics_enabled() || SB_Theme::support('sb_statistics')) {
 
     /** Load tập tin khai báo các hàm callback của chức năng thống kê */
     require SB_THEME_INC_PATH . '/sb-statistics-setting-callback.php';

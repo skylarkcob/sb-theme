@@ -8,13 +8,13 @@ function sb_theme_footer_text_callback() {
         'id' => $id,
         'name' => $name,
         'value' => $value,
-        'description' => __('The text shows on footer area, you can enter address, phone, email,...', 'sb-theme')
+        'description' => __('Thông tin chữ hiển thị dưới chân trang web, bạn có thể nhập địa chỉ, email, số điện thoại,...', 'sb-theme')
     );
     SB_Field::rich_editor_field($args);
 }
 
 function sb_theme_setting_field_footer_text() {
-    sb_theme_add_setting_field('sb_theme_footer_text', __('Footer text', 'sb-theme'), 'sb_theme_footer_text_callback');
+    sb_theme_add_setting_field('sb_theme_footer_text', __('Chữ dưới chân trang', 'sb-theme'), 'sb_theme_footer_text_callback');
 }
 
 function sb_theme_front_page_widget_callback() {
@@ -38,7 +38,7 @@ function sb_theme_category_widget_callback() {
 }
 
 function sb_theme_setting_field_category_widget() {
-    sb_theme_add_setting_field('sb_theme_category_widget', __('Category widget', 'sb-theme'), 'sb_theme_category_widget_callback');
+    sb_theme_add_setting_field('sb_theme_category_widget', __('Nhóm chuyên mục', 'sb-theme'), 'sb_theme_category_widget_callback');
 }
 
 function sb_theme_taxonomy_channel_ui_connect_callback() {

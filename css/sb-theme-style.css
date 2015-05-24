@@ -35,6 +35,10 @@ img {
     margin: 5px auto;
 }
 
+.entry-content blockquote {
+    font-size: 13px;
+}
+
 .bg-white,
 .white-bg {
     background-color: #fff;
@@ -639,6 +643,10 @@ img {
 
 .sb-comment-area .comment-respond textarea {
     width: 600px;
+}
+
+.sb-comment-area .comment-respond textarea {
+    max-width: 100%;
 }
 
 .comments-area .comment-body {
@@ -2929,6 +2937,28 @@ ol.guides li a:hover{
     font-size: 13px;
     padding-bottom: 4px;
     padding-top: 4px;
+}
+
+/* ==================================== Statistics ================================== */
+
+.widget-sb-statistics dl {
+    font-size: 13px;
+}
+
+.widget-sb-statistics dd,
+.widget-sb-statistics dt {
+
+}
+
+.widget-sb-statistics dd {
+    text-align: right;
+}
+
+.widget-sb-statistics dt {
+    float: left;
+    font-size: 13px;
+    font-weight: 400;
+    width: 120px;
 }
 
 /* ==================== Keyframes ==================== */

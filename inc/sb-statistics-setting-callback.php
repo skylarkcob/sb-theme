@@ -1,6 +1,6 @@
 <?php
 function sb_statistics_setting_field_post_views() {
-    sb_theme_add_statistics_setting_field('sb_statistics_post_views', 'Post views', 'sb_statistics_post_views_callback');
+    sb_theme_add_statistics_setting_field('sb_statistics_post_views', 'Lượt xem bài viết', 'sb_statistics_post_views_callback');
 }
 
 function sb_statistics_post_views_callback() {
@@ -9,13 +9,13 @@ function sb_statistics_post_views_callback() {
         'id' => 'sb_statistics_post_views',
         'name' => SB_Option::build_sb_option_name(array('statistics', 'post_views')),
         'value' => $value,
-        'description' => __('Turn on or turn off the function to count post views.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép đếm lượt xem cho bài viết.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
 
 function sb_statistics_setting_field_daily_post_views() {
-    sb_theme_add_statistics_setting_field('sb_statistics_daily_post_views', 'Daily post views', 'sb_statistics_daily_post_views_callback');
+    sb_theme_add_statistics_setting_field('sb_statistics_daily_post_views', 'Lượt xem hàng ngày', 'sb_statistics_daily_post_views_callback');
 }
 
 function sb_statistics_daily_post_views_callback() {
@@ -24,13 +24,13 @@ function sb_statistics_daily_post_views_callback() {
         'id' => 'sb_statistics_daily_post_views',
         'name' => SB_Option::build_sb_option_name(array('statistics', 'daily_post_views')),
         'value' => $value,
-        'description' => __('Turn on or turn off the function to count post views daily.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép đếm lượt xem cho bài viết hàng ngày.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
 
 function sb_statistics_setting_field_weekly_post_views() {
-    sb_theme_add_statistics_setting_field('sb_statistics_weekly_post_views', 'Weekly post views', 'sb_statistics_weekly_post_views_callback');
+    sb_theme_add_statistics_setting_field('sb_statistics_weekly_post_views', 'Lượt xem hàng tuần', 'sb_statistics_weekly_post_views_callback');
 }
 
 function sb_statistics_weekly_post_views_callback() {
@@ -39,13 +39,13 @@ function sb_statistics_weekly_post_views_callback() {
         'id' => 'sb_statistics_weekly_post_views',
         'name' => SB_Option::build_sb_option_name(array('statistics', 'weekly_post_views')),
         'value' => $value,
-        'description' => __('Turn on or turn off the function to count post views weekly.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép đếm lượt xem cho bài viết hàng tuần.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
 
 function sb_statistics_setting_field_monthly_post_views() {
-    sb_theme_add_statistics_setting_field('sb_statistics_monthly_post_views', 'Monthly post views', 'sb_statistics_monthly_post_views_callback');
+    sb_theme_add_statistics_setting_field('sb_statistics_monthly_post_views', 'Lượt xem hàng tháng', 'sb_statistics_monthly_post_views_callback');
 }
 
 function sb_statistics_monthly_post_views_callback() {
@@ -54,13 +54,13 @@ function sb_statistics_monthly_post_views_callback() {
         'id' => 'sb_statistics_monthly_post_views',
         'name' => SB_Option::build_sb_option_name(array('statistics', 'monthly_post_views')),
         'value' => $value,
-        'description' => __('Turn on or turn off the function to count post views monthly.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép đếm lượt xem cho bài viết hàng tháng.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
 
 function sb_statistics_setting_field_visitor_statistics() {
-    sb_theme_add_statistics_setting_field('sb_statistics_visitor_statistics(', 'Visitor statistics', 'sb_statistics_visitor_statistics_callback');
+    sb_theme_add_statistics_setting_field('sb_statistics_visitor_statistics(', 'Thống kê truy cập', 'sb_statistics_visitor_statistics_callback');
 }
 
 function sb_statistics_visitor_statistics_callback() {
@@ -69,13 +69,13 @@ function sb_statistics_visitor_statistics_callback() {
         'id' => 'sb_statistics_visitor_statistics',
         'name' => SB_Option::build_sb_option_name(array('statistics', 'visitor_statistics')),
         'value' => $value,
-        'description' => __('Turn on or turn off the function to support visitor statistics.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép thống kê lượt truy cập trên website.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
 
 function sb_statistics_setting_field_bots_statistics() {
-    sb_theme_add_statistics_setting_field('sb_statistics_bots_statistics', 'Bots statistics', 'sb_statistics_bots_statistics_callback');
+    sb_theme_add_statistics_setting_field('sb_statistics_bots_statistics', 'Thống kê bot', 'sb_statistics_bots_statistics_callback');
 }
 
 function sb_statistics_bots_statistics_callback() {
@@ -84,13 +84,13 @@ function sb_statistics_bots_statistics_callback() {
         'id' => 'sb_statistics_bots_statistics',
         'name' => SB_Option::build_sb_option_name(array('statistics', 'bots_statistics')),
         'value' => $value,
-        'description' => __('Turn on or turn off the function to count bots visits.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép thống kê bot truy cập trên website.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
 
 function sb_statistics_setting_field_daily_statistics() {
-    sb_theme_add_statistics_setting_field('sb_statistics_daily_statistics', 'Daily statistics', 'sb_statistics_daily_statistics_callback');
+    sb_theme_add_statistics_setting_field('sb_statistics_daily_statistics', 'Thống kê hàng ngày', 'sb_statistics_daily_statistics_callback');
 }
 
 function sb_statistics_daily_statistics_callback() {
@@ -99,13 +99,13 @@ function sb_statistics_daily_statistics_callback() {
         'id' => 'sb_statistics_daily_statistics',
         'name' => SB_Option::build_sb_option_name(array('statistics', 'daily_statistics')),
         'value' => $value,
-        'description' => __('Turn on or turn off the function to count daily visitor.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép thống kê lượt truy cập hàng ngày.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
 
 function sb_statistics_setting_field_weekly_statistics() {
-    sb_theme_add_statistics_setting_field('sb_statistics_weekly_statistics', 'Weekly statistics', 'sb_statistics_weekly_statistics_callback');
+    sb_theme_add_statistics_setting_field('sb_statistics_weekly_statistics', 'Thống kê hàng tuần', 'sb_statistics_weekly_statistics_callback');
 }
 
 function sb_statistics_weekly_statistics_callback() {
@@ -114,13 +114,13 @@ function sb_statistics_weekly_statistics_callback() {
         'id' => 'sb_statistics_weekly_statistics',
         'name' => SB_Option::build_sb_option_name(array('statistics', 'weekly_statistics')),
         'value' => $value,
-        'description' => __('Turn on or turn off the function to count weekly visitor.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép thống kê lượt truy cập hàng tuần.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }
 
 function sb_statistics_setting_field_monthly_statistics() {
-    sb_theme_add_statistics_setting_field('sb_statistics_monthly_statistics', 'Monthly statistics', 'sb_statistics_monthly_statistics_callback');
+    sb_theme_add_statistics_setting_field('sb_statistics_monthly_statistics', 'Thống kê hàng tháng', 'sb_statistics_monthly_statistics_callback');
 }
 
 function sb_statistics_monthly_statistics_callback() {
@@ -129,7 +129,7 @@ function sb_statistics_monthly_statistics_callback() {
         'id' => 'sb_statistics_monthly_statistics',
         'name' => SB_Option::build_sb_option_name(array('statistics', 'monthly_statistics')),
         'value' => $value,
-        'description' => __('Turn on or turn off the function to count monthly visitor.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép thống kê lượt truy cập hàng tháng.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }

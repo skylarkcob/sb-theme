@@ -522,7 +522,12 @@ class SB_Option {
     }
 
     public static function statistics_enabled() {
-        return self::utility_enabled('statistics');
+        $value = self::utility_enabled('statistics');
+        if(SB_Theme::support('sb_statistics')) {
+            $value = true;
+        }
+        $value = apply_filters('sb_theme_statistics', $value);
+        return $value;
     }
 
     public static function utility_enabled($name) {

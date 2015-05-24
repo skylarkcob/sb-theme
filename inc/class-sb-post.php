@@ -804,9 +804,7 @@ class SB_Post {
 
     public static function get_views($post_id) {
         $views = self::get_meta($post_id, 'views');
-        if(empty($views)) {
-            $views = 0;
-        }
+        $views = absint($views);
         return $views;
     }
 

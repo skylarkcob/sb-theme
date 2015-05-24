@@ -180,16 +180,16 @@ function sb_utilities_responsive_callback() {
 }
 
 function sb_utilities_setting_field_statistics() {
-    sb_theme_add_statistics_setting_field('sb_utilities_statistics', __('Statistics', 'sb-theme'), 'sb_utilities_statistics_callback');
+    sb_theme_add_statistics_setting_field('sb_utilities_statistics', __('Thống kê', 'sb-theme'), 'sb_utilities_statistics_callback');
 }
 
 function sb_utilities_statistics_callback() {
-    $value = SB_Option::get_utility('statistics');
+    $value = absint(SB_Option::statistics_enabled());
     $args = array(
         'id' => 'sb_utilities_statistics',
         'name' => 'sb_options[utilities][statistics]',
         'value' => $value,
-        'description' => __('Turn on or turn off the function to add statistics on your site.', 'sb-theme')
+        'description' => __('Bật hoặc tắt chức năng cho phép thống kê lượt truy cập và lượt xem bài viết trên website.', 'sb-theme')
     );
     SB_Field::switch_button($args);
 }

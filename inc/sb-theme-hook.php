@@ -440,6 +440,9 @@ function sb_theme_after_setup_theme_hook() {
             'footer' => __('Footer menu', 'sb-theme')
         )
     );
+    if(has_filter('sb_theme_statistics', '__return_true')) {
+        add_theme_support('sb_statistics');
+    }
 	do_action('sb_theme_after_setup_theme');
 }
 add_action('after_setup_theme', 'sb_theme_after_setup_theme_hook');
@@ -453,6 +456,9 @@ function sb_theme_widgets_init_hook() {
     register_widget('SB_Post_Widget');
     register_widget('SB_Tab_Widget');
     register_widget('SB_Menu_Widget');
+    if(SB_Option::statistics_enabled() && (bool)SB_Option::get_statistics_switch('visitor_statistics')) {
+        register_widget('SB_Statistics_Widget');
+    }
     sb_theme_register_sidebar('primary', __('Sidebar chính', 'sb-theme'), __('Sidebar chính trên website của bạn.', 'sb-theme'));
     sb_theme_register_sidebar('secondary', __('Sidebar phụ', 'sb-theme'), __('Sidebar phụ trên website của bạn.', 'sb-theme'));
     sb_theme_register_sidebar('footer', __('Sidebar dưới chân trang', 'sb-theme'), __('Sidebar chứa các widget dưới chân trang web.', 'sb-theme'));
@@ -623,6 +629,14 @@ function sb_theme_insert_comment_hook($comment_id, $comment_object) {
 }
 add_action('wp_insert_comment', 'sb_theme_insert_comment_hook', 10, 2);
 
+function sb_theme_site_statistics() {
+    SB_Theme::run_statistics();
+}
+add_action('wp_footer', 'sb_theme_site_statistics');
+
+/*
+ * Lưu ngày cuối cùng của tháng vào cơ sở dữ liệu
+ */
 function sb_theme_update_last_date_of_month() {
     $transient_name = SB_Cache::build_last_date_of_month_transient_name();
     if(false === ($checked = get_transient($transient_name))) {

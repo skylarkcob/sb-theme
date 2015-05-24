@@ -1330,6 +1330,7 @@ class SB_Core {
         } elseif(SB_Option::use_administrative_boundaries()) {
             $result = true;
         }
+        $result = apply_filters('sb_theme_use_term_meta', $result);
         return $result;
     }
 
