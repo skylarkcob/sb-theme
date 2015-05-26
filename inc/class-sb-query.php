@@ -112,6 +112,7 @@ class SB_Query {
     }
 
     public static function get_recent_post_by_view($args = array()) {
+        $tmp_args = $args;
         $posts_per_page = isset($args['posts_per_page']) ? $args['posts_per_page'] : 8;
         $new_args = array(
             'posts_per_page' => $posts_per_page * 3,
@@ -154,26 +155,14 @@ class SB_Query {
                     }
                 }
             }
+            $args = $tmp_args;
             if(count($post_ids) > 0) {
                 $args['post__in'] = $post_ids;
             }
+
             $args['orderby'] = 'meta_value_num';
             $args['meta_key'] = 'views';
-            $meta_item = array(
-                'key' => 'views',
-                'value' => 0,
-                'compare' => '>=',
-                'type' => 'NUMERIC'
-            );
-            $args = SB_Query::build_meta_query($meta_item, $args);
-            $meta_item = array(
-                'key' => 'sb_theme_temp_key',
-                'value' => 'not_has_value',
-                'compare' => 'NOT EXISTS',
-                'type' => 'CHAR'
-            );
-            $args = SB_Query::build_meta_query($meta_item, $args);
-            $query = self::get($args);
+            $query = new WP_Query($args);
         }
         return $query;
     }
@@ -221,10 +210,9 @@ class SB_Query {
 
     public static function get_related_post($args = array()) {
         $related_posts = array();
-        $post_id = '';
-        $posts_per_page = 5;
-        $post_type = 'post';
-        extract($args, EXTR_OVERWRITE);
+        $post_id = isset($args['post_id']) ? $args['post_id'] : '';
+        $posts_per_page = isset($args['posts_per_page']) ? $args['posts_per_page'] : 5;
+        $post_type = isset($args['post_type']) ? $args['post_type'] : 'post';
         if(empty($post_id) && (is_single() || is_page() || is_singular())) {
             $post_id = get_the_ID();
         }

@@ -456,6 +456,9 @@ function sb_theme_widgets_init_hook() {
     register_widget('SB_Post_Widget');
     register_widget('SB_Tab_Widget');
     register_widget('SB_Menu_Widget');
+    if(class_exists('SB_Video_Widget')) {
+        register_widget('SB_Video_Widget');
+    }
     if(SB_Option::statistics_enabled() && (bool)SB_Option::get_statistics_switch('visitor_statistics')) {
         register_widget('SB_Statistics_Widget');
     }

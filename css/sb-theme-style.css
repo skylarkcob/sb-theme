@@ -333,6 +333,10 @@ img {
     height: 20px;
 }
 
+iframe {
+    border: medium none;
+}
+
 #vgc_logo_msgoffline > *,
 #vgc_logo_msgoffline,
 .panel_footer_vgchat > *,
@@ -1893,6 +1897,14 @@ ol.guides li a:hover{
 
 .sb-mobile-menu.search.left .search-form .search-submit {
 
+}
+
+.sb-mobile-menu {
+    z-index: -1;
+}
+
+.sb-site.moved .sb-mobile-menu {
+    z-index: 499;
 }
 
 .sb-mobile-menu.left > div {

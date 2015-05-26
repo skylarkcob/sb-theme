@@ -59,6 +59,8 @@ require SB_THEME_INC_PATH . '/class-sb-post.php';
 
 require SB_THEME_INC_PATH . '/class-sb-html.php';
 
+require SB_THEME_INC_PATH . '/class-sb-video.php';
+
 require SB_THEME_INC_PATH . '/class-sb-term.php';
 
 require SB_THEME_INC_PATH . '/class-sb-plugin.php';
@@ -96,6 +98,8 @@ require SB_THEME_INC_PATH . '/widgets/class-sb-post-widget.php';
 require SB_THEME_INC_PATH . '/widgets/class-sb-tab-widget.php';
 
 require SB_THEME_INC_PATH . '/widgets/class-sb-menu-widget.php';
+
+require SB_THEME_INC_PATH . '/widgets/class-sb-video-widget.php';
 
 if(SB_Option::social_login_enabled()) {
     $facebook = SB_Option::get_social_login_app('facebook');
