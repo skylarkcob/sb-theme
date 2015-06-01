@@ -2063,7 +2063,8 @@ add_filter('the_excerpt', 'sb_theme_shortcode_from_excerpt');
  * Kiểm tra thông tin trước khi upload tập tin
  */
 function sb_theme_pre_upload_file( $file ){
-	$file['name'] = SB_PHP::remove_vietnamese(SB_PHP::lowercase($file['name']));
+	$file_name = isset($file['name']) ? $file['name'] : '';
+	$file['name'] = SB_PHP::remove_vietnamese(SB_PHP::lowercase($file_name));
 	$file = apply_filters('sb_theme_pre_upload_file', $file);
     $file = apply_filters('sb_theme_before_upload_file', $file);
 	return $file;
@@ -2077,6 +2078,8 @@ function sb_theme_check_file_size_before_upload($file) {
     $limit_size = SB_Core::get_file_size_limit();
     $limit_count = SB_Core::get_file_count_limit();
     if($is_image !== false) {
+	    $file_name = isset($file['name']) ? $file['name'] : '';
+	    $file['name'] = SB_Core::sanitize_image_name($file_name);
         $limit_image_size = SB_Core::get_image_size_limit();
         $limit_image_count = SB_Core::get_image_count_limit();
         $allow_image_type = SB_Core::get_image_type_allow();

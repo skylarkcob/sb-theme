@@ -641,7 +641,31 @@ class SB_Post {
     }
 
     public static function the_date($date_format = '', $has_time = false, $time_format = '') {
-        echo self::get_date_meta($date_format, $has_time, $time_format);
+        echo '<i class="fa fa-calendar icon-left"></i>' . self::get_date_meta($date_format, $has_time, $time_format);
+    }
+
+    public static function the_entry_meta() {
+        self::the_author();
+        self::the_date();
+        self::the_comment_link();
+    }
+
+    public static function get_interested($post_id) {
+        return absint(self::get_meta($post_id, 'interested'));
+    }
+
+    public static function the_interest_button($args = array()) {
+        $post_id = isset($args['post_id']) ? $args['post_id'] : get_the_ID();
+        $interested = self::get_interested($post_id);
+        ?>
+        <span class="btn-interest">
+            <span class="label btn" data-post="<?php echo $post_id; ?>" data-interested="<?php echo $interested; ?>">
+                <i class="fa fa-thumbs-up icon-left"></i>
+                <span class="text"><?php _e('Quan tâm', 'sb-theme'); ?></span>
+            </span>
+            <span class="count"><?php echo $interested; ?></span>
+        </span>
+        <?php
     }
 
     public static function the_date_time($date_format = '', $time_format = '') {
@@ -1110,9 +1134,10 @@ class SB_Post {
         $taxonomy = 'post_tag';
         $transient_name = SB_Cache::build_post_term_list_transient_name($post_id, $taxonomy);
         if(!SB_Cache::enabled() || false === ($term_list = get_transient($transient_name))) {
-            $before = '<span class="entry-terms ' . $taxonomy . '" itemprop="keywords"><span class="entry-utility-prep">' . SB_Message::get_category() . ': </span>';
+            $tag_label = apply_filters('sb_theme_tag_list_label', __('Tags:', 'sb-theme'));
+            $before = '<span class="entry-terms ' . $taxonomy . '" itemprop="keywords"><span class="entry-utility-prep term-label"><i class="fa fa-tag icon-left"></i><span class="text">' . $tag_label . '</span></span>';
             $after = '</span>';
-            $term_list = get_the_tag_list($before, ', ', $after, $post_id);
+            $term_list = get_the_tag_list($before, $sep, $after, $post_id);
             if(SB_Cache::enabled() && !is_wp_error($term_list)) {
                 set_transient($transient_name, $term_list, 4 * WEEK_IN_SECONDS);
             }

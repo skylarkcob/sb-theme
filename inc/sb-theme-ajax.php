@@ -24,6 +24,15 @@ function sb_theme_admin_sidebar_change_ajax_callback() {
 }
 add_action('wp_ajax_sb_theme_admin_sidebar_change', 'sb_theme_admin_sidebar_change_ajax_callback');
 
+function sb_theme_interest_post_ajax_callback() {
+    $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : 0;
+    $interested = isset($_POST['interested']) ? $_POST['interested'] : 0;
+    SB_Post::update_meta($post_id, 'interested', $interested);
+    die();
+}
+add_action('wp_ajax_sb_theme_interest_post', 'sb_theme_interest_post_ajax_callback');
+add_action('wp_ajax_nopriv_sb_theme_interest_post', 'sb_theme_interest_post_ajax_callback');
+
 function sb_option_reset_ajax_callback() {
     $sb_page = isset( $_POST['sb_option_page'] ) ? $_POST[ 'sb_option_page' ] : '';
     $data = array();

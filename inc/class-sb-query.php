@@ -108,7 +108,7 @@ class SB_Query {
     }
 
     public static function get_paged() {
-        return get_query_var('paged', 1);
+        return absint(get_query_var('paged')) ? absint(get_query_var('paged')) : 1;
     }
 
     public static function get_recent_post_by_view($args = array()) {

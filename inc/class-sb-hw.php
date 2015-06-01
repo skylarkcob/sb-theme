@@ -16,6 +16,56 @@ class SB_HW {
         return $defaults;
     }
 
+    public static function the_recent_update_and_random_widget($exclude_ids = array()) {
+        $transient_name = 'sb_theme_query_home_post_recent_update';
+        if(false === ($query = get_transient($transient_name))) {
+            $args = array(
+                'post__not_in' => $exclude_ids,
+                'post_type' => self::get_readable_post_types(),
+                'posts_per_page' => 5
+            );
+            $query = SB_Query::get_recent_update($args);
+            set_transient($transient_name, $query, DAY_IN_SECONDS);
+        }
+
+        if($query->have_posts()) : ?>
+            <div class="sub-widget">
+                <h4 class="sub-title"><span>Mới cập nhật</span></h4>
+                <div class="sub-content">
+                    <ul class="list-posts list-unstyled">
+                        <?php while($query->have_posts()) : $query->the_post();
+                            $exclude_ids[] = get_the_ID();
+                            sb_get_custom_loop('loop-more-recent-sub-posts');
+                        endwhile; wp_reset_postdata(); ?>
+                    </ul>
+                </div>
+            </div>
+        <?php endif;
+        $transient_name = 'sb_theme_query_home_random_post';
+        if(false === ($query = get_transient($transient_name))) {
+            $args = array(
+                'post__not_in' => $exclude_ids,
+                'post_type' => SB_HW::get_readable_post_types(),
+                'posts_per_page' => 4
+            );
+            $query = SB_Query::get_random_posts($args);
+            set_transient($transient_name, $query, HOUR_IN_SECONDS);
+        }
+        if($query->have_posts()) : ?>
+            <div class="sub-widget">
+                <h4 class="sub-title"><span>Ngẫu nhiên</span></h4>
+                <div class="sub-content">
+                    <ul class="list-posts list-unstyled">
+                        <?php while($query->have_posts()) : $query->the_post();
+                            $exclude_ids[] = get_the_ID();
+                            sb_get_custom_loop('loop-more-recent-sub-posts');
+                        endwhile; wp_reset_postdata(); ?>
+                    </ul>
+                </div>
+            </div>
+        <?php endif;
+    }
+
     public static function get_readable_posts($args = array()) {
         $args['post_type'] = self::get_readable_post_types();
         return SB_Query::get($args);
@@ -340,7 +390,11 @@ class SB_HW {
     }
 
     public static function get_aff_url($post_id) {
-        return SB_Post::get_meta($post_id, 'wpcf-affiliate-url');
+        $result = SB_Post::get_meta($post_id, 'wpcf-affiliate-url');
+        if(empty($result)) {
+            $result = SB_Post::get_sb_meta($post_id, 'affiliate_url');
+        }
+        return $result;
     }
 
     public static function get_aff_by_slug($slug) {

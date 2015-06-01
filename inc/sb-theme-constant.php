@@ -47,7 +47,7 @@ define( 'SB_THEME_DEFAULT_LANGUAGE', 'vi' );
 
 define( 'SB_THEME_EMAIL', 'codewpvn@gmail.com' );
 
-define( 'SB_THEME_GITHUB', 'https://github.com/skylarkcob/sb-theme' );
+define( 'SB_THEME_GITHUB', SB_THEME_GITHUB_URL );
 
 define( 'SB_THEME_FACEBOOK_PAGE', 'https://www.facebook.com/Sauhicom' );
 

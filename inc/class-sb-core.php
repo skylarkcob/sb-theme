@@ -41,7 +41,9 @@ class SB_Core {
 
     public static function update_default_permalink_struct() {
         global $wp_rewrite;
-        $wp_rewrite->set_permalink_structure( '/%category%/%postname%.html' );
+	    $default_struct = '/%category%/%postname%.html';
+        $wp_rewrite->set_permalink_structure( $default_struct );
+	    update_option('permalink_structure', $default_struct);
         flush_rewrite_rules();
     }
 
@@ -787,6 +789,13 @@ class SB_Core {
     public static function switch_theme($name) {
         switch_theme($name);
     }
+
+	public static function sanitize_image_name($name) {
+		$name = SB_PHP::remove_vietnamese(SB_PHP::lowercase($name));
+		$name = sanitize_file_name($name);
+		$name = str_replace('_', '-', $name);
+		return $name;
+	}
 
     public static function sanitize($data, $type) {
         switch($type) {

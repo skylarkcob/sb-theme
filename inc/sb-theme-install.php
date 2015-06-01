@@ -290,6 +290,7 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
             'tabindex'  => '100'
         );
         $wp_admin_bar->add_node( $args );
+
         $args = array(
             'id'        => 'sbt-settings',
             'title'     => __('Cài đặt giao diện', 'sb-theme'),
@@ -297,6 +298,7 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
             'parent'    => 'sb-options'
         );
         $wp_admin_bar->add_node( $args );
+
         $args = array(
             'id'        => 'sbt-smtp-email',
             'title'     => __('SMTP Email', 'sb-theme'),
@@ -304,6 +306,7 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
             'parent'    => 'sb-options'
         );
         $wp_admin_bar->add_node( $args );
+
         $args = array(
             'id'        => 'sbt-advanced-settings',
             'title'     => __('Cài đặt nâng cao', 'sb-theme'),
@@ -311,6 +314,7 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
             'parent'    => 'sb-options'
         );
         $wp_admin_bar->add_node( $args );
+
         $args = array(
             'id'        => 'sbt-pagination',
             'title'     => __('Phân trang', 'sb-theme'),
@@ -318,6 +322,15 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
             'parent'    => 'sb-options'
         );
         $wp_admin_bar->add_node( $args );
+
+	    $args = array(
+		    'id'        => 'options-permalink',
+		    'title'     => __('Đường dẫn tĩnh', 'sb-theme'),
+		    'href'      => admin_url( 'options-permalink.php' ),
+		    'parent'    => 'sb-options'
+	    );
+	    $wp_admin_bar->add_node( $args );
+
         $args = array(
             'id'        => 'sbt-about',
             'title'     => __('Giới thiệu SB', 'sb-theme'),

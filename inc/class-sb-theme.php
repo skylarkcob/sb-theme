@@ -86,6 +86,36 @@ class SB_Theme {
         echo $class;
     }
 
+    public static function get_supported_socials() {
+        return apply_filters('sb_theme_social', array('facebook' => 'Facebook', 'gplus' => 'Google Plus', 'twitter' => 'Twitter', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn', 'pinterest' => 'Pinterest', 'zingme' => 'Zing Me', 'rss' => 'RSS'));
+    }
+
+    public static function the_social_list() {
+        $socials = self::get_supported_socials();
+        echo '<ul class="social list-unstyled list-socials">';
+        foreach($socials as $social_name => $text) {
+            $url = SB_Option::get_theme_social($social_name);
+            if(!empty($url)) {
+                $social_name = str_replace('_', '-', $social_name);
+                if('gplus' == $social_name) {
+                    $social_name = 'google-plus';
+                }
+                ?>
+                <li class="<?php echo $social_name; ?>">
+                    <a target="_blank" rel="nofollow" href="<?php echo $url; ?>">
+                        <i class="fa fa-<?php echo $social_name; ?> btn-social btn-<?php echo $social_name; ?>"></i><span class="text"><?php echo $text; ?></span>
+                    </a>
+                </li>
+                <?php
+            }
+        }
+        echo '</ul>';
+    }
+
+    public static function get_current_theme_info() {
+        return wp_get_theme();
+    }
+
     public static function the_recent_comment_list($comments, $args = array()) {
         $avatar_size = isset($args['avatar_size']) ? absint($args['avatar_size']) : 116;
         $content_length = isset($args['content_length']) ? absint($args['content_length']) : 80;
@@ -95,23 +125,25 @@ class SB_Theme {
                 <?php
                 $author_url = $comment->comment_author_url;
                 $post_comment_url = SB_Post::get_comment_link($comment->post_id);
+                $author_link = '<b>';
+                if(!empty($author_url)) {
+                    $author_link .= '<a itemprop="url" class="url fn n" href="' . $author_url . '">';
+                    $author_link .= '<span itemprop="name">' . $comment->comment_author . '</span>';
+                    $author_link .= '</a>';
+                } else {
+                    $author_link .= '<span itemprop="name">' . $comment->comment_author . '</span>';
+                }
+                $author_link .= '</b>';
                 ?>
                 <li class="a-comment">
-                    <?php echo get_avatar($comment->comment_author_email, $avatar_size); ?>
-                    <b>
-                        <?php if(!empty($author_url)) : ?>
-                            <a itemprop="url" class="url fn n" href="<?php echo $author_url; ?>">
-                                <span itemprop="name"><?php echo $comment->comment_author; ?></span>
-                            </a>
-                        <?php else : ?>
-                            <span itemprop="name"><?php echo $comment->comment_author; ?></span>
-                        <?php endif; ?>
-                    </b>
-                    : <?php echo SB_PHP::substr($comment->comment_content, $content_length); ?> <a href="<?php echo $post_comment_url; ?>">»</a>
+                    <?php
+                    echo get_avatar($comment->comment_author_email, $avatar_size);
+                    echo $author_link . ': ';
+                    echo SB_PHP::substr($comment->comment_content, $content_length); ?> <a href="<?php echo $post_comment_url; ?>">»</a>
                 </li>
             <?php endforeach; ?>
         </ul>
-        <?php
+    <?php
     }
 
     public static function the_widget_recent_post_most_views($args = array(), &$exclude_ids = array()) {
@@ -782,8 +814,13 @@ class SB_Theme {
     }
 
     public static function addthis() {
-        echo '<div class="addthis_native_toolbox addthis_toolbox"></div>';
+        echo '<div class="addthis_native_toolbox addthis_toolbox addthis-share socials-share"></div>';
     }
+
+	public static function use_user_custom_style() {
+		return apply_filters('sb_theme_use_user_custom_style', false);
+	}
+
     public static function sharethis() {
         ?>
         <span class='st_facebook_hcount sharethis-facebook' displayText='Facebook'></span>

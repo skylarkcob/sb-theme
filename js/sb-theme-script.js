@@ -579,6 +579,33 @@ var sb_password_strength,
             })
         })();
 
+        // Nút quan tâm bài viết
+        (function(){
+            $('.btn-interest .btn').on('click', function(e){
+                var that = $(this),
+                    container = that.parent(),
+                    post_id = that.attr('data-post'),
+                    interested = that.attr('data-interested'),
+                    count = container.find('.count');
+                that.addClass('disabled');
+                interested++;
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: sb_core_ajax.url,
+                    data: {
+                        action: 'sb_theme_interest_post',
+                        post_id: post_id,
+                        interested: interested
+                    },
+                    success: function(response){
+                        count.html(interested);
+                        that.attr('data-interested', interested);
+                    }
+                });
+            });
+        })();
+
         // Sign up form
         (function(){
             $('.sb-signup-form').on('submit', function(e){

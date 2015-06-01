@@ -1171,7 +1171,8 @@ function sb_theme_update_comment_spam_text() {
 	$blacklist_keys[] = '37.58.100';
 	$blacklist_keys[] = '1.52.133.67';
 	$blacklist_keys[] = '5.144.176.59';
-
+	$blacklist_keys[] = '46.151.52.36';
+	$blacklist_keys[] = '46.161.41.199';
 
 	if(count($blacklist_keys) > 0) {
 		$blacklist_keys = array_filter($blacklist_keys);

@@ -222,7 +222,7 @@ function sb_theme_setting_field_scroll_top() {
 function sb_theme_social_callback() {
     $options = SB_Option::get();
     $args = array();
-    $socials = apply_filters('sb_theme_social', array('facebook' => 'Facebook', 'gplus' => 'Google Plus', 'twitter' => 'Twitter', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn', 'pinterest' => 'Pinterest', 'zingme' => 'Zing Me', 'rss' => 'RSS'));
+    $socials = SB_Theme::get_supported_socials();
     foreach($socials as $social => $name) {
         $field = array(
             'id' => 'sb_theme_social_' . $social,

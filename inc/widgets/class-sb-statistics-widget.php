@@ -14,18 +14,21 @@ class SB_Statistics_Widget extends WP_Widget {
             echo $args['before_title'] . $title . $args['after_title'];
             $current_date_time = SB_Core::get_current_date_time();
             $sb_user_online_option = get_option('sb_user_online');
-            //print_r($sb_user_online_option);
+            $today_label = apply_filters('sb_theme_statistics_today_label', __('Hôm nay', 'sb-theme'));
+            $yesterday_label = apply_filters('sb_theme_statistics_yesterday_label', __('Hôm qua', 'sb-theme'));
+            $total_label = apply_filters('sb_theme_statistics_total_label', __('Tổng truy cập', 'sb-theme'));
+            $online_label = apply_filters('sb_theme_statistics_online_label', __('Đang trực tuyến', 'sb-theme'));
             ?>
             <div class="sb-statistics-widget">
                 <dl>
-                    <dt><?php _e('Hôm nay', 'sb-theme'); ?></dt>
-                    <dd><?php echo SB_Option::get_visits_today(); ?></dd>
-                    <dt><?php _e('Hôm qua', 'sb-theme'); ?></dt>
-                    <dd><?php echo SB_Option::get_visits_yesterday(); ?></dd>
-                    <dt><?php _e('Tổng truy cập', 'sb-theme'); ?></dt>
-                    <dd><?php echo SB_Option::get_visits(); ?></dd>
-                    <dt><?php _e('Đang trực tuyến', 'sb-theme'); ?></dt>
-                    <dd><?php echo SB_Option::get_visitor_online(); ?></dd>
+                    <dt class="today-label"><?php echo $today_label; ?></dt>
+                    <dd class="today-count"><?php echo SB_Option::get_visits_today(); ?></dd>
+                    <dt class="yesterday-label"><?php echo $yesterday_label; ?></dt>
+                    <dd class="yesterday-count"><?php echo SB_Option::get_visits_yesterday(); ?></dd>
+                    <dt class="total-label"><?php echo $total_label; ?></dt>
+                    <dd class="total-count"><?php echo SB_Option::get_visits(); ?></dd>
+                    <dt class="online-label"><?php echo $online_label; ?></dt>
+                    <dd class="online-count"><?php echo SB_Option::get_visitor_online(); ?></dd>
                 </dl>
             </div>
             <?php

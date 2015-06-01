@@ -74,6 +74,7 @@ class SB_Video {
         $height = isset($args['height']) ? $args['height'] : '';
         $autoplay = isset($args['autoplay']) ? $args['autoplay'] : 1;
         $origin = isset($args['origin']) ? $args['origin'] : '';
+        $full_screen = isset($args['full_screen']) ? (bool)$args['full_screen'] : true;
         $iframe = new SB_HTML('iframe');
         $atts = array(
             'type' => 'text/html',
@@ -81,6 +82,9 @@ class SB_Video {
             'data-server' => 'youtube',
             'data-id' => $id
         );
+        if($full_screen) {
+            $atts['allowfullscreen'] = 'allowfullscreen';
+        }
         if(!empty($width)) {
             $atts['width'] = $width;
         }

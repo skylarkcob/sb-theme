@@ -115,6 +115,10 @@ img {
     width: auto;
 }
 
+.sb-breadcrumb {
+    font-size: 13px;
+}
+
 .sb-media-upload .image-preview > img {
     max-height: 400px;
     max-width: 400px;
@@ -720,6 +724,10 @@ input:focus:-ms-input-placeholder { color:transparent; }
     margin: 0 0 8px;
     min-height: 40px;
     padding: 0 0 9px;
+}
+
+.list-recent-comments li b a {
+    font-weight: 700;
 }
 
 .list-recent-comments .avatar {
@@ -2341,28 +2349,35 @@ ol.guides li a:hover{
     color: #26c4f1;
 }
 
+.btn-google-plus,
 .btn-gplus,
 .btn-googleplus {
     background-color: #e93f2e;
     border: 1px solid #e52b18;
 }
+
+.btn-google-plus:hover, .btn-google-plus:focus, .btn-google-plus:active, .btn-google-plus.active, .open > .btn-google-plus.dropdown-toggle,
 .btn-gplus:hover, .btn-gplus:focus, .btn-gplus:active, .btn-gplus.active, .open > .btn-gplus.dropdown-toggle,
 .btn-googleplus:hover, .btn-googleplus:focus, .btn-googleplus:active, .btn-googleplus.active, .open > .btn-googleplus.dropdown-toggle {
     background-color: #ce2616;
     border: 1px solid #ae2012;
     color: #fff;
 }
+
+.btn-google-plus:active, .btn-google-plus.active, .open > .btn-google-plus.dropdown-toggle,
 .btn-gplus:active, .btn-gplus.active, .open > .btn-gplus.dropdown-toggle,
 .btn-googleplus:active, .btn-googleplus.active, .open > .btn-googleplus.dropdown-toggle {
     background-image: none;
 }
 
+.btn-google-plus.disabled, .btn-google-plus.disabled:hover, .btn-google-plus.disabled:focus, .btn-google-plus.disabled:active, .btn-google-plus.disabled.active, .btn-google-plus[disabled], .btn-google-plus[disabled]:hover, .btn-google-plus[disabled]:focus, .btn-google-plus[disabled]:active, .btn-google-plus.active[disabled], fieldset[disabled] .btn-google-plus, fieldset[disabled] .btn-google-plus:hover, fieldset[disabled] .btn-google-plus:focus, fieldset[disabled] .btn-google-plus:active, fieldset[disabled] .btn-google-plus.active,
 .btn-gplus.disabled, .btn-gplus.disabled:hover, .btn-gplus.disabled:focus, .btn-gplus.disabled:active, .btn-gplus.disabled.active, .btn-gplus[disabled], .btn-gplus[disabled]:hover, .btn-gplus[disabled]:focus, .btn-gplus[disabled]:active, .btn-gplus.active[disabled], fieldset[disabled] .btn-gplus, fieldset[disabled] .btn-gplus:hover, fieldset[disabled] .btn-gplus:focus, fieldset[disabled] .btn-gplus:active, fieldset[disabled] .btn-gplus.active,
 .btn-googleplus.disabled, .btn-googleplus.disabled:hover, .btn-googleplus.disabled:focus, .btn-googleplus.disabled:active, .btn-googleplus.disabled.active, .btn-googleplus[disabled], .btn-googleplus[disabled]:hover, .btn-googleplus[disabled]:focus, .btn-googleplus[disabled]:active, .btn-googleplus.active[disabled], fieldset[disabled] .btn-googleplus, fieldset[disabled] .btn-googleplus:hover, fieldset[disabled] .btn-googleplus:focus, fieldset[disabled] .btn-googleplus:active, fieldset[disabled] .btn-googleplus.active {
     background-color: #e93f2e;
     border: 1px solid #e52b18;
 }
 
+.btn-google-plus .badge,
 .btn-gplus .badge,
 .btn-googleplus .badge {
     background-color: #fff;
@@ -2392,6 +2407,31 @@ ol.guides li a:hover{
 .btn-youtube .badge {
     background-color: #fff;
     color: #e63127;
+}
+
+.btn-rss {
+    background-color: #feae1b;
+    border: 1px solid #e49c18;
+}
+
+.btn-rss:hover, .btn-rss:focus, .btn-rss:active, .btn-rss.active, .open > .btn-rss.dropdown-toggle {
+    background-color: #feae1b;
+    border: 1px solid #e49c18;
+    color: #fff;
+}
+
+.btn-rss:active, .btn-rss.active, .open > .btn-rss.dropdown-toggle {
+    background-image: none;
+}
+
+.btn-rss.disabled, .btn-rss.disabled:hover, .btn-rss.disabled:focus, .btn-rss.disabled:active, .btn-rss.disabled.active, .btn-rss[disabled], .btn-rss[disabled]:hover, .btn-rss[disabled]:focus, .btn-rss[disabled]:active, .btn-rss.active[disabled], fieldset[disabled] .btn-rss, fieldset[disabled] .btn-rss:hover, fieldset[disabled] .btn-rss:focus, fieldset[disabled] .btn-rss:active, fieldset[disabled] .btn-rss.active {
+    background-color: #feae1b;
+    border: 1px solid #e49c18;
+}
+
+.btn-rss .badge {
+    background-color: #fff;
+    color: #feae1b;
 }
 
 .btn-pinterest {
@@ -2466,6 +2506,49 @@ ol.guides li a:hover{
 }
 .btn > a {
     color: #fff;
+}
+
+.list-socials .btn-social {
+    height: 24px;
+    margin-right: 5px;
+    padding: 4px;
+    text-align: center;
+    vertical-align: middle;
+    width: 24px;
+}
+
+.btn-interest .label {
+    background-color: #eee;
+    font-size: 11px;
+    line-height: 17px;
+    padding: 5px 10px;
+}
+
+.btn-interest .fa {
+    font-size: 13px;
+    vertical-align: 1px;
+}
+
+.btn-interest .label {
+    color: #555;
+    display: inline-block;
+    font-weight: 400;
+    height: 20px;
+    margin-right: 6px;
+    overflow: hidden;
+    padding-bottom: 0;
+    padding-top: 0;
+    vertical-align: middle;
+}
+
+.btn-interest .count {
+    color: #656565;
+    font-size: 11px;
+}
+
+.btn-interest .label:hover {
+    background-color: #ededed;
+    box-shadow: none;
 }
 
 /* ==================== Icon inside button ==================== */
@@ -2964,6 +3047,12 @@ ol.guides li a:hover{
 
 .widget-sb-statistics dd {
     text-align: right;
+}
+
+.widget-sb-statistics dd::after {
+    clear: both;
+    content: "";
+    display: block;
 }
 
 .widget-sb-statistics dt {
