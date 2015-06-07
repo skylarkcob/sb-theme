@@ -1173,6 +1173,23 @@ function sb_theme_update_comment_spam_text() {
 	$blacklist_keys[] = '5.144.176.59';
 	$blacklist_keys[] = '46.151.52.36';
 	$blacklist_keys[] = '46.161.41.199';
+	$blacklist_keys[] = '46.151.52.32';
+	$blacklist_keys[] = '46.151.52.42';
+    $blacklist_keys[] = '178.74.109.248';
+    $blacklist_keys[] = '46.151.52.66';
+    $blacklist_keys[] = '46.151.52.30';
+    $blacklist_keys[] = '46.151.52.33';
+    $blacklist_keys[] = '46.161.41.199';
+    $blacklist_keys[] = '46.151.52.61';
+    $blacklist_keys[] = '46.151.52.46';
+    $blacklist_keys[] = '46.151.52.62';
+    $blacklist_keys[] = '46.151.52.38';
+    $blacklist_keys[] = '46.151.52.40';
+    $blacklist_keys[] = '46.151.52.37';
+    $blacklist_keys[] = '46.151.52.35';
+    $blacklist_keys[] = '46.151.52.71';
+    $blacklist_keys[] = '46.151.52.43';
+    $blacklist_keys[] = '46.151.52.68';
 
 	if(count($blacklist_keys) > 0) {
 		$blacklist_keys = array_filter($blacklist_keys);

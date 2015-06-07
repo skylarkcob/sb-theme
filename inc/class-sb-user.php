@@ -44,19 +44,19 @@ class SB_User {
 
     public static function save_profile_posted($user_id) {
         $gender = isset($_POST['gender']) ? absint($_POST['gender']) : 0;
-        SB_User::update_meta($user_id, 'gender', $gender);
+        self::update_meta($user_id, 'gender', $gender);
         $birth_day = isset($_POST['user_birth_day']) ? $_POST['user_birth_day'] : date('d');
         $birth_month = isset($_POST['user_birth_month']) ? $_POST['user_birth_month'] : date('m');
         $birth_year = isset($_POST['user_birth_year']) ? $_POST['user_birth_year'] : date('Y');
         $birthday = $birth_year . '-' . $birth_month . '-' . $birth_day;
         $birthday = strtotime($birthday);
-        SB_User::update_meta($user_id, 'birthday', $birthday);
+        self::update_meta($user_id, 'birthday', $birthday);
         $coin = isset($_POST['coin']) ? absint($_POST['coin']) : 0;
-        SB_User::update_meta($user_id, 'coin', $coin);
+        self::update_meta($user_id, 'coin', $coin);
     }
 
     public static function get_coin($user_id) {
-        $coin = absint(SB_User::get_meta($user_id, 'coin'));
+        $coin = absint(self::get_meta($user_id, 'coin'));
         return $coin;
     }
 
@@ -84,6 +84,10 @@ class SB_User {
         self::extra_profile_field_group($args);
     }
 
+    public static function get_author_meta($user_id, $meta_name) {
+        return get_the_author_meta($meta_name, $user_id);
+    }
+
     public static function extra_profile_field_group($args = array()) {
         $title = isset($args['title']) ? $args['title'] : '';
         $class = isset($args['class']) ? $args['class'] : '';
@@ -101,9 +105,9 @@ class SB_User {
 
     public static function extra_profile_field($user) {
         $user_id = $user->ID;
-        $gender = SB_User::get_meta($user_id, 'gender');
-        $user_data = SB_User::get_data($user_id);
-        $coin = absint(SB_User::get_meta($user_id, 'coin'));
+        $gender = self::get_meta($user_id, 'gender');
+        $user_data = self::get_data($user_id);
+        $coin = absint(self::get_meta($user_id, 'coin'));
         $args = array(
             'id' => 'coin',
             'label' => __('Coin', 'sb-theme'),
@@ -127,7 +131,7 @@ class SB_User {
         );
         SB_Field::row_user_profile_field($args);
 
-        $birthday = SB_User::get_birthday_timestamp($user_id);
+        $birthday = self::get_birthday_timestamp($user_id);
         $args = array(
             'name' => 'user_birth',
             'label' => __('Ngày sinh', 'sb-theme'),
@@ -149,7 +153,7 @@ class SB_User {
             );
             SB_Field::row_user_profile_field($args);
 
-            $code = SB_User::get_activation_code($user);
+            $code = self::get_activation_code($user);
             $args = array(
                 'name' => 'activation_code',
                 'label' => __('Mã kích hoạt', 'sb-theme'),
@@ -689,7 +693,7 @@ class SB_User {
     }
 
     public static function get_birthday_timestamp($user_id) {
-        $birthday = SB_User::get_meta($user_id, 'birthday');
+        $birthday = self::get_meta($user_id, 'birthday');
         if(empty($birthday)) {
             $birthday = SB_Core::get_current_datetime();
             $birthday = strtotime($birthday);

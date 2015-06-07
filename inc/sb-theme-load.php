@@ -47,7 +47,17 @@ require SB_THEME_INC_PATH . '/class-sb-membership.php';
 
 require SB_THEME_PLUGIN_PATH . '/really-simple-captcha/really-simple-captcha.php';
 
-require SB_THEME_INC_PATH . '/class-sb-menu-walker.php';
+if(SB_Core::use_custom_menu()) {
+    require SB_THEME_INC_PATH . '/class-sb-menu-walker.php';
+
+    require SB_THEME_INC_PATH . '/class-sb-menu-edit-walker.php';
+
+    require SB_THEME_INC_PATH . '/class-sb-custom-menu.php';
+
+    $GLOBALS['sb_theme_custom_menu'] = new SB_Custom_Menu();
+
+    require SB_THEME_INC_PATH . '/widgets/class-sb-menu-widget.php';
+}
 
 do_action('sb_theme_load_middle');
 
@@ -96,8 +106,6 @@ require SB_THEME_INC_PATH . '/class-sb-paginate.php';
 require SB_THEME_INC_PATH . '/widgets/class-sb-post-widget.php';
 
 require SB_THEME_INC_PATH . '/widgets/class-sb-tab-widget.php';
-
-require SB_THEME_INC_PATH . '/widgets/class-sb-menu-widget.php';
 
 require SB_THEME_INC_PATH . '/widgets/class-sb-video-widget.php';
 

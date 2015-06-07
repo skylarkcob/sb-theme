@@ -6,7 +6,7 @@ function sb_theme_term_meta_thumbnail($taxonomies = array()) {
     $fields = array(
         array(
             'name' => 'thumbnail',
-            'type' => 'image_url'
+            'type' => 'array'
         )
     );
     $args = array(
@@ -18,14 +18,16 @@ function sb_theme_term_meta_thumbnail($taxonomies = array()) {
 }
 
 function sb_theme_meta_term_thumbnail_callback( $term ) {
-    sb_term_meta_nonce();
+    SB_Theme::the_term_meta_nonce();
     $value = SB_Term::get_meta($term->term_id, $term->taxonomy, 'thumbnail');
+
     $args = array(
-        'id' => 'sb_category_thumbnail',
-        'label' => __('Thumbnail', 'sb-theme'),
+        'id' => 'sb_theme_term_thumbnail',
+        'label' => __('Ảnh thumbnail', 'sb-theme'),
         'name' => 'thumbnail',
         'value' => $value,
-        'description' => __('You can enter url or upload new image file.', 'sb-theme')
+        'description' => __('Bạn có thể nhập địa chỉ hoặc tải lên hình ảnh mới.', 'sb-theme'),
+        'autocomplete' => false
     );
     SB_Term_Field::image_upload($args);
 }
@@ -36,6 +38,38 @@ if(SB_Option::use_term_thumbnail()) {
         $taxs[] = 'category';
     }
     sb_theme_term_meta_thumbnail($taxs);
+}
+
+/*
+ * Lựa chọn màu sắc cho chuyên mục
+ */
+function sb_theme_term_meta_color($taxonomies = array()) {
+    $fields = array(
+        array(
+            'name' => 'color',
+            'type' => 'text'
+        )
+    );
+    $args = array(
+        'taxonomies' => $taxonomies,
+        'callback' => 'sb_theme_meta_term_color_callback',
+        'fields' => $fields
+    );
+    $term_meta = new SB_Term_Meta($args);
+}
+
+function sb_theme_meta_term_color_callback( $term ) {
+    SB_Theme::the_term_meta_nonce();
+    $value = SB_Term::get_meta($term->term_id, $term->taxonomy, 'color');
+    $args = array(
+        'id' => 'sb_theme_term_color',
+        'label' => __('Màu sắc', 'sb-theme'),
+        'name' => 'color',
+        'value' => $value,
+        'description' => __('Lựa chọn màu sắc đại diện cho chuyên mục.', 'sb-theme'),
+        'autocomplete' => false
+    );
+    SB_Term_Field::color_picker($args);
 }
 
 /*
@@ -391,3 +425,48 @@ if(SB_Option::use_administrative_boundaries()) {
 function sb_theme_metabox_administrative_boundaries_callback() {
     sb_theme_get_meta_box('meta-box-administrative-boundaries');
 }
+
+/*
+ * Thêm mục vào khung publish khi tạo mới hoặc sửa bài viết
+ */
+function sb_theme_publish_box_meta_field() {
+    global $post;
+    if(!SB_Core::is_valid_object($post)) {
+        return;
+    }
+    $post_type = $post->post_type;
+    $post_types = SB_Core::publish_box_meta_field_post_types();
+    if(in_array($post_type, $post_types)) {
+        SB_Theme::the_meta_box_nonce();
+        if(SB_Core::add_checkbox_featured_post()) {
+            $key = 'featured';
+            $value = 0;
+            if(SB_Post::is($post)) {
+                $value = SB_Post::get_meta($post->ID, $key);
+            }
+            $args = array(
+                'id' => 'sb_theme_meta_featured_post',
+                'name' => $key,
+                'value' => $value,
+                'label' => __('Featured?', 'sb-theme'),
+                'container_class' => 'misc-pub-section',
+                'option_value' => 1
+            );
+            SB_Field::checkbox($args);
+        }
+        do_action('sb_theme_post_publish_box_meta_field');
+    }
+}
+add_action('post_submitbox_misc_actions', 'sb_theme_publish_box_meta_field');
+
+function sb_theme_publish_box_meta_field_save($post_id) {
+    if(!SB_Core::check_before_save_post_meta($post_id)) {
+        return $post_id;
+    }
+    if(SB_Core::add_checkbox_featured_post()) {
+        $value = isset($_POST['featured']) ? 1 : 0;
+        SB_Post::update_meta($post_id, 'featured', $value);
+    }
+    return $post_id;
+}
+add_action('save_post', 'sb_theme_publish_box_meta_field_save');

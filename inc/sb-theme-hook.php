@@ -455,7 +455,9 @@ function sb_theme_widgets_init_hook() {
     register_widget('SB_Banner_Widget');
     register_widget('SB_Post_Widget');
     register_widget('SB_Tab_Widget');
-    register_widget('SB_Menu_Widget');
+    if(class_exists('SB_Menu_Widget')) {
+        register_widget('SB_Menu_Widget');
+    }
     if(class_exists('SB_Video_Widget')) {
         register_widget('SB_Video_Widget');
     }
@@ -520,6 +522,13 @@ function sb_theme_wp_footer() { ?>
     sb_theme_remove_facebook_login_special_char();
 }
 add_action('wp_footer', 'sb_theme_wp_footer');
+
+function sb_theme_add_to_body_before() {
+    if(SB_Theme::use_facebook_javascript_sdk()) {
+        SB_Theme::the_facebook_javascript_sdk();
+    }
+}
+add_action('sb_theme_body_before', 'sb_theme_add_to_body_before');
 
 /*
  * Chạy hàm khi plugin WordPress SEO by Yoast được kích hoạt

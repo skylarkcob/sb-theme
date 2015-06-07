@@ -179,6 +179,56 @@ class SB_Field {
         echo $after;
     }
 
+    public static function build_menu_item_field_id($field_name, $item_id) {
+        $id = str_replace('_', '-', $field_name);
+        return 'edit-menu-item-' . $id . '-' . $item_id;
+    }
+
+    public static function build_menu_item_field_name($field_name, $item_id) {
+        $name = str_replace('_', '-', $field_name);
+        return 'menu-item-' . $name . '[' . $item_id . ']';
+    }
+
+    public static function build_menu_item_field_class($field_name) {
+        $field_name = str_replace('_', '-', $field_name);
+        return 'edit-menu-item-' . $field_name;
+    }
+
+    public static function build_menu_item_field_data($field_name, $item_id) {
+        $result = array(
+            'id' => self::build_menu_item_field_id($field_name, $item_id),
+            'name' => self::build_menu_item_field_name($field_name, $item_id),
+            'class' => self::build_menu_item_field_class($field_name)
+        );
+        return $result;
+    }
+
+    public static function menu_item_before($field_name, $item_id, $label = '', $container_class = '') {
+        if(empty($container_class)) {
+            $container_class = 'description-wide';
+        }
+        $container_class = SB_PHP::add_string_with_space_before($container_class, 'margin-bottom-10 sbt-menu-field description field-' . $field_name);
+        ?>
+        <div class="<?php echo $container_class; ?>">
+        <label for="edit-menu-item-<?php echo $field_name; ?>-<?php echo $item_id; ?>">
+        <?php
+        if(!empty($label)) {
+            echo $label;
+        }
+        ?><br />
+        <?php
+    }
+
+    public static function menu_item_after($description = '') {
+        if(!empty($description)) {
+            echo '<span class="description">' . $description . '</span>';
+        }
+        ?>
+        </label>
+        </div>
+    <?php
+    }
+
     public static function media_upload_group($args = array()) {
         $name = isset($args['name']) ? trim($args['name']) : '';
         if(empty($name)) {
@@ -615,9 +665,7 @@ class SB_Field {
             if(!empty($checked)) {
                 $atts['checked'] = 'checked';
             }
-            if('radio' == $type) {
-                $atts['value'] = $option_value;
-            }
+            $atts['value'] = $field_value;
             if(!isset($args['autocomplete'])) {
                 $atts['autocomplete'] = 'off';
             }
@@ -1130,6 +1178,7 @@ class SB_Field {
                 'data-default-color' => $default
             );
             $args['attributes'] = $atts;
+            $args['field_class'] = $field_class;
             self::text($args);
         }
         self::the_after($before, $after);

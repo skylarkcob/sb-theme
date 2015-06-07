@@ -30,6 +30,14 @@ class SB_Core {
         return $shortcode_tags;
     }
 
+    public static function use_custom_menu() {
+        return apply_filters('sb_theme_use_custom_menu', false);
+    }
+
+    public static function use_menu_item_description() {
+        return apply_filters('sb_theme_use_menu_item_description', true);
+    }
+
     public static function get_permalink_by_id($id) {
         $result = '';
         $id = absint($id);
@@ -238,6 +246,13 @@ class SB_Core {
             return false;
         }
         return true;
+    }
+
+    public static function is_valid_object($object) {
+        if(is_object($object) && !is_wp_error($object)) {
+            return true;
+        }
+        return false;
     }
 
     public static function format_price($args = array()) {
@@ -797,6 +812,13 @@ class SB_Core {
 		return $name;
 	}
 
+    public static function sanitize_slug($slug) {
+        $slug = SB_PHP::remove_vietnamese(SB_PHP::lowercase($slug));
+        $slug = sanitize_title($slug);
+        $slug = str_replace('_', '-', $slug);
+        return $slug;
+    }
+
     public static function sanitize($data, $type) {
         switch($type) {
             case 'url':
@@ -1330,6 +1352,21 @@ class SB_Core {
         }
     }
 
+    public static function add_checkbox_featured_post() {
+        return apply_filters('sb_theme_add_checkbox_featured_post', true);
+    }
+
+    public static function publish_box_meta_field_post_types() {
+        return apply_filters('sb_theme_publish_box_meta_field_post_types', array('post'));
+    }
+
+    public static function check_before_save_post_meta($post_id) {
+        if(!SB_Core::verify_nonce('sb_meta_box', 'sb_meta_box_nonce') || (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) || !current_user_can('edit_post', $post_id)) {
+            return false;
+        }
+        return true;
+    }
+
     public static function use_custom_metas() {
         $result = false;
         if(sb_theme_support_term_meta() || SB_Option::utility_enabled('term_meta')) {
@@ -1337,6 +1374,8 @@ class SB_Core {
         } elseif(SB_Option::use_term_thumbnail()) {
             $result = true;
         } elseif(SB_Option::use_administrative_boundaries()) {
+            $result = true;
+        } elseif(self::add_checkbox_featured_post()) {
             $result = true;
         }
         $result = apply_filters('sb_theme_use_term_meta', $result);

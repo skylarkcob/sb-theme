@@ -283,17 +283,14 @@ class SB_Post {
         $query = self::get_all();
         if($query->have_posts()) {
             $my_posts = $query->posts;
-            global $post;
             foreach($my_posts as $post) {
                 if(SB_Core::is_error($post)) {
                     continue;
                 }
-                setup_postdata($post);
-                $args['post_content'] = get_the_content();
-                $args['post_id'] = get_the_ID();
+                $args['post_content'] = $post->post_content;
+                $args['post_id'] = $post->ID;
                 self::change_url_in_content($args);
             }
-            wp_reset_postdata();
         }
     }
 
@@ -568,12 +565,12 @@ class SB_Post {
         return self::set_thumbnail($post_id, $attach_id);
     }
 
-    public static function get_author_url() {
-        return get_author_posts_url(get_the_author_meta('ID'));
+    public static function get_author_url($author_nicename = '') {
+        return get_author_posts_url(get_the_author_meta('ID'), $author_nicename);
     }
 
-    public static function the_author() {
-        self::the_author_link();
+    public static function the_author($args = array()) {
+        self::the_author_link($args);
     }
 
     public static function get_the_date($format = '') {
@@ -644,8 +641,8 @@ class SB_Post {
         echo '<i class="fa fa-calendar icon-left"></i>' . self::get_date_meta($date_format, $has_time, $time_format);
     }
 
-    public static function the_entry_meta() {
-        self::the_author();
+    public static function the_entry_meta($args = array()) {
+        self::the_author($args);
         self::the_date();
         self::the_comment_link();
     }
@@ -913,6 +910,20 @@ class SB_Post {
         }
     }
 
+    public static function build_menu_item_meta_key($key_name) {
+        $key_name = str_replace('-', '_', $key_name);
+        return '_menu_item_' . $key_name;
+    }
+
+    public static function update_menu_item_meta_on_save($field_name, $menu_item_db_id) {
+        $field_name = str_replace('_', '-', $field_name);
+        $key = 'menu-item-' . $field_name;
+        if(isset($_REQUEST[$key]) && is_array($_REQUEST[$key])) {
+            $value = $_REQUEST[$key][$menu_item_db_id];
+            update_post_meta($menu_item_db_id, self::build_menu_item_meta_key($field_name), $value);
+        }
+    }
+
     public static function get_menu_custom_items() {
         $result = array();
         $transient_name = SB_Cache::build_custom_menu_transient_name();
@@ -1052,8 +1063,9 @@ class SB_Post {
         return SB_PHP::get_all_image_html_from_string($content);
     }
 
-    public static function get_author_link() {
-        $user_nicename = get_the_author_meta('user_nicename');
+    public static function get_author_link($args = array()) {
+        $author_meta = isset($args['author_meta']) ? $args['author_meta'] : 'user_nicename';
+        $user_nicename = get_the_author_meta($author_meta);
 
         $author_name = new SB_HTML('span');
         $atts = array(
@@ -1086,8 +1098,8 @@ class SB_Post {
         return $span->build();
     }
 
-    public static function the_author_link() {
-        echo self::get_author_link();
+    public static function the_author_link($args = array()) {
+        echo self::get_author_link($args);
     }
 
     public static function get_comments($post_id, $args = array()) {

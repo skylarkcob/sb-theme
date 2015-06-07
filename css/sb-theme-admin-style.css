@@ -168,7 +168,7 @@ a:focus {
     margin-top: 10px;
 }
 
-.margin-bttom-10 {
+.margin-bottom-10 {
     margin-bottom: 10px;
 }
 
@@ -1081,6 +1081,11 @@ div.sb-post-meta-row .image-preview {
     border: medium none;
     height: auto;
     width: auto;
+}
+
+.sb-media-upload .image-preview.has-image img {
+    background-color: #eee;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1) inset, 0 0 0 1px rgba(0, 0, 0, 0.05) inset;
 }
 
 .sb-option .sb-sortable-list.front-page-widget li {

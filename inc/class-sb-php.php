@@ -75,6 +75,14 @@ class SB_PHP {
         return $result;
     }
 
+    public static function get_current_day_of_week($full = true) {
+        $format = 'l';
+        if(!$full) {
+            $format = 'D';
+        }
+        return date($format);
+    }
+
     public static function is_array_has_value( $arr ) {
         if( is_array( $arr ) && count( $arr ) > 0 ) {
             return true;
@@ -954,41 +962,94 @@ class SB_PHP {
         return $output_file;
     }
 
+    public static function convert_month_name_to_vietnamese($month_full_name) {
+        switch($month_full_name) {
+            case 'January':
+                $month_full_name = 'Tháng một';
+                break;
+            case 'February':
+                $month_full_name = 'Tháng hai';
+                break;
+            case 'March':
+                $month_full_name = 'Tháng ba';
+                break;
+            case 'April':
+                $month_full_name = 'Tháng tư';
+                break;
+            case 'May':
+                $month_full_name = 'Tháng năm';
+                break;
+            case 'June':
+                $month_full_name = 'Tháng sáu';
+                break;
+            case 'July':
+                $month_full_name = 'Tháng bảy';
+                break;
+            case 'August':
+                $month_full_name = 'Tháng tám';
+                break;
+            case 'September':
+                $month_full_name = 'Tháng chín';
+                break;
+            case 'October':
+                $month_full_name = 'Tháng mười';
+                break;
+            case 'November':
+                $month_full_name = 'Tháng mười một';
+                break;
+            case 'December':
+                $month_full_name = 'Tháng mười hai';
+                break;
+        }
+        return $month_full_name;
+    }
 
+    public static function get_current_month_of_year($full = true) {
+        $format = 'F';
+        if(!$full) {
+            $format = 'M';
+        }
+        return date($format);
+    }
 
     public static function get_current_weekday_and_date_time( $format = 'd/m/Y H:i:s', $args = array() ) {
         return self::current_weekday( $format, $args );
     }
 
+    public static function convert_day_name_to_vietnamese($day_name) {
+        $weekday = $day_name;
+        switch ( $weekday ) {
+            case 'Monday':
+                $weekday = 'Thứ hai';
+                break;
+            case 'Tuesday':
+                $weekday = 'Thứ ba';
+                break;
+            case 'Wednesday':
+                $weekday = 'Thứ tư';
+                break;
+            case 'Thursday':
+                $weekday = 'Thứ năm';
+                break;
+            case 'Friday':
+                $weekday = 'Thứ sáu';
+                break;
+            case 'Saturday':
+                $weekday = 'Thứ bảy';
+                break;
+            case 'Sunday':
+                $weekday = 'Chủ nhật';
+                break;
+        }
+        return $weekday;
+    }
+
     public static function current_weekday( $format = 'd/m/Y H:i:s', $args = array() ) {
         self::timezone_hcm();
         $weekday = date( 'l' );
-        $weekday = strtolower( $weekday );
         $labels = isset( $args['labels'] ) ? $args['labels'] : array();
         $separator = isset( $args['separator'] ) ? $args['separator'] : ', ';
-        switch ( $weekday ) {
-            case 'monday':
-                $weekday = isset( $labels['mon'] ) ? $labels['mon'] : __( 'Thứ hai', 'sb-theme' );
-                break;
-            case 'tuesday':
-                $weekday = isset( $labels['tue'] ) ? $labels['tue'] : __( 'Thứ ba', 'sb-theme' );
-                break;
-            case 'wednesday':
-                $weekday = isset( $labels['wed'] ) ? $labels['wed'] : __( 'Thứ tư', 'sb-theme' );
-                break;
-            case 'thursday':
-                $weekday = isset( $labels['thur'] ) ? $labels['thur'] : __( 'Thứ năm', 'sb-theme' );
-                break;
-            case 'friday':
-                $weekday = isset( $labels['fri'] ) ? $labels['fri'] : __( 'Thứ sáu', 'sb-theme' );
-                break;
-            case 'saturday':
-                $weekday = isset( $labels['sat'] ) ? $labels['sat'] : __( 'Thứ bảy', 'sb-theme' );
-                break;
-            default:
-                $weekday = isset( $labels['sun'] ) ? $labels['sun'] : __( 'Chủ nhật', 'sb-theme' );
-                break;
-        }
+        $weekday = self::convert_day_name_to_vietnamese($weekday);
         return $weekday . $separator . date( $format );
     }
 
@@ -1008,6 +1069,33 @@ class SB_PHP {
 
     public static function set_session( $key, $value ) {
         $_SESSION[ $key ] = $value;
+    }
+
+    public static function color_hex_to_rgb($color, $opacity = false) {
+        $default = 'rgb(0,0,0)';
+        if(empty($color)) {
+            return $default;
+        }
+        if($color[0] == '#') {
+            $color = substr($color, 1);
+        }
+        if(strlen($color) == 6) {
+            $hex = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
+        } elseif(strlen($color) == 3) {
+            $hex = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
+        } else {
+            return $default;
+        }
+        $rgb = array_map('hexdec', $hex);
+        if($opacity) {
+            if(abs($opacity) > 1) {
+                $opacity = 1.0;
+            }
+            $output = 'rgba(' . implode(',', $rgb) . ',' . $opacity . ')';
+        } else {
+            $output = 'rgb(' . implode(',', $rgb) . ')';
+        }
+        return $output;
     }
 
     public static function set_session_array( $key, $value, $args = array() ) {

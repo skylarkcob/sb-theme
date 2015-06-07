@@ -80,6 +80,9 @@ class SB_Term_Meta {
             $value = isset($_POST[$name]) ? $_POST[$name] : '';
             $sb_term_metas[$term_id][$name] = $value;
             $sb_term_metas[$term_id]['taxonomy'] = $taxonomy;
+            if($name == 'thumbnail') {
+                update_option('sb_theme_test', $value);
+            }
         }
         SB_Option::update_term_metas($sb_term_metas);
         SB_Core::delete_transient('sb_theme_term_meta');

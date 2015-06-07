@@ -18,6 +18,26 @@ class SB_Theme {
         }
     }
 
+    public static function use_custom_menu() {
+        return SB_Core::use_custom_menu();
+    }
+
+    public static function add_term_field_thumbnail($taxonomies = array()) {
+        sb_theme_term_meta_thumbnail($taxonomies);
+    }
+
+    public static function add_category_field_thumbnail() {
+        self::add_term_field_thumbnail(array('category'));
+    }
+
+    public static function add_term_field_color($taxonomies = array()) {
+        sb_theme_term_meta_color($taxonomies);
+    }
+
+    public static function add_category_field_color() {
+        self::add_term_field_color(array('category'));
+    }
+
     public static function get_rss_feed_url() {
         $url = '';
         if(empty($url)) {
@@ -238,6 +258,11 @@ class SB_Theme {
         <?php endif;
     }
 
+    public static function get_category_widget_ids() {
+        $cats = SB_Option::get_theme_option_single_key('category_widget');
+        return SB_PHP::string_to_array(',', $cats);
+    }
+
     public static function the_favicon_html() {
         $favicon_url = SB_Option::get_favicon_url();
         if(!empty($favicon_url)) {
@@ -443,6 +468,32 @@ class SB_Theme {
         sb_theme_the_logo();
     }
 
+    public static function the_facebook_javascript_sdk($api_id = '1425884427679175') {
+        ?>
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v2.3&appId=<?php echo $api_id; ?>";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
+        <?php
+    }
+
+    public static function use_facebook_javascript_sdk() {
+        return apply_filters('sb_theme_use_facebook_javascript_sdk', false);
+    }
+
+    public static function the_facebook_share_and_like_buttons($url = '') {
+        if(empty($url) || !self::use_facebook_javascript_sdk()) {
+            return;
+        }
+        ?>
+        <div class="fb-like" data-href="<?php echo $url; ?>" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
+        <?php
+    }
+
     public static function the_menu($args = array()) {
         $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
         if(empty($theme_location)) {
@@ -470,6 +521,10 @@ class SB_Theme {
                 self::the_menu_default($args);
                 echo '</div>';
             }
+        }
+        $mobile_button = isset($args['mobile_button']) ? $args['mobile_button'] : false;
+        if($mobile_button) {
+            self::the_mobile_menu_button('', 'hidden button-' . $position);
         }
     }
 
@@ -534,9 +589,12 @@ class SB_Theme {
             $class = SB_PHP::add_string_with_space_before($class, 'search');
         }
         $search_args['search_icon'] = true;
+        $mobile_button = isset($args['mobile_button']) ? $args['mobile_button'] : false;
         if(!SB_Core::is_error($menu)) {
             echo '<div class="' . $class . '">';
-            self::the_mobile_menu_button($button_text);
+            if($mobile_button) {
+                self::the_mobile_menu_button($button_text);
+            }
             if($search) {
                 self::the_search_form($search_args);
             }
@@ -545,7 +603,9 @@ class SB_Theme {
             echo '</div>';
         } else {
             echo '<div class="' . $class . '">';
-            self::the_mobile_menu_button($button_text);
+            if($mobile_button) {
+                self::the_mobile_menu_button($button_text);
+            }
             if($search) {
                 self::the_search_form($search_args);
             }
@@ -554,11 +614,12 @@ class SB_Theme {
         }
     }
 
-    public static function the_mobile_menu_button($button_text = '') {
+    public static function the_mobile_menu_button($button_text = '', $class = '') {
         if(!empty($button_text)) {
             $button_text = '<span class="text">' . $button_text . '</span>';
         }
-        echo '<span class="mobile-menu-button"><i class="fa fa fa-bars"></i>' . $button_text . '</span>';
+        $class = SB_PHP::add_string_with_space_before($class, 'mobile-menu-button');
+        echo '<span class="' . $class . '"><i class="fa fa fa-bars"></i>' . $button_text . '</span>';
     }
 
     public static function google_analytics_tracking() {

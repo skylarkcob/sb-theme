@@ -61,7 +61,7 @@ class SB_Meta_Box {
     }
 
     public function save($post_id) {
-        if (!SB_Core::verify_nonce('sb_meta_box', 'sb_meta_box_nonce') || (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) || !current_user_can('edit_post', $post_id)) {
+        if(!SB_Core::check_before_save_post_meta($post_id)) {
             return $post_id;
         }
         foreach($this->fields as $field) {

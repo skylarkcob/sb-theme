@@ -157,6 +157,10 @@ img {
     padding-top: 2px;
 }
 
+.admin-bar .modal-dialog {
+    margin-top: 50px;
+}
+
 .sb-media-upload .sb-button:hover,
 .sb-media-upload .sb-button:active,
 .sb-media-upload .sb-button:focus {
@@ -293,8 +297,16 @@ img {
     margin-bottom: 10px;
 }
 
+.margin-bottom-15 {
+    margin-bottom: 15px;
+}
+
 .margin-bottom-20 {
     margin-bottom: 20px;
+}
+
+.margin-bottom-30 {
+    margin-bottom: 30px;
 }
 
 .margin-bottom-40 {
@@ -1852,7 +1864,11 @@ ol.guides li a:hover{
     position: absolute;
     top: 0;
     width: 250px;
-    z-index: 1001;
+    z-index: -1;
+}
+
+.sb-mobile-menu .sf-menu a {
+    border-left: medium none;
 }
 
 .search.sb-mobile-menu > div {
@@ -1908,7 +1924,7 @@ ol.guides li a:hover{
 }
 
 .sb-mobile-menu {
-    z-index: -1;
+    z-index: 499;
 }
 
 .sb-site.moved .sb-mobile-menu {
@@ -1960,7 +1976,7 @@ ol.guides li a:hover{
 .sb-mobile-menu {
     height: 100%;
     position: absolute;
-    width: 250px;
+    width: 0;
 }
 
 .sb-mobile-menu.right {
@@ -1993,6 +2009,15 @@ ol.guides li a:hover{
 
 .sb-mobile-menu li a {
     border-bottom: 1px solid #262626;
+    border-top: 1px solid #444;
+}
+
+.sb-mobile-menu .sf-menu > li:last-child {
+    border-bottom: 1px solid #444;
+}
+
+.sb-mobile-menu .sf-menu > li:first-child a {
+    border-top: medium none;
 }
 
 .sb-mobile-menu .sub-menu > li:last-child {

@@ -179,11 +179,14 @@ class SB_Option {
     }
 
     public static function get_term_metas() {
+        /*
         global $sb_term_metas;
-        if(!is_array($sb_term_metas) || count($sb_term_metas) < 1) {
+        if(!is_array($sb_term_metas) || count($sb_term_metas) < 1 || true) {
             $sb_term_metas = get_option('sb_term_metas');
         }
         return $sb_term_metas;
+        */
+        return get_option('sb_term_metas');
     }
 
     public static function update_term_metas($new_value) {

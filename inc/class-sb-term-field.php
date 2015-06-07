@@ -27,6 +27,16 @@ class SB_Term_Field {
         self::after();
     }
 
+    public static function color_picker($args = array()) {
+        $id = isset($args['id']) ? $args['id'] : '';
+        $label = isset($args['label']) ? $args['label'] : '';
+        self::before($id, $label);
+        //$args['container_class'] = isset($args['container_class']) ? $args['container_class'] . ' small' : 'small';
+        $args['label'] = '';
+        SB_Field::color_picker($args);
+        self::after();
+    }
+
     public static function is_edit_page() {
         if(isset($GLOBALS['pagenow']) && 'edit-tags.php' == $GLOBALS['pagenow']) {
             $action = isset($_GET['action']) ? $_GET['action'] : '';

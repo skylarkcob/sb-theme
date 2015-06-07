@@ -33,7 +33,7 @@ if(empty($id) || empty($title) || empty($callback)) {
                 <?php foreach($buttons as $button) : ?>
                     <?php
                     $ajax_loading = '';
-                    if(isset($button['loading_image']) || (bool)$button['loading_image']) {
+                    if(isset($button['loading_image']) && (bool)$button['loading_image']) {
                         $ajax_loading = SB_Theme::get_loading_image();
                     }
                     ?>

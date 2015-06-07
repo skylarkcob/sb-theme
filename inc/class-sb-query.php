@@ -45,6 +45,16 @@ class SB_Query {
         return self::get($args);
     }
 
+    public static function get_featured_posts($args = array()) {
+        $meta_item = array(
+            'key' => 'featured',
+            'value' => 1,
+            'type' => 'NUMERIC'
+        );
+        $args = self::build_meta_query($meta_item, $args);
+        return self::get($args);
+    }
+
     public static function get_post_by_term($term_id, $taxonomy, $args = array()) {
         $tax_item = array(
             'taxonomy' => $taxonomy,
@@ -102,6 +112,19 @@ class SB_Query {
         return self::get($args);
     }
 
+    public static function get_most_view_posts($args = array()) {
+        $args['orderby'] = 'meta_value_num';
+        $args['meta_key'] = 'views';
+        $meta_item = array(
+            'key' => 'views',
+            'value' => 0,
+            'type' => 'NUMERIC',
+            'compare' => '>'
+        );
+        $args = self::build_meta_query($meta_item, $args);
+        return self::get($args);
+    }
+
     public static function get_recent_update($args = array()) {
         $args['orderby'] = 'modified';
         return self::get($args);
@@ -112,57 +135,70 @@ class SB_Query {
     }
 
     public static function get_recent_post_by_view($args = array()) {
-        $tmp_args = $args;
         $posts_per_page = isset($args['posts_per_page']) ? $args['posts_per_page'] : 8;
-        $new_args = array(
-            'posts_per_page' => $posts_per_page * 3,
-            'post_type' => isset($args['post_type']) ? $args['post_type'] : 'post'
-        );
-        if(isset($args['post__not_in'])) {
-            $new_args['post__not_in'] = $args['post__not_in'];
-        }
-        $query = self::get_recent_post($new_args);
-        $post_ids = array();
-        if($query->have_posts()) {
-            $my_posts = $query->posts;
-            $temp_posts = array();
-            foreach($my_posts as $post) {
-                $post_id = $post->ID;
-                $item = array('id' => $post_id, 'views' => SB_Post::get_views($post_id));
-                array_push($temp_posts, $item);
+        $paged = isset($args['paged']) ? $args['paged'] : 1;
+        $offset = isset($args['offset']) ? $args['offset'] : 0;
+        $transient_name = 'sb_theme_query_recent_posts_ppp_' . $posts_per_page . '_paged_' . $paged . '_offset_' . $offset;
+        if(false === ($query = get_transient($transient_name))) {
+            $tmp_args = $args;
+            $new_args = array(
+                'posts_per_page' => -1,
+                'post_type' => isset($args['post_type']) ? $args['post_type'] : 'post'
+            );
+            if(isset($args['post__not_in'])) {
+                $new_args['post__not_in'] = $args['post__not_in'];
             }
-            $temp_posts = SB_PHP::array_sort($temp_posts, 'views', 'DESC');
-            $count = 0;
-            foreach($temp_posts as $key => $temp) {
-                if($count >= $posts_per_page) {
-                    break;
+            $query = self::get_recent_post($new_args);
+            $post_ids = array();
+            if($query->have_posts()) {
+                $my_posts = $query->posts;
+                $temp_posts = array();
+                foreach($my_posts as $post) {
+                    $post_id = $post->ID;
+                    $item = array('id' => $post_id, 'views' => SB_Post::get_views($post_id));
+                    array_push($temp_posts, $item);
                 }
-                array_push($post_ids, $temp['id']);
-                $count++;
-                unset($temp_posts[$key]);
-            }
-            if(count($post_ids) < $posts_per_page) {
-                $get_enough = isset($args['get_enough']) ? (bool)$args['get_enough'] : false;
-                if($get_enough) {
-                    $get_more = $posts_per_page - count($post_ids);
-                    $count = 0;
-                    foreach($temp_posts as $key => $temp) {
-                        if($count >= $get_more) {
-                            break;
+                $temp_posts = SB_PHP::array_sort($temp_posts, 'views', 'DESC');
+                $count = 0;
+                foreach($temp_posts as $key => $temp) {
+                    if($count >= $posts_per_page) {
+                        break;
+                    }
+                    array_push($post_ids, $temp['id']);
+                    $count++;
+                    unset($temp_posts[$key]);
+                }
+                if(count($post_ids) < $posts_per_page) {
+                    $get_enough = isset($args['get_enough']) ? (bool)$args['get_enough'] : false;
+                    if($get_enough) {
+                        $get_more = $posts_per_page - count($post_ids);
+                        $count = 0;
+                        foreach($temp_posts as $key => $temp) {
+                            if($count >= $get_more) {
+                                break;
+                            }
+                            array_push($post_ids, $temp['id']);
+                            $count++;
                         }
-                        array_push($post_ids, $temp['id']);
-                        $count++;
                     }
                 }
+                $args = $tmp_args;
+                if(count($post_ids) > 0) {
+                    $args['post__in'] = $post_ids;
+                }
+                $args['orderby'] = 'meta_value_num';
+                $args['meta_key'] = 'views';
+                $query = self::get($args);
+                if(!$query->have_posts()) {
+                    $args = array(
+                        'posts_per_page' => $posts_per_page
+                    );
+                    $args['orderby'] = 'meta_value_num';
+                    $args['meta_key'] = 'views';
+                    $query = self::get_recent_post($args);
+                }
             }
-            $args = $tmp_args;
-            if(count($post_ids) > 0) {
-                $args['post__in'] = $post_ids;
-            }
-
-            $args['orderby'] = 'meta_value_num';
-            $args['meta_key'] = 'views';
-            $query = new WP_Query($args);
+            set_transient($transient_name, $query, 30 * MINUTE_IN_SECONDS);
         }
         return $query;
     }
