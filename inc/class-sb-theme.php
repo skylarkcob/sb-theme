@@ -812,8 +812,44 @@ class SB_Theme {
         sb_theme_get_content($name);
     }
 
+    public static function get_meta_box($name) {
+        sb_theme_get_meta_box($name);
+    }
+
     public static function get_custom_loop($name) {
         sb_get_custom_loop($name);
+    }
+
+    public static function get_ads_items() {
+        global $sb_theme_ads_items;
+        if(!is_array($sb_theme_ads_items)) {
+            $sb_theme_ads_items = array();
+        }
+        return $sb_theme_ads_items;
+    }
+
+    public static function register_ads($id, $name, $description) {
+        global $sb_theme_ads_items;
+        if(!is_array($sb_theme_ads_items)) {
+            $sb_theme_ads_items = array();
+        }
+        if(array_key_exists($id, $sb_theme_ads_items)) {
+            return;
+        }
+        $new_ads_item = array(
+            'id' => $id,
+            'name' => $name,
+            'description' => $description
+        );
+        $sb_theme_ads_items[$id] = $new_ads_item;
+    }
+
+    public static function get_post_type_ads_name() {
+        return SB_Core::get_post_type_ads_name();
+    }
+
+    public static function get_ads_by_position($ads_id) {
+        return SB_Ads::get_by_position($ads_id);
     }
 
     public static function get_custom_metabox($name) {

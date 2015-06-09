@@ -146,8 +146,7 @@ function sb_theme_admin_enqueue_scripts_hook() {
     do_action('sb_theme_admin_enqueue_scripts_before');
 
     wp_enqueue_media();
-    wp_enqueue_script( 'jquery-ui-core' );
-
+    SB_Lib::load_jquery_ui();
     wp_register_style('sb-theme-admin-style', SB_THEME_URL . '/css/sb-theme-admin-style.css');
     wp_register_script( 'sb-theme-admin', SB_THEME_URL . '/js/sb-theme-admin-script.js', array( 'jquery' ), false, true );
 
@@ -887,6 +886,16 @@ function sb_theme_save_post_hook( $post_id, $post, $update ) {
     do_action('sb_theme_save_post', $post_id, $post, $update);
 }
 add_action( 'save_post', 'sb_theme_save_post_hook', 10, 3 );
+
+/*
+ * Xóa cache khi cập nhật quảng cáo
+ */
+function sb_theme_on_ads_update($post_id, $post, $update) {
+    if(SB_Core::get_post_type_ads_name() == $post->post_type) {
+        SB_Core::delete_transient('sb_theme_query_ads');
+    }
+}
+add_action('sb_theme_save_post', 'sb_theme_on_ads_update', 10, 3);
 
 /*
  * Chạy hàm khi xóa bài viết

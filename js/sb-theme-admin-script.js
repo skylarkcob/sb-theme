@@ -195,6 +195,28 @@ var sb_ajax_loader,
         }, 1000);
     })();
 
+    // Function datetime picker
+    (function(){
+        $('input.sb-datetime').each(function(index, el){
+            var that = $(el),
+                datetime_format = that.attr('data-datetime-format'),
+                min_date = that.attr('data-min-date'),
+                max_date = that.attr('data-max-date'),
+                options = {};
+            if(!$.trim(datetime_format)) {
+                datetime_format = 'dd/mm/yy';
+            }
+            options['dateFormat'] = datetime_format;
+            if($.trim(min_date)) {
+                options['minDate'] = min_date;
+            }
+            if($.trim(max_date)) {
+                options['maxDate'] = max_date;
+            }
+            that.datepicker(options);
+        });
+    })();
+
     // Turn on or turn off switch button
     (function(){
         sb_option.find('label.switch-button').each(function(){

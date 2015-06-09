@@ -470,3 +470,46 @@ function sb_theme_publish_box_meta_field_save($post_id) {
     return $post_id;
 }
 add_action('save_post', 'sb_theme_publish_box_meta_field_save');
+
+/*
+ * Tạo thông tin mở rộng cho quảng cáo
+ */
+$fields = array(
+    array(
+        'name' => 'ads_position',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'ads_expire_date',
+        'type' => 'datetime'
+    ),
+    array(
+        'name' => 'ads_link',
+        'type' => 'url'
+    ),
+    array(
+        'name' => 'ads_image',
+        'type' => 'media_image'
+    ),
+    array(
+        'name' => 'ads_code',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'ads_active',
+        'type' => 'checkbox'
+    )
+);
+
+$args = array(
+    'fields' => $fields,
+    'id' => 'sb_theme_ads_information',
+    'callback' => 'sb_theme_ads_information_callback',
+    'post_type' => SB_Core::get_post_type_ads_name(),
+    'title' => __('Thông tin quảng cáo', 'sb-theme')
+);
+$sb_theme_meta = new SB_Meta_Box($args);
+
+function sb_theme_ads_information_callback() {
+    SB_Theme::get_meta_box('meta-box-ads-information');
+}

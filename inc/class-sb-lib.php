@@ -10,6 +10,13 @@ class SB_Lib {
         sb_theme_load_jquery_datetimepicker();
     }
 
+    public static function load_jquery_ui() {
+        wp_enqueue_script('jquery-ui-core');
+        wp_enqueue_script('jquery-ui-datepicker');
+        wp_enqueue_style('wp-jquery-ui-dialog');
+        wp_enqueue_style('jquery-ui-style', '//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css');
+    }
+
     public static function load_owl_carousel() {
         sb_theme_load_owl_carousel();
     }

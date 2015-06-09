@@ -59,6 +59,8 @@ if(SB_Core::use_custom_menu()) {
     require SB_THEME_INC_PATH . '/widgets/class-sb-menu-widget.php';
 }
 
+require SB_THEME_INC_PATH . '/sb-theme-global-variable.php';
+
 do_action('sb_theme_load_middle');
 
 require SB_THEME_INC_PATH . '/class-sb-payment.php';
@@ -66,6 +68,8 @@ require SB_THEME_INC_PATH . '/class-sb-payment.php';
 require SB_THEME_INC_PATH . '/class-sb-ngan-luong.php';
 
 require SB_THEME_INC_PATH . '/class-sb-post.php';
+
+require SB_THEME_INC_PATH . '/class-sb-ads.php';
 
 require SB_THEME_INC_PATH . '/class-sb-html.php';
 

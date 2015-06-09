@@ -170,6 +170,55 @@ class SB_PHP {
         }
     }
 
+    public static function convert_datetime_format_to_jquery($php_format) {
+        $matched_symbols = array(
+            // Day
+            'd' => 'dd',
+            'D' => 'D',
+            'j' => 'd',
+            'l' => 'DD',
+            'N' => '',
+            'S' => '',
+            'w' => '',
+            'z' => 'o',
+            // Week
+            'W' => '',
+            // Month
+            'F' => 'MM',
+            'm' => 'mm',
+            'M' => 'M',
+            'n' => 'm',
+            't' => '',
+            // Year
+            'L' => '',
+            'o' => '',
+            'Y' => 'yy',
+            'y' => 'y',
+            // Time
+            'a' => '',
+            'A' => '',
+            'B' => '',
+            'g' => '',
+            'G' => '',
+            'h' => '',
+            'H' => '',
+            'i' => '',
+            's' => '',
+            'u' => ''
+        );
+        $result = '';
+        $escaping = false;
+        for($i = 0; $i < strlen($php_format); $i++) {
+            $char = $php_format[$i];
+            if(isset($matched_symbols[$char])) {
+                $result .= $matched_symbols[$char];
+            } else {
+                $result .= $char;
+            }
+        }
+        return esc_attr($result);
+    }
+
     public static function date_plus_minute( $date, $minute ) {
         $kq = new DateTime( $date );
         $time_modify = '+' . $minute;

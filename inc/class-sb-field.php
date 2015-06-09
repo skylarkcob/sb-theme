@@ -107,6 +107,66 @@ class SB_Field {
         echo self::get_option($args);
     }
 
+    public static function datetime_picker($args = array()) {
+        $name = isset($args['name']) ? $args['name'] : '';
+        $value = isset($args['value']) ? $args['value'] : '';
+        $field_class = isset($args['field_class']) ? trim($args['field_class']) : '';
+        $label = isset($args['label']) ? $args['label'] : '';
+        $date_format = isset($args['date_format']) ? $args['date_format'] : SB_Option::get_date_format();
+        if(!empty($value)) {
+            $value = date($date_format, $value);
+        }
+        if($value == 0) {
+            $value = '';
+        }
+        $field_class = SB_PHP::add_string_with_space_before($field_class, 'sb-datetime width-small');
+        $display_block = isset($args['display_block']) ? $args['display_block'] : true;
+        if($display_block) {
+            $field_class = SB_PHP::add_string_with_space_before($field_class, 'display-block');
+        }
+        $current = isset($args['current']) ? $args['current'] : false;
+        if($current && empty($value)) {
+            $value = date($date_format);
+        }
+        $container_class = isset($args['container_class']) ? $args['container_class'] : '';
+        $container_class = SB_PHP::add_string_with_space_before($container_class, 'sb-field-datetime-picker');
+        $before = isset($args['before']) ? $args['before'] : '<div class="' . $container_class . '">';
+        $after = isset($args['after']) ? $args['after'] : '</div>';
+        $description = isset($args['description']) ? $args['description'] : '';
+        $id = isset($args['id']) ? $args['id'] : '';
+        $date_format_jquery = SB_PHP::convert_datetime_format_to_jquery($date_format);
+        echo $before;
+        self::label(array('for' => $id, 'text' => $label));
+        $args['value'] = $value;
+        $args['only'] = true;
+        $args['field_class'] = $field_class;
+        $args['placeholder'] = $date_format_jquery;
+        $args['autocomplete'] = false;
+        $attributes = isset($args['attributes']) ? (array)$args['attributes'] : array();
+        $min_date = isset($args['min_date']) ? $args['min_date'] : '';
+        $max_date = isset($args['max_date']) ? $args['max_date'] : '';
+        if(empty($min_date) && !is_numeric($min_date)) {
+            $min_date_by_value = isset($args['min_date_by_value']) ? $args['min_date_by_value'] : false;
+            if($min_date_by_value) {
+                $min_date = $value;
+            }
+        }
+        $atts = array(
+            'data-datetime-format' => $date_format_jquery
+        );
+        if(!empty($min_date) || is_numeric($min_date)) {
+            $atts['data-min-date'] = $min_date;
+        }
+        if(!empty($max_date)) {
+            $atts['data-max-date'] = $max_date;
+        }
+        $attributes = wp_parse_args($attributes, $atts);
+        $args['attributes'] = $attributes;
+        self::text($args);
+        self::the_description($description);
+        self::the_after($before, $after);
+    }
+
     public static function select_birthday($args = array()) {
         $lang = isset($args['language']) ? $args['language'] : 'en';
         $birthday = isset($args['value']) ? $args['value'] : strtotime(SB_Core::get_current_datetime());
@@ -677,12 +737,14 @@ class SB_Field {
             echo $html->build();
         } else {
             echo $before;
+            $label_class = isset($args['label_class']) ? $args['label_class'] : '';
             if(!empty($label) && 'checkbox' != $type && 'radio' != $type) {
-                self::label(array('text' => $label, 'for' => 'id'));
+                self::label(array('text' => $label, 'for' => $id, 'class' => $label_class));
             }
             echo $html->build();
             if('checkbox' == $type || 'radio' == $type) {
-                self::label(array('text' => $label, 'for' => $id, 'attributes' => array('class' => $type . '-label')));
+                $label_class = SB_PHP::add_string_with_space_before($label_class, $type . '-label');
+                self::label(array('text' => $label, 'for' => $id, 'attributes' => array('class' => $label_class)));
             }
 
             if($with_button) {
@@ -849,9 +911,10 @@ class SB_Field {
         $options = isset($args['options']) ? $args['options'] : array();
         $description = isset($args['description']) ? $args['description'] : '';
         $container_class = isset($args['container_class']) ? $args['container_class'] : '';
+        $container_class = SB_PHP::add_string_with_space_before($container_class, 'sb-field-select');
         $load_item = isset($args['load_item']) ? $args['load_item'] : true;
         $value = isset($args['value']) ? $args['value'] : '';
-        $field_class = isset($args['field_class']) ? $args['field_class'] : '';
+        $field_class = isset($args['field_class']) ? $args['field_class'] : 'widefat';
         if(!is_array($options) || count($options) < 1) {
             $options = $list_options;
         }
@@ -968,7 +1031,8 @@ class SB_Field {
         $html = new SB_HTML('label');
         $atts = array(
             'for' => isset($args['for']) ? $args['for'] : '',
-            'text' => isset($args['text']) ? $args['text'] : ''
+            'text' => isset($args['text']) ? $args['text'] : '',
+            'class' => isset($args['class']) ? $args['class'] : ''
         );
         $html->set_attribute_array($atts);
         $attributes = isset($args['attributes']) ? $args['attributes'] : array();

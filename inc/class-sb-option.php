@@ -117,7 +117,11 @@ class SB_Option {
     }
 
     public static function get_timezone_string() {
-        return get_option('timezone_string');
+        $result = get_option('timezone_string');
+        if(empty($result)) {
+            $result = 'Asia/Ho_Chi_Minh';
+        }
+        return $result;
     }
 
     public static function update_permalink($struct) {

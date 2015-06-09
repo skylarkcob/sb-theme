@@ -1,4 +1,7 @@
 <?php
+if(class_exists('SB_Product')) {
+    return;
+}
 class SB_Product {
     public static function get_category_thumbnail_url($cat) {
         $thumbnail_id = get_woocommerce_term_meta( $cat->term_id, 'thumbnail_id', true );

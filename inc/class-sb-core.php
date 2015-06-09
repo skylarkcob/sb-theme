@@ -152,6 +152,14 @@ class SB_Core {
         return json_decode($captcha);
     }
 
+    public static function use_ads_system() {
+        return apply_filters('sb_theme_use_ads_system', false);
+    }
+
+    public static function get_post_type_ads_name() {
+        return 'sbt_ads';
+    }
+
     public static function check_captcha($code) {
         return SB_Captcha::check($code);
     }
@@ -233,12 +241,12 @@ class SB_Core {
         return class_exists('YARPP');
     }
 
-    public static function current_time_mysql() {
-        return current_time('mysql', 0);
+    public static function current_time_mysql($gmt = 0) {
+        return current_time('mysql', $gmt);
     }
 
-    public static function current_time_stamp() {
-        return current_time('timestamp', 0);
+    public static function current_time_stamp($gmt = 0) {
+        return current_time('timestamp', $gmt);
     }
 
     public static function is_error($thing) {
@@ -654,7 +662,8 @@ class SB_Core {
     }
 
     public static function set_default_timezone() {
-        date_default_timezone_set(SB_Option::get_timezone_string());
+        $time_zone_string = SB_Option::get_timezone_string();
+        date_default_timezone_set($time_zone_string);
     }
 
     public static function get_current_datetime() {
