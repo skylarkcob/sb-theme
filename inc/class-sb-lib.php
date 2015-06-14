@@ -78,4 +78,14 @@ class SB_Lib {
 		self::load_bootstrap();
 		self::load_font_awesome();
 	}
+
+    public static function load_boostrap_chosen() {
+        wp_enqueue_style('bootstrap-shosen-style', SB_THEME_LIB_URL . '/bootstrap-chosen/bootstrap-chosen.css');
+        wp_enqueue_script('bower-chosen', SB_THEME_LIB_URL . '/bower-chosen/chosen.jquery.js', array('jquery'), false, true);
+    }
+
+    public static function load_bower_chosen() {
+        wp_enqueue_style('bower-shosen-style', SB_THEME_LIB_URL . '/bower-chosen/chosen.css');
+        wp_enqueue_script('bower-chosen', SB_THEME_LIB_URL . '/bower-chosen/chosen.jquery.js', array('jquery'), false, true);
+    }
 }

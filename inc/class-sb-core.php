@@ -920,6 +920,37 @@ class SB_Core {
 	    }
     }
 
+    public static function generate_theme_license_key($domain) {
+        $domain = SB_PHP::get_domain_name_only($domain);
+        $text = SB_THEME_PASS . '-domain:' . $domain;
+        return wp_hash_password($text);
+    }
+
+    public static function is_theme_for_domain($domain = '') {
+        $transient_name = 'sb_theme_check_theme_for_domain';
+        if(false === ($result = get_transient($transient_name))) {
+            if(!defined('SB_THEME_LICENSE_KEY')) {
+                update_option('sb_theme_license_defined', 0);
+                $result = 0;
+            } else {
+                update_option('sb_theme_license_defined', 1);
+                if(empty($domain)) {
+                    $domain = get_bloginfo('url');
+                }
+                $domain = SB_PHP::get_domain_name_only($domain);
+                $text = SB_THEME_PASS . '-domain:' . $domain;
+                if(SB_User::check_password($text, SB_THEME_LICENSE_KEY)) {
+                    $result = 1;
+                } else {
+                    $result = 0;
+                }
+            }
+            update_option('sb_theme_license_valid', $result);
+            set_transient($transient_name, $result, DAY_IN_SECONDS);
+        }
+        return (bool)$result;
+    }
+
     public static function get_admin_edit_page_url() {
         $post_type = isset($_GET['post_type']) ? $_GET['post_type'] : '';
         $edit_url = admin_url('edit.php');
@@ -1025,6 +1056,18 @@ class SB_Core {
             return true;
         }
         return false;
+    }
+
+    public static function is_theme_developing() {
+        $result = apply_filters('sb_theme_developing', false);
+        if($result) {
+            $domain = get_bloginfo('url');
+            $domain = SB_PHP::get_domain_name_only($domain);
+            if(false === strpos($domain, 'hocwp.net') && false === strpos($domain, 'localhost')) {
+                $result = false;
+            }
+        }
+        return $result;
     }
 
     public static function is_support_post_favorites() {

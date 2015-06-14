@@ -41,6 +41,20 @@ function sb_theme_setting_field_category_widget() {
     sb_theme_add_setting_field('sb_theme_category_widget', __('Nhóm chuyên mục', 'sb-theme'), 'sb_theme_category_widget_callback');
 }
 
+function sb_theme_hotline_callback() {
+    $value = SB_Option::get_theme_option_single_key('hotline');
+    $args = array(
+        'id' => 'sb_theme_hotline',
+        'name' => SB_Option::build_sb_theme_option_name(array('hotline')),
+        'value' => $value
+    );
+    SB_Field::text($args);
+}
+
+function sb_theme_setting_field_hotline() {
+    sb_theme_add_setting_field('sb_theme_hotline', __('Hotline', 'sb-theme'), 'sb_theme_hotline_callback');
+}
+
 function sb_theme_taxonomy_channel_ui_connect_callback() {
     $args = array(
         'option_name' => 'channel_ui_connect',
@@ -87,7 +101,7 @@ function sb_theme_addthis_callback() {
     $args = array(
         'id' => 'sb_theme_addthis_profile_id',
         'name' => 'sb_options[theme][addthis_profile_id]',
-        'description' => __('Your profile ID at AddThis.', 'sb-theme'),
+        'description' => __('Mã ID tài khoản AddThis của bạn.', 'sb-theme'),
         'field_class' => 'width-medium',
         'value' => $value
     );
@@ -103,7 +117,7 @@ function sb_theme_add_to_head_callback() {
     $args = array(
         'id' => 'sb_theme_add_to_head',
         'name' => 'sb_options[theme][add_to_head]',
-        'description' => __('Put your code here and it will be inserted into head meta.', 'sb-theme'),
+        'description' => __('Đặt các đoạn mã của bạn vào đây thì sẽ xuất hiện vào thẻ head của trang.', 'sb-theme'),
         'field_class' => 'width-large',
         'value' => $value,
         'media_buttons' => false,
@@ -112,11 +126,11 @@ function sb_theme_add_to_head_callback() {
         'only_text' => true,
         'textarea_rows' => 10
     );
-    SB_Field::rich_editor($args);
+    SB_Field::textarea($args);
 }
 
 function sb_theme_setting_field_add_to_head() {
-    sb_theme_add_setting_field('sb_theme_add_to_head', __('Add to head', 'sb-theme'), 'sb_theme_add_to_head_callback');
+    sb_theme_add_setting_field('sb_theme_add_to_head', __('Thêm vào thẻ head', 'sb-theme'), 'sb_theme_add_to_head_callback');
 }
 
 function sb_theme_sharethis_callback() {
@@ -124,7 +138,7 @@ function sb_theme_sharethis_callback() {
     $args = array(
         'id' => 'sb_theme_sharethis_pub_key',
         'name' => 'sb_options[theme][sharethis_pub_key]',
-        'description' => __('Your publisher key on ShareThis website.', 'sb-theme'),
+        'description' => __('Mã publisher trên tài khoản ShareThis của bạn.', 'sb-theme'),
         'field_class' => 'width-medium',
         'value' => $value
     );
@@ -140,7 +154,7 @@ function sb_theme_google_analytics_callback() {
     $args = array(
         'id' => 'sb_theme_google_analytics',
         'name' => SB_Option::build_sb_theme_option_name(array('google_analytics')),
-        'description' => __('Your Google Analytics tracking ID.', 'sb-theme'),
+        'description' => __('Mã ID theo dõi Google Analytics của bạn.', 'sb-theme'),
         'field_class' => 'width-medium',
         'value' => $value
     );
@@ -175,7 +189,7 @@ function sb_theme_facebook_api_callback() {
     $args = array(
         'id' => 'sb_theme_facebook_api_callback_url_profile_id',
         'name' => SB_Option::build_sb_theme_option_name(array('facebook_api', 'callback_url')),
-        'description' => __('Facebook callback url.', 'sb-theme'),
+        'description' => __('Đường dẫn trả về khi thực thi lệnh từ Facebook.', 'sb-theme'),
         'value' => $value
     );
     SB_Field::text_field($args);
@@ -190,7 +204,7 @@ function sb_theme_facebook_fanpage_id_callback() {
     $args = array(
         'id' => 'sb_theme_facebook_fanpage_id',
         'name' => 'sb_options[theme][facebook_fanpage]',
-        'description' => __('Your fanpage ID at Facebook.', 'sb-theme'),
+        'description' => __('Mã ID của Fanpage trên Facebook.', 'sb-theme'),
         'value' => $value
     );
     SB_Field::text_field($args);
@@ -204,7 +218,7 @@ function sb_theme_scroll_top_callback() {
     $name = 'sb_options[theme][scroll_top]';
     $options = SB_Option::get();
     $value = isset($options['theme']['scroll_top']) ? $options['theme']['scroll_top'] : 1;
-    $description = __('You can turn on or turn off the scroll to top button on your site.', 'sb-theme');
+    $description = __('Bạn có thể bật hoặc tắt chức năng cho phép hiển thị nút quay về đầu trang.', 'sb-theme');
     $id = 'sb_theme_scroll_top';
     $args = array(
         'id' => $id,
@@ -216,7 +230,7 @@ function sb_theme_scroll_top_callback() {
 }
 
 function sb_theme_setting_field_scroll_top() {
-    sb_theme_add_setting_field('sb_theme_scroll_to_top', __('Scroll to top', 'sb-theme'), 'sb_theme_scroll_top_callback');
+    sb_theme_add_setting_field('sb_theme_scroll_to_top', __('Nút về đầu trang', 'sb-theme'), 'sb_theme_scroll_top_callback');
 }
 
 function sb_theme_social_callback() {
@@ -228,7 +242,7 @@ function sb_theme_social_callback() {
             'id' => 'sb_theme_social_' . $social,
             'name' => 'sb_options[theme][social][' . $social . ']',
             'value' => isset($options['theme']['social'][$social]) ? $options['theme']['social'][$social] : '',
-            'description' => __('The url to your ' . $name . ' page.', 'sb-theme')
+            'description' => __('Đường dẫn tới trang ' . $name . ' của bạn.', 'sb-theme')
         );
         array_push($args, $field);
     }
@@ -237,7 +251,7 @@ function sb_theme_social_callback() {
 }
 
 function sb_theme_setting_field_social() {
-    sb_theme_add_setting_field('sb_theme_social', __('Social settings', 'sb-theme'), 'sb_theme_social_callback');
+    sb_theme_add_setting_field('sb_theme_social', __('Mạng xã hội', 'sb-theme'), 'sb_theme_social_callback');
 }
 
 function sb_theme_no_thumbnail_callback() {
@@ -247,11 +261,11 @@ function sb_theme_no_thumbnail_callback() {
         'id' => 'sb_theme_no_thumbnail',
         'name' => 'sb_options[theme][thumbnail]',
         'value' => $value,
-        'description' => __('You can enter url or upload new thumbnail image file.', 'sb-theme')
+        'description' => __('Bạn có thể nhập vào đường dẫn hoặc tải lên hình ảnh mới.', 'sb-theme')
     );
     SB_Field::media_image($args);
 }
 
 function sb_theme_setting_field_no_thumbnail() {
-    sb_theme_add_setting_field('sb_theme_no_thumbnail', __('Thumbnail image', 'sb-theme'), 'sb_theme_no_thumbnail_callback');
+    sb_theme_add_setting_field('sb_theme_no_thumbnail', __('Ảnh thumbnail mặc định', 'sb-theme'), 'sb_theme_no_thumbnail_callback');
 }

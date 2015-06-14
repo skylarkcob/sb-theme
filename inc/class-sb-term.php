@@ -72,7 +72,7 @@ class SB_Term {
         $result = array();
         $trasient_name = 'sb_theme_term_meta_' . $child_taxonomy . '_of_' . $parent_key . '_' . $parent_id;
         if(false === ($result = get_transient($trasient_name))) {
-            $sb_term_metas = SB_Option::get_term_metas();
+            $sb_term_metas = (array)SB_Option::get_term_metas();
             foreach($sb_term_metas as $term_id => $data) {
                 if(isset($data[$parent_key]) && $parent_id == $data[$parent_key]) {
                     $result[] = get_term($term_id, $child_taxonomy);

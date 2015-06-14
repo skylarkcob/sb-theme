@@ -1,16 +1,16 @@
 <?php do_action('sb_theme_html_before'); ?>
 <!DOCTYPE html>
-<html <?php language_attributes(); ?> class="no-js">
+<html lang="vi" dir="ltr" class="no-js">
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <?php if(version_compare(get_bloginfo('version'), '4.1', '<')) : ?>
         <title><?php SB_Theme::the_title(); ?></title>
     <?php endif; ?>
-    <meta name="viewport" content="width=device-width">
-    <link rel="profile" href="http://gmpg.org/xfn/11">
-    <link rel="pingback" href="<?php bloginfo('pingback_url'); ?>">
-    <script>(function(){document.documentElement.className='js'})();</script>
+	<meta content="width=device-width, initial-scale=1" name="viewport">
     <?php wp_head(); ?>
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>">
+	<script>(function(){document.documentElement.className='js'})();</script>
 </head>
 <body <?php body_class(); ?>>
 <?php

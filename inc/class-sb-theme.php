@@ -97,6 +97,14 @@ class SB_Theme {
         }
     }
 
+    public static function add_theme_setting_field_category_widget() {
+        sb_theme_setting_field_category_widget();
+    }
+
+    public static function add_theme_setting_field_hotline() {
+        sb_theme_setting_field_hotline();
+    }
+
 	public static function add_theme_support_woocommerce() {
 		add_theme_support( 'woocommerce' );
 	}
@@ -623,22 +631,7 @@ class SB_Theme {
     }
 
     public static function google_analytics_tracking() {
-        $ga_id = SB_Option::get_theme_option_single_key('google_analytics');
-        if(empty($ga_id)) {
-            return;
-        }
-        ?>
-        <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-            ga('create', '<?php echo $ga_id; ?>', 'auto');
-            ga('send', 'pageview');
-
-        </script>
-        <?php
+        self::get_content('google-analytics');
     }
 
     public static function the_term_meta_nonce() {
@@ -697,12 +690,19 @@ class SB_Theme {
     }
 
     public static function register_sidebar_leaderboard_ads() {
-        sb_theme_register_sidebar('leaderboard-ads', 'Leaderboard ads', __('The avertising on top of site.', 'sb-theme'));
+        sb_theme_register_sidebar('leaderboard_ads', 'Quảng cáo đầu trang', __('Quảng cáo xuất hiện phía đầu của trang web.', 'sb-theme'));
     }
 
     public static function register_sidebar_float_ads() {
-        sb_theme_register_sidebar('float-ads-left', 'Float ads left', __('The avertising on the left of site.', 'sb-theme'));
-        sb_theme_register_sidebar('float-ads-right', 'Float ads right', __('The avertising on the right of site.', 'sb-theme'));
+        sb_theme_register_sidebar('float_ads_left', 'Quảng cáo bên trái', __('Quảng cáo xuất hiện phía bên trái trang web.', 'sb-theme'));
+        sb_theme_register_sidebar('float_ads_right', 'Quảng cáo bên phải', __('Quảng cáo xuất hiện phía bên phải trang web.', 'sb-theme'));
+    }
+
+    public static function the_float_ads() {
+        ?>
+        <div class="hidden-sm float-ads left sb-float-ads"><?php dynamic_sidebar('float_ads_left'); ?></div>
+        <div class="hidden-sm float-ads right sb-float-ads"><?php dynamic_sidebar('float_ads_right'); ?></div>
+        <?php
     }
 
     public static function the_loading_dotted() {
@@ -720,7 +720,7 @@ class SB_Theme {
 
     public static function get_page_not_found_image_url() {
         if(!class_exists('SB_Core')) {
-            return;
+            return '';
         }
         return SB_CORE_URL . '/images/page-not-found.png';
     }
@@ -775,6 +775,10 @@ class SB_Theme {
         ?>
         <div class="<?php echo $class; ?>" data-score="<?php echo $score; ?>" data-star-on="<?php echo SB_THEME_LIB_URL . '/jquery-raty/images/star-on.png'; ?>" data-star-half="<?php echo SB_THEME_LIB_URL . '/jquery-raty/images/star-half.png'; ?>" data-star-off="<?php echo SB_THEME_LIB_URL . '/jquery-raty/images/star-off.png'; ?>"></div>
         <?php
+    }
+
+    public static function get_post_type_archive_link($post_type) {
+        return get_post_type_archive_link($post_type);
     }
 
     public static function set_modal_argument($args = array()) {
@@ -902,7 +906,7 @@ class SB_Theme {
 
     public static function get_loading_image($url = '') {
         if(!class_exists('SB_Core')) {
-            return;
+            return '';
         }
         if(empty($url)) {
             $url = SB_CORE_URL . '/images/ajax-loader.gif';

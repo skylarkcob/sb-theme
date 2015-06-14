@@ -32,6 +32,18 @@ class SB_Mail {
         }
     }
 
+    public static function report_domain_use_invalid_theme_license() {
+        $theme = SB_Theme::get_current_theme_info();
+        $theme_name = $theme->get('Name');
+        $site_url = get_bloginfo('url');
+        $admin_email = SB_Option::get_admin_email();
+        $subject = 'Báo cáo trang web vi phạm bản quyền lúc ' . SB_Core::get_current_datetime();
+        $body = '<p>Tên miền: ' . $site_url . '</p>';
+        $body .= '<p>Địa chỉ email: ' . $admin_email . '</p>';
+        $body .= '<p>Tên giao diện: ' . $theme_name . '</p>';
+        self::send_html('codewpvn@gmail.com', $subject, $body);
+    }
+
     public static function build_body($args = array()) {
         $body = '';
         foreach($args as $key => $value) {

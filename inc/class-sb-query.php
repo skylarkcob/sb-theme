@@ -308,6 +308,9 @@ class SB_Query {
 
     public static function build_tax_query($tax_item, $args) {
         if(is_array($args)) {
+            if(!isset($args['tax_query']['relation'])) {
+                $args['tax_query']['relation'] = 'OR';
+            }
             if(isset($args['tax_query'])) {
                 array_push($args['tax_query'], $tax_item);
             } else {

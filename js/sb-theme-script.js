@@ -188,6 +188,12 @@ var sb_password_strength,
         });
     })();
 
+    sb_theme.scroll_to_position = function(pos, time) {
+        time = time || 1000;
+        $('html, body').stop().animate({scrollTop: pos}, time);
+    };
+
+
     window.sb_switch_loading = function (value, selector) {
         var loading = selector || $('div.loading');
         if(value) {
@@ -225,7 +231,7 @@ var sb_password_strength,
     };
 
     sb_theme.go_to_top = function() {
-        $('html, body').animate({scrollTop : 0},800);
+        sb_theme.scroll_to_position(0);
         return false;
     };
 

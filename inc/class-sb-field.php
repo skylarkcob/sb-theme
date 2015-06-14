@@ -774,7 +774,9 @@ class SB_Field {
         $autocomplete = isset($args['autocomplete']) ? $args['autocomplete'] : true;
         $before = isset($args['before']) ? $args['before'] : '<div class="' . esc_attr($container_class) . '">';
         $row = isset($args['row']) ? $args['row'] : 4;
-
+        if(isset($args['textarea_rows'])) {
+            $row = $args['textarea_rows'];
+        }
         echo $before;
         $html = new SB_HTML('textarea');
         $atts = array(

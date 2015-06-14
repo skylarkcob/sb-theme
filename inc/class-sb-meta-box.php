@@ -21,17 +21,20 @@ class SB_Meta_Box {
         if(!is_array($args)) {
             return;
         }
-        $id = '';
-        $post_type = '';
-        $post_types = array('post');
-        $fields = array();
-        $title = 'SB Meta Box';
-        $callback = '';
-        $context = 'advanced';
-        $priority = 'default';
-        $callback_args = null;
-        extract($args, EXTR_OVERWRITE);
-        $this->id = 'sb_meta_box_' . $id;
+        $id = isset($args['id']) ? $args['id'] : '';
+        $post_type = isset($args['post_type']) ? $args['post_type'] : '';
+        $post_types = isset($args['post_types']) ? $args['post_types'] : array('post');
+        $fields = isset($args['fields']) ? $args['fields'] : array();
+        $title = isset($args['title']) ? $args['title'] : apply_filters('sb_theme_metabox_default_title', __('SB Meta Box', 'sb-theme'));
+        $callback = isset($args['callback']) ? $args['callback'] : '';
+        $context = isset($args['context']) ? $args['context'] : apply_filters('sb_theme_metabox_default_context', 'normal');
+        $priority = isset($args['priority']) ? $args['priority'] : apply_filters('sb_theme_metabox_defautl_priority', 'high');
+        $callback_args = isset($args['callback_args']) ? $args['callback_args'] : null;
+	    if(empty($id)) {
+		    $id = 'default';
+	    }
+	    $id = 'sb_theme_metabox_' . $id;
+        $this->id = $id;
         $this->post_type = $post_type;
         $this->post_types = $post_types;
         $this->fields = array();
@@ -83,6 +86,8 @@ class SB_Meta_Box {
             $meta_value = SB_Core::sanitize($value, $type);
             SB_Post::update_meta($post_id, $name, $meta_value);
             do_action('sb_theme_post_update_meta_box', $post_id, $name, $meta_value);
+	        $meta_name = $name;
+	        do_action('sb_theme_update_post_meta', $post_id, $meta_name, $meta_value);
             if(SB_Option::use_administrative_boundaries() && in_array($name, $this->administrative_boundaries_names)) {
                 $meta_value = absint($meta_value);
                 switch($name) {

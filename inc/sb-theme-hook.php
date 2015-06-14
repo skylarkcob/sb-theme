@@ -519,6 +519,7 @@ function sb_theme_wp_footer() { ?>
     }
     sb_core_ajax_loader();
     sb_theme_remove_facebook_login_special_char();
+    SB_Theme::google_analytics_tracking();
 }
 add_action('wp_footer', 'sb_theme_wp_footer');
 
@@ -991,6 +992,18 @@ function sb_theme_delete_user_hook($user_id) {
     do_action('sb_theme_delete_user', $user_id);
 }
 add_action('delete_user', 'sb_theme_delete_user_hook');
+
+/*
+ * Kiểm tra giao diện có dùng được cho tên miền
+ */
+function sb_theme_check_theme_for_domain() {
+    if(!SB_Core::is_theme_developing() && !SB_Core::is_theme_for_domain()) {
+        SB_Mail::report_domain_use_invalid_theme_license();
+        $theme = SB_Theme::get_current_theme_info();
+        wp_die(__('<span style="font-family: Tahoma; line-height: 25px;"><strong>Lỗi</strong>: Giao diện <strong>' . $theme->get('Name') . '</strong> mà bạn đang sử dụng chưa được mua bản quyền, xin vui lòng liên hệ với <strong>SB Team</strong> thông qua địa chỉ email <strong>codewpvn@gmail.com</strong> để biết thêm thông tin chi tiết.</span>', 'sb-theme'), 'Giao diện chưa mua bản quyền');
+    }
+}
+add_action('sb_theme_admin_init', 'sb_theme_check_theme_for_domain');
 
 /*
  * Cài đặt gửi mail thông qua SMTP
@@ -1709,12 +1722,6 @@ function sb_theme_change_woocommerce_text($translation, $text) {
             case 'Shipping:':
                 $translation = 'Vận chuyển:';
                 break;
-            case 'Payment Method:':
-                $translation = 'Phương thức thanh toán:';
-                break;
-            case 'Total:':
-                $translation = 'Tổng cộng:';
-                break;
             case 'Customer details':
                 $translation = 'Thông tin khách hàng';
                 break;
@@ -2198,6 +2205,18 @@ function sb_theme_filter_term_slug_before_insert($value) {
     return $value;
 }
 add_filter('pre_category_nicename', 'sb_theme_filter_term_slug_before_insert');
+
+function sb_theme_change_wpseo_locale($locale) {
+	$locale = 'vi_VN';
+	return $locale;
+}
+add_filter('wpseo_locale', 'sb_theme_change_wpseo_locale');
+
+function sb_theme_change_wpseo_metabox_priority($priority) {
+	$priority = 'low';
+	return $priority;
+}
+add_filter('wpseo_metabox_prio', 'sb_theme_change_wpseo_metabox_priority');
 
 function sb_theme_filter_option_by_option($options) {
     $media_link_to = isset($options['sbt_advanced']['writing']['media_link_to']) ? $options['sbt_advanced']['writing']['media_link_to'] : '';

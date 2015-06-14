@@ -153,6 +153,11 @@ class SB_Option {
         return array('id' => $value_id, 'url' => $value_url);
     }
 
+    public static function get_media_url_by_value($value) {
+        $detail = self::get_media_detail($value);
+        return $detail['url'];
+    }
+
     public static function get_media_url($array_key = array()) {
         $value = self::get_option_by_key($array_key);
         $media_detail = self::get_media_detail($value);

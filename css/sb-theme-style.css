@@ -85,7 +85,7 @@ img {
 }
 
 .no-padding-right {
-    padding-right: 0;
+    padding-right: 0 !important;
 }
 
 .sb-media-upload .image-preview {
@@ -315,6 +315,10 @@ img {
 
 .margin-top-10 {
     margin-top: 10px;
+}
+
+.margin-top-15 {
+    margin-top: 15px;
 }
 
 .margin-top-20 {
@@ -1865,6 +1869,10 @@ ol.guides li a:hover{
     top: 0;
     width: 250px;
     z-index: -1;
+}
+
+.sf-menu {
+    margin: 0;
 }
 
 .sb-mobile-menu .sf-menu a {
