@@ -921,7 +921,7 @@ class SB_Core {
     }
 
     public static function generate_theme_license_key($domain) {
-        $domain = SB_PHP::get_domain_name_only($domain);
+        $domain = SB_PHP::get_domain_name($domain);
         $text = SB_THEME_PASS . '-domain:' . $domain;
         return wp_hash_password($text);
     }
@@ -937,9 +937,9 @@ class SB_Core {
                 if(empty($domain)) {
                     $domain = get_bloginfo('url');
                 }
-                $domain = SB_PHP::get_domain_name_only($domain);
+                $domain = SB_PHP::get_domain_name($domain);
                 $text = SB_THEME_PASS . '-domain:' . $domain;
-                if(SB_User::check_password($text, SB_THEME_LICENSE_KEY)) {
+                if(self::password_compare($text, SB_THEME_LICENSE_KEY)) {
                     $result = 1;
                 } else {
                     $result = 0;
@@ -1062,8 +1062,8 @@ class SB_Core {
         $result = apply_filters('sb_theme_developing', false);
         if($result) {
             $domain = get_bloginfo('url');
-            $domain = SB_PHP::get_domain_name_only($domain);
-            if(false === strpos($domain, 'hocwp.net') && false === strpos($domain, 'localhost')) {
+            $domain = SB_PHP::get_domain_name($domain);
+            if(!SB_PHP::is_string_contain($domain, 'hocwp.net') && !SB_PHP::is_string_contain($domain, 'localhost') && !SB_PHP::is_ip_valid($domain)) {
                 $result = false;
             }
         }
@@ -1413,7 +1413,7 @@ class SB_Core {
     }
 
     public static function check_before_save_post_meta($post_id) {
-        if(!SB_Core::verify_nonce('sb_meta_box', 'sb_meta_box_nonce') || (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) || !current_user_can('edit_post', $post_id)) {
+        if(!self::verify_nonce('sb_meta_box', 'sb_meta_box_nonce') || (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) || !current_user_can('edit_post', $post_id)) {
             return false;
         }
         return true;

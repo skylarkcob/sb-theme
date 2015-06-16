@@ -49,6 +49,10 @@ var sb_password_strength,
         }
     };
 
+    sb_theme.ajax_loader = function(status) {
+        sb_core.sb_ajax_loader(status);
+    };
+
     sb_core.sb_resize_iframe = function(obj, divisor, min_height) {
         divisor = divisor || 1;
         min_height = min_height || 100;

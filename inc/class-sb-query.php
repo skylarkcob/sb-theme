@@ -8,6 +8,12 @@ class SB_Query {
         return get_pages($args);
     }
 
+    public static function get_pages_by_template($template_name, $args = array()) {
+        $args['meta_key'] = '_wp_page_template';
+        $args['meta_value'] = $template_name;
+        return self::get_pages($args);
+    }
+
     public static function get($args = array()) {
         $transient_name = isset($args['transient_name']) ? $args['transient_name'] : '';
         if(SB_Cache::query_cache() && !empty($transient_name) && false === ($query = get_transient($transient_name))) {
