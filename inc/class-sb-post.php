@@ -603,17 +603,20 @@ class SB_Post {
         $title = new SB_HTML($headline);
         $title->set_attribute('class', 'entry-title');
         $title->set_attribute('itemprop', 'headline');
-
+        $post_title = isset($args['post_title']) ? $args['post_title'] : '';
+        if(empty($post_title)) {
+            $post_title = get_the_title($post_id);
+        }
         $title_text = '';
         if($link) {
             $post_link = new SB_HTML('a');
             $post_link->set_attribute('itemprop', 'url');
             $post_link->set_attribute('rel', 'bookmark');
             $post_link->set_attribute('href', get_permalink($post_id));
-            $post_link->set_text(get_the_title($post_id));
+            $post_link->set_text($post_title);
             $title_text = $post_link->build();
         } else {
-            $title_text = get_the_title($post_id);
+            $title_text = $post_title;
         }
         $title->set_text($title_text);
         echo $title->build();

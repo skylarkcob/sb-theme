@@ -438,6 +438,10 @@ class SB_Theme {
         echo '</div>';
     }
 
+    public static function disable_admin_bar() {
+        show_admin_bar(false);
+    }
+
     public static function object_embed($args = array()) {
         $url = isset($args['url']) ? $args['url'] : '';
         $flash_var = isset($args['flash_var']) ? $args['flash_var'] : '';
@@ -514,6 +518,10 @@ class SB_Theme {
         $position = isset($args['position']) ? $args['position'] : 'left';
         $class = 'sb-mobile-menu';
         $class = SB_PHP::add_string_with_space_before($class, $position);
+        $home_icon = isset($args['home_icon']) ? $args['home_icon'] : false;
+        if($home_icon) {
+            echo '<a class="home-link" href="' . home_url('/') . '"><i class="fa fa-home home-icon"></i></a>';
+        }
         if(!SB_Core::is_error($menu)) {
             $sb_menu = self::get_menu($args);
             echo $sb_menu;
