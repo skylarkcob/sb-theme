@@ -65,6 +65,20 @@ class SB_Term_Field {
         self::term_select($args);
     }
 
+    public static function select($args = array()) {
+        $id = isset($args['id']) ? $args['id'] : '';
+        $label = isset($args['label']) ? $args['label'] : '';
+        if(self::is_edit_page()) {
+            $args['label'] = '';
+            self::before($id, $label);
+        }
+        $args['container_class'] = isset($args['container_class']) ? $args['container_class'] . ' small' : 'small';
+        SB_Field::select($args);
+        if(self::is_edit_page()) {
+            self::after();
+        }
+    }
+
     private static function before($id, $label) { ?>
         <tr class="form-field">
             <th scope="row"><?php SB_Field::label(array('for' => $id, 'text' => $label)); ?></th>

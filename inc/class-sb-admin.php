@@ -6,6 +6,7 @@ class SB_Admin {
     private $advanced_tabs = array();
     private $checkout_tabs = array();
     private $store_tabs = array();
+	private $vchat_tabs = array();
 
     public function __construct() {
         if($this->has_sb_admin()) {
@@ -34,6 +35,7 @@ class SB_Admin {
         add_filter('sb_theme_advanced_setting_tabs', array($this, 'advanced_setting_tabs'));
         add_filter('sb_theme_checkout_setting_tabs', array($this, 'checkout_setting_tabs'));
         add_filter('sb_theme_store_setting_tabs', array($this, 'store_setting_tabs'));
+	    add_filter('sb_theme_vchat_setting_tabs', array($this, 'vchat_setting_tabs'));
     }
 
     private function filter() {
@@ -49,6 +51,19 @@ class SB_Admin {
         $tabs = wp_parse_args($tabs, $defaults);
         return $tabs;
     }
+
+	public function vchat_setting_tabs($tabs) {
+		$defaults = array(
+			'dashboard' => array(
+				'name' => __('Quản lý trò chuyện', 'sb-theme')
+			),
+			'setting' => array(
+				'name' => __('Cài đặt', 'sb-theme')
+			)
+		);
+		$tabs = wp_parse_args($tabs, $defaults);
+		return $tabs;
+	}
 
     public function advanced_setting_tabs($tabs) {
         $defaults = array(
@@ -102,6 +117,10 @@ class SB_Admin {
     public function get_checkout_setting_tabs() {
         return apply_filters('sb_theme_checkout_setting_tabs', $this->checkout_tabs);
     }
+
+	public function get_vchat_setting_tabs() {
+		return apply_filters('sb_theme_vchat_setting_tabs', $this->vchat_tabs);
+	}
 
     private function has_sb_admin() {
         global $sb_admin;

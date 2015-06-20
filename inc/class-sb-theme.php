@@ -34,6 +34,24 @@ class SB_Theme {
         sb_theme_term_meta_color($taxonomies);
     }
 
+    public static function the_yahoo_button($args = array()) {
+        $title = isset($args['title']) ? $args['title'] : 'Liên hệ qua Yahoo';
+        $account = isset($args['account']) ? $args['account'] : '';
+        $type = isset($args['type']) ? $args['type'] : 1;
+        echo '<a class="btn-yahoo" target="_blank" title="' . $title . '" rel="nofollow" href="ymsgr:sendim?' . $account . '"><img border="0" align="absmiddle" alt="' . $account . '" src="http://opi.yahoo.com/online?u=' . $account . '&amp;m=g&amp;t=' . $type . '"></a>';
+    }
+
+    public static function the_skype_button($args = array()) {
+        $title = isset($args['title']) ? $args['title'] : 'Liên hệ qua Skype';
+        $account = isset($args['account']) ? $args['account'] : '';
+        $type = isset($args['type']) ? $args['type'] : 1;
+        $image = isset($args['image']) ? $args['image'] : '';
+        if(empty($image)) {
+            $image = self::get_image_url('icon-skype-49.png');
+        }
+        echo '<a class="btn-skype" target="_blank" title="' . $title . '" rel="nofollow" href="skype:' . $account . '?chat"><img alt="' . $account . '" src="' . $image . '" style="border:none;"></a>';
+    }
+
     public static function add_category_field_color() {
         self::add_term_field_color(array('category'));
     }
@@ -731,6 +749,10 @@ class SB_Theme {
             return '';
         }
         return SB_CORE_URL . '/images/page-not-found.png';
+    }
+
+    public static function get_image_url($name) {
+        return SB_THEME_URL . '/images/' . $name;
     }
 
     public static function get_custom_image_url($name) {

@@ -18,6 +18,16 @@ button.sb-button:hover {
     border: 1px solid #1b93df;
 }
 
+iframe.sb-iframe {
+    min-height: 800px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.row-setting-content .widefat {
+    max-width: 70%;
+}
+
 a.toplevel_page_sb_options .wp-menu-image {
     background-image: url("../images/sb-options-icon.png");
 }
@@ -1136,11 +1146,13 @@ div.sb-post-meta-row .image-preview {
     padding-right: 0;
 }
 
+.sbt-row-setting .row-setting-content .tab-content-item,
 .form-table.row-setting-table .tab-content-item,
 .sb-theme-advanced-setting-section .tab-content-item {
     display: none;
 }
 
+.sbt-row-setting .row-setting-content .tab-content-item.active,
 .form-table.row-setting-table .tab-content-item.active,
 .sb-theme-advanced-setting-section .tab-content-item.active {
     display: block;

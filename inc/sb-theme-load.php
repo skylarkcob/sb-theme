@@ -107,6 +107,8 @@ require SB_THEME_INC_PATH . '/class-sb-comment.php';
 
 require SB_THEME_INC_PATH . '/class-sb-paginate.php';
 
+require SB_THEME_INC_PATH . '/widgets/class-sb-support-widget.php';
+
 require SB_THEME_INC_PATH . '/widgets/class-sb-post-widget.php';
 
 require SB_THEME_INC_PATH . '/widgets/class-sb-tab-widget.php';

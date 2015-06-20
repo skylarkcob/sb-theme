@@ -502,6 +502,18 @@ class SB_Option {
         return self::get_theme_checkout_option($args);
     }
 
+	public static function get_option_by_base($base, $child_base, $option_name = '') {
+		$args = array(
+			'keys' => array(
+				$child_base
+			)
+		);
+		if(!empty($option_name)) {
+			$args['keys'][] = $option_name;
+		}
+		return self::get_by_base_option_name($base, $args);
+	}
+
     public static function get_theme_advanced_option_by_key($key_array) {
         $args = array(
             'keys' => $key_array
@@ -532,6 +544,16 @@ class SB_Option {
         $value = self::get_utility_option(array('keys' => array($name)));
         return intval($value);
     }
+
+	public static function get_vchat_code() {
+		$base_option_name = 'sbt_vchat';
+		$tab_base_option_name = 'setting';
+		$base_id = 'vchat';
+
+		$key = 'code';
+		$value = SB_Option::get_option_by_base($base_option_name, $tab_base_option_name, $key);
+		return $value;
+	}
 
     public static function statistics_enabled() {
         $value = self::utility_enabled('statistics');

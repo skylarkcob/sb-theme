@@ -34,6 +34,10 @@ class SB_Core {
         return apply_filters('sb_theme_use_custom_menu', false);
     }
 
+	public static function use_vchat() {
+		return apply_filters('sb_theme_use_vchat', false);
+	}
+
     public static function use_menu_item_description() {
         return apply_filters('sb_theme_use_menu_item_description', true);
     }
@@ -920,15 +924,25 @@ class SB_Core {
 	    }
     }
 
-    public static function generate_theme_license_key($domain) {
+    public static function build_license_plain_text($domain) {
+        $domain = SB_PHP::lowercase($domain);
+        $domain = esc_url_raw($domain);
         $domain = SB_PHP::get_domain_name($domain);
         $text = SB_THEME_PASS . '-domain:' . $domain;
+        return $text;
+    }
+
+    public static function generate_theme_license_key($domain) {
+        $text = self::build_license_plain_text($domain);
         return wp_hash_password($text);
     }
 
     public static function is_theme_for_domain($domain = '') {
         $transient_name = 'sb_theme_check_theme_for_domain';
-        if(false === ($result = get_transient($transient_name))) {
+        $saved_license = get_option('sb_theme_license_key');
+        $current_license = (defined('SB_THEME_LICENSE_KEY')) ? SB_THEME_LICENSE_KEY : '';
+        $result = 0;
+        if(empty($saved_license) || $saved_license != $current_license || false === ($result = get_transient($transient_name))) {
             if(!defined('SB_THEME_LICENSE_KEY')) {
                 update_option('sb_theme_license_defined', 0);
                 $result = 0;
@@ -937,15 +951,16 @@ class SB_Core {
                 if(empty($domain)) {
                     $domain = get_bloginfo('url');
                 }
-                $domain = SB_PHP::get_domain_name($domain);
-                $text = SB_THEME_PASS . '-domain:' . $domain;
+                $text = self::build_license_plain_text($domain);
                 if(self::password_compare($text, SB_THEME_LICENSE_KEY)) {
                     $result = 1;
                 } else {
                     $result = 0;
                 }
+                $current_license = SB_THEME_LICENSE_KEY;
             }
             update_option('sb_theme_license_valid', $result);
+            update_option('sb_theme_license_key', $current_license);
             set_transient($transient_name, $result, DAY_IN_SECONDS);
         }
         return (bool)$result;
@@ -1136,6 +1151,12 @@ class SB_Core {
                 'before_title'  => '<h4 class="widget-title">',
                 'after_title'   => '</h4>',
             ));
+        }
+    }
+
+    public static function register_widget($class_name) {
+        if(class_exists($class_name)) {
+            register_widget($class_name);
         }
     }
 

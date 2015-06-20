@@ -990,6 +990,10 @@ class SB_Post {
         return get_page_by_path($slug, OBJECT, $post_type);
     }
 
+    public static function get_page_by_slug($page_slug) {
+        return self::get_by_slug($page_slug, 'page');
+    }
+
     public static function add($args = array()) {
         self::insert($args);
     }

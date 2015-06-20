@@ -172,6 +172,10 @@ class SB_Admin_Custom {
         sb_theme_get_content('sb-admin-setting-checkout-page');
     }
 
+	public static function vchat_setting_page_callback() {
+		SB_Theme::get_content('sb-admin-setting-vchat-page');
+	}
+
     public static function setting_page_before() {
         ?>
         <div class="wrap sb-theme sb-option sb-options" data-message-confirm="<?php echo SB_Message::get_confirm_text(); ?>" data-option-changed="0">
@@ -284,6 +288,10 @@ class SB_Admin_Custom {
         if(!SB_PHP::callback_exists($callback) || empty($tab_html)) {
             return;
         }
+	    $title = isset($args['title']) ? $args['title'] : '';
+	    if(!empty($title)) {
+		    echo '<h2>' . $title . '</h2>';
+	    }
         ?>
         <div class="<?php echo $container_class; ?>">
             <?php echo $tab_html; ?>

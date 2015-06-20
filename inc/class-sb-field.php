@@ -672,6 +672,19 @@ class SB_Field {
         self::text($args);
     }
 
+	public static function iframe($args = array()) {
+		$src = isset($args['src']) ? $args['src'] : '';
+		if(empty($src)) {
+			return;
+		}
+		$class = isset($args['class']) ? $args['class'] : '';
+		$class = SB_PHP::add_string_with_space_before($class, 'sb-iframe');
+		$iframe = new SB_HTML('iframe');
+		$iframe->set_attribute('src', $src);
+		$iframe->set_class($class);
+		echo $iframe->build();
+	}
+
     public static function text($args = array()) {
         $with_button = isset($args['button']) ? $args['button'] : false;
         $type = isset($args['type']) ? $args['type'] : 'text';
@@ -924,7 +937,10 @@ class SB_Field {
         $before = isset($args['before']) ? $args['before'] : '<div class="' . $container_class . '">';
         $after = isset($args['after']) ? $args['after'] : '</div>';
         echo $before;
-        $autocomplete = isset($args['autocomplete']) ? '' : 'off';
+        $autocomplete = isset($args['autocomplete']) ? $args['autocomplete'] : false;
+        if(!$autocomplete) {
+            $autocomplete = 'off';
+        }
         $select_option = isset($args['default_option']) ? $args['default_option'] : '';
         if($load_item && empty($all_option)) {
             foreach($options as $key => $text) {

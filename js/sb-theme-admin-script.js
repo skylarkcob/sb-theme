@@ -69,6 +69,14 @@ var sb_ajax_loader,
         return false;
     }
 
+    // Cập nhật chiều cao cho iframe
+    (function(){
+        $('iframe').on('ready', function(e) {
+            var that = $(this);
+            alert(that.contents().find('body').attr('style'));
+        });
+    })();
+
     // Detect options changes
     (function(){
         $('.sb-theme.sb-options').find('.sb-remove-media, .reset-button, .sb-add-sidebar, .sb-icon-delete').on('click', function(e){

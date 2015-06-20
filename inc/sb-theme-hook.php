@@ -321,6 +321,16 @@ function sb_theme_check_user_post_before_add_new() {
 }
 add_action('sb_theme_admin_init', 'sb_theme_check_user_post_before_add_new');
 
+function sb_theme_remove_theme_editor() {
+    $current_page = $GLOBALS['pagenow'];
+    if('theme-editor.php' == $current_page) {
+        wp_redirect(admin_url());
+        exit;
+    }
+    remove_submenu_page('themes.php', 'theme-editor.php');
+}
+add_action('sb_theme_admin_init', 'sb_theme_remove_theme_editor');
+
 function sb_theme_admin_menu_hook() {
     if(is_admin()) {
         if(SB_Option::use_administrative_boundaries()) {
@@ -529,6 +539,16 @@ function sb_theme_add_to_body_before() {
     }
 }
 add_action('sb_theme_body_before', 'sb_theme_add_to_body_before');
+
+function sb_theme_add_to_body_after() {
+	if(SB_Core::use_vchat()) {
+		$code = SB_Option::get_vchat_code();
+		if(!empty($code)) {
+			echo $code;
+		}
+	}
+}
+add_action('sb_theme_body_after', 'sb_theme_add_to_body_after');
 
 /*
  * Chạy hàm khi plugin WordPress SEO by Yoast được kích hoạt

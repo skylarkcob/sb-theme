@@ -332,6 +332,22 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
 	    $wp_admin_bar->add_node( $args );
 
         $args = array(
+            'id'        => 'widgets',
+            'title'     => __('Widgets', 'sb-theme'),
+            'href'      => admin_url( 'widgets.php' ),
+            'parent'    => 'sb-options'
+        );
+        $wp_admin_bar->add_node( $args );
+
+        $args = array(
+            'id'        => 'menus',
+            'title'     => __('Menus', 'sb-theme'),
+            'href'      => admin_url( 'nav-menus.php' ),
+            'parent'    => 'sb-options'
+        );
+        $wp_admin_bar->add_node( $args );
+
+        $args = array(
             'id'        => 'sbt-about',
             'title'     => __('Giới thiệu SB', 'sb-theme'),
             'href'      => admin_url( 'admin.php?page=sb_options' ),

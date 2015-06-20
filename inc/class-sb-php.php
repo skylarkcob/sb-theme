@@ -785,7 +785,8 @@ class SB_PHP {
 
     public static function get_domain_name( $url ) {
         $parse = parse_url( $url );
-        return isset( $parse['host'] ) ? $parse['host'] : '';
+        $result = isset( $parse['host'] ) ? $parse['host'] : '';
+        return $result;
     }
 
     public static function get_root_domain($url) {

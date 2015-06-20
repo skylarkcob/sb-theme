@@ -1802,6 +1802,12 @@ ol.guides li a:hover{
     margin-bottom: 0 !important;
 }
 
+#panel_chat_vatgia #vgc_loading .vgc_ic_loading,
+#vgc_bc_off #vgc_loading .vgc_ic_loading,
+.send_file_loadding {
+    background: rgba(0, 0, 0, 0) url("../images/loading.gif") no-repeat scroll center center !important;
+}
+
 /* ==================== Strength indicator ==================== */
 
 .sb-password-strength-indicator {
