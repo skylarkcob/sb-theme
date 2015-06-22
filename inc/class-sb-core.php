@@ -52,10 +52,13 @@ class SB_Core {
     }
 
     public static function update_default_permalink_struct() {
+        self::update_permalink_struct('/%category%/%postname%.html');
+    }
+
+    public static function update_permalink_struct($struct) {
         global $wp_rewrite;
-	    $default_struct = '/%category%/%postname%.html';
-        $wp_rewrite->set_permalink_structure( $default_struct );
-	    update_option('permalink_structure', $default_struct);
+        $wp_rewrite->set_permalink_structure( $struct );
+        update_option('permalink_structure', $struct);
         flush_rewrite_rules();
     }
 
@@ -1427,6 +1430,11 @@ class SB_Core {
 
     public static function add_checkbox_featured_post() {
         return apply_filters('sb_theme_add_checkbox_featured_post', true);
+    }
+
+    public static function post_type_use_featured_meta_field() {
+        $post_types = array('post');
+        return apply_filters('sb_theme_post_types_use_featured_meta_field', $post_types);
     }
 
     public static function publish_box_meta_field_post_types() {

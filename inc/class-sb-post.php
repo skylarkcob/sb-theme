@@ -4,6 +4,14 @@ class SB_Post {
         return self::get_all_media_images($post_id);
     }
 
+	public static function add_support($post_type, $support) {
+		add_post_type_support($post_type, $support);
+	}
+
+	public static function add_page_support_excerpt() {
+		self::add_support('page', 'excerpt');
+	}
+
     public static function get_all_media_images($post_id) {
         $transient_name = SB_Cache::build_post_media_images_transient_name($post_id);
         if(!SB_Cache::post_images_cache() || false === ($result = get_transient($transient_name))) {

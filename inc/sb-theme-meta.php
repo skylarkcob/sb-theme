@@ -438,7 +438,8 @@ function sb_theme_publish_box_meta_field() {
     $post_types = SB_Core::publish_box_meta_field_post_types();
     if(in_array($post_type, $post_types)) {
         SB_Theme::the_meta_box_nonce();
-        if(SB_Core::add_checkbox_featured_post()) {
+        $post_types_use_featured_meta_field = SB_Core::post_type_use_featured_meta_field();
+        if(SB_Core::add_checkbox_featured_post() && in_array($post_type, $post_types_use_featured_meta_field)) {
             $key = 'featured';
             $value = 0;
             if(SB_Post::is($post)) {
@@ -455,6 +456,7 @@ function sb_theme_publish_box_meta_field() {
             SB_Field::checkbox($args);
         }
         do_action('sb_theme_post_publish_box_meta_field');
+        do_action('sb_theme_' . $post_type . '_publish_box_meta_field');
     }
 }
 add_action('post_submitbox_misc_actions', 'sb_theme_publish_box_meta_field');

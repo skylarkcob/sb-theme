@@ -125,8 +125,7 @@ class SB_Option {
     }
 
     public static function update_permalink($struct) {
-        global $wp_rewrite;
-        $wp_rewrite->set_permalink_structure( $struct );
+        SB_Core::update_permalink_struct($struct);
     }
 
     public static function get_permalink_struct() {

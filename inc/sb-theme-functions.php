@@ -320,7 +320,7 @@ function sb_theme_update_default_options() {
 	sb_theme_update_comment_spam_text();
 	$permalink_struct = SB_Option::get_permalink_struct();
 	if(empty($permalink_struct)) {
-		SB_Option::update_permalink('/%category%/%postname%.html');
+		SB_Core::update_default_permalink_struct();
 	}
 }
 

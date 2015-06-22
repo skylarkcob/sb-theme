@@ -855,6 +855,13 @@ class SB_Field {
         self::text($args);
     }
 
+    public static function build_publish_box_class($args = array()) {
+        $container_class = isset($args['container_class']) ? $args['container_class'] : '';
+        $container_class = SB_PHP::add_string_with_space_before($container_class, 'misc-pub-section');
+        $args['container_class'] = $container_class;
+        return $args;
+    }
+
     public static function radio($args = array()) {
         $args['type'] = 'radio';
         $args['autocomplete'] = false;

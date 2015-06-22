@@ -68,6 +68,23 @@ img {
     min-height: 400px;
 }
 
+.errormsg {
+    color: #dd4b39;
+    display: block;
+    line-height: 17px;
+    margin: 0.5em 0 0;
+}
+
+input.form-error[type="checkbox"],
+input.form-error[type="email"],
+input.form-error[type="number"],
+input.form-error[type="password"],
+input.form-error[type="text"],
+input.form-error[type="tel"],
+input.form-error[type="url"] {
+    border: 1px solid #dd4b39;
+}
+
 .overflow-hidden {
     overflow: hidden;
 }
@@ -1802,10 +1819,87 @@ ol.guides li a:hover{
     margin-bottom: 0 !important;
 }
 
+/* ==================== vChat ==================== */
+
 #panel_chat_vatgia #vgc_loading .vgc_ic_loading,
 #vgc_bc_off #vgc_loading .vgc_ic_loading,
 .send_file_loadding {
     background: rgba(0, 0, 0, 0) url("../images/loading.gif") no-repeat scroll center center !important;
+}
+
+#panel_chat_vatgia .panel_footer_vgchat .vgc_bt_logovchat,
+#vgc_logo_msgoffline .vgclogovchat, .vgc_bt_logovchat,
+#vgc_bc_off .vgc_off_row li .vgc_polls_contact {
+    display: none !important;
+}
+
+#vgc_bc_off .vgc_off_row li .vgc_name_title {
+    color: #555 !important;
+    font-family: Tahoma !important;
+    font-weight: 700;
+    line-height: 11px !important;
+}
+
+#vgc_bc_off #vgc_er {
+    color: #dd4b39 !important;
+    font: 13px/1.5 arial,helvetica,sans-serif !important;
+}
+
+#vgc_bc_off .vgc_control,
+#vgc_bc_off .vgc_control_msg {
+    color: #999 !important;
+}
+
+#vgc_bc_off #vgc_loading {
+    padding-top: 30%;
+}
+
+#panel_chat_vatgia .panel_info_vgchat .vgc_info_support_address,
+#panel_chat_vatgia .panel_info_vgchat .vgc_info_support_name {
+    font-family: Tahoma;
+    height: auto !important;
+    line-height: 16px !important;
+}
+
+#panel_chat_vatgia .panel_info_vgchat .vgc_info_support_name {
+    color: #60b436 !important;
+    margin-top: -1px;
+}
+
+#panel_chat_vatgia .panel_info_vgchat .vgc_info_support_avatar img {
+    max-height: 100% !important;
+    width: 100% !important;
+}
+
+#panel_chat_vatgia .panel_info_vgchat .vgc_info_support_avatar {
+    border-radius: 0 !important;
+    opacity: 0.8;
+}
+
+#panel_chat_vatgia .panel_info_vgchat .vgc_info_support_avatar:hover {
+    opacity: 1;
+}
+
+#vatgia_client_polls {
+    height: 92% !important;
+}
+
+#vatgia_client_polls .vgc_p_a_list li {
+    padding: 1px 0 !important;
+}
+
+#vatgia_client_polls .vgc_p_a_title {
+    font-weight: 400 !important;
+    line-height: 19px !important;
+}
+
+.vgc_greeting_chat #vgc_greeting_text {
+    font-size: 13px !important;
+    line-height: 19px !important;
+}
+
+.vgc_greeting_chat .vgc_greeting_text {
+    padding: 20px 15px 10px !important;
 }
 
 /* ==================== Strength indicator ==================== */
