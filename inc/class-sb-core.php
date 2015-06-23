@@ -928,16 +928,37 @@ class SB_Core {
     }
 
     public static function build_license_plain_text($domain) {
+        return self::build_license_plain_text_with_pass_hashed($domain, SB_THEME_PASS);
+    }
+
+    public static function build_license_plain_text_with_pass_hashed($domain, $pass_hashed) {
         $domain = SB_PHP::lowercase($domain);
         $domain = esc_url_raw($domain);
         $domain = SB_PHP::get_domain_name($domain);
-        $text = SB_THEME_PASS . '-domain:' . $domain;
+        $text = $pass_hashed . '-domain:' . $domain;
         return $text;
     }
 
-    public static function generate_theme_license_key($domain) {
-        $text = self::build_license_plain_text($domain);
+    public static function generate_theme_license_key($domain, $pass) {
+        $hashed_pass = self::generate_password_hash($pass);
+        if(self::password_compare($pass, SB_THEME_PASS)) {
+            $hashed_pass = SB_THEME_PASS;
+        }
+        return self::generate_theme_license_key_with_pass_hashed($domain, $hashed_pass);
+    }
+
+    public static function generate_theme_license_key_with_pass_hashed($domain, $pass_hashed) {
+        $text = self::build_license_plain_text_with_pass_hashed($domain, $pass_hashed);
         return wp_hash_password($text);
+    }
+
+    public static function generate_password_hash($plain_text) {
+        return wp_hash_password($plain_text);
+    }
+
+    public static function build_current_domain_license_plain_text() {
+        $domain = get_bloginfo('url');
+        return self::build_license_plain_text($domain);
     }
 
     public static function is_theme_for_domain($domain = '') {
