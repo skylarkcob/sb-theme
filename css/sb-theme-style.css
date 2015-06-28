@@ -1113,31 +1113,38 @@ img.sb-captcha-image {
 .sb-account-page.sb-user {
     background-color: #f5f5f5;
 }
+
 .sb-verify-account {
     background-color: #fff;
 }
+
 .sb-accounts .dashboard .user-display-name {
     left: 94px;
     position: absolute;
     top: 8px;
     width: 185px;
 }
+
 .sb-accounts .dashboard .user-display-name .name {
     display: block;
     font-size: 18px;
     font-weight: 700;
     line-height: 21px;
     max-width: 185px;
+    overflow: hidden;
     padding: 6px 0;
+    text-overflow: ellipsis;
     white-space: nowrap;
     word-wrap: normal;
 }
+
 .sb-accounts .content-main {
     background-color: #fff;
     border: 1px solid #f1f1f1;
     border-radius: 6px;
     margin-left: 310px;
 }
+
 .sb-accounts .content-main .module {
     padding: 0;
 }
@@ -1294,6 +1301,133 @@ body.sb-user {
 }
 .sb-accounts .dashboard .module.user-avatar-box {
     min-height: 154px;
+}
+
+.sb-theme-login .hr {
+    border-bottom: 1px solid #c3c4c7;
+    box-shadow: 0 1px 0 #fff, 0 0 0 transparent;
+    height: 8px;
+    margin: 10px 0 20px;
+    position: relative;
+    text-align: center;
+    width: 100%;
+}
+
+.sb-theme-login .hr .inner {
+    background: none repeat scroll 0 0 #fff;
+    border-radius: 100px;
+    display: inline-block;
+    font-family: "Georgia","Times","Times New Roman",serif;
+    font-size: 16px;
+    font-style: italic;
+    line-height: 0;
+    padding: 9px 10px;
+    width: auto;
+}
+
+.sb-theme-login.sb-accounts .hr {
+    height: 11px;
+}
+
+.sb-theme-login.sb-accounts .hr .inner {
+    background-color: #F1F1F1;
+}
+
+.sb-theme-login .sb-theme-btn-social .flip-icon {
+    display: inline-block;
+    fill: #fff;
+    float: left;
+    height: 18px;
+    line-height: 11px;
+    margin-top: 4px;
+    padding-right: 10px;
+    vertical-align: middle;
+    width: 18px;
+}
+
+.sb-theme-login .sb-theme-btn-social.btn-facebook .flip-icon {
+    border-right: 1px solid #627aac;
+    box-shadow: -1px 0 0 0 #293e6a inset;
+}
+
+.sb-theme-btn-social > span {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    padding-top: 2px;
+    vertical-align: 2px;
+}
+
+.sb-theme-btn-social {
+    cursor: pointer;
+    text-align: left;
+}
+
+.sb-theme-login .sb-theme-btn-social .flip-icon {
+    margin-right: 20px;
+}
+
+.sb-theme-btn-social.btn-gplus:hover,
+.sb-theme-btn-social.btn-gplus:focus,
+.sb-theme-btn-social.btn-gplus:active,
+.sb-theme-btn-social.btn-gplus {
+    background-color: #e93f2e;
+}
+
+.sb-theme-login .sb-theme-btn-social.btn-gplus .flip-icon {
+    border-right: 1px solid #ef786c;
+    box-shadow: -1px 0 0 0 #ba3224 inset;
+    margin-left: 3px;
+    padding-right: 7px;
+}
+
+.sb-theme-btn-social.btn-twitter:hover,
+.sb-theme-btn-social.btn-twitter:focus,
+.sb-theme-btn-social.btn-twitter:active,
+.sb-theme-btn-social.btn-twitter {
+    background-color: #26c4f1;
+}
+
+.sb-theme-login .sb-theme-btn-social.btn-twitter .flip-icon {
+    border-right: 1px solid #7cdbf6;
+    box-shadow: -1px 0 0 0 #1a89a8 inset;
+    margin-left: 3px;
+    padding-right: 7px;
+}
+
+.sb-theme-login .sb-captcha-image {
+    cursor: pointer;
+}
+
+.sb-theme-login .sb-theme-extra {
+    overflow: hidden;
+    padding: 10px 0 15px;
+}
+
+.sb-theme-login input.captcha-code {
+    float: left;
+    font-size: 13px;
+    height: auto;
+    margin-bottom: 0;
+    margin-right: 10px;
+    margin-top: 0;
+    max-width: 150px;
+    padding: 5px 10px;
+}
+
+.sb-theme-login.sb-accounts .sb-theme-btn-social {
+    display: block;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.sb-theme-login.sb-accounts .sb-theme-btn-social .flip-icon {
+    height: 21px;
+    width: 29px;
+}
+
+.sb-theme-login.sb-accounts .sb-theme-btn-social span {
+    line-height: 27px;
 }
 
 @media only screen and (max-width: 1024px) {
@@ -2250,6 +2384,30 @@ ol.guides li a:hover{
     box-shadow: none;
 }
 
+.icon-collapse-expand {
+    color: #fff;
+    cursor: pointer;
+    position: absolute;
+    right: 14px;
+    top: 14px;
+}
+
+.icon-collapse-expand:hover {
+    color: #999;
+}
+
+.sb-mobile-menu .sub-menu .sub-menu, .sb-mobile-menu .sub-menu {
+    display: none;
+}
+
+.sb-mobile-menu .sf-arrows .sf-with-ul::after {
+    display: none;
+}
+
+.sb-mobile-menu .sf-menu li.menu-item-has-children:hover > .sub-menu {
+    display: none;
+}
+
 /* ================= Center ajax loading ================= */
 
 .sb-ajax-loader.center {
@@ -3113,8 +3271,8 @@ ol.guides li a:hover{
 
 .single-product .woocommerce-tabs #respond .comment-form .comment-form-rating > label {
     margin-bottom: 0;
-    margin-right: 15px;
-    vertical-align: -1px;
+    margin-right: 85px;
+    vertical-align: 1px;
 }
 
 .single-product .woocommerce-tabs #review_form #respond .comment-form .comment-form-comment label {

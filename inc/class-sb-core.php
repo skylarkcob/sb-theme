@@ -82,6 +82,14 @@ class SB_Core {
         return false;
     }
 
+    public static function trailing_slash_url($url) {
+        $last_chars = substr($url, -5);
+        if(!SB_PHP::is_string_contain($last_chars, '.php') && !SB_PHP::is_string_contain($last_chars, '.html')) {
+            $url = trailingslashit($url);
+        }
+        return $url;
+    }
+
     public static function page_template_init($args = array()) {
         $plugin_path = isset($args['plugin_path']) ? untrailingslashit($args['plugin_path']) : '';
         $folder_path = isset($args['folder_path']) ? untrailingslashit($args['folder_path']) : '';
@@ -235,6 +243,14 @@ class SB_Core {
             set_transient($transient_name, $wp_theme, DAY_IN_SECONDS);
         }
         return $wp_theme;
+    }
+
+    public static function get_wp_version() {
+        return get_bloginfo('version');
+    }
+
+    public static function compare_wp_version($compare_version, $compare) {
+        return version_compare(self::get_wp_version(), $compare_version, $compare);
     }
 
     public static function get_woocommerce_version() {

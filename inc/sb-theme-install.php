@@ -276,6 +276,25 @@ unset($GLOBALS['wpdb']->dbpassword);
 /** Xóa tên cơ sở dữ liệu */
 unset($GLOBALS['wpdb']->dbname);
 
+/*
+ * Thay đổi jQuery sang CDN của Google
+ */
+function sb_theme_change_jquery() {
+    wp_enqueue_script('jquery');
+    $jquery_handle = (version_compare($GLOBALS['wp_version'], '3.6-alpha1', '>=')) ? 'jquery-core' : 'jquery';
+    $wp_jquery_ver = $GLOBALS['wp_scripts']->registered[$jquery_handle]->ver;
+    $jquery_ver = ($wp_jquery_ver == '') ? SB_THEME_JQUERY_VERSION : $wp_jquery_ver;
+    wp_deregister_script('jquery');
+    wp_register_script('jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/' . $jquery_ver . '/jquery.min.js', array(), false, false);
+    wp_enqueue_script('jquery');
+}
+add_action('wp_enqueue_scripts', 'sb_theme_change_jquery');
+
+function sb_theme_jquery_fallback() {
+    echo '<script>window.jQuery || document.write(\'<script type="text/javascript" src="' . includes_url('js/jquery/jquery.js') . '"><\/script>\')</script>' . "\n";
+}
+add_action('sb_theme_footer_before', 'sb_theme_jquery_fallback');
+
 /**
  * Thêm menu vào admin bar.
  */

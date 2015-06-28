@@ -501,10 +501,12 @@ class SB_Theme {
     public static function the_facebook_javascript_sdk($api_id = '1425884427679175') {
         ?>
         <div id="fb-root"></div>
-        <script>(function(d, s, id) {
+        <script type="text/javascript" async defer>(function(d, s, id) {
                 var js, fjs = d.getElementsByTagName(s)[0];
                 if (d.getElementById(id)) return;
                 js = d.createElement(s); js.id = id;
+                js.async = 1;
+                js.defer = 1;
                 js.src = "//connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v2.3&appId=<?php echo $api_id; ?>";
                 fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));</script>
@@ -740,6 +742,7 @@ class SB_Theme {
     }
 
     public static function the_login_page_header() {
+        do_action('sb_theme_login_page_init');
         do_action('sb_login_page_init');
         get_header();
     }

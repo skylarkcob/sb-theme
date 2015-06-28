@@ -1002,6 +1002,10 @@ class SB_Post {
         return self::get_by_slug($page_slug, 'page');
     }
 
+    public static function get_page_by_template($template_name, $args = array()) {
+        return SB_Query::get_pages_by_template($template_name, $args);
+    }
+
     public static function add($args = array()) {
         self::insert($args);
     }
@@ -1034,6 +1038,32 @@ class SB_Post {
         if(is_object($term) && !is_wp_error($term)) {
             $result['street'] = $term->term_id;
         }
+        return $result;
+    }
+
+    public static function update_yoast_seo_title($post_id, $title) {
+        return update_post_meta($post_id, '_yoast_wpseo_title', $title);
+    }
+
+    public static function update_yoast_seo_description($post_id, $description) {
+        return update_post_meta($post_id, '_yoast_wpseo_metadesc', $description);
+    }
+
+    public static function update_yoast_seo_keyword($post_id, $keyword) {
+        return update_post_meta($post_id, '_yoast_wpseo_metakeywords', $keyword);
+    }
+
+    public static function update_yoast_seo($post_id, $title, $description, $keyword) {
+        $result = false;
+        if(SB_Core::is_wpseo_yoast_installed()) {
+            $updated_title = self::update_yoast_seo_title($post_id, $title);
+            $updated_desc = self::update_yoast_seo_description($post_id, $description);
+            $updated_kw = self::update_yoast_seo_keyword($post_id, $keyword);
+            if($updated_title && $updated_desc && $updated_kw){
+                $result = true;
+            }
+        }
+
         return $result;
     }
 

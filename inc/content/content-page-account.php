@@ -1,4 +1,4 @@
-<div class="sb-login-page-box sb-accounts">
+<div class="sb-login-page-box sb-accounts sb-theme-login">
     <div class="sb-wrap container">
         <div class="sb-login-page-container">
             <?php

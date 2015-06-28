@@ -365,7 +365,7 @@ class SB_Option {
     }
 
     public static function get_current_wordpress_version() {
-        return get_bloginfo('version');
+        return SB_Core::get_wp_version();
     }
 
     public static function get_activated_plugins() {

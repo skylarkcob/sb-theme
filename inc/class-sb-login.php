@@ -84,7 +84,7 @@ class SB_Login {
         }
         $redirect_uri = isset($this->facebook['callback_url']) ? $this->facebook['callback_url'] : '';
         $redirect_uri = esc_url(remove_query_arg(array('redirect_to'), $redirect_uri));
-        if(version_compare(PHP_VERSION, '5.4', '<')) {
+        if(SB_PHP::compare_version('5.4', '<')) {
             $sb_facebook_v3 = new Facebook(
                 array(
                     'appId' => $app_id,

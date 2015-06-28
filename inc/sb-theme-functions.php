@@ -922,10 +922,12 @@ function sb_tab_widget_get_sidebars() {
 
 function sb_theme_get_social_login_facebook() {
     $facebook = SB_Option::get_social_login_app('facebook');
+    $callback_url = isset($facebook['redirect_uri']) ? $facebook['redirect_uri'] : SB_User::get_login_url();
+    $callback_url = SB_Core::trailing_slash_url($callback_url);
     $args = array(
         'app_id' => isset($facebook['app_id']) ? $facebook['app_id'] : '',
         'app_secret' => isset($facebook['app_secret']) ? $facebook['app_secret'] : '',
-        'callback_url' => isset($facebook['redirect_uri']) ? $facebook['redirect_uri'] : SB_User::get_login_url()
+        'callback_url' => $callback_url
     );
     $sb_login = new SB_Login('facebook');
     $sb_login->set_facebook_arg($args);
@@ -935,11 +937,13 @@ function sb_theme_get_social_login_facebook() {
 
 function sb_theme_get_social_login_google($code = '') {
     $google = SB_Option::get_social_login_app('google');
+    $callback_url = isset($google['redirect_uri']) ? $google['redirect_uri'] : SB_User::get_login_url();
+    $callback_url = SB_Core::trailing_slash_url($callback_url);
     $args = array(
         'client_id' => isset($google['client_id']) ? $google['client_id'] : '',
         'client_secret' => isset($google['client_secret']) ? $google['client_secret'] : '',
         'api_key' => isset($google['api_key']) ? $google['api_key'] : '',
-        'callback_url' => isset($facebook['redirect_uri']) ? $facebook['redirect_uri'] : SB_User::get_login_url(),
+        'callback_url' => $callback_url,
         'code' => $code
     );
     $sb_login = new SB_Login('google');
@@ -984,9 +988,13 @@ function sb_theme_social_login_email_exists($message) {
 }
 
 function sb_theme_remove_facebook_login_special_char() {
+    sb_theme_remove_special_char_on_url_script();
+}
+
+function sb_theme_remove_special_char_on_url_script() {
     ?>
-    <script type="text/javascript">
-        if(window.location.hash && window.location.hash == '#_=_') {
+    <script type="text/javascript" async defer>
+        if(window.location.hash && (window.location.hash == '#' || window.location.hash == '#_=_')) {
             if(window.history && history.pushState) {
                 window.history.pushState('', document.title, window.location.pathname);
             } else {
@@ -1005,7 +1013,7 @@ function sb_theme_remove_facebook_login_special_char() {
 
 function sb_theme_admin_confirm_publish_post() {
     ?>
-    <script type="text/javascript">
+    <script type="text/javascript" defer>
         (function($){
             $('input[name="publish"]').on('click', function(e){
                 if(!confirm('Bạn có thật sự muốn đăng bài viết hay không?')) {
@@ -1032,7 +1040,7 @@ function sb_theme_social_login_facebook_check_data_back() {
                 $user = SB_User::get_by('email', $user_email);
                 if(SB_User::is($user)) {
                     $facebook_integrated = (bool)SB_User::get_meta($user->ID, 'facebook_integrated');
-                    if($facebook_integrated) {
+                    if($facebook_integrated || (is_page() && isset($profile['verified']) && (bool)$profile['verified'])) {
                         SB_User::force_login($user->ID);
                         wp_redirect(sb_login_page_get_login_redirect_url());
                         exit;
@@ -1086,7 +1094,7 @@ function sb_theme_social_login_google_check_data_back() {
                 $user = SB_User::get_by('email', $user_email);
                 if(SB_User::is($user)) {
                     $google_integrated = (bool)SB_User::get_meta($user->ID, 'google_integrated');
-                    if($google_integrated) {
+                    if($google_integrated || (is_page() && isset($profile['verifiedEmail']) && (bool)$profile['verifiedEmail'])) {
                         SB_User::force_login($user->ID);
                         wp_redirect(sb_login_page_get_login_redirect_url());
                         exit;

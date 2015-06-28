@@ -3,6 +3,10 @@ if(class_exists('SB_Product')) {
     return;
 }
 class SB_Product {
+    public static function get_out_of_stock_text() {
+        return apply_filters('sb_theme_out_of_stock_text', __('Tạm hết hàng', 'sb-theme'));
+    }
+
     public static function get_category_thumbnail_url($cat) {
         $thumbnail_id = get_woocommerce_term_meta( $cat->term_id, 'thumbnail_id', true );
         return wp_get_attachment_url( $thumbnail_id );
@@ -34,6 +38,7 @@ class SB_Product {
     public function get_add_to_cart_button($args = array()) {
         $defaults = array('id' => $this->product->id, 'sku' => $this->get_sku());
         $args = wp_parse_args($args, $defaults);
+        $id = isset($args['id']) ? $args['id'] : '';
         if(empty($id) || !is_numeric($id)) {
             $id = isset($args['post_id']) ? $args['post_id'] : '';
             if(empty($id)) {
@@ -41,17 +46,18 @@ class SB_Product {
             }
         }
         if(!empty($id) && is_numeric($id)) {
-            $price = $this->get_price();
+            $price = self::get_price($id);
             $style = '';
             if($price == 0) {
                 $style = ' pointer-events: none; cursor: default;';
                 $style = trim($style);
             }
-            $class = '';
-            if(0 == $this->get_price()) {
-                $class = ' please-call';
+            $sku = isset($args['sku']) ? $args['sku'] : '';
+            $class = 'custom-add-to-cart';
+            if(0 == $price) {
+                $class .= ' please-call';
             }
-            return '<div class="custom-add-to-cart'.$class.'">'.do_shortcode('[add_to_cart id="'.$id.'" sku="'.$sku.'" style="'.$style.'"]').'</div>';
+            return '<div class="' . $class . '" data-post-id="' . $id . '">' . do_shortcode('[add_to_cart id="' . $id . '" sku="' . $sku . '" style="' . $style . '"]') . '</div>';
         }
         return '';
     }
@@ -140,6 +146,39 @@ class SB_Product {
         return $result;
     }
 
+    public static function get_price_by_key($post_id, $price_key) {
+        $prices = self::get_prices($post_id);
+        return floatval(isset($prices[$price_key]) ? $prices[$price_key] : '');
+    }
+
+    public static function get_price($post_id = 0) {
+        if(!is_numeric($post_id)) {
+            $type = $post_id;
+            $prices = self::get_prices($post_id);
+            $price = 0;
+            switch($type) {
+                case 'sale':
+                    $price = $prices['sale_price'];
+                    break;
+                case 'regular':
+                    $price = $prices['regular_price'];
+                    break;
+                default:
+                    $price = $prices['price'];
+            }
+            return floatval($price);
+        }
+        return self::get_price_by_key($post_id, 'price');
+    }
+
+    public static function get_regular_price($post_id) {
+        return self::get_price_by_key($post_id, 'regular_price');
+    }
+
+    public static function get_sale_price($post_id) {
+        return self::get_price_by_key($post_id, 'sale_price');
+    }
+
     public static function get_no_price_text() {
         return apply_filters('sb_theme_no_price_text', __('Xin vui lòng liên hệ', 'sb-theme'));
     }
@@ -212,47 +251,34 @@ class SB_Product {
         return $woocommerce->cart->get_cart_total();
     }
 
-    public function get_price($type = 'price') {
-        $product = $this->product;
-        $price = 0;
-        switch($type) {
-            case 'sale':
-                $price = $product->get_sale_price();
-                break;
-            case 'regular':
-                $price = $product->get_regular_price();
-                break;
-            default:
-                $price = $product->price;
+    public static function the_price_html($price, $sale_price = 0) {
+        if(0 == $price) {
+            echo '<span class="price"><span class="no-price call">' . self::get_out_of_stock_text() . '</span></span>';
+        } else {
+            $result = '';
+            if($sale_price > 0) {
+                $ins = '<ins><span class="amount">' . number_format($sale_price) . ' đ</span></ins>';
+                $del = '<del><span class="amount">' . number_format($price) . ' đ</span></del>';
+                $result = $ins . ' ' . $del;
+            }
+            else {
+                $result = '<ins><span class="amount">' . number_format($price) . ' đ</span></ins>';
+            }
+            echo '<span class="price">' . trim($result) . '</span>';
         }
-        return floatval($price);
     }
 
     public function price() {
-        $price = $this->get_price();
-        if(0 == $price) {
-            echo '<span class="price"><span class="no-price call">Tạm hết hàng</span></span>';
-        }
-        else {
-            $sale = $this->get_price('sale');
-            if($sale > 0) {
-                $price = $this->get_price('regular');
-                $sale = '<ins><span class="amount">'.number_format($sale).' đ</span></ins>';
-                $price = '<del><span class="amount">'.number_format($price).' đ</span></del>';
-                $price = $price.' '.$sale;
-            }
-            else {
-                $price = $this->get_price();
-                $price = '<ins><span class="amount">'.number_format($price).' đ</span></ins>';
-            }
-            echo '<span class="price">'.trim($price).'</span>';
-        }
+        $post_id = get_the_ID();
+        $prices = self::get_prices($post_id);
+        self::the_price_html($prices['price'], $prices['sale_price']);
     }
 
     public function is_sale() {
-        $price = $this->get_price('sale');
+        $prices = self::get_prices(get_the_ID());
+        $price = $prices['price'];
         if($price > 0) {
-            $regular = $this->get_price('regular');
+            $regular = $prices['regular_price'];
             if($price < $regular) {
                 return true;
             }
@@ -261,7 +287,51 @@ class SB_Product {
     }
 
     public function sale_percentage() {
-        echo '-'.SB_PHP::percentage($this->get_price('sale'), $this->get_price('regular'), 2).'%';
+        self::the_sale_percentage(get_the_ID());
+    }
+
+    public static function get_sale_percentage($post_id) {
+        $prices = self::get_prices($post_id);
+        $sale_price = $prices['sale_price'];
+        if($sale_price < 1) {
+            return 0;
+        }
+        return SB_PHP::percentage($sale_price, $prices['regular_price'], 2);
+    }
+
+    public static function get_sale_percentage_html($post_id) {
+        $percent = self::get_sale_percentage($post_id);
+        $result = '';
+        if($percent > 0) {
+            $result = '<span class="sale-percentage">' . '-' . self::get_sale_percentage($post_id) . '%' . '</span>';
+        }
+        return $result;
+    }
+
+    public static function the_sale_percentage($post_id) {
+        echo self::get_sale_percentage_html($post_id);
+    }
+
+    public static function get_warranty($post_id) {
+        $product = self::get_product_object($post_id);
+        $bao_hanh = $product->get_attribute('bao-hanh');
+        if(empty($bao_hanh)) {
+            $bao_hanh = SB_Post::get_meta($post_id, 'wpcf-title-description');
+            $bao_hanh = SB_PHP::lowercase($bao_hanh);
+            if(SB_PHP::is_string_contain($bao_hanh, 'bảo hành')) {
+                $bao_hanh_pos = strrpos($bao_hanh, 'bảo hành');
+                $bao_hanh = mb_substr($bao_hanh, $bao_hanh_pos);
+                $bao_hanh = mb_ereg_replace('bảo hành', '', $bao_hanh);
+                $bao_hanh = mb_ereg_replace('o hành', '', $bao_hanh);
+                $bao_hanh = mb_ereg_replace('hành:', '', $bao_hanh);
+                $bao_hanh = mb_ereg_replace('hành', '', $bao_hanh);
+                $bao_hanh = mb_ereg_replace('chính hãng', '', $bao_hanh);
+            } else {
+                $bao_hanh = '';
+            }
+        }
+        $bao_hanh = trim($bao_hanh);
+        return $bao_hanh;
     }
 
     public static function count_product() {

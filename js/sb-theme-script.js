@@ -318,6 +318,32 @@ var sb_password_strength,
         });
     })();
 
+    // Thêm nút mở rộng thu gọn cho submenu trên điện thoại
+    (function(){
+        $('.sb-mobile-menu .sf-menu li.menu-item-has-children').append('<i class="fa fa-plus icon-collapse-expand icon-expand"></i>');
+        $('.sb-mobile-menu .sf-menu li.menu-item-has-children').find('.icon-collapse-expand').each(function(index, el){
+            var icon_collapse_expand = $(el);
+            icon_collapse_expand.on('click', function(e){
+                var that = $(this),
+                    list_item = that.parent();
+                if(that.hasClass('active')) {
+                    that.removeClass('fa-minus');
+                    that.removeClass('icon-collapse');
+                    that.addClass('fa-plus');
+                    that.addClass('icon-expand');
+                    list_item.find('.sub-menu:first').slideUp();
+                } else {
+                    that.removeClass('fa-plus');
+                    that.removeClass('icon-expand');
+                    that.addClass('fa-minus');
+                    that.addClass('icon-collapse');
+                    list_item.find('.sub-menu:first').slideDown();
+                }
+                that.toggleClass('active');
+            });
+        });
+    })();
+
     // Float ads
     (function(){
         var content_container = $('.sb-site'),
@@ -946,57 +972,27 @@ var sb_password_strength,
         })();
     })();
 
-    // Thêm và xóa hình ảnh
+    // Đăng nhập mạng xã hội
     (function(){
-        $('.sb-insert-media').live('click', function(e){
-            e.preventDefault();
-            var that = $(this);
-            if(file_frame) {
-                file_frame.uploader.uploader.param('post_id', new_post_id);
-                file_frame.open();
-                return;
-            }
-            file_frame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
-            file_frame.on('select', function(){
-                var media_data = sb_core.sb_receive_media_selected(file_frame),
-                    media_container = that.closest('.sb-media-upload'),
-                    image_preview_container = media_container.find('.image-preview'),
-                    image_input = media_container.find('input.image-url'),
-                    media_id_input = media_container.find('input.media-id');
-                image_input.val(media_data.url);
-                image_input.attr('value', media_data.url);
-                media_id_input.val(media_data.id);
-                if(image_preview_container.length) {
-                    image_preview_container.html('<img src="' + media_data.url + '">');
-                    image_preview_container.addClass('has-image');
+        $('.sb-login-form .btn-social').on('click', function(e){
+            var that = $(this),
+                data_social = that.attr('data-social');
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: sb_theme.ajax_url,
+                data: {
+                    action: 'sb_theme_login_social',
+                    data_social: data_social
+                },
+                success: function(response){
+                    if($.trim(response.url)) {
+                        window.location.href = response.url;
+                    } else {
+                        alert(response.message)
+                    }
                 }
-                file_frame = null;
             });
-            file_frame.open();
-        });
-
-        $('.sb-remove-media').live('click', function(e){
-            e.preventDefault();
-            var that = $(this),
-                media_container = that.closest('.sb-media-upload');
-            media_container.find('input').val('').attr('value', '');
-            media_container.find('.image-preview').removeClass('has-image').html('');
-        });
-
-        $('.sb-media-upload .image-url').live('change input', function(e){
-            e.preventDefault();
-            var that = $(this),
-                media_container = that.closest('.sb-media-upload'),
-                image_preview_container = media_container.find('.image-preview'),
-                image_text = that.val();
-            if($.trim(image_text) && sb_core.sb_is_image_url(image_text)) {
-                image_preview_container.html('<img src="' + image_text + '">');
-                image_preview_container.addClass('has-image');
-            } else {
-                image_preview_container.html('');
-                image_preview_container.removeClass('has-image');
-            }
-            media_container.find('.media-id').val(0);
         });
     })();
 
@@ -1077,6 +1073,60 @@ var sb_password_strength,
                     }
                 });
             }
+        });
+    })();
+
+    // Thêm và xóa hình ảnh
+    (function(){
+        $('.sb-insert-media').on('click', function(e){
+            e.preventDefault();
+            var that = $(this);
+            if(file_frame) {
+                file_frame.uploader.uploader.param('post_id', new_post_id);
+                file_frame.open();
+                return;
+            }
+            file_frame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
+            file_frame.on('select', function(){
+                var media_data = sb_core.sb_receive_media_selected(file_frame),
+                    media_container = that.closest('.sb-media-upload'),
+                    image_preview_container = media_container.find('.image-preview'),
+                    image_input = media_container.find('input.image-url'),
+                    media_id_input = media_container.find('input.media-id');
+                image_input.val(media_data.url);
+                image_input.attr('value', media_data.url);
+                media_id_input.val(media_data.id);
+                if(image_preview_container.length) {
+                    image_preview_container.html('<img src="' + media_data.url + '">');
+                    image_preview_container.addClass('has-image');
+                }
+                file_frame = null;
+            });
+            file_frame.open();
+        });
+
+        $('.sb-remove-media').on('click', function(e){
+            e.preventDefault();
+            var that = $(this),
+                media_container = that.closest('.sb-media-upload');
+            media_container.find('input').val('').attr('value', '');
+            media_container.find('.image-preview').removeClass('has-image').html('');
+        });
+
+        $('.sb-media-upload .image-url').on('change input', function(e){
+            e.preventDefault();
+            var that = $(this),
+                media_container = that.closest('.sb-media-upload'),
+                image_preview_container = media_container.find('.image-preview'),
+                image_text = that.val();
+            if($.trim(image_text) && sb_core.sb_is_image_url(image_text)) {
+                image_preview_container.html('<img src="' + image_text + '">');
+                image_preview_container.addClass('has-image');
+            } else {
+                image_preview_container.html('');
+                image_preview_container.removeClass('has-image');
+            }
+            media_container.find('.media-id').val(0);
         });
     })();
 

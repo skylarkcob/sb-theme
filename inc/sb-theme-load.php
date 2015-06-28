@@ -107,6 +107,8 @@ require SB_THEME_INC_PATH . '/class-sb-comment.php';
 
 require SB_THEME_INC_PATH . '/class-sb-paginate.php';
 
+require SB_THEME_INC_PATH . '/class-sb-base-slug.php';
+
 require SB_THEME_INC_PATH . '/widgets/class-sb-support-widget.php';
 
 require SB_THEME_INC_PATH . '/widgets/class-sb-post-widget.php';
@@ -123,7 +125,7 @@ if(SB_Option::social_login_enabled()) {
     $twitter = SB_Option::get_social_login_app('twitter');
     $twitter_enabled = isset($twitter['enabled']) ? (bool)$twitter['enabled'] : false;
     if($facebook_enabled) {
-        if(version_compare(PHP_VERSION, '5.4.0', '<')) {
+        if(SB_PHP::compare_version('5.4', '<')) {
             /** Load Facebook PHP SDK */
             require SB_THEME_LIB_PATH . '/facebook-php-sdk/facebook.php';
         } else {

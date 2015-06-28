@@ -13,7 +13,7 @@ do_action('sb_theme_hook_before');
 function sb_theme_init_hook() {
 	do_action('sb_theme_init_before');
     $session_started = true;
-    if ( version_compare( phpversion(), '5.4.0', '>=' ) ) {
+    if ( SB_PHP::compare_version('5.4', '>=') ) {
         if ( PHP_SESSION_NONE == session_status() ) {
             $session_started = false;
         }
@@ -220,6 +220,7 @@ function sb_theme_login_check_social_login() {
     SB_User::check_social_login_data_send_back($data_social);
 }
 add_action('sb_theme_login_init', 'sb_theme_login_check_social_login');
+add_action('sb_theme_login_page_init', 'sb_theme_login_check_social_login');
 
 /*
  * Hàm thêm thông tin vào trang đăng nhập
@@ -229,6 +230,11 @@ function sb_theme_login_form_hook() {
     do_action('sb_theme_login_form');
 }
 add_action('login_form', 'sb_theme_login_form_hook');
+
+function sb_theme_login_page_login_form() {
+    SB_Theme::get_content('sb-theme-wp-login-social');
+}
+add_action('sb_theme_login_page_login_form', 'sb_theme_login_page_login_form');
 
 /*
  * Hàm thêm thông tin vào chân trang login
@@ -489,10 +495,7 @@ function sb_theme_after_switch_hook() {
     if(is_admin() && defined('SB_CORE_VERSION')) {
         sb_theme_update_default_options();
     }
-
     SB_Membership::init_roles_and_capabilities();
-
-    flush_rewrite_rules();
 }
 add_action('sb_theme_after_switch_theme', 'sb_theme_after_switch_hook');
 
@@ -504,6 +507,7 @@ function sb_theme_switch_hook($newname, $newtheme) {
     do_action('sb_theme_switch_theme', $newname, $newtheme);
     do_action('sb_theme_deactivation', $newname, $newtheme);
     do_action('sb_theme_uninstall', $newname, $newtheme);
+    do_action('sb_theme_before_uninstall');
 }
 add_action('switch_theme', 'sb_theme_switch_hook', 10, 2);
 
@@ -528,10 +532,18 @@ function sb_theme_wp_footer() { ?>
         include SB_THEME_LIB_PATH . '/sharethis/config.php';
     }
     sb_core_ajax_loader();
-    sb_theme_remove_facebook_login_special_char();
+    sb_theme_remove_special_char_on_url_script();
     SB_Theme::google_analytics_tracking();
 }
 add_action('wp_footer', 'sb_theme_wp_footer');
+
+function sb_theme_add_hidden_data_field() {
+    if(is_singular()) {
+        $post_id = get_the_ID();
+        echo '<input type="hidden" class="current-post-id" value="' . $post_id . '">';
+    }
+}
+add_action('sb_theme_footer_before', 'sb_theme_add_hidden_data_field');
 
 function sb_theme_add_to_body_before() {
     if(SB_Theme::use_facebook_javascript_sdk()) {
@@ -755,20 +767,30 @@ function sb_login_page_init() {
         if('logout' == $action) {
             return;
         }
-        $acc_page_id = sb_login_page_get_page_account_id();
-        if($acc_page_id > 0 && SB_Post::is_published($acc_page_id)) {
-            $login_url = sb_login_page_get_page_account_url();
-            if(!empty($login_url) && !empty($action)) {
-                $login_url = add_query_arg(array('action' => $action), $login_url);
+        $data_social = isset($_GET['data_social']) ? $_GET['data_social'] : '';
+        if(empty($data_social)) {
+            $data_social = isset($_GET['state']) ? $_GET['state'] : '';
+        }
+        if(empty($data_social)) {
+            $acc_page_id = sb_login_page_get_page_account_id();
+            if($acc_page_id > 0 && SB_Post::is_published($acc_page_id)) {
+                $login_url = sb_login_page_get_page_account_url();
+                if(!empty($login_url) && !empty($action)) {
+                    $login_url = add_query_arg(array('action' => $action), $login_url);
+                }
+                if(!empty($login_url)) {
+                    wp_redirect($login_url);
+                    exit();
+                }
             }
-            if(!empty($login_url)) {
-                wp_redirect($login_url);
-                exit();
-            }
+        } else {
+            $data_social = SB_Core::decrypt($data_social);
+            SB_User::check_social_login_data_send_back($data_social);
         }
     }
 }
 add_action('sb_theme_login_init', 'sb_login_page_init');
+add_action('sb_theme_login_page_init', 'sb_login_page_init');
 
 /*
  * Kiểm tra trước khi hiển thị nội dung trang đăng nhập
@@ -847,14 +869,6 @@ function sb_theme_lost_password_post_hook() {
     }
 }
 add_action('lostpassword_post', 'sb_theme_lost_password_post_hook');
-
-/*
- * Chạy hàm khi plugin SB Login Page ngừng kích hoạt
- */
-function sb_login_page_plugin_deactivated() {
-    //sb_login_page_delete_page_templates();
-}
-add_action('sb_login_page_deactivation', 'sb_login_page_plugin_deactivated');
 
 /*
  * Thêm các trường mở rộng cho tài khoản người dùng
@@ -1064,7 +1078,7 @@ function sb_theme_admin_notice_hook() {
 add_action('sb_theme_admin_notices', 'sb_theme_admin_notice_hook');
 
 function sb_theme_add_style_and_script_to_editor() {
-    if(version_compare(SB_Option::get_current_wordpress_version(), '4.2', '>=')) {
+    if(SB_Core::compare_wp_version('4.2', '>=')) {
         if(SB_Option::support_link_title()) {
             if(!SB_Core::is_restore_link_title_field_installed()) {
                 SB_Lib::restore_link_title();
@@ -1125,6 +1139,11 @@ function sb_theme_on_edit_post($post) {
     }
 }
 add_action('sb_theme_edit_post', 'sb_theme_on_edit_post');
+
+function sb_theme_update_rewrite_rule_before_uninstall() {
+    flush_rewrite_rules();
+}
+add_action('sb_theme_before_uninstall', 'sb_theme_update_rewrite_rule_before_uninstall');
 
 /* ================================================================================================================== */
 
@@ -1872,10 +1891,10 @@ function sb_theme_change_woocommerce_text($translation, $text) {
                 $translation = 'Gửi';
                 break;
             case '%s customer reviews':
-                $translation = '% nhận xét';
+                $translation = '%s nhận xét';
                 break;
             case '%s customer review':
-                $translation = '% nhận xét';
+                $translation = '%s nhận xét';
                 break;
             case 'Be the first to review':
                 $translation = 'Trở thành người đầu tiên đánh giá';
@@ -1894,6 +1913,9 @@ function sb_theme_change_woocommerce_text($translation, $text) {
                 break;
             case 'Your comment is awaiting approval':
                 $translation = 'Bình luận của bạn đang được đợi để xét duyệt.';
+                break;
+            case 'Rated %s out of 5':
+                $translation = 'Được đánh giá %s trên tổng số 5';
                 break;
         }
     }
@@ -1917,13 +1939,39 @@ function sb_theme_change_woocommerce_text_with_context($translations, $text, $co
                 $translations = '%s nhận xét cho %s';
                 break;
             case '%s customer reviews':
-                $translations = '% nhận xét';
+                $translations = '%s nhận xét';
+                break;
+            case '%s customer review':
+                $translations = '%s nhận xét';
                 break;
         }
     }
     return $translations;
 }
 add_filter('gettext_with_context', 'sb_theme_change_woocommerce_text_with_context', 10, 3, 2);
+
+function sb_theme_change_woocommerce_ngettext($translation, $single, $plural, $number, $domain = 'default') {
+    if(SB_Theme::support('woocommerce') && (!is_admin() || (is_admin() && defined('DOING_AJAX')))) {
+        $translations = get_translations_for_domain( $domain );
+        $translation = $translations->translate_plural( $single, $plural, $number );
+        switch($translation) {
+            case '%s customer reviews':
+                $translation = '%s nhận xét';
+                break;
+            case '%s customer review':
+                $translation = '%s nhận xét';
+                break;
+            case 'Category:':
+                $translation = 'Chuyên mục:';
+                break;
+            case 'Categories:':
+                $translation = 'Chuyên mục:';
+                break;
+        }
+    }
+    return $translation;
+}
+add_filter('ngettext', 'sb_theme_change_woocommerce_ngettext', 10, 4);
 
 function sb_theme_change_woocommerce_template_path($template, $template_name, $template_path) {
     $woocommerce_template_path  = trailingslashit(SB_THEME_CONTENT_WOOCOMMERCE_PATH);
@@ -1943,12 +1991,12 @@ function sb_theme_woocommerce_template_part_filter($template, $slug, $name) {
         $file_name = "{$slug}.php";
     }
     $file_path = $woocommerce_template_path . $file_name;
-    if(file_exists($file_path)) {
+    if(file_exists($file_path) && !file_exists(get_template_directory() . '/woocommerce')) {
         $template = $file_path;
     }
     return $template;
 }
-add_filter('wc_get_template_part', 'sb_theme_woocommerce_template_part_filter', 10, 3);
+//add_filter('wc_get_template_part', 'sb_theme_woocommerce_template_part_filter', 10, 3);
 
 function sb_theme_cart_shipping_method_filter($label, $method) {
     if(is_object($method) && $method->id == 'free_shipping') {
@@ -2246,6 +2294,30 @@ function sb_theme_filter_option_by_option($options) {
     return $options;
 }
 add_filter('sb_theme_sanitize_option', 'sb_theme_filter_option_by_option');
+
+/*
+ * Thêm thuộc tính async khi tải JavaScript
+ */
+function sb_theme_script_loader_tag($tag, $handle) {
+    if(!is_admin()) {
+        if('jquery' == $handle) {
+            return $tag;
+        }
+    }
+    return $tag;
+}
+add_filter('script_loader_tag', 'sb_theme_script_loader_tag', 10, 2);
+
+// Thêm thuộc tính defer vào khi tải JavaScript
+function sb_theme_clean_url($url) {
+    if(!SB_PHP::is_string_contain($url, '.js') || SB_PHP::is_string_contain($url, 'jquery.js') || SB_PHP::is_string_contain($url, 'jquery.min.js')) {
+        return $url;
+    } elseif(SB_PHP::is_string_contain($url, '.js')) {
+        $url = "$url' defer='defer";
+    }
+    return $url;
+}
+add_filter('clean_url', 'sb_theme_clean_url', 11, 1);
 
 function sb_theme_add_to_cart_text_filter() {
     $woocommerce_version = SB_Core::get_woocommerce_version();

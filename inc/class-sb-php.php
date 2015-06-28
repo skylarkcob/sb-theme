@@ -478,6 +478,9 @@ class SB_PHP {
     }
 
     public static function percentage( $val1, $val2, $precision ) {
+        if($val2 == 0) {
+            return 0;
+        }
         $res = 100 - round( ($val1 / $val2) * 100, $precision );
         return $res;
     }
@@ -1395,11 +1398,14 @@ class SB_PHP {
         return phpversion();
     }
 
+    public static function compare_version($compare_version, $compare) {
+        return version_compare(self::get_version(), $compare_version, $compare);
+    }
+
     public static function get_pc_ip() {
-        $version = self::get_version();
         $result = '';
         if ( function_exists( 'getHostByName' ) ) {
-            if ( -1 == version_compare( $version, '5.3.0' ) && function_exists( 'php_uname' ) ) {
+            if (self::compare_version('5.3.0', '<') && function_exists( 'php_uname' ) ) {
                 $result = getHostByName( php_uname( 'n' ) );
             } elseif( function_exists( 'getHostName' ) ) {
                 $result = getHostByName( getHostName() );

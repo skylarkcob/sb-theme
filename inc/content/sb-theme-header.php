@@ -2,15 +2,15 @@
 <!DOCTYPE html>
 <html lang="vi" dir="ltr" class="no-js">
 <head>
-    <meta charset="<?php bloginfo( 'charset' ); ?>">
-    <?php if(version_compare(get_bloginfo('version'), '4.1', '<')) : ?>
+    <meta charset="<?php bloginfo('charset'); ?>">
+    <?php if(SB_Core::compare_wp_version('4.1', '<')) : ?>
         <title><?php SB_Theme::the_title(); ?></title>
     <?php endif; ?>
 	<meta content="width=device-width, initial-scale=1" name="viewport">
     <?php wp_head(); ?>
 	<link rel="profile" href="http://gmpg.org/xfn/11">
 	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>">
-	<script>(function(){document.documentElement.className='js'})();</script>
+	<script type="text/javascript">(function(){document.documentElement.className='js'})();</script>
 </head>
 <body <?php body_class(); ?>>
 <?php

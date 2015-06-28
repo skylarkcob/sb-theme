@@ -15,6 +15,7 @@
                 <label for="login-password"><?php echo $text; ?></label>
                 <input type="password" class="form-control login-password" id="login-password" placeholder="<?php echo $text; ?>">
             </div>
+            <?php do_action('sb_theme_login_page_login_form'); ?>
             <div class="form-group">
                 <?php do_action('sb_login_page_field'); ?>
                 <?php wp_nonce_field('sb-theme', 'security'); ?>
