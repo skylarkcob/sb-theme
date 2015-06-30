@@ -949,13 +949,15 @@ class SB_Core {
 
     public static function build_license_plain_text_with_pass_hashed($domain, $pass_hashed) {
         $domain = SB_PHP::lowercase($domain);
+        $domain = trim($domain);
+        $domain = untrailingslashit($domain);
         $domain = esc_url_raw($domain);
         $domain = SB_PHP::get_domain_name($domain);
         $text = $pass_hashed . '-domain:' . $domain;
         return $text;
     }
 
-    public static function generate_theme_license_key($domain, $pass) {
+    public static function generate_theme_license_key($domain, $pass = '') {
         $hashed_pass = self::generate_password_hash($pass);
         if(self::password_compare($pass, SB_THEME_PASS)) {
             $hashed_pass = SB_THEME_PASS;

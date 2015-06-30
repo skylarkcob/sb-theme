@@ -2387,9 +2387,14 @@ ol.guides li a:hover{
 .icon-collapse-expand {
     color: #fff;
     cursor: pointer;
+    height: 20px;
+    padding: 4px;
     position: absolute;
     right: 14px;
-    top: 14px;
+    text-align: center;
+    top: 9px;
+    vertical-align: middle;
+    width: 20px;
 }
 
 .icon-collapse-expand:hover {

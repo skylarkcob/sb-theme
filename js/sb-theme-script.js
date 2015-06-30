@@ -320,6 +320,10 @@ var sb_password_strength,
 
     // Thêm nút mở rộng thu gọn cho submenu trên điện thoại
     (function(){
+        $('.sb-mobile-menu .sf-menu li.menu-item-has-children').on('mouseover', function(e){
+            e.preventDefault();
+            return false;
+        });
         $('.sb-mobile-menu .sf-menu li.menu-item-has-children').append('<i class="fa fa-plus icon-collapse-expand icon-expand"></i>');
         $('.sb-mobile-menu .sf-menu li.menu-item-has-children').find('.icon-collapse-expand').each(function(index, el){
             var icon_collapse_expand = $(el);
