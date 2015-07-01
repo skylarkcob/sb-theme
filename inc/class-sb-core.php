@@ -568,6 +568,31 @@ class SB_Core {
         }
     }
 
+    public static function esc_gender_sql($gender) {
+        $result = 1;
+        if(is_numeric($gender)) {
+            $gender = absint($gender);
+            if(0 == $gender) {
+                $result = 0;
+            }
+        } else {
+            $gender = strtolower($gender);
+            if('male' == $gender || 'nam' == $gender) {
+                $result = 0;
+            }
+        }
+        return $result;
+    }
+
+    public static function esc_gender($gender) {
+        $result = __('Nữ', 'sb-theme');
+        $gender = self::esc_gender_sql($gender);
+        if(0 == $gender) {
+            $result = __('Nam', 'sb-theme');
+        }
+        return $result;
+    }
+
     public static function get_menu_by_location($location) {
         $locations = self::get_menu_location();
         $menu = null;

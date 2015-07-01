@@ -1063,9 +1063,28 @@ function sb_theme_social_login_facebook_check_data_back() {
                 $result = sb_login_page_user_signup($args);
                 if($result) {
                     $user = SB_User::get_by('email', $user_email);
+                    $user_id = $user->ID;
                     if(SB_User::is($user)) {
-                        SB_User::update_meta($user->ID, 'facebook_profile', $profile);
-                        SB_User::update_meta($user->ID, 'facebook_integrated', 1);
+                        SB_User::update_meta($user_id, 'facebook_profile', $profile);
+                        SB_User::update_meta($user_id, 'facebook_integrated', 1);
+                        $first_name = isset($profile['first_name']) ? $profile['first_name'] : '';
+                        $last_name = isset($profile['last_name']) ? $profile['last_name'] : '';
+                        $middle_name = isset($profile['middle_name']) ? $profile['middle_name'] : '';
+                        if(!empty($last_name) && !empty($middle_name)) {
+                            $last_name .= ' ' . $middle_name;
+                        }
+                        $gender = isset($profile['gender']) ? $profile['gender'] : '';
+                        $name = isset($profile['name']) ? $profile['name'] : '';
+                        if(empty($name)) {
+                            $name = $last_name . ' ' . $first_name;
+                        }
+                        $user_data = array(
+                            'display_name' => $name,
+                            'first_name' => $first_name,
+                            'last_name' => $last_name
+                        );
+                        SB_User::update($user_id, $user_data);
+                        SB_User::update_meta($user_id, 'gender', SB_Core::esc_gender_sql($gender));
                     }
                     wp_redirect(sb_login_page_get_login_redirect_url());
                     exit;
@@ -1115,8 +1134,23 @@ function sb_theme_social_login_google_check_data_back() {
                 if($result) {
                     $user = SB_User::get_by('email', $user_email);
                     if(SB_User::is($user)) {
-                        SB_User::update_meta($user->ID, 'google_profile', $profile);
-                        SB_User::update_meta($user->ID, 'google_integrated', 1);
+                        $user_id = $user->ID;
+                        SB_User::update_meta($user_id, 'google_profile', $profile);
+                        SB_User::update_meta($user_id, 'google_integrated', 1);
+                        $family_name = isset($profile['familyName']) ? $profile['familyName'] : '';
+                        $gender = isset($profile['gender']) ? $profile['gender'] : '';
+                        $given_name = isset($profile['givenName']) ? $profile['givenName'] : '';
+                        $name = isset($profile['name']) ? $profile['name'] : '';
+                        if(empty($name)) {
+                            $name = $given_name . ' ' . $family_name;
+                        }
+                        $user_data = array(
+                            'display_name' => $name,
+                            'first_name' => $given_name,
+                            'last_name' => $family_name
+                        );
+                        SB_User::update($user_id, $user_data);
+                        SB_User::update_meta($user_id, 'gender', SB_Core::esc_gender_sql($gender));
                     }
                     wp_redirect(sb_login_page_get_login_redirect_url());
                     exit;

@@ -279,6 +279,8 @@ unset($GLOBALS['wpdb']->dbname);
 /*
  * Thay đổi jQuery sang CDN của Google
  */
+$sb_theme_use_jquery_cdn = apply_filters('sb_theme_use_jquery_cdn', false);
+
 function sb_theme_change_jquery() {
     wp_enqueue_script('jquery');
     $jquery_handle = (version_compare($GLOBALS['wp_version'], '3.6-alpha1', '>=')) ? 'jquery-core' : 'jquery';
@@ -288,12 +290,12 @@ function sb_theme_change_jquery() {
     wp_register_script('jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/' . $jquery_ver . '/jquery.min.js', array(), false, false);
     wp_enqueue_script('jquery');
 }
-add_action('wp_enqueue_scripts', 'sb_theme_change_jquery');
+if($sb_theme_use_jquery_cdn) add_action('wp_enqueue_scripts', 'sb_theme_change_jquery');
 
 function sb_theme_jquery_fallback() {
     echo '<script>window.jQuery || document.write(\'<script type="text/javascript" src="' . includes_url('js/jquery/jquery.js') . '"><\/script>\')</script>' . "\n";
 }
-add_action('sb_theme_footer_before', 'sb_theme_jquery_fallback');
+if($sb_theme_use_jquery_cdn) add_action('sb_theme_footer_before', 'sb_theme_jquery_fallback');
 
 /**
  * Thêm menu vào admin bar.
