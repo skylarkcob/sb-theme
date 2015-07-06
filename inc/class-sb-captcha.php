@@ -25,9 +25,7 @@ class SB_Captcha {
     }
 
     public static function use_captcha() {
-        $use_captcha = apply_filters('sb_use_captcha', false);
-        $use_captcha = apply_filters('sb_theme_use_captcha', $use_captcha);
-        return $use_captcha;
+        return SB_Tool::use_captcha();
     }
 
     public static function required_plugins_installed() {
@@ -46,7 +44,7 @@ class SB_Captcha {
     }
 
     public static function need_check_login_captcha() {
-        if(SB_Option::use_login_captcha() && self::need_check()) {
+        if(SB_Tool::use_login_captcha() && self::need_check()) {
             return true;
         }
         return false;
@@ -169,7 +167,7 @@ class SB_Captcha {
         $class = SB_PHP::add_string_with_space_before($class, 'sb-captcha-image captcha-code captcha-code-image sb-theme-captcha-image');
         if(!empty($url)) {
             $len = isset($args['len']) ? $args['len'] : 4;
-            echo '<img class="' . $class . '" data-file="' . $file_name . '" src="' . $url . '" data-len="' . $len . '">';
+            echo '<img alt="" class="' . $class . '" data-file="' . $file_name . '" src="' . $url . '" data-len="' . $len . '">';
         }
     }
 }

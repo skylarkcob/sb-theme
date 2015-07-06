@@ -53,6 +53,27 @@ var sb_password_strength,
         sb_core.sb_ajax_loader(status);
     };
 
+    sb_theme.social_login_ajax = function(data_social) {
+        sb_theme.ajax_loader(true);
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: sb_theme.ajax_url,
+            data: {
+                action: 'sb_theme_login_social',
+                data_social: data_social
+            },
+            success: function(response){
+                sb_theme.ajax_loader(false);
+                if($.trim(response.url)) {
+                    window.location.href = response.url;
+                } else {
+                    alert(response.message)
+                }
+            }
+        });
+    };
+
     sb_core.sb_resize_iframe = function(obj, divisor, min_height) {
         divisor = divisor || 1;
         min_height = min_height || 100;
@@ -750,6 +771,7 @@ var sb_password_strength,
                 }
                 if(data_valid) {
                     submit_button.addClass('disabled');
+                    sb_theme.ajax_loader(true);
                     $.ajax({
                         type: 'POST',
                         dataType: 'json',
@@ -762,6 +784,7 @@ var sb_password_strength,
                             security: that.find('#security').val()
                         },
                         success: function(response){
+                            sb_theme.ajax_loader(false);
                             var data = response;
                             if(data.logged_in == true) {
                                 window.location.href = redirect.val();
@@ -981,22 +1004,7 @@ var sb_password_strength,
         $('.sb-login-form .btn-social').on('click', function(e){
             var that = $(this),
                 data_social = that.attr('data-social');
-            $.ajax({
-                type: 'POST',
-                dataType: 'json',
-                url: sb_theme.ajax_url,
-                data: {
-                    action: 'sb_theme_login_social',
-                    data_social: data_social
-                },
-                success: function(response){
-                    if($.trim(response.url)) {
-                        window.location.href = response.url;
-                    } else {
-                        alert(response.message)
-                    }
-                }
-            });
+            sb_theme.social_login_ajax(data_social);
         });
     })();
 
@@ -1101,7 +1109,7 @@ var sb_password_strength,
                 image_input.attr('value', media_data.url);
                 media_id_input.val(media_data.id);
                 if(image_preview_container.length) {
-                    image_preview_container.html('<img src="' + media_data.url + '">');
+                    image_preview_container.html('<img alt="" src="' + media_data.url + '">');
                     image_preview_container.addClass('has-image');
                 }
                 file_frame = null;
@@ -1124,7 +1132,7 @@ var sb_password_strength,
                 image_preview_container = media_container.find('.image-preview'),
                 image_text = that.val();
             if($.trim(image_text) && sb_core.sb_is_image_url(image_text)) {
-                image_preview_container.html('<img src="' + image_text + '">');
+                image_preview_container.html('<img alt="" src="' + image_text + '">');
                 image_preview_container.addClass('has-image');
             } else {
                 image_preview_container.html('');

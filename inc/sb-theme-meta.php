@@ -32,7 +32,7 @@ function sb_theme_meta_term_thumbnail_callback( $term ) {
     SB_Term_Field::image_upload($args);
 }
 
-if(SB_Option::use_term_thumbnail()) {
+if(SB_Tool::use_term_thumbnail()) {
     $taxs = SB_Option::get_taxonomy_use_thumbnail();
     if(count($taxs) < 1) {
         $taxs[] = 'category';
@@ -75,7 +75,7 @@ function sb_theme_meta_term_color_callback( $term ) {
 /*
  * Tạo mối liên hệ giữa các địa giới hành chính
  */
-if(SB_Option::use_administrative_boundaries()) {
+if(SB_Tool::use_administrative_boundaries()) {
     $use_taxonomies = SB_Core::get_administrative_boundaries_taxonomies();
 
     // Quận huyện thuộc tỉnh thành
@@ -402,7 +402,7 @@ function sb_theme_term_meta_street_district_create() {
 /*
  * Tạo meta box cho post type, người dùng chọn thông tin địa giới hành chính
  */
-if(SB_Option::use_administrative_boundaries()) {
+if(SB_Tool::use_administrative_boundaries()) {
     $use_taxonomies = SB_Core::get_administrative_boundaries_taxonomies();
     $post_types = SB_Option::get_post_type_use_administrative_boundaries();
     $post_type = SB_Core::get_add_new_post_type();
@@ -439,7 +439,7 @@ function sb_theme_publish_box_meta_field() {
     if(in_array($post_type, $post_types)) {
         SB_Theme::the_meta_box_nonce();
         $post_types_use_featured_meta_field = SB_Core::post_type_use_featured_meta_field();
-        if(SB_Core::add_checkbox_featured_post() && in_array($post_type, $post_types_use_featured_meta_field)) {
+        if(SB_Tool::post_use_featured_meta() && in_array($post_type, $post_types_use_featured_meta_field)) {
             $key = 'featured';
             $value = 0;
             if(SB_Post::is($post)) {
@@ -465,7 +465,7 @@ function sb_theme_publish_box_meta_field_save($post_id) {
     if(!SB_Core::check_before_save_post_meta($post_id)) {
         return $post_id;
     }
-    if(SB_Core::add_checkbox_featured_post()) {
+    if(SB_Tool::post_use_featured_meta()) {
         $value = isset($_POST['featured']) ? 1 : 0;
         SB_Post::update_meta($post_id, 'featured', $value);
     }
@@ -495,7 +495,7 @@ $fields = array(
     ),
     array(
         'name' => 'ads_code',
-        'type' => 'text'
+        'type' => 'textarea'
     ),
     array(
         'name' => 'ads_active',

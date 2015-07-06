@@ -985,7 +985,7 @@ class SB_Coupon {
         $image_url = SB_Post::get_sb_meta($post_id, 'printable');
         $image = '';
         if(!empty($image_url)) {
-            $image = '<img src="' . $image_url . '">';
+            $image = '<img alt="" src="' . $image_url . '">';
         }
         if(empty($image)) {
             $image = SB_Post::get_meta($post_id, 'wpcf-printable-code');

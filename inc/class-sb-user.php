@@ -676,7 +676,7 @@ class SB_User {
 
     public static function get_login_url($redirect = '') {
         $url = '';
-        if(function_exists('sb_login_page_get_page_login_url')) {
+        if(function_exists('sb_login_page_get_page_login_url') && SB_Tool::use_custom_login()) {
             $url = sb_login_page_get_page_login_url();
             if(!empty($url) && !empty($redirect)) {
                 $url = add_query_arg(array('redirect_to' => $redirect), $url);

@@ -258,7 +258,7 @@ class SB_PHP {
         return $old_string;
     }
 
-    public static function substr( $str, $len, $more = '...', $charset = 'UTF-8' ) {
+    public static function substr( $str, $len, $more = SB_THEME_THREE_DOT, $charset = 'UTF-8' ) {
         $str = html_entity_decode( $str, ENT_QUOTES, $charset );
         if ( mb_strlen( $str, $charset ) > $len ) {
             $arr = explode( ' ', $str );
@@ -280,7 +280,7 @@ class SB_PHP {
         if(empty($text)) {
             $text = isset($args['string']) ? $args['string'] : '';
         }
-        $more = isset($args['more']) ? $args['more'] : '...';
+        $more = isset($args['more']) ? $args['more'] : SB_THEME_THREE_DOT;
         $read_more = isset($args['read_more']) ? $args['read_more'] : '';
         $len = isset($args['len']) ? absint($args['len']) : 0;
         if($len == 0) {

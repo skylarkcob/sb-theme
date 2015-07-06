@@ -22,7 +22,15 @@ class SB_HW {
             $args = array(
                 'post__not_in' => $exclude_ids,
                 'post_type' => self::get_readable_post_types(),
-                'posts_per_page' => 5
+                'posts_per_page' => 5,
+                'meta_query' => array(
+                    array(
+                        'key' => '_thumbnail_id',
+                        'value' => 0,
+                        'type' => 'NUMERIC',
+                        'compare' => '>'
+                    )
+                )
             );
             $query = SB_Query::get_recent_update($args);
             set_transient($transient_name, $query, DAY_IN_SECONDS);
@@ -46,7 +54,7 @@ class SB_HW {
             $args = array(
                 'post__not_in' => $exclude_ids,
                 'post_type' => SB_HW::get_readable_post_types(),
-                'posts_per_page' => 4
+                'posts_per_page' => 5
             );
             $query = SB_Query::get_random_posts($args);
             set_transient($transient_name, $query, HOUR_IN_SECONDS);

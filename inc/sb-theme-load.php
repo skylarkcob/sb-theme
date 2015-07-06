@@ -35,6 +35,8 @@ require SB_THEME_INC_PATH . '/class-sb-core.php';
 
 require SB_THEME_INC_PATH . '/class-sb-option.php';
 
+require SB_THEME_INC_PATH . '/class-sb-tool.php';
+
 require SB_THEME_INC_PATH . '/class-sb-captcha.php';
 
 require SB_THEME_INC_PATH . '/class-sb-mail.php';
@@ -47,7 +49,7 @@ require SB_THEME_INC_PATH . '/class-sb-membership.php';
 
 require SB_THEME_PLUGIN_PATH . '/really-simple-captcha/really-simple-captcha.php';
 
-if(SB_Core::use_custom_menu()) {
+if(SB_Tool::use_custom_menu()) {
     require SB_THEME_INC_PATH . '/class-sb-menu-walker.php';
 
     require SB_THEME_INC_PATH . '/class-sb-menu-edit-walker.php';
@@ -151,7 +153,7 @@ require SB_THEME_INC_PATH . '/class-sb-lib.php';
  * Kiểm tra nếu giao diện có hỗ trợ meta cho term hoặc tiện ích chức năng
  * meta cho term được bật thì load class cần thiết.
  */
-if(SB_Core::use_custom_metas()) {
+if(SB_Tool::use_term_meta()) {
 
     /*
      * Kiểm tra nếu không tồn tại class SB_Term_Meta thì load class này.

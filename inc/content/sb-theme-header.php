@@ -12,7 +12,7 @@
 	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>">
 	<script type="text/javascript">(function(){document.documentElement.className='js'})();</script>
 </head>
-<body <?php body_class(); ?>>
+<body <?php body_class(); ?> itemtype="http://schema.org/WebPage" itemscope="itemscope">
 <?php
 do_action('sb_theme_body_before');
 $transform = apply_filters('sb_theme_transform', true);

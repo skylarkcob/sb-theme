@@ -36,6 +36,7 @@ function sb_theme_advanced_setting_general_taxonomy_use_thumbnail() {
     $tab_base_option_name = 'general';
     $key = 'taxonomy_use_thumbnail';
 	$actives = SB_Option::get_taxonomy_use_thumbnail();
+    //$actives = apply_filters('sb_theme_taxonomy_use_thumbnail', $actives);
     $args = array(
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
@@ -54,6 +55,7 @@ function sb_theme_advanced_setting_general_taxonomy_use_thumbnail() {
 function sb_theme_advanced_setting_general_taxonomy_use_thumbnail_sortable_callback() {
     $taxs = get_taxonomies(array(), 'objects');
     $actives = SB_Option::get_taxonomy_use_thumbnail();
+    //$actives = apply_filters('sb_theme_taxonomy_use_thumbnail', $actives);
     foreach($taxs as $key => $value) {
         if(in_array($key, $actives)) {
             continue;

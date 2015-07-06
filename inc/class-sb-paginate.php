@@ -98,7 +98,7 @@ class SB_Paginate {
         $total_page = isset($args['total_page']) ? $args['total_page'] : $current_page;
         $request = isset($args['request']) ? $args['request'] : self::get_request();
 
-        $hidden_button = '<span class="paginate-item hidden-item">...</span>';
+        $hidden_button = '<span class="paginate-item hidden-item">' . SB_THEME_THREE_DOT . '</span>';
         $result = '';
         $hidden_before = false;
         $hidden_after = false;

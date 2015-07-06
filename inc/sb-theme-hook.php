@@ -89,16 +89,24 @@ function sb_theme_wp_enqueue_scripts_hook() {
         SB_Theme::enqueue_password_strength_meter();
     }
 
-    wp_enqueue_script('comment-reply');
+    if(is_singular()) {
+        wp_enqueue_script('comment-reply');
+    }
+
+    if(SB_Tool::use_bootstrap_and_fontawesome()) {
+        SB_Lib::load_bootstrap_and_font_awesome();
+    }
 
     do_action('sb_theme_load_lib_scripts');
 
-    wp_register_script( 'superfish', SB_THEME_LIB_URL . '/superfish/js/superfish.min.js', array( 'jquery', 'hoverIntent' ), false, true );
-    wp_register_script( 'supersubs', SB_THEME_LIB_URL . '/superfish/js/supersubs.js', array( 'superfish' ), false, true );
+    if(SB_Tool::use_superfish()) {
+        wp_register_script( 'superfish', SB_THEME_LIB_URL . '/superfish/js/superfish.min.js', array( 'jquery', 'hoverIntent' ), false, true );
+        wp_register_script( 'supersubs', SB_THEME_LIB_URL . '/superfish/js/supersubs.js', array( 'superfish' ), false, true );
 
-    wp_register_style( 'superfish-style', SB_THEME_LIB_URL . '/superfish/css/superfish.css' );
-    wp_register_style( 'superfish-vertical-style', SB_THEME_LIB_URL . '/superfish/css/superfish-vertical.css', array( 'superfish-style' ) );
-    wp_register_style( 'superfish-navbar-style', SB_THEME_LIB_URL . '/superfish/css/superfish-navbar.css', array( 'superfish-vertical-style' ) );
+        wp_register_style( 'superfish-style', SB_THEME_LIB_URL . '/superfish/css/superfish.css' );
+        wp_register_style( 'superfish-vertical-style', SB_THEME_LIB_URL . '/superfish/css/superfish-vertical.css', array( 'superfish-style' ) );
+        wp_register_style( 'superfish-navbar-style', SB_THEME_LIB_URL . '/superfish/css/superfish-navbar.css', array( 'superfish-vertical-style' ) );
+    }
 
     wp_register_style( 'sb-theme-style', SB_THEME_URL . '/css/sb-theme-style.css', array( 'superfish-navbar-style' ) );
     wp_register_script( 'sb-theme', SB_THEME_URL . '/js/sb-theme-script.js', array( 'supersubs' ), false, true );
@@ -165,12 +173,12 @@ function sb_theme_admin_enqueue_scripts_hook() {
 }
 add_action( 'admin_enqueue_scripts', 'sb_theme_admin_enqueue_scripts_hook' );
 
-function sb_theme_admin_head_hook() { ?>
+function sb_theme_add_admin_footer_hook() { ?>
     <script type="text/javascript">
         var sb_core_admin_ajax = <?php echo json_encode( array( 'url' => SB_Core::get_admin_ajax_url() ) ); ?>;
     </script><?php
 }
-add_action('admin_footer', 'sb_theme_admin_head_hook');
+add_action('admin_footer', 'sb_theme_add_admin_footer_hook');
 
 /*
  * Chạy hàm khi permalink được cập nhật
@@ -339,7 +347,7 @@ add_action('sb_theme_admin_init', 'sb_theme_remove_theme_editor');
 
 function sb_theme_admin_menu_hook() {
     if(is_admin()) {
-        if(SB_Option::use_administrative_boundaries()) {
+        if(SB_Tool::use_administrative_boundaries()) {
             $post_types = SB_Option::get_post_type_use_administrative_boundaries();
             foreach($post_types as $post_type) {
                 remove_meta_box('provincediv', $post_type, 'side');
@@ -375,6 +383,16 @@ function sb_theme_limit_free_post_admin_notices() {
 add_action('sb_theme_admin_notices', 'sb_theme_limit_free_post_admin_notices');
 
 /*
+ * Khuyến khích người dùng sử dụng PHP phiên bản 5.4 về sau
+ */
+function sb_theme_encourage_user_use_new_php_version() {
+    if(SB_PHP::compare_version(SB_THEME_RECOMMEND_PHP_VERSION, '<')) {
+        SB_Message::admin_notice_warning(__('Wordpress chỉ hoạt động tốt nhất trên phiên bản PHP ' . SB_THEME_RECOMMEND_PHP_VERSION . ' hoặc cao hơn. Hiện tại hosting của bạn đang dùng PHP phiên bản ' . SB_PHP::get_version() . '.', 'sb-theme'));
+    }
+}
+add_action('sb_theme_admin_notices', 'sb_theme_encourage_user_use_new_php_version');
+
+/*
  * Hàm khởi động hook tạo post type và taxonomy
  */
 function sb_theme_custom_post_type_and_taxonomy_hook() {
@@ -404,6 +422,10 @@ function sb_theme_wp_head_hook() {
 	SB_Theme::the_favicon_html();
 	SB_Theme::the_date_meta_html();
     SB_Theme::the_robots_meta();
+    if(SB_Option::utility_enabled('add_to_head')) {
+        $value = SB_Option::get_theme_option(array('keys' => array('add_to_head')));
+        echo $value;
+    }
 	do_action('sb_theme_wp_head');
 }
 add_action('wp_head', 'sb_theme_wp_head_hook');
@@ -427,7 +449,7 @@ function sb_theme_admin_footer_hook() {
     }
     sb_core_ajax_loader();
 }
-add_action( 'admin_footer', 'sb_theme_admin_footer_hook' );
+add_action('admin_footer', 'sb_theme_admin_footer_hook');
 
 /*
  * Khai báo các ứng dụng sau khi giao diện được cài đặt
@@ -525,12 +547,16 @@ function sb_theme_wp_footer() { ?>
     if(SB_Option::utility_enabled('float_ads')) {
         sb_theme_get_content('content-float-ads');
     }
-    if(sb_theme_support_addthis() || SB_Option::utility_enabled('addthis')) {
-        include SB_THEME_LIB_PATH . '/addthis/config.php';
+
+    if(is_singular()) {
+        if(sb_theme_support_addthis() || SB_Option::utility_enabled('addthis')) {
+            include SB_THEME_LIB_PATH . '/addthis/config.php';
+        }
+        if(SB_Option::utility_enabled('sharethis')) {
+            include SB_THEME_LIB_PATH . '/sharethis/config.php';
+        }
     }
-    if(SB_Option::utility_enabled('sharethis')) {
-        include SB_THEME_LIB_PATH . '/sharethis/config.php';
-    }
+
     sb_core_ajax_loader();
     sb_theme_remove_special_char_on_url_script();
     SB_Theme::google_analytics_tracking();
@@ -546,18 +572,20 @@ function sb_theme_add_hidden_data_field() {
 add_action('sb_theme_footer_before', 'sb_theme_add_hidden_data_field');
 
 function sb_theme_add_to_body_before() {
-    if(SB_Theme::use_facebook_javascript_sdk()) {
+    if(SB_Tool::use_facebook_javascript_sdk()) {
         SB_Theme::the_facebook_javascript_sdk();
     }
 }
 add_action('sb_theme_body_before', 'sb_theme_add_to_body_before');
 
 function sb_theme_add_to_body_after() {
-	if(SB_Core::use_vchat()) {
+	if(SB_Tool::use_vchat()) {
 		$code = SB_Option::get_vchat_code();
 		if(!empty($code)) {
 			echo $code;
-		}
+		} elseif(SB_Theme::is_founder()) {
+            SB_Theme::get_content('vchat');
+        }
 	}
 }
 add_action('sb_theme_body_after', 'sb_theme_add_to_body_after');
@@ -762,7 +790,7 @@ add_action('sb_comment_empty_spam_cron_job', 'sb_comment_empty_spam_cron_functio
  * tới trang này.
  */
 function sb_login_page_init() {
-    if(sb_login_page_use_sb_login() && SB_Core::is_login_page()) {
+    if(SB_Core::is_login_page()) {
         $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
         if('logout' == $action) {
             return;
@@ -771,7 +799,7 @@ function sb_login_page_init() {
         if(empty($data_social)) {
             $data_social = isset($_GET['state']) ? $_GET['state'] : '';
         }
-        if(empty($data_social)) {
+        if(empty($data_social) && SB_Theme::use_custom_login() && !SB_User::is_logged_in()) {
             $acc_page_id = sb_login_page_get_page_account_id();
             if($acc_page_id > 0 && SB_Post::is_published($acc_page_id)) {
                 $login_url = sb_login_page_get_page_account_url();
@@ -783,7 +811,7 @@ function sb_login_page_init() {
                     exit();
                 }
             }
-        } else {
+        } elseif(!empty($data_social)) {
             $data_social = SB_Core::decrypt($data_social);
             SB_User::check_social_login_data_send_back($data_social);
         }
@@ -861,10 +889,10 @@ add_action('sb_login_page_init', 'sb_login_page_custom_init');
  * Kiểm tra trước khi chấp nhận yêu cầu khôi phục mật khẩu
  */
 function sb_theme_lost_password_post_hook() {
-    if(SB_Option::use_login_captcha() && SB_Captcha::need_check() && (!isset($_POST['captcha_code']) || empty($_POST['captcha_code']))) {
+    if(SB_Tool::use_login_captcha() && SB_Captcha::need_check() && (!isset($_POST['captcha_code']) || empty($_POST['captcha_code']))) {
         add_filter('allow_password_reset', array('SB_Message', 'empty_captcha_error'));
     }
-    if(SB_Option::use_login_captcha() && SB_Captcha::need_check() && isset($_POST['captcha_code']) && !SB_Captcha::check($_POST['captcha_code'])) {
+    if(SB_Tool::use_login_captcha() && SB_Captcha::need_check() && isset($_POST['captcha_code']) && !SB_Captcha::check($_POST['captcha_code'])) {
         add_filter('allow_password_reset', array('SB_Message', 'invalid_captcha_error'));
     }
 }
@@ -1043,7 +1071,7 @@ add_action('sb_theme_admin_init', 'sb_theme_check_theme_for_domain');
  * Cài đặt gửi mail thông qua SMTP
  */
 function sb_theme_phpmailer_init_hook($phpmailer) {
-    if(SB_Option::use_smtp_mail()) {
+    if(SB_Tool::use_smtp_email()) {
         $sb_smtp = SB_Option::get_option_by_key(array('smtp_email'));
         $host = isset($sb_smtp['smtp_host']) ? $sb_smtp['smtp_host'] : '';
         $port = isset($sb_smtp['smtp_port']) ? $sb_smtp['smtp_port'] : '';
@@ -1144,6 +1172,54 @@ function sb_theme_update_rewrite_rule_before_uninstall() {
     flush_rewrite_rules();
 }
 add_action('sb_theme_before_uninstall', 'sb_theme_update_rewrite_rule_before_uninstall');
+
+/*
+ * Hiển thị nội dung thông tin quảng cáo vào bảng
+ */
+function sb_theme_show_advertise_table_column_content($column_name, $post_id) {
+    $date_sql = SB_Post::get_sb_meta($post_id, 'ads_expire_date');
+    $activated = (bool)SB_Post::get_sb_meta($post_id, 'ads_active');
+    $current_date_sql = strtotime(SB_Core::get_current_date_time());
+    $ads_position = SB_Post::get_sb_meta($post_id, 'ads_position');
+    if('expiration_date' == $column_name) {
+        if(!empty($date_sql)) {
+            echo date('d/m/Y', $date_sql);
+        }
+    } elseif('activated' == $column_name) {
+        if($activated) {
+            echo '<div class="dashicons dashicons-yes color-success" alt="f147"></div>';
+        } else {
+            echo '<div class="dashicons dashicons-no color-danger" alt="f158"></div>';
+        }
+    } elseif('status' == $column_name) {
+        if(($activated && !empty($date_sql) && $date_sql >= $current_date_sql) || ($activated && empty($date_sql))) {
+            echo '<div class="bg-circle bg-success width-dot" title="' . __('Running', 'sb-theme') . '"></div>';
+        } elseif(!$activated && empty($date_sql)) {
+            echo '<div class="bg-circle bg-gray width-dot" title="' . __('Not activated and expiration date is empty', 'sb-theme') . '"></div>';
+        } elseif(!$activated && !empty($date_sql) && $date_sql < $current_date_sql) {
+            echo '<div class="bg-circle bg-warning width-dot" title="' . __('Not activated and expiration date is expired', 'sb-theme') . '"></div>';
+        } elseif($activated && !empty($date_sql) && $date_sql < $current_date_sql) {
+            echo '<div class="bg-circle bg-danger width-dot" title="' . __('Activated and expiration date is expired', 'sb-theme') . '"></div>';
+        }
+    } elseif('position' == $column_name) {
+        if(!empty($ads_position)) {
+            $ads_items = SB_Theme::get_ads_items();
+            $title = '';
+            if(is_array($ads_items) && isset($ads_items[$ads_position])) {
+                $info = $ads_items[$ads_position];
+                $name = isset($info['name']) ? $info['name'] : '';
+                $description = isset($info['description']) ? $info['description'] : '';
+                if(!empty($name)) {
+                    $description = $name . ' - ' . $description;
+                }
+                $title = $description;
+                $title = trim($title, ' - ');
+            }
+            echo '<span title="' . $title . '">' . $ads_position . '</span>';
+        }
+    }
+}
+if(SB_Tool::use_ads_system()) add_action('manage_' . SB_Theme::get_post_type_ads_name() . '_posts_custom_column', 'sb_theme_show_advertise_table_column_content', 10, 2);
 
 /* ================================================================================================================== */
 
@@ -1369,10 +1445,10 @@ function sb_theme_filter_select_user_groups( $editable_roles ) {
  * Thay đổi tên người gửi mail
  */
 function sb_theme_mail_from_name( $name ) {
-	if ( 'wordpress' == strtolower( $name ) ) {
+	if('wordpress' == strtolower($name)) {
 		$name = get_bloginfo( 'name' );
 	}
-    if(empty($name) && SB_Option::use_smtp_mail()) {
+    if(empty($name) && SB_Tool::use_smtp_email()) {
         $name = SB_Option::get_option_by_key(array('smtp_mail', 'from_name'));
     }
 	$name = apply_filters('sb_theme_mail_from_name', $name);
@@ -1384,7 +1460,7 @@ add_filter( 'wp_mail_from_name', 'sb_theme_mail_from_name' );
  * Lọc địa chỉ email người gửi mail
  */
 function sb_theme_mail_from_filter($email) {
-    if(empty($email) && SB_Option::use_smtp_mail()) {
+    if(empty($email) && SB_Tool::use_smtp_email()) {
         $email = SB_Option::get_option_by_key(array('smtp_mail', 'from_email'));
     }
     $email = apply_filters('sb_theme_mail_from', $email);
@@ -2065,7 +2141,7 @@ add_filter('post_class', 'sb_theme_post_class');
  * Khai báo ký tự excerpt more
  */
 function sb_theme_excerpt_more($more) {
-	$more = '...';
+	$more = SB_THEME_THREE_DOT;
 	$more = apply_filters('sb_theme_excerpt_more', $more);
 	return $more;
 }
@@ -2248,6 +2324,18 @@ function sb_theme_preprocess_comment($commentdata) {
 }
 add_filter('preprocess_comment', 'sb_theme_preprocess_comment', 1);
 
+/*
+ * Thêm cột vào bảng thông tin quảng cáo
+ */
+function sb_theme_add_advertise_table_columns($defaults) {
+    $defaults['position'] = __('Position', 'sb-theme');
+    $defaults['expiration_date'] = __('Expiration Date', 'sb-theme');
+    $defaults['activated'] = __('Active', 'sb-theme');
+    $defaults['status'] = __('Status', 'sb-theme');
+    return $defaults;
+}
+if(SB_Tool::use_ads_system()) add_filter('manage_' . SB_Theme::get_post_type_ads_name() . '_posts_columns', 'sb_theme_add_advertise_table_columns', 10);
+
 function sb_theme_filter_term_slug_before_insert($value) {
     if(isset($_POST['taxonomy'])) {
         $taxonomy = $_POST['taxonomy'];
@@ -2256,7 +2344,7 @@ function sb_theme_filter_term_slug_before_insert($value) {
             $name = isset($_POST['tag-name']) ? $_POST['tag-name'] : '';
             if(!empty($name)) {
                 $slug = sanitize_title($name);
-                if(SB_Option::use_administrative_boundaries()) {
+                if(SB_Tool::use_administrative_boundaries()) {
                     $district = isset($_POST['district']) ? absint($_POST['district']) : 0;
                     if($district > 0) {
                         $item = SB_Term::get_by('id', $district, 'district');
@@ -2298,6 +2386,8 @@ add_filter('sb_theme_sanitize_option', 'sb_theme_filter_option_by_option');
 /*
  * Thêm thuộc tính async khi tải JavaScript
  */
+$sb_theme_async_javascript = SB_Tool::async_javascript();
+
 function sb_theme_script_loader_tag($tag, $handle) {
     if(!is_admin()) {
         if('jquery' == $handle) {
@@ -2306,18 +2396,26 @@ function sb_theme_script_loader_tag($tag, $handle) {
     }
     return $tag;
 }
-add_filter('script_loader_tag', 'sb_theme_script_loader_tag', 10, 2);
+if($sb_theme_async_javascript) add_filter('script_loader_tag', 'sb_theme_script_loader_tag', 10, 2);
 
 // Thêm thuộc tính defer vào khi tải JavaScript
 function sb_theme_clean_url($url) {
-    if(!SB_PHP::is_string_contain($url, '.js') || SB_PHP::is_string_contain($url, 'jquery.js') || SB_PHP::is_string_contain($url, 'jquery.min.js')) {
+    $skip = false;
+    if(SB_PHP::is_string_contain($url, 'syntaxhighlighter')) {
+        $skip = true;
+    }
+    if($skip || !SB_PHP::is_string_contain($url, '.js') || SB_PHP::is_string_contain($url, 'jquery.js') || SB_PHP::is_string_contain($url, 'jquery.min.js')) {
         return $url;
     } elseif(SB_PHP::is_string_contain($url, '.js')) {
-        $url = "$url' defer='defer";
+        if(SB_PHP::is_string_contain($url, 'syntaxhighlighter')) {
+            $url = "$url' async='async";
+        } else {
+            $url = "$url' defer='defer";
+        }
     }
     return $url;
 }
-add_filter('clean_url', 'sb_theme_clean_url', 11, 1);
+if($sb_theme_async_javascript) add_filter('clean_url', 'sb_theme_clean_url', 11, 1);
 
 function sb_theme_add_to_cart_text_filter() {
     $woocommerce_version = SB_Core::get_woocommerce_version();

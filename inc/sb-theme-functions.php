@@ -36,7 +36,7 @@ function sb_core_ajax_loader($image = '') {
             $image = sb_core_get_image_url('icon-ajax-loader.gif');
         }
     }
-    echo '<div class="sb-ajax-loader center sb-theme-ajax-loader sb-theme-ajax-full-page"><img src="' . $image . '"></div>';
+    echo '<div class="sb-ajax-loader center sb-theme-ajax-loader sb-theme-ajax-full-page"><img alt="" src="' . $image . '"></div>';
 }
 
 function sb_admin_need_ui() {
@@ -720,19 +720,15 @@ function sb_login_page_get_logout_redirect_url() {
 }
 
 function sb_login_page_signup_captcha() {
-    return apply_filters('sb_login_page_signup_captcha', sb_login_page_use_captcha());
+    return SB_Tool::custom_signup_use_captcha();
 }
 
 function sb_login_page_use_captcha() {
-    $options = SB_Option::get();
-    $value = isset($options['login_page']['use_captcha']) ? intval($options['login_page']['use_captcha']) : 1;
-    return (bool)$value;
+    return SB_Tool::custom_login_use_captcha();
 }
 
 function sb_login_page_use_sb_login() {
-    $options = SB_Option::get();
-    $value = isset($options['login_page']['use_sb_login']) ? intval($options['login_page']['use_sb_login']) : 1;
-    return (bool)$value;
+    return SB_Tool::use_custom_login();
 }
 
 function sb_login_page_is_login_custom_page() {
@@ -993,7 +989,7 @@ function sb_theme_remove_facebook_login_special_char() {
 
 function sb_theme_remove_special_char_on_url_script() {
     ?>
-    <script type="text/javascript" async defer>
+    <script type="text/javascript">
         if(window.location.hash && (window.location.hash == '#' || window.location.hash == '#_=_')) {
             if(window.history && history.pushState) {
                 window.history.pushState('', document.title, window.location.pathname);
@@ -1013,7 +1009,7 @@ function sb_theme_remove_special_char_on_url_script() {
 
 function sb_theme_admin_confirm_publish_post() {
     ?>
-    <script type="text/javascript" defer>
+    <script type="text/javascript">
         (function($){
             $('input[name="publish"]').on('click', function(e){
                 if(!confirm('Bạn có thật sự muốn đăng bài viết hay không?')) {

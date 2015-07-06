@@ -8,7 +8,7 @@ function sb_theme_footer_text_callback() {
         'id' => $id,
         'name' => $name,
         'value' => $value,
-        'description' => __('Thông tin chữ hiển thị dưới chân trang web, bạn có thể nhập địa chỉ, email, số điện thoại,...', 'sb-theme')
+        'description' => __('Thông tin chữ hiển thị dưới chân trang web, bạn có thể nhập địa chỉ, email, số điện thoại,', 'sb-theme') . SB_THEME_THREE_DOT
     );
     SB_Field::rich_editor_field($args);
 }

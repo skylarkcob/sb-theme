@@ -39,13 +39,7 @@ class SB_Comment {
     }
 
     public static function use_default_avatar() {
-        global $sb_options;
-        if(empty($sb_options)) {
-            $sb_options = get_option('sb_options');
-        }
-        $options = $sb_options;
-        $result = isset($options['comment']['default_avatar']) ? $options['comment']['default_avatar'] : 0;
-        return (bool)$result;
+        return SB_Tool::use_default_avatar();
     }
 
     public static function enable_comment_tools() {

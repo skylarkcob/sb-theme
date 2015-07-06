@@ -47,7 +47,7 @@ function sb_theme_advanced_setting_writing_add_post_page_group() {
 
 $args = array(
     'title' => 'Media',
-    'description' => 'Bạn có thể cài đặt giới hạn dung lượng tập tin, giới hạn dung lượng hình ảnh,... và các vấn đề liên quan đến media tại đây.',
+    'description' => 'Bạn có thể cài đặt giới hạn dung lượng tập tin, giới hạn dung lượng hình ảnh,' . SB_THEME_THREE_DOT . ' và các vấn đề liên quan đến media tại đây.',
     'callback' => 'sb_theme_advanced_setting_writing_media_group'
 );
 SB_Admin_Custom::row_setting_field($args);

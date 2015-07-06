@@ -10,6 +10,10 @@ class SB_Base_Slug {
         array_push($this->taxonomies, $tax_name);
     }
 
+    public function flush_rewrite_rule() {
+        flush_rewrite_rules();
+    }
+
     public function execute() {
         if(!$this->use_pretty_permalinks()) {
             return;
@@ -84,6 +88,9 @@ class SB_Base_Slug {
         add_filter('request', array($this, 'category_request'));
         add_filter('category_rewrite_rules', array($this, 'category_rewrite_rules'));
         add_filter('category_link', array($this, 'category_link'));
+        add_action('created_category', array($this, 'flush_rewrite_rule'));
+        add_action('edited_category', array($this, 'flush_rewrite_rule'));
+        add_action('delete_category', array($this, 'flush_rewrite_rule'));
     }
 
     public function get_category_base() {
@@ -123,6 +130,9 @@ class SB_Base_Slug {
         add_filter('request', array($this, 'tag_request'));
         add_filter('tag_rewrite_rules', array($this, 'tag_rewrite_rules'));
         add_filter('tag_link', array($this, 'tag_link'));
+        add_action('created_post_tag', array($this, 'flush_rewrite_rule'));
+        add_action('edited_post_tag', array($this, 'flush_rewrite_rule'));
+        add_action('delete_post_tag', array($this, 'flush_rewrite_rule'));
     }
 
     public function get_tag_base() {

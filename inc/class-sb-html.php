@@ -77,16 +77,18 @@ class SB_HTML {
 
     public function build() {
         $this->check_html();
-        $result = '<'.$this->name;
+        $html_name = $this->name;
+        $result = '<' . $html_name;
         foreach($this->attributes as $key => $value) {
             if($key != 'text') {
                 $result .= sprintf(' %1$s="%2$s"', $key, esc_attr($value));
             }
         }
         $result .= '>';
-        if(!in_array($this->name, $this->get_self_closers())) {
-            $result .= $this->get_attribute('text');
-            $result .= sprintf('</%s>', $this->name);
+        if(!in_array($html_name, $this->get_self_closers())) {
+            $text = $this->get_attribute('text');
+            $result .= $text;
+            $result .= sprintf('</%s>', $html_name);
         }
         return $result;
     }

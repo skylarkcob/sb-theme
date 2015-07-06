@@ -88,7 +88,7 @@ class SB_Meta_Box {
             do_action('sb_theme_post_update_meta_box', $post_id, $name, $meta_value);
 	        $meta_name = $name;
 	        do_action('sb_theme_update_post_meta', $post_id, $meta_name, $meta_value);
-            if(SB_Option::use_administrative_boundaries() && in_array($name, $this->administrative_boundaries_names)) {
+            if(SB_Tool::use_administrative_boundaries() && in_array($name, $this->administrative_boundaries_names)) {
                 $meta_value = absint($meta_value);
                 switch($name) {
                     case 'sbmb_province':

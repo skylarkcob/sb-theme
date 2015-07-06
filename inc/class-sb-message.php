@@ -134,6 +134,10 @@ class SB_Message {
         SB_Core::admin_notices_message(array('message' => $text, 'is_error' => true));
     }
 
+    public static function admin_notice_warning($text) {
+        SB_Core::admin_notices_message(array('message' => $text, 'type' => 'warning', 'label' => __('Chú ý:', 'sb-theme')));
+    }
+
     public static function admin_notices_message($args = array()) {
         SB_Core::admin_notices_message($args);
     }
@@ -178,7 +182,7 @@ class SB_Message {
     }
 
     public static function warning_missing_really_simple_captcha_plugin() {
-        if(SB_Option::use_login_captcha() && !SB_Captcha::required_plugins_installed()) {
+        if(SB_Tool::use_login_captcha() && !SB_Captcha::required_plugins_installed()) {
             $args = array(
                 'message' => sprintf(__('Để chức năng captcha được hoạt động, bạn phải cài đặt và kích hoạt plugin %s.', 'sb-theme'), '<a target="_blank" href="https://wordpress.org/plugins/really-simple-captcha/">Really Simple CAPTCHA</a>'),
                 'type' => 'warning'

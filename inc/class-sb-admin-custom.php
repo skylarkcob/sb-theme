@@ -224,6 +224,17 @@ class SB_Admin_Custom {
         }
     }
 
+    public static function form_before($class = '') {
+        $class = SB_PHP::add_string_with_space_before($class, 'sb-theme-setting-form');
+        echo '<form class="' . $class . '" method="post" action="' . esc_url(admin_url('options.php')) . '">';
+        settings_fields( 'sb-setting' );
+    }
+
+    public static function form_after() {
+        submit_button(SB_Message::get_save_changes());
+        echo '</form>';
+    }
+
     public static function row_setting_page( $page ) {
         self::table_setting_page($page, false);
     }

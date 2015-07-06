@@ -11,7 +11,7 @@ class SB_Field {
         $image_preview = '';
         $image_preview_class = 'image-preview';
         if(!empty($value)) {
-            $image_preview = sprintf('<img src="%s">', $value);
+            $image_preview = sprintf('<img alt="" src="%s">', $value);
             $image_preview_class .= ' has-image';
         }
         if($preview) {
@@ -374,7 +374,7 @@ class SB_Field {
         $value_url = $media_detail['url'];
         $image_preview_class = 'image-preview';
         if(!empty($value_url)) {
-            $image_preview = sprintf('<img src="%s">', $value_url);
+            $image_preview = sprintf('<img alt="" src="%s">', $value_url);
             $image_preview_class .= ' has-image';
         }
         $container_class = SB_PHP::add_string_with_space_before($container_class, 'sb-media-upload');
@@ -438,8 +438,8 @@ class SB_Field {
                             <input type="text" name="sidebar_default_0_description" value="<?php _e('Mô tả cho sidebar', 'sb-theme'); ?>" autocomplete="off" disabled>
                             <input type="text" name="sidebar_default_0_id" value="<?php _e('Sidebar id', 'sb-theme'); ?>" autocomplete="off" disabled>
                         </div>
-                        <img class="sb-icon-drag" src="<?php echo SB_CORE_URL . '/images/icon-drag-16.png'; ?>">
-                        <img class="sb-icon-delete" src="<?php echo SB_CORE_URL . '/images/icon-delete-16.png'; ?>">
+                        <img alt="" class="sb-icon-drag" src="<?php echo SB_CORE_URL . '/images/icon-drag-16.png'; ?>">
+                        <img alt="" class="sb-icon-delete" src="<?php echo SB_CORE_URL . '/images/icon-delete-16.png'; ?>">
                     </li>
                     <?php $count = 1; foreach($default_sidebars as $value) : ?>
                         <li class="ui-state-disabled sb-default-sidebar">
@@ -448,8 +448,8 @@ class SB_Field {
                                 <input type="text" name="sidebar_default_<?php echo $count; ?>_description" value="<?php echo $value['description']; ?>" autocomplete="off" disabled>
                                 <input type="text" name="sidebar_default_<?php echo $count; ?>_id" value="<?php echo $value['id']; ?>" autocomplete="off" disabled>
                             </div>
-                            <img class="sb-icon-drag" src="<?php echo SB_CORE_URL . '/images/icon-drag-16.png'; ?>">
-                            <img class="sb-icon-delete" src="<?php echo SB_CORE_URL . '/images/icon-delete-16.png'; ?>">
+                            <img alt="" class="sb-icon-drag" src="<?php echo SB_CORE_URL . '/images/icon-drag-16.png'; ?>">
+                            <img alt="" class="sb-icon-delete" src="<?php echo SB_CORE_URL . '/images/icon-delete-16.png'; ?>">
                         </li>
                     <?php $count++; endforeach; ?>
                     <?php $count = 1; foreach($list_sidebars as $sidebar) : ?>
@@ -459,8 +459,8 @@ class SB_Field {
                                 <input type="text" name="<?php echo $name . '[' . $count . '][description]'; ?>" value="<?php echo $sidebar['description']; ?>" autocomplete="off">
                                 <input type="text" name="<?php echo $name . '[' . $count . '][id]'; ?>" value="<?php echo $sidebar['id']; ?>" autocomplete="off">
                             </div>
-                            <img class="sb-icon-drag" src="<?php echo SB_CORE_URL . '/images/icon-drag-16.png'; ?>">
-                            <img class="sb-icon-delete" src="<?php echo SB_CORE_URL . '/images/icon-delete-16.png'; ?>">
+                            <img alt="" class="sb-icon-drag" src="<?php echo SB_CORE_URL . '/images/icon-drag-16.png'; ?>">
+                            <img alt="" class="sb-icon-delete" src="<?php echo SB_CORE_URL . '/images/icon-delete-16.png'; ?>">
                         </li>
                     <?php $count++; endforeach; ?>
                 </ul>
@@ -640,7 +640,7 @@ class SB_Field {
                 <input type="hidden" name="<?php echo $name; ?>[count]" value="<?php echo $real_count; ?>" class="ui-item-count item-count" autocomplete="off">
             </div>
             <button class="button add-item ui-add-item absolute" data-type="rss_feed" data-name="<?php echo $name; ?>" data-count="<?php echo $count; ?>" data-next-id="<?php echo $next_id; ?>"><?php _e('Add new', 'sb-theme'); ?></button>
-            <button class="button reset-item ui-reset-item absolute reset" data-type="rss_feed"><?php _e('Reset', 'sb-theme'); ?> <img src="<?php echo SB_CORE_URL; ?>/images/ajax-loader.gif"></button>
+            <button class="button reset-item ui-reset-item absolute reset" data-type="rss_feed"><?php _e('Reset', 'sb-theme'); ?> <img alt="" src="<?php echo SB_CORE_URL; ?>/images/ajax-loader.gif"></button>
         </div>
         <?php
         self::the_description($description);

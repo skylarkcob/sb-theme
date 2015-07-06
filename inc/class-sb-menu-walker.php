@@ -152,7 +152,7 @@ class SB_Menu_Walker extends Walker_Nav_Menu {
         $link_text = apply_filters( 'the_title', $item->title, $item->ID );
         $item_output .= apply_filters('sb_theme_menu_item_output_link_text', $link_text, $item);
 
-        if(SB_Core::use_menu_item_description() && !empty($item->description)) {
+        if(SB_Tool::use_menu_item_description() && !empty($item->description)) {
             $item_output .= '<span class="description">' . $item->description . '</span>';
         }
 

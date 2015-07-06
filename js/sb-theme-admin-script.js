@@ -312,8 +312,8 @@ var sb_ajax_loader,
             $html = '<div class="sb-sidebar-line"><input type="text" name="' + list.attr('data-name') + '[' + data_sidebar + '][name]"><input type="text" name="' + list.attr('data-name') + '[' + data_sidebar + '][description]"><input type="text" name="' + list.attr('data-name') + '[' + data_sidebar + '][id]"></div>';
             list.attr('data-sidebar', data_sidebar);
 
-            $html += '<img src="' + list.attr('data-icon-drag') + '" class="sb-icon-drag">';
-            $html += '<img src="' + list.attr('data-icon-delete') + '" class="sb-icon-delete">';
+            $html += '<img alt="" src="' + list.attr('data-icon-drag') + '" class="sb-icon-drag">';
+            $html += '<img alt="" src="' + list.attr('data-icon-delete') + '" class="sb-icon-delete">';
             $li.attr('data-sidebar', data_sidebar);
             $li.html($html);
             list.append($li);
@@ -751,7 +751,7 @@ var sb_ajax_loader,
                 image_input.attr('value', media_data.url);
                 media_id_input.val(media_data.id);
                 if(image_preview_container.length) {
-                    image_preview_container.html('<img src="' + media_data.url + '">');
+                    image_preview_container.html('<img alt="" src="' + media_data.url + '">');
                     image_preview_container.addClass('has-image');
                 }
                 file_frame = null;
@@ -774,7 +774,7 @@ var sb_ajax_loader,
                 image_preview_container = media_container.find('.image-preview'),
                 image_text = that.val();
             if($.trim(image_text) && sb_is_image_url(image_text)) {
-                image_preview_container.html('<img src="' + image_text + '">');
+                image_preview_container.html('<img alt="" src="' + image_text + '">');
                 image_preview_container.addClass('has-image');
             } else {
                 image_preview_container.html('');

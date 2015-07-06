@@ -1,5 +1,6 @@
 /* =================== Global =================== */
 
+.sb-theme-setting-form,
 .sb-option {
     font-family: arial, lucinda, verdana, geneva, sans-serif;
 }
@@ -188,6 +189,47 @@ a:focus {
 
 .sbt-admin-notice.notice-warning {
     border-color: #f0ad4e;
+}
+
+.bg-success {
+    background-color: #5cb85c;
+}
+
+.bg-gray {
+    background-color: #aaa;
+}
+
+.bg-warning {
+    background-color: #f0ad4e;
+}
+
+.bg-danger {
+    background-color: #d9534f;
+}
+
+.width-dot {
+    height: 14px;
+    width: 14px;
+}
+
+.color-success {
+    color: #5cb85c;
+}
+
+.color-danger {
+    color: #d9534f;
+}
+
+.color-info {
+    color: #5bc0de;
+}
+
+.color-warning {
+    color: #f0ad4e;
+}
+
+.bg-circle {
+    border-radius: 50%;
 }
 
 .sbt-admin-notice.notice-success {

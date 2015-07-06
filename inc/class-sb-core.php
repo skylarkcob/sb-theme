@@ -31,15 +31,15 @@ class SB_Core {
     }
 
     public static function use_custom_menu() {
-        return apply_filters('sb_theme_use_custom_menu', false);
+        return false;
     }
 
 	public static function use_vchat() {
-		return apply_filters('sb_theme_use_vchat', false);
+		return false;
 	}
 
     public static function use_menu_item_description() {
-        return apply_filters('sb_theme_use_menu_item_description', true);
+        return true;
     }
 
     public static function get_permalink_by_id($id) {
@@ -150,6 +150,12 @@ class SB_Core {
         echo self::get_captcha_url();
     }
 
+    public static function add_random_to_url() {
+        global $wp;
+        $wp->add_query_var('random');
+        add_rewrite_rule('random/?$', 'index.php?random=1', 'top');
+    }
+
     public static function set_captcha_session($code = '') {
         if(empty($code)) {
             $code = random(1000, 9999);
@@ -168,7 +174,7 @@ class SB_Core {
     }
 
     public static function use_ads_system() {
-        return apply_filters('sb_theme_use_ads_system', false);
+        return false;
     }
 
     public static function get_post_type_ads_name() {
@@ -509,17 +515,23 @@ class SB_Core {
         $class = 'sbt-admin-notice';
         $class .= ' notice-' . $type;
         $pgraph_text = '';
-        if ($is_error) {
+        $label = isset($args['label']) ? $args['label'] : '';
+        if($is_error) {
             $class .= ' error';
             $div->set_attribute('class', $class);
-            $pgraph_text = '<strong>' . __('Lỗi:', 'sb-theme') . '</strong>';
-        }
-        else {
+            if(empty($label)) {
+                $label = __('Lỗi:', 'sb-theme');
+            }
+            $pgraph_text = '<strong>' . $label . '</strong>';
+        } else {
             $class .= ' updated fade';
             $div->set_attribute('class', $class);
         }
         $paragraph = new SB_HTML('p');
-        $paragraph->set_text($pgraph_text . ' ' . $message);
+        if(!empty($label)) {
+            $pgraph_text = '<strong>' . $label . '</strong>' . ' ';
+        }
+        $paragraph->set_text($pgraph_text . $message);
 
         $div->set_text($paragraph->build());
 
@@ -1145,7 +1157,15 @@ class SB_Core {
         if($result) {
             $domain = get_bloginfo('url');
             $domain = SB_PHP::get_domain_name($domain);
-            if(!SB_PHP::is_string_contain($domain, 'hocwp.net') && !SB_PHP::is_string_contain($domain, 'localhost') && !SB_PHP::is_ip_valid($domain)) {
+            $is_sb_team_dev = false;
+            if(SB_PHP::is_string_contain($domain, 'hocwp.net') || SB_PHP::is_string_contain($domain, 'localhost')) {
+                $is_sb_team_dev = true;
+            } elseif(SB_PHP::is_ip_valid($domain) && $domain == SB_THEME_DEV_IP) {
+                $is_sb_team_dev = true;
+            } elseif($domain == SB_THEME_DEV_DOMAIN_NAME) {
+                $is_sb_team_dev = true;
+            }
+            if(!$is_sb_team_dev) {
                 $result = false;
             }
         }
@@ -1493,7 +1513,7 @@ class SB_Core {
     }
 
     public static function add_checkbox_featured_post() {
-        return apply_filters('sb_theme_add_checkbox_featured_post', true);
+        return true;
     }
 
     public static function post_type_use_featured_meta_field() {
@@ -1513,18 +1533,7 @@ class SB_Core {
     }
 
     public static function use_custom_metas() {
-        $result = false;
-        if(sb_theme_support_term_meta() || SB_Option::utility_enabled('term_meta')) {
-            $result = true;
-        } elseif(SB_Option::use_term_thumbnail()) {
-            $result = true;
-        } elseif(SB_Option::use_administrative_boundaries()) {
-            $result = true;
-        } elseif(self::add_checkbox_featured_post()) {
-            $result = true;
-        }
-        $result = apply_filters('sb_theme_use_term_meta', $result);
-        return $result;
+        return false;
     }
 
     public static function get_add_new_post_type() {

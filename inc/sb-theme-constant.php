@@ -5,11 +5,15 @@ define( 'SB_THEME_WEBSITE', 'http://www.hocwp.net' );
 
 define( 'SB_CORE_URL', SB_THEME_URL );
 
+define('SB_THEME_THREE_DOT', '&#8230;');
+
 define( 'SB_CORE_INC_PATH', SB_THEME_INC_PATH );
 
 define( 'SB_LOGIN_PAGE_INC_PATH', SB_THEME_INC_PATH );
 
 define( 'SB_CORE_VERSION', SB_THEME_VERSION );
+
+define('SB_THEME_RECOMMEND_PHP_VERSION', '5.4');
 
 define( 'SB_THEME_DATE_TIME_FORMAT', 'Y-m-d H:i:s' );
 
@@ -22,6 +26,10 @@ define( 'SB_CORE_PASS', SB_THEME_PASS );
 define( 'SB_THEME_RSS_FEED_NUMBER', 5 );
 
 define( 'SB_THEME_COIN_PRICE_BASE', 1000 );
+
+define('SB_THEME_DEV_IP', '192.168.1.66');
+
+define('SB_THEME_DEV_DOMAIN_NAME', 'wp.dev');
 
 define( 'SB_RSS_FEED_NUMBER', SB_THEME_RSS_FEED_NUMBER );
 

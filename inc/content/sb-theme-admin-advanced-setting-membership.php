@@ -1,7 +1,7 @@
 <?php
 $args = array(
     'title' => 'Hệ thống thành viên trả phí',
-    'description' => 'Với hệ thống thành viên có trả phí, bạn có thể quản lý người dùng, yêu cầu họ nạp tài khoản để sử dụng cho việc đăng bài, tải tài liệu,...',
+    'description' => 'Với hệ thống thành viên có trả phí, bạn có thể quản lý người dùng, yêu cầu họ nạp tài khoản để sử dụng cho việc đăng bài, tải tài liệu,' . SB_THEME_THREE_DOT,
     'callback' => 'sb_theme_advanced_setting_membership_paid_membership'
 );
 SB_Admin_Custom::row_setting_field($args);

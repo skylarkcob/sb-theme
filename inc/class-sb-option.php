@@ -288,8 +288,6 @@ class SB_Option {
         $key = 'post_type_use_administrative_boundaries';
         $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
         $value = SB_PHP::string_to_array(',', $value);
-        $post_types = apply_filters('sb_theme_post_type_use_administrative_boundaries', array());
-        $value = wp_parse_args($value, $post_types);
         $value = SB_PHP::to_array($value);
         return $value;
     }
@@ -299,7 +297,6 @@ class SB_Option {
         $key = 'use_administrative_boundaries';
         $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
         $value = SB_Option::check_switch_value($value, 0);
-        $value = apply_filters('sb_theme_use_administrative_boundaries', $value);
         return (bool)$value;
     }
 

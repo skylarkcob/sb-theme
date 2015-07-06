@@ -12,7 +12,7 @@ class SB_Video {
 
     public static function get_youtube_thumbnail_data_object($api_key, $video_id) {
         $transient_name = 'sb_theme_youtube_' . $video_id . '_thumbnail_object';
-        if(true || false === ($data = get_transient($transient_name))) {
+        if(false === ($data = get_transient($transient_name))) {
             $data = self::get_youtube_data_object($api_key, $video_id);
             $data = $data->items[0]->snippet->thumbnails;
             set_transient($transient_name, $data, WEEK_IN_SECONDS);

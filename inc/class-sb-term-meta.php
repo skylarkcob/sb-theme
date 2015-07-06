@@ -86,7 +86,7 @@ class SB_Term_Meta {
         }
         SB_Option::update_term_metas($sb_term_metas);
         SB_Core::delete_transient('sb_theme_term_meta');
-        if(SB_Option::use_administrative_boundaries()) {
+        if(SB_Tool::use_administrative_boundaries()) {
             SB_Core::delete_transient('sb_theme_administrative_boundaries');
         }
         return $term_id;

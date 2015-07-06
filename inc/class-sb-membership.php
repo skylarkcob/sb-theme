@@ -16,7 +16,6 @@ class SB_Membership {
 
     public static function use_sb_login_page() {
         $result = sb_login_page_use_sb_login();
-        $result = apply_filters('sb_theme_use_sb_login_page', $result);
         return $result;
     }
 

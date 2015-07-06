@@ -19,7 +19,7 @@ class SB_Theme {
     }
 
     public static function use_custom_menu() {
-        return SB_Core::use_custom_menu();
+        return SB_Tool::use_custom_menu();
     }
 
     public static function add_term_field_thumbnail($taxonomies = array()) {
@@ -162,6 +162,11 @@ class SB_Theme {
         return wp_get_theme();
     }
 
+    public static function is_founder() {
+        $value = sb_core_owner();
+        return apply_filters('sb_theme_founder', $value);
+    }
+
     public static function the_recent_comment_list($comments, $args = array()) {
         $avatar_size = isset($args['avatar_size']) ? absint($args['avatar_size']) : 116;
         $content_length = isset($args['content_length']) ? absint($args['content_length']) : 80;
@@ -228,7 +233,7 @@ class SB_Theme {
                                 ?>
                                 <li class="sb-post">
                                     <?php SB_Post::the_thumbnail_crop_only_link_image_html($thumbnail_width, $thumbnail_height); ?>
-                                    <h3 class="post-title"><a href="<?php the_permalink(); ?>"><?php echo SB_PHP::substr(get_the_title(), $title_length); ?></a></h3>
+                                    <h3 class="post-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
                                 </li>
                             <?php endwhile; wp_reset_postdata(); ?>
                         </ol>
@@ -274,7 +279,7 @@ class SB_Theme {
                                 ?>
                                 <li class="sb-post">
                                     <?php SB_Post::the_thumbnail_crop_only_link_image_html($thumbnail_width, $thumbnail_height); ?>
-                                    <h3 class="post-title"><a href="<?php the_permalink(); ?>"><?php echo SB_PHP::substr(get_the_title(), $title_length); ?></a></h3>
+                                    <h3 class="post-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
                                 </li>
                             <?php endwhile; wp_reset_postdata(); ?>
                         </ol>
@@ -295,8 +300,7 @@ class SB_Theme {
             printf('<link type="images/x-icon" href="%s" rel="icon">', $favicon_url);
         }
         $manifest_file = ABSPATH . 'manifest.json';
-        ?>
-        <?php if(file_exists($manifest_file)) : ?>
+        if(file_exists($manifest_file)) : ?>
             <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
             <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
             <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
@@ -314,8 +318,7 @@ class SB_Theme {
             <meta name="msapplication-TileColor" content="#da532c">
             <meta name="msapplication-TileImage" content="/mstile-144x144.png">
             <meta name="theme-color" content="#ffffff">
-        <?php endif; ?>
-        <?php
+        <?php endif;
     }
 
     public static function section_before($name, $class = '') {
@@ -501,7 +504,7 @@ class SB_Theme {
     public static function the_facebook_javascript_sdk($api_id = '1425884427679175') {
         ?>
         <div id="fb-root"></div>
-        <script type="text/javascript" async defer>(function(d, s, id) {
+        <script type="text/javascript">(function(d, s, id) {
                 var js, fjs = d.getElementsByTagName(s)[0];
                 if (d.getElementById(id)) return;
                 js = d.createElement(s); js.id = id;
@@ -514,7 +517,7 @@ class SB_Theme {
     }
 
     public static function use_facebook_javascript_sdk() {
-        return apply_filters('sb_theme_use_facebook_javascript_sdk', false);
+        return SB_Tool::use_facebook_javascript_sdk();
     }
 
     public static function the_facebook_share_and_like_buttons($url = '') {
@@ -536,9 +539,11 @@ class SB_Theme {
         $menu = wp_get_nav_menu_object($menu_id);
         $mobile = isset($args['mobile']) ? $args['mobile'] : false;
         $position = isset($args['position']) ? $args['position'] : 'left';
+        $button_text = isset($args['button_text']) ? trim($args['button_text']) : '';
         $class = 'sb-mobile-menu';
         $class = SB_PHP::add_string_with_space_before($class, $position);
         $home_icon = isset($args['home_icon']) ? $args['home_icon'] : false;
+        $mobile_button = isset($args['mobile_button']) ? $args['mobile_button'] : false;
         if($home_icon) {
             echo '<a class="home-link" href="' . home_url('/') . '"><i class="fa fa-home home-icon"></i></a>';
         }
@@ -546,21 +551,20 @@ class SB_Theme {
             $sb_menu = self::get_menu($args);
             echo $sb_menu;
             if($mobile) {
-                echo '<div class="' . $class . '"><span class="mobile-menu-button"><i class="fa fa fa-bars"></i></span>';
+                echo '<div class="' . $class . '">';
                 echo $sb_menu;
                 echo '</div>';
             }
         } else {
             self::the_menu_default($args);
             if($mobile) {
-                echo '<div class="' . $class . '"><span class="mobile-menu-button"><i class="fa fa fa-bars"></i></span>';
+                echo '<div class="' . $class . '">';
                 self::the_menu_default($args);
                 echo '</div>';
             }
         }
-        $mobile_button = isset($args['mobile_button']) ? $args['mobile_button'] : false;
         if($mobile_button) {
-            self::the_mobile_menu_button('', 'hidden button-' . $position);
+            self::the_mobile_menu_button($button_text, 'hidden button-' . $position);
         }
     }
 
@@ -924,7 +928,7 @@ class SB_Theme {
         $name = isset($args['name']) ? $args['name'] : '';
         $locale = isset($args['locale']) ? $args['locale'] : 'en_US';
         $submit_button_text = isset($args['submit_button_text']) ? $args['submit_button_text'] : __('Đăng ký', 'sb-theme');
-        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : __('Nhập địa chỉ email của bạn...', 'sb-theme');
+        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : __('Nhập địa chỉ email của bạn', 'sb-theme') . SB_THEME_THREE_DOT;
         ?>
         <form class="feedburner-form" action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open('https://feedburner.google.com/fb/a/mailverify?uri=<?php echo $name; ?>', 'popupwindow', 'scrollbars=yes,width=550,height=520');return true">
             <?php do_action('sb_theme_feedburner_before'); ?>
@@ -944,7 +948,7 @@ class SB_Theme {
         if(empty($url)) {
             $url = SB_CORE_URL . '/images/ajax-loader.gif';
         }
-        return sprintf('<img src="%s" class="ajax-loading loading-image hidden">', $url);
+        return sprintf('<img alt="" src="%s" class="ajax-loading loading-image hidden">', $url);
     }
 
     public static function addthis() {
@@ -952,8 +956,13 @@ class SB_Theme {
     }
 
 	public static function use_user_custom_style() {
-		return apply_filters('sb_theme_use_user_custom_style', false);
+		return SB_Tool::user_use_custom_style();
 	}
+
+    public static function use_custom_login() {
+        $result = SB_Tool::use_custom_login();
+        return $result;
+    }
 
     public static function sharethis() {
         ?>

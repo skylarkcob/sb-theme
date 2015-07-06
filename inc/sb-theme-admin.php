@@ -22,7 +22,7 @@ function sb_theme_menu() {
     if(SB_Theme::support('woocommerce')) {
         SB_Admin_Custom::add_submenu_page(__('Cửa hàng', 'sb-theme'), 'sbt_store', array('SB_Admin_Custom', 'setting_page_callback'));
     }
-	if(SB_Core::use_vchat()) {
+	if(SB_Tool::use_vchat()) {
 		SB_Admin_Custom::add_submenu_page(__('vChat', 'sb-theme'), 'sbt_vchat', array('SB_Admin_Custom', 'vchat_setting_page_callback'));
 	}
 }
@@ -67,7 +67,7 @@ add_action('sb_theme_option_page_init', 'sb_theme_checkout_setting_field');
 function sb_theme_smtp_email_setting_field() {
     SB_Admin_Custom::add_section('sb_theme_smtp_email_setting_section', __('Trang cài đặt tùy chọn cho SMTP Email', 'sb-theme'), 'sbt_smtp_email');
     sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_enabled', __('Gửi mail bằng SMTP', 'sb-theme'), 'sb_theme_smpt_email_enabled_callback');
-    if(SB_Option::use_smtp_mail()) {
+    if(SB_Tool::use_smtp_email()) {
         sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_from_name', __('Tên người gửi', 'sb-theme'), 'sb_theme_smpt_email_from_name_callback');
         sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_from_email', __('Email người gửi', 'sb-theme'), 'sb_theme_smpt_email_from_email_callback');
         sb_theme_add_smtp_email_setting_field('sb_theme_smtp_email_info', __('Thông tin SMTP', 'sb-theme'), 'sb_theme_smpt_email_info_callback');
