@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Post_Widget extends WP_Widget {
 	public $types = array();
 	private $order_by = array();

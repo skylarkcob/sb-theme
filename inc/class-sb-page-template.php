@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Page_Template {
     protected $plugin_slug;
     protected $plugin_path;

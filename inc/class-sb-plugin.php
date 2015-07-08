@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Plugin {
     private $slug;
     private $folder_name;

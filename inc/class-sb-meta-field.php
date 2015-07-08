@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Meta_Field {
     public static function get_name($args) {
         $name = isset($args['name']) ? trim($args['name']) : '';

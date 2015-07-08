@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 if(class_exists('SB_Product')) {
     return;
 }

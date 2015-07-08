@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Detect {
     public static function is_mobile() {
         if(!class_exists('Mobile_Detect')) {

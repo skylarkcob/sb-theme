@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $args = array(
     'title' => 'Hệ thống thành viên trả phí',
     'description' => 'Với hệ thống thành viên có trả phí, bạn có thể quản lý người dùng, yêu cầu họ nạp tài khoản để sử dụng cho việc đăng bài, tải tài liệu,' . SB_THEME_THREE_DOT,

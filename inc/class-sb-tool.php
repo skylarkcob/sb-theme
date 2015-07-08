@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Tool {
     public static function use_custom_login() {
         $options = SB_Option::get();

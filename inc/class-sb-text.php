@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Text {
     public static function get_add_to_cart() {
         $menu_base = 'store';

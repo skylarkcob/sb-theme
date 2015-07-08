@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Term_Field {
     public static function url($args = array()) {
         $args['type'] = 'url';

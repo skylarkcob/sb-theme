@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 global $sb_theme_roles;
 $sb_theme_roles = SB_Membership::get_roles();
 

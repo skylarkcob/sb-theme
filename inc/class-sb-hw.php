@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_HW {
     public static function get_reference_cats($args = array()) {
         return SB_Term::get('rcat', $args);
@@ -389,7 +391,7 @@ class SB_HW {
 
     public static function set_go_url($url) {
         global $sb_go_url;
-        $sb_go_url = esc_url($url);
+        $sb_go_url = esc_url_raw($url);
     }
 
     public static function get_go_url() {

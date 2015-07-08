@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Core {
     public static function deactivate_all_sb_plugin($sb_plugins = array()) {
         $activated_plugins = get_option('active_plugins');
@@ -794,25 +796,16 @@ class SB_Core {
         exit();
     }
 
+    public static function prevent_direct_access() {
+        defined('ABSPATH') or die('Please do not pip me!');
+    }
+
     public static function the_ajax_security_nonce() {
         wp_nonce_field('sb-core-ajax', 'security');
     }
 
     public static function check_ajax_referer() {
         check_ajax_referer('sb-core-ajax', 'security');
-    }
-
-    public static function delete_transient($transient_name, $blog_id = '') {
-        self::delete_transient_check($transient_name, '', $blog_id);
-    }
-
-    public static function delete_transient_check($transient_name, $condition = '', $blog_id = '') {
-        global $wpdb;
-        if(!empty($blog_id)) {
-            $wpdb->set_blog_id($blog_id);
-        }
-        $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_name like %s" . $condition, '_transient_' . $transient_name . '_%' ) );
-        $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_name like %s" . $condition, '_transient_timeout_' . $transient_name . '_%' ) );
     }
 
     public static function insert_attachment($attachment, $file_path, $parent_post_id = 0) {
@@ -1091,9 +1084,52 @@ class SB_Core {
         return get_permalink(get_page_by_path($slug));
     }
 
+    public static function delete_transient($transient_name, $blog_id = '') {
+        self::delete_transient_check($transient_name, '', $blog_id);
+    }
+
+    public static function delete_transient_check($transient_name, $condition = '', $blog_id = '') {
+        global $wpdb;
+        if(!empty($blog_id)) {
+            $wpdb->set_blog_id($blog_id);
+        }
+        $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_name like %s" . $condition, '_transient_' . $transient_name . '_%' ) );
+        $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_name like %s" . $condition, '_transient_timeout_' . $transient_name . '_%' ) );
+    }
+
+    public static function delete_all_transient() {
+        global $wpdb;
+        $query = "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_%' OR option_name LIKE '_site_transient_%'";
+        $wpdb->query($query);
+    }
+
     public static function delete_revision() {
         global $wpdb;
         $query = $wpdb->prepare("DELETE FROM $wpdb->posts WHERE post_type = %s", 'revision');
+        $wpdb->query($query);
+    }
+
+    public static function delete_unused_comment_meta() {
+        global $wpdb;
+        $query = "DELETE FROM $wpdb->commentmeta WHERE comment_id NOT IN ( SELECT comment_id FROM $wpdb->comments )";
+        $wpdb->query($query);
+    }
+
+    public static function delete_unused_post_meta() {
+        global $wpdb;
+        $query = "DELETE FROM $wpdb->postmeta WHERE post_id NOT IN ( SELECT post_id FROM $wpdb->posts )";
+        $wpdb->query($query);
+    }
+
+    public static function delete_auto_draft() {
+        global $wpdb;
+        $query = $wpdb->prepare("DELETE FROM $wpdb->posts WHERE post_status = %s", 'auto-draft');
+        $wpdb->query($query);
+    }
+
+    public static function delete_trash_post() {
+        global $wpdb;
+        $query = $wpdb->prepare("DELETE FROM $wpdb->posts WHERE post_status = %s", 'trash');
         $wpdb->query($query);
     }
 

@@ -1,7 +1,6 @@
 <?php
-/*
- * Template Name: Lost password
- */
+defined('ABSPATH') or die('Please do not pip me!');
+
 SB_Theme::the_login_page_header();
 sb_theme_get_content('content-page-lost-password');
 get_footer();

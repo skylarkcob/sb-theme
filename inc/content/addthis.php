@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $profile_id = SB_Option::get_theme_option(array('keys' => array('addthis_profile_id')));
 if(empty($profile_id)) {
     $profile_id = 'ra-4e8109ea4780ac8d';

@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Tab_Widget extends WP_Widget {
 	public function __construct() {
 		parent::__construct( 'sb_tab_widget', 'SB Tab', array(

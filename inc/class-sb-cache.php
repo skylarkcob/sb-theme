@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Cache {
     public static function build_post_transient_name($post_id, $suffix = '') {
         return 'sb_theme_post_' . $post_id . $suffix;

@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Query {
     public static function get_posts_per_page() {
         return get_option('posts_per_page');

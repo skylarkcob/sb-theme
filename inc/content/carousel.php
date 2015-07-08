@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $args = SB_Theme::get_carousel_argument();
 $container_class = isset($args['container_class']) ? $args['container_class'] : 'slide';
 $id = isset($args['id']) ? $args['id'] : '';

@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 if(!SB_Option::social_login_enabled()) {
     return;
 }

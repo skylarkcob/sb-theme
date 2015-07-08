@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_CSS {
     public static function build($elements, $properties) {
         $elements = (array)$elements;

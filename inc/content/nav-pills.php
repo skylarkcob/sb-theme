@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $args = SB_Theme::get_nav_pills_argument();
 if(!is_array($args)) {
     return;

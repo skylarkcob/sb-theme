@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 if(is_admin() || !method_exists('SB_Option', 'get_logo_type') || !method_exists('SB_Option', 'get_logo_text')) {
     return;
 }

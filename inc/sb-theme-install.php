@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 /** Tạo hook trước khi cài đặt SB Theme */
 do_action('sb_theme_install_before');
 
@@ -345,7 +347,7 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
         $wp_admin_bar->add_node( $args );
 
 	    $args = array(
-		    'id'        => 'options-permalink',
+		    'id'        => 'sbt-options-permalink',
 		    'title'     => __('Đường dẫn tĩnh', 'sb-theme'),
 		    'href'      => admin_url( 'options-permalink.php' ),
 		    'parent'    => 'sb-options'
@@ -353,7 +355,7 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
 	    $wp_admin_bar->add_node( $args );
 
         $args = array(
-            'id'        => 'widgets',
+            'id'        => 'sbt-widgets',
             'title'     => __('Widgets', 'sb-theme'),
             'href'      => admin_url( 'widgets.php' ),
             'parent'    => 'sb-options'
@@ -361,7 +363,7 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
         $wp_admin_bar->add_node( $args );
 
         $args = array(
-            'id'        => 'menus',
+            'id'        => 'sbt-menus',
             'title'     => __('Menus', 'sb-theme'),
             'href'      => admin_url( 'nav-menus.php' ),
             'parent'    => 'sb-options'

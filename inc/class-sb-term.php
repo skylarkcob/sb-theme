@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Term {
     public static function get($taxonomy, $args = array()) {
         $args['hide_empty'] = 0;

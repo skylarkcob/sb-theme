@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Paginate {
     public static function get_request() {
         return SB_Core::get_request();

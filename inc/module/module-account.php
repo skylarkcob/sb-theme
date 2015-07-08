@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $user = SB_User::get_current();
 $user_id = $user->ID;
 $logout_url = SB_User::get_logout_url();

@@ -1,3 +1,7 @@
+<?php
+defined('ABSPATH') or die('Please do not pip me!');
+
+?>
 <div class="sbtheme-about about-sb-text">
     <?php $logo_url = SB_CORE_URL . '/images/sb-framework-logo-300.png'; ?>
     <div class="sb-logo"><img alt="" src="<?php echo $logo_url; ?>"></div>

@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Option {
     public static function update($sb_options) {
         self::update_option('sb_options', $sb_options);

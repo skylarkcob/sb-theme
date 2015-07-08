@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 /**
  * Load các tập tin và thư viện cần thiết để giao diện hoạt động.
  *

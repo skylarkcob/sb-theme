@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Banner_Widget extends WP_Widget {
 	public function __construct() {
 		parent::__construct('sb_banner_widget', 'SB Banner',

@@ -9,7 +9,7 @@ Author URI: http://ottopress.com
 License: GPLv2
 License URI: http://www.opensource.org/licenses/GPL-2.0
 */
-
+defined('ABSPATH') or die('Please do not pip me!');
 add_action( 'wp_enqueue_editor', 'restore_link_title_field', 20 );
 function restore_link_title_field() {
 	wp_enqueue_script( 'wplinkTitle', plugins_url( 'restore-link-title-field.js', __FILE__ ), array( 'wplink' ), '1.3', true );

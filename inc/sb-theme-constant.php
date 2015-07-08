@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 define( 'SB_THEME_AUTHOR', 'SB Team' );
 
 define( 'SB_THEME_WEBSITE', 'http://www.hocwp.net' );
@@ -57,7 +59,7 @@ define( 'SB_THEME_EMAIL', 'codewpvn@gmail.com' );
 
 define( 'SB_THEME_GITHUB', SB_THEME_GITHUB_URL );
 
-define( 'SB_THEME_FACEBOOK_PAGE', 'https://www.facebook.com/Sauhicom' );
+define( 'SB_THEME_FACEBOOK_PAGE', 'https://www.facebook.com/hocwpnet' );
 
 define( 'SB_THEME_FACEBOOK', 'https://www.facebook.com/skylarkcob' );
 

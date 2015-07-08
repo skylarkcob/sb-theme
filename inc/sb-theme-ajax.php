@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 function sb_core_deactivate_ajax_callback() {
     echo SB_Message::get_deactivate_sb_core_confirm_text();
     die();
@@ -23,6 +25,35 @@ function sb_theme_admin_sidebar_change_ajax_callback() {
     die();
 }
 add_action('wp_ajax_sb_theme_admin_sidebar_change', 'sb_theme_admin_sidebar_change_ajax_callback');
+
+function sb_theme_optimize_database_ajax_callback() {
+    $delete_revision = isset($_POST['delete_revision']) ? $_POST['delete_revision'] : 0;
+    $delete_auto_draft = isset($_POST['delete_auto_draft']) ? $_POST['delete_auto_draft'] : 0;
+    $delete_spam_comment = isset($_POST['delete_spam_comment']) ? $_POST['delete_spam_comment'] : 0;
+    $delete_trash = isset($_POST['delete_trash']) ? $_POST['delete_trash'] : 0;
+    $delete_transient = isset($_POST['delete_transient']) ? $_POST['delete_transient'] : 0;
+    if((bool)$delete_revision) {
+        SB_Core::delete_revision();
+    }
+    if((bool)$delete_auto_draft) {
+        SB_Core::delete_auto_draft();
+    }
+    if((bool)$delete_spam_comment) {
+        SB_Comment::delete_all_spam();
+        SB_Comment::delete_awaiting_moderation();
+    }
+    if((bool)$delete_trash) {
+        SB_Core::delete_trash_post();
+        SB_Comment::empty_trash();
+    }
+    if((bool)$delete_transient) {
+        SB_Core::delete_all_transient();
+    }
+    SB_Core::delete_unused_comment_meta();
+    SB_Core::delete_unused_post_meta();
+    die();
+}
+add_action('wp_ajax_sb_theme_optimize_database', 'sb_theme_optimize_database_ajax_callback');
 
 function sb_theme_interest_post_ajax_callback() {
     $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : 0;

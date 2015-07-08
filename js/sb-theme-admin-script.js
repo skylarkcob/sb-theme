@@ -141,16 +141,37 @@ var sb_ajax_loader,
         });
     })();
 
-    // Clean post revision
+    // Tối ưu hóa cơ sở dữ liệu
     (function(){
-        $('.sb-clean-post-revision').on('click', function(e){
+        $('.sb-theme-optimize-database.sb-button').on('click', function(e){
             e.preventDefault();
             sb_core.sb_ajax_loader(true);
             var that = $(this),
+                container = that.parent(),
+                delete_revision = container.find('.delete-revision'),
+                delete_auto_draft = container.find('.delete-auto-draft'),
+                delete_spam_comment = container.find('.delete-spam-comment'),
+                delete_trash = container.find('.delete-trash'),
+                delete_transient = container.find('.delete-transient'),
                 data = null;
             data = {
-                action: 'sb_clean_post_revision'
+                action: 'sb_theme_optimize_database'
             };
+            if(delete_revision.is(':checked')) {
+                data.delete_revision = 1;
+            }
+            if(delete_auto_draft.is(':checked')) {
+                data.delete_auto_draft = 1;
+            }
+            if(delete_spam_comment.is(':checked')) {
+                data.delete_spam_comment = 1;
+            }
+            if(delete_trash.is(':checked')) {
+                data.delete_trash = 1;
+            }
+            if(delete_transient.is(':checked')) {
+                data.delete_transient = 1;
+            }
             $.post(sb_core_admin_ajax.url, data, function(resp){
                 sb_core.sb_ajax_loader(false);
             });

@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Mail {
     public static function set_html_content_type() {
         return 'text/html';

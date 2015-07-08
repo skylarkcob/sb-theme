@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 function sb_utilities_setting_field_jquery_marquee() {
     sb_theme_add_utilities_setting_field('sb_utilities_jquery_marquee', 'jQuery Marquee', 'sb_utilities_jquery_marquee_callback');
 }

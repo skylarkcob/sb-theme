@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Theme {
     public static function the_title() {
         if(is_home()) {
@@ -674,6 +676,17 @@ class SB_Theme {
         sb_meta_box_nonce();
     }
 
+    public static function get_contact_form_departments() {
+        $default_departments = array(
+            'question' => 'Câu hỏi',
+            'advertising' => 'Quảng cáo',
+            'technical_assistance' => 'Hỗ trợ kỹ thuật',
+            'service' => 'Dịch vụ'
+        );
+        $result = apply_filters('sb_theme_contact_form_departments', $default_departments);
+        return $result;
+    }
+
     private static function the_menu_default($args = array()) {
         $theme_location = isset($args['theme_location']) ? $args['theme_location'] : '';
         $menu_class = isset($args['menu_class']) ? $args['menu_class'] : '';
@@ -829,6 +842,16 @@ class SB_Theme {
             $sb_modal_argument = array();
         }
         return $sb_modal_argument;
+    }
+
+    public static function set_contact_form_arg($args = array()) {
+        global $sb_contact_form_args;
+        $sb_contact_form_args = $args;
+    }
+
+    public static function get_contact_form_arg() {
+        global $sb_contact_form_args;
+        return (array)$sb_contact_form_args;
     }
 
     public static function modal($args = array()) {

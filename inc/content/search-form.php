@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $args = SB_Theme::get_search_form_args();
 $action = isset($args['action']) ? $args['action'] : home_url('/');
 $action = esc_url($action);

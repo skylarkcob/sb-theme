@@ -1,4 +1,8 @@
-<?php do_action('sb_theme_html_before'); ?>
+<?php
+defined('ABSPATH') or die('Please do not pip me!');
+
+do_action('sb_theme_html_before');
+?>
 <!DOCTYPE html>
 <html lang="vi" dir="ltr" class="no-js">
 <head>

@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Message {
     public static function get_confirm_text() {
         $text = __('Are you sure?', 'sb-theme');

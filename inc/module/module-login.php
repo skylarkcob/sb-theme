@@ -1,3 +1,7 @@
+<?php
+defined('ABSPATH') or die('Please do not pip me!');
+
+?>
 <div class="sb-login-section">
     <div class="sb-login-section-container">
         <p class="login-title"><?php _e('Một tài khoản dùng chung cho tất cả dịch vụ', 'sb-theme'); ?></p>

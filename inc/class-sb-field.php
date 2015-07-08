@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Field {
 
     private static function image_thumbnail($args = array()) {

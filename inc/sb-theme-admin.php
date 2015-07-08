@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $sb_admin = new SB_Admin();
 
 add_action( 'init', 'sb_theme_check_license' );

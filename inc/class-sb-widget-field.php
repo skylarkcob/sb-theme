@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Widget_Field {
     public static function before($class = '') {
         $class = SB_PHP::add_string_with_space_before($class, 'sb-widget');

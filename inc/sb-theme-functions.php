@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 function sb_core_get_default_theme() {
     SB_Core::get_default_theme();
 }

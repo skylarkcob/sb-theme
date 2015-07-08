@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_User {
     public static function is_admin($user_id = 0) {
         if($user_id == 0) {

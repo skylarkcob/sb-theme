@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Statistics_Widget extends WP_Widget {
     public function __construct() {
         parent::__construct('sb_statistics_widget', 'SB Statistics', array(

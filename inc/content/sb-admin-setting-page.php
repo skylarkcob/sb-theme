@@ -1,4 +1,8 @@
-<?php SB_Admin_Custom::setting_page_before(); ?>
+<?php
+defined('ABSPATH') or die('Please do not pip me!');
+
+SB_Admin_Custom::setting_page_before();
+?>
     <h2 style="display: none">&nbsp;</h2>
     <?php if (isset($_REQUEST['submit']) || isset($_REQUEST['settings-updated'])) : ?>
         <div id="message" class="updated">

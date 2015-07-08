@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 global $sb_admin;
 $adv_tabs = $sb_admin->get_advanced_setting_tabs();
 $transient_name = SB_Cache::build_admin_advanced_setting_tab_transient_name();

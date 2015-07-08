@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Browser {
     public static function is_firefox() {
         global $is_gecko;

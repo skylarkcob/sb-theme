@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 function sb_statistics_setting_field_post_views() {
     sb_theme_add_statistics_setting_field('sb_statistics_post_views', 'Lượt xem bài viết', 'sb_statistics_post_views_callback');
 }

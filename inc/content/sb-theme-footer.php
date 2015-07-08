@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 do_action('sb_theme_site_container_after');
 echo '</div>'; // End .sb-site-container
 echo '</div>'; // End .sb-site

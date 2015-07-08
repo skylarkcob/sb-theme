@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $count = isset($_POST['data_count']) ? $_POST['data_count'] : 1;
 $count++;
 $name = isset($_POST['data_name']) ? $_POST['data_name'] : '';

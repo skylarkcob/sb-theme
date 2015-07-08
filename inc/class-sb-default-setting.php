@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Default_Setting {
 	public static function paginate() {
 		$options = array(

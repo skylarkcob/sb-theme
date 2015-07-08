@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Menu_Edit_Walker extends Walker_Nav_Menu {
     /**
      * Starts the list before the elements are added.

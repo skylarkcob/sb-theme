@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_PHP {
     public static function url_exists( $url ) {
         $file_headers = @get_headers( $url );

@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Coupon {
     public static function get_coupon_type_slug() {
         return apply_filters('sb_theme_coupon_type_slug', 'coupon_type');

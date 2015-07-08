@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 /**
  * Gọi và chạy tất cả các hook trên giao diện.
  *
@@ -268,6 +270,21 @@ function sb_theme_lost_password_form_hook() {
     do_action('sb_theme_lost_password_form');
 }
 add_action('lostpassword_form', 'sb_theme_lost_password_form_hook');
+
+function sb_theme_add_more_admin_bar_item($wp_admin_bar) {
+    if(current_user_can('manage_options')) {
+        if(SB_Tool::use_vchat()) {
+            $args = array(
+                'id'        => 'sbt-vchat',
+                'title'     => __('Quản lý trò chuyện', 'sb-theme'),
+                'href'      => admin_url( 'admin.php?page=sbt_vchat' ),
+                'parent'    => 'sb-options'
+            );
+            $wp_admin_bar->add_node( $args );
+        }
+    }
+}
+add_action('admin_bar_menu', 'sb_theme_add_more_admin_bar_item', 999);
 
 /*
  * Hàm tạo hook thêm thông tin vào tất cả các form trang login

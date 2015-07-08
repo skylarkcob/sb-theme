@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Admin_Custom {
     public static function add_submenu_page( $title, $slug, $callback ) {
         if ( ! self::submenu_page_exists( $slug ) ) {

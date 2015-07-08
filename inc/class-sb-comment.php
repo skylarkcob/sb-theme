@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Comment {
     public static function allow_author_post_shortcode_on_comment() {
         if(current_user_can('edit_posts')) {
@@ -71,6 +73,12 @@ class SB_Comment {
         }
     }
 
+    public static function delete_not_approved() {
+        global $wpdb;
+        $query = "DELETE FROM $wpdb->comments WHERE comment_approved != 1";
+        $wpdb->query($query);
+    }
+
     public static function delete_all() {
         $comments = self::get();
         foreach($comments as $comment) {
@@ -101,6 +109,24 @@ class SB_Comment {
 
     public static function delete($comment_id) {
         return wp_delete_comment($comment_id, true);
+    }
+
+    public static function delete_all_spam() {
+        global $wpdb;
+        $query = "DELETE FROM $wpdb->comments WHERE comment_approved = 'spam'";
+        $wpdb->query($query);
+    }
+
+    public static function delete_awaiting_moderation() {
+        global $wpdb;
+        $query = "DELETE FROM $wpdb->comments WHERE comment_approved = 0";
+        $wpdb->query($query);
+    }
+
+    public static function empty_trash() {
+        global $wpdb;
+        $query = "DELETE FROM $wpdb->comments WHERE comment_approved = 'trash'";
+        $wpdb->query($query);
     }
 
     public static function is_author_email_valid($comment_data) {

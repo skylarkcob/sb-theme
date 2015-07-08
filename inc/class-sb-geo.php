@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Geo {
     public static function is_geoplugin_valid($geo) {
         return SB_PHP::is_geoplugin_valid($geo);

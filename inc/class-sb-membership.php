@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Membership {
     public static function is_paid_membership_enabled() {
         $result = (bool)SB_Option::get_advanced_membership_setting('use_paid_membership');

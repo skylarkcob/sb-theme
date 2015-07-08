@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 global $post;
 $post_id = $post->ID;
 SB_Theme::the_meta_box_nonce();

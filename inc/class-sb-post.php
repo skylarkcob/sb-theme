@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Post {
     public static function get_images($post_id) {
         return self::get_all_media_images($post_id);

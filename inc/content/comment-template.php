@@ -1,7 +1,10 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 if(post_password_required()) {
     return;
 }
+
 function sb_theme_custom_comment_nav() {
     if(get_comment_pages_count() > 1 && get_option('page_comments')) : ?>
         <nav class="navigation comment-navigation" role="navigation">

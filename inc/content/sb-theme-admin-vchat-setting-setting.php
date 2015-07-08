@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $args = array(
 	'title' => 'Cài đặt vChat',
 	'description' => 'Cài đặt các thông tin tùy chọn để vChat hiển thị trên website.',

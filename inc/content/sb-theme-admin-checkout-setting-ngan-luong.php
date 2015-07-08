@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $args = array(
     'title' => 'Thanh toán bằng Ngân Lượng',
     'description' => 'Cài đặt cổng thanh toán thông qua dịch vụ của Ngân Lượng.',

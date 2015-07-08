@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $step = isset($_REQUEST['step']) ? trim($_REQUEST['step']) : '';
 $code = isset($_REQUEST['code']) ? trim($_REQUEST['code']) : '';
 $user_id = isset($_REQUEST['user_id']) ? trim($_REQUEST['user_id']) : 0;

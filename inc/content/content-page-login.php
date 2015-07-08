@@ -1,3 +1,7 @@
+<?php
+defined('ABSPATH') or die('Please do not pip me!');
+
+?>
 <div class="sb-login-page-box sb-accounts sb-theme-login">
     <div class="sb-wrap container">
         <div class="sb-login-page-container">

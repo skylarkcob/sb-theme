@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 global $sb_admin;
 $tabs = $sb_admin->get_store_setting_tabs();
 $tabs_html = SB_Admin_Custom::build_row_setting_tab('store', $tabs, 'sbt-store-tabs');

@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 function sb_theme_footer_text_callback() {
     $options = SB_Option::get();
     $value = isset($options['theme']['footer_text']) ? $options['theme']['footer_text'] : '';

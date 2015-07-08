@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 /*
  * Plugin SB Clean
  */
@@ -17,15 +19,59 @@ function sb_clean_setting_field() {
     SB_Admin_Custom::add_section('sb_clean_section', __('Trang cài đặt tùy chọn dọn dẹp hệ thống', 'sb-theme'), 'sb_clean');
     SB_Admin_Custom::add_setting_field('sb_clean_wpdb', __('Xóa thông tin WPDB', 'sb-theme'), 'sb_clean_section', 'sb_clean_wpdb_callback', 'sb_clean');
     SB_Admin_Custom::add_setting_field('sb_clean_head_meta', __('Rút gọn thẻ head', 'sb-theme'), 'sb_clean_section', 'sb_clean_head_meta_callback', 'sb_clean');
-    SB_Admin_Custom::add_setting_field('sb_clean_post_revision', __('Xóa bài viết tạm', 'sb-theme'), 'sb_clean_section', 'sb_clean_post_revision_callback', 'sb_clean');
+    SB_Admin_Custom::add_setting_field('sb_theme_optimize_database', __('Tối ưu cơ sở dữ liệu', 'sb-theme'), 'sb_clean_section', 'sb_theme_optimize_database_setting_callback', 'sb_clean');
 }
 add_action('sb_admin_init', 'sb_clean_setting_field');
 
-function sb_clean_post_revision_callback() {
+function sb_theme_optimize_database_setting_callback() {
+    $args = array(
+        'label' => __('Xóa tất cả bài viết tạm', 'sb-theme'),
+        'field_class' => 'delete-revision',
+        'description' => 'Bài viết tạm (revision) là những phiên bản sao lưu khác nhau của cùng một bài viết.',
+        'container_class' => 'margin-bottom',
+        'value' => 1
+    );
+    SB_Field::checkbox($args);
+
+    $args = array(
+        'label' => __('Xóa tất cả bài viết nháp được lưu tự động', 'sb-theme'),
+        'field_class' => 'delete-auto-draft',
+        'description' => 'Các bài viết nháp (auto draft) được tự động tạo ra khi bạn soạn thảo bài viết.',
+        'container_class' => 'margin-bottom',
+        'value' => 1
+    );
+    SB_Field::checkbox($args);
+
+    $args = array(
+        'label' => __('Xóa tất cả bình luận spam và chưa được xét duyệt', 'sb-theme'),
+        'field_class' => 'delete-spam-comment',
+        'container_class' => 'margin-bottom',
+        'value' => 1
+    );
+    SB_Field::checkbox($args);
+
+    $args = array(
+        'label' => __('Làm trống thùng rác', 'sb-theme'),
+        'field_class' => 'delete-trash',
+        'description' => 'Xóa tất cả các bài viết trong thùng rác, bao gồm thùng rác của bình luận.',
+        'container_class' => 'margin-bottom',
+        'value' => 1
+    );
+    SB_Field::checkbox($args);
+
+    $args = array(
+        'label' => __('Xóa transient', 'sb-theme'),
+        'field_class' => 'delete-transient',
+        'description' => 'Transient là các giá trị được lưu trữ tạm thời trong cơ sở dữ liệu của bạn.',
+        'container_class' => 'margin-bottom',
+        'value' => 0
+    );
+    SB_Field::checkbox($args);
+
     $args = array(
         'text' => __('Tiến hành', 'sb-theme'),
-        'field_class' => 'sb-clean-post-revision',
-        'description' => __('Bắt đầu xóa các bài viết tạm thời và được sao lưu tự động trong cơ sở dữ liệu.', 'sb-theme')
+        'field_class' => 'sb-theme-optimize-database',
+        'description' => __('Bạn nên sao lưu cơ sở dữ liệu trước khi tiến hành.', 'sb-theme')
     );
     SB_Field::button($args);
 }

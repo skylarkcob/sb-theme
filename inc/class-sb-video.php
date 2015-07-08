@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Video {
     public static $youtube_embed_base_url = 'http://www.youtube.com/embed/';
 

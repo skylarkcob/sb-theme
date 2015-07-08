@@ -1,3 +1,7 @@
+<?php
+defined('ABSPATH') or die('Please do not pip me!');
+
+?>
 <div class="sb-theme-extra">
     <?php
     $use_captcha = SB_Tool::use_login_captcha();

@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $args = SB_Admin_Custom::get_current_rss_feed_item();
 $name = isset($args['name']) ? $args['name'] : '';
 $count = isset($args['count']) ? $args['count'] : 1;

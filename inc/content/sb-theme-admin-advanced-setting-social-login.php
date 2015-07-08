@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $args = array(
     'title' => 'Facebook',
     'description' => 'Nhập thông tin Facebook APP của bạn, nếu bạn chưa có tài khoản, bạn có thể tạo 1 APP mới <a target="_blank" href="https://developers.facebook.com/">tại đây</a>.',

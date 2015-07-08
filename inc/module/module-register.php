@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $error_message = '';
 $has_error = false;
 $error_class = 'errors';

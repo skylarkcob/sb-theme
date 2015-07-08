@@ -1,3 +1,7 @@
+<?php
+defined('ABSPATH') or die('Please do not pip me!');
+
+?>
 <div class="sb-social-share margin-bottom-10">
     <ul class="list-inline list-unstyled">
         <li><a target="_blank" href="<?php echo SB_Theme::get_social_share_url(array('social_name' => 'facebook')); ?>" class="btn btn-social btn-facebook"><i class="fa fa-facebook icon-left"></i> Facebook</a></li>

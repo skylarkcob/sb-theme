@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 /*
  * Tạo thumbnail cho chuyên mục
  */

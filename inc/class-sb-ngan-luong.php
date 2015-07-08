@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 class SB_Ngan_Luong {
     // Địa chỉ thanh toán hoá đơn của NgânLượng.vn
     private $nganluong_url = 'https://www.nganluong.vn/checkout.php';

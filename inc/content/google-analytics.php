@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') or die('Please do not pip me!');
+
 $ga_id = SB_Option::get_theme_option_single_key('google_analytics');
 if(empty($ga_id)) {
     return;
