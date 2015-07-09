@@ -503,7 +503,9 @@ class SB_Theme {
         sb_theme_the_logo();
     }
 
-    public static function the_facebook_javascript_sdk($api_id = '1425884427679175') {
+    public static function the_facebook_javascript_sdk($app_id = '1425884427679175') {
+        $sb_theme_facebook_app_id = apply_filters('sb_theme_facebook_app_id', $app_id);
+        $sb_theme_facebook_javascript_sdk_version = apply_filters('sb_theme_facebook_javascript_sdk_version', 2.4);
         ?>
         <div id="fb-root"></div>
         <script type="text/javascript">(function(d, s, id) {
@@ -512,7 +514,7 @@ class SB_Theme {
                 js = d.createElement(s); js.id = id;
                 js.async = 1;
                 js.defer = 1;
-                js.src = "//connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v2.3&appId=<?php echo $api_id; ?>";
+                js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v<?php echo $sb_theme_facebook_javascript_sdk_version; ?>&appId=<?php echo $sb_theme_facebook_app_id; ?>";
                 fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));</script>
         <?php
@@ -528,6 +530,20 @@ class SB_Theme {
         }
         ?>
         <div class="fb-like" data-href="<?php echo $url; ?>" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
+        <?php
+    }
+
+    public static function the_facebook_page_plugin($args = array()) {
+        $page_id = isset($args['page_id']) ? $args['page_id'] : 'hocwpnet';
+        $page_name = isset($args['page_name']) ? $args['page_name'] : 'Học WordPress';
+        ?>
+        <div class="fb-page" data-href="https://www.facebook.com/<?php echo $page_id; ?>" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" data-show-posts="false">
+            <div class="fb-xfbml-parse-ignore">
+                <blockquote cite="https://www.facebook.com/<?php echo $page_id; ?>">
+                    <a href="https://www.facebook.com/<?php echo $page_id; ?>"><?php echo $page_name; ?></a>
+                </blockquote>
+            </div>
+        </div>
         <?php
     }
 
@@ -951,7 +967,7 @@ class SB_Theme {
         $name = isset($args['name']) ? $args['name'] : '';
         $locale = isset($args['locale']) ? $args['locale'] : 'en_US';
         $submit_button_text = isset($args['submit_button_text']) ? $args['submit_button_text'] : __('Đăng ký', 'sb-theme');
-        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : __('Nhập địa chỉ email của bạn', 'sb-theme') . SB_THEME_THREE_DOT;
+        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : __('Nhập địa chỉ email của bạn', 'sb-theme') . esc_html(SB_THEME_THREE_DOT);
         ?>
         <form class="feedburner-form" action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open('https://feedburner.google.com/fb/a/mailverify?uri=<?php echo $name; ?>', 'popupwindow', 'scrollbars=yes,width=550,height=520');return true">
             <?php do_action('sb_theme_feedburner_before'); ?>

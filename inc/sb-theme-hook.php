@@ -588,12 +588,12 @@ function sb_theme_add_hidden_data_field() {
 }
 add_action('sb_theme_footer_before', 'sb_theme_add_hidden_data_field');
 
-function sb_theme_add_to_body_before() {
+function sb_theme_add_facebook_javascript_sdk() {
     if(SB_Tool::use_facebook_javascript_sdk()) {
         SB_Theme::the_facebook_javascript_sdk();
     }
 }
-add_action('sb_theme_body_before', 'sb_theme_add_to_body_before');
+add_action('wp_footer', 'sb_theme_add_facebook_javascript_sdk');
 
 function sb_theme_add_to_body_after() {
 	if(SB_Tool::use_vchat()) {
@@ -2158,7 +2158,7 @@ add_filter('post_class', 'sb_theme_post_class');
  * Khai báo ký tự excerpt more
  */
 function sb_theme_excerpt_more($more) {
-	$more = SB_THEME_THREE_DOT;
+	$more = esc_html(SB_THEME_THREE_DOT);
 	$more = apply_filters('sb_theme_excerpt_more', $more);
 	return $more;
 }

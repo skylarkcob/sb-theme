@@ -2339,12 +2339,11 @@ ol.guides li a:hover{
     width: 100%;
 }
 
-.sb-mobile-menu li a {
-    border-bottom: 1px solid #262626;
+.sb-mobile-menu .sf-menu li a {
     border-top: 1px solid #444;
 }
 
-.sb-mobile-menu .sf-menu > li:last-child {
+.sb-mobile-menu .sf-menu li:last-child a {
     border-bottom: 1px solid #444;
 }
 
@@ -2352,8 +2351,8 @@ ol.guides li a:hover{
     border-top: medium none;
 }
 
-.sb-mobile-menu .sub-menu > li:last-child {
-
+.sb-mobile-menu .sub-menu > li:last-child a {
+    border-bottom: medium none;
 }
 
 .sb-mobile-menu.right li > a {
@@ -2477,14 +2476,16 @@ ol.guides li a:hover{
 .icon-collapse-expand {
     color: #fff;
     cursor: pointer;
-    height: 20px;
-    padding: 4px;
+    height: 100%;
+    line-height: 45px;
+    max-height: 45px;
+    padding: 0;
     position: absolute;
-    right: 14px;
+    right: 0;
     text-align: center;
-    top: 9px;
+    top: 0;
     vertical-align: middle;
-    width: 20px;
+    width: 45px;
 }
 
 .icon-collapse-expand:hover {

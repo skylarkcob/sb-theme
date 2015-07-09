@@ -351,17 +351,13 @@ var sb_password_strength,
             icon_collapse_expand.on('click', function(e){
                 var that = $(this),
                     list_item = that.parent();
+                $('.sb-mobile-menu .sf-menu li.menu-item-has-children').not(list_item).find('.sub-menu').hide();
+                $('.sb-mobile-menu .sf-menu li.menu-item-has-children').not(list_item).find('.icon-collapse-expand').removeClass('fa-minus icon-collapse active').addClass('fa-plus icon-expand');
                 if(that.hasClass('active')) {
-                    that.removeClass('fa-minus');
-                    that.removeClass('icon-collapse');
-                    that.addClass('fa-plus');
-                    that.addClass('icon-expand');
+                    that.removeClass('fa-minus icon-collapse').addClass('fa-plus icon-expand');
                     list_item.find('.sub-menu:first').slideUp();
                 } else {
-                    that.removeClass('fa-plus');
-                    that.removeClass('icon-expand');
-                    that.addClass('fa-minus');
-                    that.addClass('icon-collapse');
+                    that.removeClass('fa-plus icon-expand').addClass('fa-minus icon-collapse');
                     list_item.find('.sub-menu:first').slideDown();
                 }
                 that.toggleClass('active');
