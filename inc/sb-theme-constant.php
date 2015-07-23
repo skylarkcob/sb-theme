@@ -1,6 +1,10 @@
 <?php
 defined('ABSPATH') or die('Please do not pip me!');
 
+define('SB_THEME_BOOTSTRAP_VERSION', '3.3.5');
+
+define('SB_THEME_FONT_AWESOME_VERSION', '4.3.0');
+
 define( 'SB_THEME_AUTHOR', 'SB Team' );
 
 define( 'SB_THEME_WEBSITE', 'http://www.hocwp.net' );

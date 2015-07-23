@@ -20,6 +20,149 @@ class SB_Core {
         return get_search_query();
     }
 
+    public static function minify_styles_and_scripts() {
+        SB_Core::minify_all_css();
+        wp_dequeue_style('sb-theme-custom-mobile-style');
+        wp_dequeue_style('sb-theme-custom-style');
+        wp_dequeue_style('sb-theme-style');
+        wp_register_style('sb-theme-minified-style', SB_THEME_CUSTOM_URL . '/css/sb-theme-style.min.css');
+        wp_enqueue_style('sb-theme-minified-style');
+        SB_Core::compress_all_javascript();
+        wp_dequeue_script('sb-theme-custom');
+        wp_dequeue_script('sb-theme');
+        wp_register_script('sb-theme-minified', SB_THEME_CUSTOM_URL . '/js/sb-theme-script.min.js', array('jquery'), false, true);
+        wp_localize_script('sb-theme-minified', 'sb_theme', array(
+            'ajax_url' => SB_Core::get_admin_ajax_url(),
+            'ajaxurl' => SB_Core::get_admin_ajax_url(),
+            'site_url' => get_bloginfo('url')
+        ));
+        wp_enqueue_script('sb-theme-minified');
+    }
+
+    public static function compress_javascript($args = array()) {
+        $content = isset($args['content']) ? $args['content'] : '';
+        if(empty($content)) {
+            $file = isset($args['file']) ? $args['file'] : '';
+            $content = @file_get_contents($file);
+        }
+        $api_url = isset($args['api_url']) ? $args['api_url'] : 'https://marijnhaverbeke.nl/uglifyjs';
+
+        $closure_compiler = isset($args['closure_compiler']) ? $args['closure_compiler'] : array();
+        $closure_compiler['js_code'] = isset($closure_compiler['js_code']) ? $closure_compiler['js_code'] . $content : $content;
+        $closure_compiler['output_info'] = isset($closure_compiler['output_info']) ? $closure_compiler['output_info'] : 'compiled_code';
+        $closure_compiler['compilation_level'] = isset($closure_compiler['compilation_level']) ? $closure_compiler['compilation_level'] : 'ADVANCED_OPTIMIZATIONS';
+        $closure_compiler['output_format'] = isset($closure_compiler['output_format']) ? $closure_compiler['output_format'] : 'text';
+
+        if(!SB_PHP::is_url_alive($api_url)) {
+            $api_url = 'http://javascript-minifier.com/raw';
+            $closure_compiler['input'] = $closure_compiler['js_code'];
+        }
+
+        $postdata = array(
+            'http' => array(
+                'method' => 'POST',
+                'header' => 'Content-type: application/x-www-form-urlencoded',
+                'content' => http_build_query($closure_compiler)
+            )
+        );
+        $content = @file_get_contents($api_url, false, stream_context_create($postdata));
+        return $content;
+    }
+
+    public static function get_script_enqueued() {
+        global $wp_scripts;
+        return $wp_scripts->queue;
+    }
+
+    public static function get_script_registered() {
+        global $wp_scripts;
+        return $wp_scripts->registered;
+    }
+
+    public static function get_registered_script_object($handle) {
+        $scripts = self::get_script_registered();
+        $result = isset($scripts[$handle]) ? $scripts[$handle] : null;
+        return $result;
+    }
+
+    public static function compress_all_javascript() {
+        global $wp_scripts;
+        $transient_name = 'sb_theme_scripts_minified';
+        $force_update = apply_filters('sb_theme_force_update_script', false);
+        $dest_path = SB_THEME_CUSTOM_PATH . '/js/sb-theme-script.min.js';
+        $saved_content = @file_get_contents($dest_path);
+        if($force_update || false === get_transient($transient_name) || empty($saved_content)) {
+            $handles = self::get_script_enqueued();
+            $minified = '';
+            foreach($handles as $handle) {
+                $script = self::get_registered_script_object($handle);
+                if(self::is_valid_object($script)) {
+                    if('sb-theme' == $handle || 'sb-theme-custom' == $handle) {
+                        $src = $script->src;
+                        $content = @file_get_contents($src);
+                        $content = self::compress_javascript(array('content' => $content));
+                        $minified .= $content;
+                    }
+                }
+            }
+            @file_put_contents($dest_path, $minified);
+            set_transient($transient_name, 1, WEEK_IN_SECONDS);
+        }
+    }
+
+    public static function get_style_enqueued() {
+        global $wp_styles;
+        return $wp_styles->queue;
+    }
+
+    public static function get_style_registered() {
+        global $wp_styles;
+        return $wp_styles->registered;
+    }
+
+    public static function get_registered_style_object($handle) {
+        $styles = self::get_style_registered();
+        $result = isset($styles[$handle]) ? $styles[$handle] : null;
+        return $result;
+    }
+
+    public static function minify_all_css() {
+        global $wp_styles;
+        $transient_name = 'sb_theme_styles_minified';
+        $force_update = apply_filters('sb_theme_force_update_style', false);
+        $dest_path = SB_THEME_CUSTOM_PATH . '/css/sb-theme-style.min.css';
+        $saved_content = @file_get_contents($dest_path);
+        if($force_update || false === get_transient($transient_name) || empty($dest_path)) {
+            $handles = self::get_style_enqueued();
+            $minified = '';
+            foreach($handles as $handle) {
+                $style = self::get_registered_style_object($handle);
+                if(self::is_valid_object($style)) {
+                    $src = $style->src;
+                    $url_replace = '';
+                    switch($handle) {
+                        case 'sb-theme-style':
+                            $url_replace = SB_THEME_URL . '/images/';
+                            break;
+                        case 'sb-theme-custom-style':
+                            $url_replace = SB_THEME_CUSTOM_URL . '/images/';
+                            break;
+                        case 'sb-theme-custom-mobile-style':
+                            $url_replace = SB_THEME_CUSTOM_URL . '/images/';
+                            break;
+                    }
+                    if(!empty($url_replace)) {
+                        $css = SB_CSS::minify($src);
+                        $css = str_replace('../images/', $url_replace, $css);
+                        $minified .= $css;
+                    }
+                }
+            }
+            @file_put_contents($dest_path, $minified);
+            set_transient($transient_name, 1, WEEK_IN_SECONDS);
+        }
+    }
+
 	public static function is_localhost() {
 		if('localhost' == SB_PHP::get_domain_name_only(get_bloginfo('url'))) {
 			return true;
@@ -180,7 +323,15 @@ class SB_Core {
     }
 
     public static function get_post_type_ads_name() {
-        return 'sbt_ads';
+        return apply_filters('sb_theme_post_type_ads_name', 'sbt_ads');
+    }
+
+    public static function get_post_type_support_name() {
+        return apply_filters('sb_theme_post_type_support_name', 'sbt_support');
+    }
+
+    public static function get_post_type_slider_name() {
+        return apply_filters('sb_theme_post_type_slider_name', 'sbt_slider');
     }
 
     public static function check_captcha($code) {
@@ -944,10 +1095,16 @@ class SB_Core {
 		return apply_filters('sb_theme_license_redirect', SB_THEME_LICENSE_REDIRECT);
 	}
 
+    public static function is_founder() {
+        $value = false;
+        $value = apply_filters( 'sb_core_owner', $value );
+        return apply_filters('sb_theme_founder', $value);
+    }
+
     public static function check_license() {
 	    $transient_name = SB_Cache::build_license_transient_name();
 	    if(false === ($license = get_transient($transient_name))) {
-		    if ( sb_core_owner() ) {
+		    if ( self::is_founder() ) {
 			    return;
 		    }
 		    $license = 1;
@@ -982,7 +1139,7 @@ class SB_Core {
         $domain = trim($domain);
         $domain = untrailingslashit($domain);
         $domain = esc_url_raw($domain);
-        $domain = SB_PHP::get_domain_name($domain);
+        $domain = SB_PHP::get_domain_name_full($domain);
         $text = $pass_hashed . '-domain:' . $domain;
         return $text;
     }
@@ -1009,6 +1166,11 @@ class SB_Core {
         return self::build_license_plain_text($domain);
     }
 
+    public static function license_compare($domain, $license) {
+        $text = self::build_license_plain_text($domain);
+        return self::password_compare($text, $license);
+    }
+
     public static function is_theme_for_domain($domain = '') {
         $transient_name = 'sb_theme_check_theme_for_domain';
         $saved_license = get_option('sb_theme_license_key');
@@ -1023,8 +1185,7 @@ class SB_Core {
                 if(empty($domain)) {
                     $domain = get_bloginfo('url');
                 }
-                $text = self::build_license_plain_text($domain);
-                if(self::password_compare($text, SB_THEME_LICENSE_KEY)) {
+                if(self::license_compare($domain, SB_THEME_LICENSE_KEY)) {
                     $result = 1;
                 } else {
                     $result = 0;
@@ -1192,7 +1353,7 @@ class SB_Core {
         $result = apply_filters('sb_theme_developing', false);
         if($result) {
             $domain = get_bloginfo('url');
-            $domain = SB_PHP::get_domain_name($domain);
+            $domain = SB_PHP::get_domain_name_full($domain);
             $is_sb_team_dev = false;
             if(SB_PHP::is_string_contain($domain, 'hocwp.net') || SB_PHP::is_string_contain($domain, 'localhost')) {
                 $is_sb_team_dev = true;
@@ -1324,6 +1485,18 @@ class SB_Core {
 
     public static function is_wpseo_yoast_installed() {
         return defined('WPSEO_FILE');
+    }
+
+    public static function is_super_cache_installed() {
+        return defined('WPCACHEHOME');
+    }
+
+    public static function is_super_cache_enabled() {
+        $result = false;
+        if(self::is_super_cache_installed()) {
+            $result = $GLOBALS['cache_enabled'];
+        }
+        return (bool)$result;
     }
 
     public static function is_restore_link_title_field_installed() {

@@ -27,6 +27,7 @@ function sb_theme_menu() {
 	if(SB_Tool::use_vchat()) {
 		SB_Admin_Custom::add_submenu_page(__('vChat', 'sb-theme'), 'sbt_vchat', array('SB_Admin_Custom', 'vchat_setting_page_callback'));
 	}
+    SB_Admin_Custom::add_submenu_page(__('Socials', 'sb-theme'), 'sbt_socials', array('SB_Admin_Custom', 'socials_setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_theme_menu');
 
@@ -401,6 +402,19 @@ function sb_theme_vchat_setting_setting_field() {
 	SB_Theme::get_content('sb-theme-admin-vchat-setting-setting');
 }
 add_action('sb_theme_vchat_setting_setting_field', 'sb_theme_vchat_setting_setting_field');
+
+/*
+ * Trang cài đặt Socials
+ */
+function sb_theme_socials_setting_facebook_field() {
+	SB_Theme::get_content('sb-theme-admin-socials-setting-facebook');
+}
+add_action('sb_theme_socials_setting_facebook_field', 'sb_theme_socials_setting_facebook_field');
+
+function sb_theme_socials_setting_google_field() {
+	SB_Theme::get_content('sb-theme-admin-socials-setting-google');
+}
+add_action('sb_theme_socials_setting_google_field', 'sb_theme_socials_setting_google_field');
 
 /*
  * Thêm trường cài đặt vào tab Membership trong bảng điều khiển nâng cao

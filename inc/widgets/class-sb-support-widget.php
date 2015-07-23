@@ -24,7 +24,14 @@ class SB_Support_Widget extends WP_Widget {
         }
         ?>
         <div class="widget-content">
-            <?php do_action('sb_theme_support_widget_display', $instance); ?>
+            <?php
+            do_action('sb_theme_support_widget_display', $instance);
+            $sidebar_id = isset($args['id']) ? $args['id'] : '';
+            if(!empty($sidebar_id)) {
+                $sidebar_id = SB_PHP::esc_id($sidebar_id);
+                do_action('sb_theme_support_widget_display_' . $sidebar_id, $instance);
+            }
+            ?>
         </div>
         <?php
 

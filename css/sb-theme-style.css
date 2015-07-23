@@ -8,6 +8,16 @@ body h1, body h2, body h3, body h4, body h5, body h6 {
     line-height: inherit;
 }
 
+button,
+select,
+input,
+textarea,
+iframe,
+figure,
+embed {
+    max-width: 100%;
+}
+
 /* ==================== Global ==================== */
 
 .sb-site {
@@ -57,7 +67,7 @@ div blockquote::before {
 
 div blockquote::after {
     bottom: 0;
-    content: "”";
+    content: "�?";
     right: 10px;
 }
 
@@ -2730,46 +2740,57 @@ div > .syntaxhighlighter {
 .btn-social {
     color: #fff;
 }
+
 .sb-social-share li:first-child {
     padding-left: 0;
 }
+
 .btn-facebook {
     background-color: #3b5998;
     border: 1px solid #344e86;
     color: #fff;
 }
+
 .btn-facebook:hover, .btn-facebook:focus, .btn-facebook:active, .btn-facebook.active, .open > .btn-facebook.dropdown-toggle {
     background-color: #2d4373;
     border: 1px solid #23345a;
     color: #fff;
 }
+
 .btn-facebook:active, .btn-facebook.active, .open > .btn-facebook.dropdown-toggle {
     background-image: none;
 }
+
 .btn-facebook.disabled, .btn-facebook.disabled:hover, .btn-facebook.disabled:focus, .btn-facebook.disabled:active, .btn-facebook.disabled.active, .btn-facebook[disabled], .btn-facebook[disabled]:hover, .btn-facebook[disabled]:focus, .btn-facebook[disabled]:active, .btn-facebook.active[disabled], fieldset[disabled] .btn-facebook, fieldset[disabled] .btn-facebook:hover, fieldset[disabled] .btn-facebook:focus, fieldset[disabled] .btn-facebook:active, fieldset[disabled] .btn-facebook.active {
     background-color: #3b5998;
     border: 1px solid #344e86;
 }
+
 .btn-facebook .badge {
     background-color: #fff;
     color: #3b5998;
 }
+
 .btn-twitter {
     background-color: #26c4f1;
     border: 1px solid #0fbdee;
 }
+
 .btn-twitter:hover, .btn-twitter:focus, .btn-twitter:active, .btn-twitter.active, .open > .btn-twitter.dropdown-toggle {
     background-color: #0eaad6;
     border: 1px solid #0c8fb5;
     color: #fff;
 }
+
 .btn-twitter:active, .btn-twitter.active, .open > .btn-twitter.dropdown-toggle {
     background-image: none;
 }
+
 .btn-twitter.disabled, .btn-twitter.disabled:hover, .btn-twitter.disabled:focus, .btn-twitter.disabled:active, .btn-twitter.disabled.active, .btn-twitter[disabled], .btn-twitter[disabled]:hover, .btn-twitter[disabled]:focus, .btn-twitter[disabled]:active, .btn-twitter.active[disabled], fieldset[disabled] .btn-twitter, fieldset[disabled] .btn-twitter:hover, fieldset[disabled] .btn-twitter:focus, fieldset[disabled] .btn-twitter:active, fieldset[disabled] .btn-twitter.active {
     background-color: #26c4f1;
     border: 1px solid #0fbdee;
 }
+
 .btn-twitter .badge {
     background-color: #fff;
     color: #26c4f1;
@@ -2976,6 +2997,15 @@ div > .syntaxhighlighter {
     box-shadow: none;
 }
 
+.fb-like-buttons > .item {
+    float: left;
+    margin-right: 5px;
+}
+
+.fb-like-buttons > .item:last-child {
+    margin-right: 0;
+}
+
 /* ==================== Icon inside button ==================== */
 
 .icon-right {
@@ -2995,6 +3025,7 @@ div > .syntaxhighlighter {
     border: 1px solid #ddd;
     bottom: 50px;
     display: none;
+    line-height: 1;
     opacity: 0.8;
     padding: 10px;
     position: fixed;

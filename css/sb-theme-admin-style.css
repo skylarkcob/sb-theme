@@ -175,6 +175,10 @@ a:focus {
     width: 100%;
 }
 
+.margin-top {
+    margin-top: 15px;
+}
+
 .margin-top-10 {
     margin-top: 10px;
 }
@@ -307,6 +311,32 @@ a:focus {
 .sb-option .sb-theme-sidebar .sb-sortable-list li > img {
     margin-left: 5px;
     top: 18px;
+}
+
+.icon-sortable-ui.icon-drag,
+.icon-sortable-ui.icon-delete {
+    height: 16px;
+    opacity: 1;
+    position: absolute;
+    top: 15px;
+    width: 16px;
+    z-index: 499;
+}
+
+.icon-sortable-ui.icon-delete {
+    background: rgba(0, 0, 0, 0) url("../images/icon-delete-16.png") no-repeat scroll 0 0;
+    cursor: pointer;
+    left: 15px;
+}
+
+.icon-sortable-ui.icon-drag {
+    background: rgba(0, 0, 0, 0) url("../images/icon-drag-16.png") no-repeat scroll 0 0;
+    cursor: move;
+    left: 40px;
+}
+
+.icon-sortable-ui.icon-drag {
+
 }
 
 .sb-sidebar-group li .sb-icon-delete {
@@ -1382,4 +1412,63 @@ div.sb-post-meta-row .image-preview {
     border: 1px solid #ebebeb;
     padding: 2px;
     vertical-align: -15px;
+}
+
+.sb-checkbox-field > input[type="checkbox"] {
+    margin-top: 0;
+}
+
+.list-slider-items > li {
+    background-color: #f2f2f2;
+    border: 1px solid #eee;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.list-slider-items > li > .item-image {
+    float: left;
+    margin-right: 10px;
+    width: 30%;
+}
+
+.list-slider-items .item-info > * {
+    display: block;
+    font-family: arial;
+    font-size: 13px;
+    margin: 0 0 10px;
+    width: 100%;
+}
+
+.list-slider-items .item-info > *:last-child {
+    margin-bottom: 0;
+}
+
+.list-slider-items .item-info {
+    float: right;
+    width: 68%;
+}
+
+.list-slider-items > li > .item-image {
+    cursor: pointer;
+    max-height: 126px;
+    opacity: 0.8;
+}
+
+.list-slider-items > li > .item-image:hover {
+    opacity: 1;
+}
+
+.list-slider-items > li {
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.list-slider-items > li:last-child {
+    margin-bottom: 0;
+}
+
+.ui-sortable li.ui-state-highlight,
+.list-slider-items .ui-state-highlight {
+    padding-bottom: 0;
+    padding-top: 0;
 }

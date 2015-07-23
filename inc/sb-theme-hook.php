@@ -13,27 +13,15 @@ do_action('sb_theme_hook_before');
  * Hàm sử dụng hook init
  */
 function sb_theme_init_hook() {
+    SB_PHP::session_start();
 	do_action('sb_theme_init_before');
-    $session_started = true;
-    if ( SB_PHP::compare_version('5.4', '>=') ) {
-        if ( PHP_SESSION_NONE == session_status() ) {
-            $session_started = false;
-        }
-    } else {
-        if ( '' == session_id() ) {
-            $session_started = false;
-        }
-    }
-    if(!$session_started) {
-        session_start();
-    }
     if(!current_user_can('read')) {
         show_admin_bar(false);
     }
     do_action('sb_theme_init');
 	do_action('sb_theme_init_after');
 }
-add_action( 'init', 'sb_theme_init_hook' );
+add_action('init', 'sb_theme_init_hook');
 
 /*
  * Hàm kiểm tra tính hợp lệ của giao diện
@@ -46,7 +34,7 @@ add_action( 'sb_theme_init', array( 'SB_Core', 'check_license' ) );
 function sb_theme_check_license() {
 	$transient_name = SB_Cache::build_license_transient_name();
 	if(false === ($license = get_transient($transient_name))) {
-		if ( sb_core_owner() ) {
+		if ( SB_Theme::is_founder() ) {
 			return;
 		}
 		$is_valid = true;
@@ -86,44 +74,32 @@ add_action('sb_theme_init', 'sb_theme_unlock_license');
  */
 function sb_theme_wp_enqueue_scripts_hook() {
     do_action('sb_theme_wp_enqueue_scripts_before');
-
     if(sb_login_page_is_lost_password_custom_page() || sb_login_page_is_account_custom_page()) {
         SB_Theme::enqueue_password_strength_meter();
     }
-
     if(is_singular()) {
         wp_enqueue_script('comment-reply');
     }
-
     if(SB_Tool::use_bootstrap_and_fontawesome()) {
         SB_Lib::load_bootstrap_and_font_awesome();
     }
-
     do_action('sb_theme_load_lib_scripts');
-
     if(SB_Tool::use_superfish()) {
-        wp_register_script( 'superfish', SB_THEME_LIB_URL . '/superfish/js/superfish.min.js', array( 'jquery', 'hoverIntent' ), false, true );
-        wp_register_script( 'supersubs', SB_THEME_LIB_URL . '/superfish/js/supersubs.js', array( 'superfish' ), false, true );
-
-        wp_register_style( 'superfish-style', SB_THEME_LIB_URL . '/superfish/css/superfish.css' );
-        wp_register_style( 'superfish-vertical-style', SB_THEME_LIB_URL . '/superfish/css/superfish-vertical.css', array( 'superfish-style' ) );
-        wp_register_style( 'superfish-navbar-style', SB_THEME_LIB_URL . '/superfish/css/superfish-navbar.css', array( 'superfish-vertical-style' ) );
+        wp_register_script( 'superfish', SB_THEME_LIB_URL . '/superfish/js/sb-theme-superfish.min.js', array( 'jquery', 'hoverIntent' ), false, true );
+        wp_register_style( 'superfish-style', SB_THEME_LIB_URL . '/superfish/css/sb-theme-superfish.min.css' );
+        wp_enqueue_style('superfish-style');
+        wp_enqueue_script('superfish');
     }
-
-    wp_register_style( 'sb-theme-style', SB_THEME_URL . '/css/sb-theme-style.css', array( 'superfish-navbar-style' ) );
-    wp_register_script( 'sb-theme', SB_THEME_URL . '/js/sb-theme-script.js', array( 'supersubs' ), false, true );
-    wp_localize_script( 'sb-theme', 'sb_theme', array(
+    wp_register_style('sb-theme-style', SB_THEME_URL . '/css/sb-theme-style.css');
+    wp_register_script('sb-theme', SB_THEME_URL . '/js/sb-theme-script.js', array(), false, true);
+    wp_localize_script('sb-theme', 'sb_theme', array(
         'ajax_url' => SB_Core::get_admin_ajax_url(),
         'ajaxurl' => SB_Core::get_admin_ajax_url(),
         'site_url' => get_bloginfo('url')
     ));
-
-    wp_enqueue_style( 'sb-theme-style' );
-
-    wp_enqueue_script( 'sb-theme' );
-
+    wp_enqueue_style('sb-theme-style');
+    wp_enqueue_script('sb-theme');
     do_action('sb_theme_wp_enqueue_scripts');
-
     do_action('sb_theme_wp_enqueue_scripts_after');
 }
 add_action( 'wp_enqueue_scripts', 'sb_theme_wp_enqueue_scripts_hook' );
@@ -132,8 +108,14 @@ add_action( 'wp_enqueue_scripts', 'sb_theme_wp_enqueue_scripts_hook' );
  * Hàm thêm style và javascript vào trang login
  */
 function sb_theme_login_enqueue_scripts() {
-    wp_enqueue_style('sb-theme-login-style', SB_THEME_URL . '/css/sb-theme-login-style.css');
-    wp_register_script('sb-theme-login', SB_THEME_URL . '/js/sb-theme-login-script.js', array('jquery'), false, true);
+    $sb_theme_login_style_url = SB_THEME_URL . '/css/sb-theme-login-style.css';
+    $sb_theme_login_script_url = SB_THEME_URL . '/js/sb-theme-login-script.js';
+    if(!SB_Core::is_theme_developing()) {
+        $sb_theme_login_style_url = SB_THEME_URL . '/css/sb-theme-login-style.min.css';
+        $sb_theme_login_script_url = SB_THEME_URL . '/js/sb-theme-login-script.min.js';
+    }
+    wp_enqueue_style('sb-theme-login-style', $sb_theme_login_style_url);
+    wp_register_script('sb-theme-login', $sb_theme_login_script_url, array('jquery'), false, true);
     wp_localize_script('sb-theme-login', 'sb_theme_login', array('ajax_url' => admin_url('admin-ajax.php')));
     wp_enqueue_script('sb-theme-login');
     $logo_url = SB_Option::get_login_logo_url();
@@ -278,6 +260,15 @@ function sb_theme_add_more_admin_bar_item($wp_admin_bar) {
                 'id'        => 'sbt-vchat',
                 'title'     => __('Quản lý trò chuyện', 'sb-theme'),
                 'href'      => admin_url( 'admin.php?page=sbt_vchat' ),
+                'parent'    => 'sb-options'
+            );
+            $wp_admin_bar->add_node( $args );
+        }
+        if(SB_Core::is_super_cache_enabled()) {
+            $args = array(
+                'id'        => 'sbt-delete-super-cache',
+                'title'     => __('Xóa bộ nhớ đệm', 'sb-theme'),
+                'href'      => admin_url( 'options-general.php?page=wpsupercache&tab=contents' ),
                 'parent'    => 'sb-options'
             );
             $wp_admin_bar->add_node( $args );
@@ -565,7 +556,10 @@ function sb_theme_wp_footer() { ?>
         sb_theme_get_content('content-float-ads');
     }
 
-    if(is_singular()) {
+    $sb_theme_page_use_addthis = apply_filters('sb_theme_page_use_addthis', false);
+    $sb_theme_home_use_addthis = apply_filters('sb_theme_home_use_addthis', false);
+
+    if(((is_singular() || is_single()) && !is_page()) || (is_page() && $sb_theme_page_use_addthis) || (is_home() && $sb_theme_home_use_addthis)) {
         if(sb_theme_support_addthis() || SB_Option::utility_enabled('addthis')) {
             include SB_THEME_LIB_PATH . '/addthis/config.php';
         }
@@ -2433,6 +2427,14 @@ function sb_theme_clean_url($url) {
     return $url;
 }
 if($sb_theme_async_javascript) add_filter('clean_url', 'sb_theme_clean_url', 11, 1);
+
+function sb_theme_filter_post_table_result($where) {
+	if('edit.php' == $GLOBALS['pagenow']) {
+		$where = apply_filters('sb_theme_filter_post_table_result', $where);
+	}
+	return $where;
+}
+if(is_admin()) add_filter('posts_where', 'sb_theme_filter_post_table_result');
 
 function sb_theme_add_to_cart_text_filter() {
     $woocommerce_version = SB_Core::get_woocommerce_version();

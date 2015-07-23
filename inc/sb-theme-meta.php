@@ -458,7 +458,9 @@ function sb_theme_publish_box_meta_field() {
             SB_Field::checkbox($args);
         }
         do_action('sb_theme_post_publish_box_meta_field');
-        do_action('sb_theme_' . $post_type . '_publish_box_meta_field');
+        if('post' != $post_type) {
+            do_action('sb_theme_' . $post_type . '_publish_box_meta_field');
+        }
     }
 }
 add_action('post_submitbox_misc_actions', 'sb_theme_publish_box_meta_field');
@@ -516,4 +518,103 @@ $sb_theme_meta = new SB_Meta_Box($args);
 
 function sb_theme_ads_information_callback() {
     SB_Theme::get_meta_box('meta-box-ads-information');
+}
+
+/*
+ * Tạo thông tin mở rộng cho support
+ */
+$fields = array(
+    array(
+        'name' => 'support_position',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'support_name',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'support_yahoo',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'support_skype',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'support_phone',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'support_chuc_vu',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'support_avatar',
+        'type' => 'media_image'
+    ),
+    array(
+        'name' => 'support_active',
+        'type' => 'checkbox'
+    )
+);
+
+$args = array(
+    'fields' => $fields,
+    'id' => 'sb_theme_support_information',
+    'callback' => 'sb_theme_support_information_callback',
+    'post_type' => SB_Theme::get_post_type_support_name(),
+    'title' => __('Thông tin hỗ trợ', 'sb-theme')
+);
+$sb_theme_meta = new SB_Meta_Box($args);
+
+function sb_theme_support_information_callback() {
+    SB_Theme::get_meta_box('meta-box-support-information');
+}
+
+/*
+ * Tạo thông tin mở rộng cho slider
+ */
+$fields = array(
+    array(
+        'name' => 'slider_position',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'slider_active',
+        'type' => 'checkbox'
+    )
+);
+
+$args = array(
+    'fields' => $fields,
+    'id' => 'sb_theme_slider_information',
+    'callback' => 'sb_theme_slider_information_callback',
+    'post_type' => SB_Core::get_post_type_slider_name(),
+    'title' => __('Thông tin slider', 'sb-theme')
+);
+$sb_theme_meta = new SB_Meta_Box($args);
+
+function sb_theme_slider_information_callback() {
+    SB_Theme::get_meta_box('meta-box-slider-information');
+}
+
+// Thông tin các item trong slider
+$fields = array(
+    array(
+        'name' => 'slider_items',
+        'type' => 'array'
+    )
+);
+
+$args = array(
+    'fields' => $fields,
+    'id' => 'sb_theme_slider_items_information',
+    'callback' => 'sb_theme_slider_items_information_callback',
+    'post_type' => SB_Core::get_post_type_slider_name(),
+    'title' => __('Các đối tượng hiển thị trên slider', 'sb-theme')
+);
+$sb_theme_meta = new SB_Meta_Box($args);
+
+function sb_theme_slider_items_information_callback() {
+    SB_Theme::get_meta_box('meta-box-slider-items-information');
 }

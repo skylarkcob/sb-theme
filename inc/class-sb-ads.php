@@ -24,41 +24,46 @@ class SB_Ads {
         return $query;
     }
 
+    public static function show_by_id($post_id) {
+        if(self::can_show($post_id)) {
+            $ads = get_post($post_id);
+            $ads_image = self::get_image($post_id);
+            $image_data = SB_Option::get_media_detail($ads_image);
+            $ads_image = $image_data['url'];
+            if(empty($ads_image)) {
+                $ads_code = self::get_code($post_id);
+                echo $ads_code;
+            } else {
+                $ads_link = self::get_link($post_id);
+                $img = new SB_HTML('img');
+                $atts = array(
+                    'src' => $ads_image,
+                    'alt' => $ads->post_title
+                );
+                $img->set_attribute_array($atts);
+
+                if(!empty($ads_link)) {
+                    $link = new SB_HTML('a');
+                    $link_atts = array(
+                        'title' => $ads->post_title,
+                        'href' => $ads_link
+                    );
+                    $link->set_attribute_array($link_atts);
+                    $link->set_text($img->build());
+                    echo $link->build();
+                } else {
+                    echo $img->build();
+                }
+            }
+        }
+    }
+
     public static function show_by_position($position_id) {
         $query = SB_Ads::get_by_position($position_id);
         if($query->have_posts()) {
             $ads = array_shift($query->posts);
             $post_id = $ads->ID;
-            if(self::can_show($post_id)) {
-                $ads_image = self::get_image($post_id);
-                $image_data = SB_Option::get_media_detail($ads_image);
-                $ads_image = $image_data['url'];
-                if(empty($ads_image)) {
-                    $ads_code = self::get_code($post_id);
-                    echo $ads_code;
-                } else {
-                    $ads_link = self::get_link($post_id);
-                    $img = new SB_HTML('img');
-                    $atts = array(
-                        'src' => $ads_image,
-                        'alt' => $ads->post_title
-                    );
-                    $img->set_attribute_array($atts);
-
-                    if(!empty($ads_link)) {
-                        $link = new SB_HTML('a');
-                        $link_atts = array(
-                            'title' => $ads->post_title,
-                            'href' => $ads_link
-                        );
-                        $link->set_attribute_array($link_atts);
-                        $link->set_text($img->build());
-                        echo $link->build();
-                    } else {
-                        echo $img->build();
-                    }
-                }
-            }
+            self::show_by_id($post_id);
         }
     }
 

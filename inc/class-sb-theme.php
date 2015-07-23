@@ -121,6 +121,10 @@ class SB_Theme {
         sb_theme_setting_field_category_widget();
     }
 
+    public static function add_theme_setting_field_term_widget($callback, $title = '', $option_name = 'term_widget') {
+        sb_theme_setting_field_term_widget($callback, $title, $option_name);
+    }
+
     public static function add_theme_setting_field_hotline() {
         sb_theme_setting_field_hotline();
     }
@@ -135,7 +139,9 @@ class SB_Theme {
     }
 
     public static function get_supported_socials() {
-        return apply_filters('sb_theme_social', array('facebook' => 'Facebook', 'gplus' => 'Google Plus', 'twitter' => 'Twitter', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn', 'pinterest' => 'Pinterest', 'zingme' => 'Zing Me', 'rss' => 'RSS'));
+        $result = apply_filters('sb_theme_social', array('facebook' => 'Facebook', 'gplus' => 'Google Plus', 'twitter' => 'Twitter', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn', 'pinterest' => 'Pinterest', 'zingme' => 'Zing Me', 'rss' => 'RSS'));
+        $result = apply_filters('sb_theme_use_socials', $result);
+        return $result;
     }
 
     public static function the_social_list() {
@@ -165,8 +171,7 @@ class SB_Theme {
     }
 
     public static function is_founder() {
-        $value = sb_core_owner();
-        return apply_filters('sb_theme_founder', $value);
+        return SB_Core::is_founder();
     }
 
     public static function the_recent_comment_list($comments, $args = array()) {
@@ -174,10 +179,9 @@ class SB_Theme {
         $content_length = isset($args['content_length']) ? absint($args['content_length']) : 80;
         ?>
         <ul class="list-unstyled list-recent-comments">
-            <?php foreach($comments as $comment) : ?>
-                <?php
+            <?php foreach($comments as $comment) :
                 $author_url = $comment->comment_author_url;
-                $post_comment_url = SB_Post::get_comment_link($comment->post_id);
+                $post_comment_url = get_comment_link($comment->comment_ID);
                 $author_link = '<b>';
                 if(!empty($author_url)) {
                     $author_link .= '<a itemprop="url" class="url fn n" href="' . $author_url . '">';
@@ -386,17 +390,24 @@ class SB_Theme {
         } elseif(is_tax()) {
             $term = SB_Term::get_single();
             echo $term->name;
+        } elseif(is_post_type_archive()) {
+            post_type_archive_title();
         } else {
             _e('Lưu trữ', 'sb-theme');
         }
     }
 
     public static function the_comment_template() {
-        if(function_exists('sb_comment_template')) {
-            sb_comment_template();
-        } else {
-            comments_template();
-        }
+	    $use_facebook_comments = SB_Tool::use_facebook_comments();
+	    if($use_facebook_comments) {
+		    self::the_facebook_comments();
+	    } else {
+		    if(function_exists('sb_comment_template')) {
+			    sb_comment_template();
+		    } else {
+			    comments_template();
+		    }
+	    }
     }
 
     public static function the_comments() {
@@ -503,9 +514,10 @@ class SB_Theme {
         sb_theme_the_logo();
     }
 
-    public static function the_facebook_javascript_sdk($app_id = '1425884427679175') {
-        $sb_theme_facebook_app_id = apply_filters('sb_theme_facebook_app_id', $app_id);
-        $sb_theme_facebook_javascript_sdk_version = apply_filters('sb_theme_facebook_javascript_sdk_version', 2.4);
+    public static function the_facebook_javascript_sdk() {
+        $app_id = self::get_facebook_app_id();
+        $version = apply_filters('sb_theme_facebook_javascript_sdk_version', 2.4);
+	    $language = apply_filters('sb_theme_facebook_language', 'vi_VN');
         ?>
         <div id="fb-root"></div>
         <script type="text/javascript">(function(d, s, id) {
@@ -514,7 +526,7 @@ class SB_Theme {
                 js = d.createElement(s); js.id = id;
                 js.async = 1;
                 js.defer = 1;
-                js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v<?php echo $sb_theme_facebook_javascript_sdk_version; ?>&appId=<?php echo $sb_theme_facebook_app_id; ?>";
+                js.src = "//connect.facebook.net/<?php echo $language; ?>/sdk.js#xfbml=1&version=v<?php echo $version; ?>&appId=<?php echo $app_id; ?>";
                 fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));</script>
         <?php
@@ -524,13 +536,72 @@ class SB_Theme {
         return SB_Tool::use_facebook_javascript_sdk();
     }
 
-    public static function the_facebook_share_and_like_buttons($url = '') {
-        if(empty($url) || !self::use_facebook_javascript_sdk()) {
+    public static function the_facebook_share_and_like_buttons($args = array()) {
+        if(!self::use_facebook_javascript_sdk()) {
             return;
         }
+	    $url = isset($args['url']) ? $args['url'] : '';
+	    if(empty($url)) {
+		    $url = get_permalink();
+	    }
+	    $layout = isset($args['layout']) ? $args['layout'] : 'button_count';
+	    $action = isset($args['action']) ? $args['action'] : 'like';
+	    $show_faces = isset($args['show_faces']) ? $args['show_faces'] : false;
+        $show_faces = SB_PHP::bool_to_string($show_faces);
+	    $share = isset($args['share']) ? $args['share'] : true;
+        $share = SB_PHP::bool_to_string($share);
         ?>
-        <div class="fb-like" data-href="<?php echo $url; ?>" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
+	    <div class="fb-like-buttons like-share">
+		    <div class="item">
+			    <div class="fb-like" data-href="<?php echo $url; ?>" data-layout="<?php echo $layout; ?>" data-action="<?php echo $action; ?>" data-show-faces="<?php echo $show_faces; ?>" data-share="<?php echo $share; ?>"></div>
+		    </div>
+	    </div>
         <?php
+    }
+
+	public static function get_facebook_app_id() {
+		$app_id = SB_Option::get_facebook_app_id();
+		if(empty($app_id)) {
+			$app_id = '1425884427679175';
+		}
+		$app_id = apply_filters('sb_theme_facebook_app_id', $app_id);
+		return $app_id;
+	}
+
+    public static function the_facebook_like_and_recommend_buttons($args = array()) {
+	    if(!self::use_facebook_javascript_sdk()) {
+		    return;
+	    }
+	    $url = isset($args['url']) ? $args['url'] : '';
+	    if(empty($url)) {
+		    $url = get_permalink();
+	    }
+	    $app_id = self::get_facebook_app_id();
+	    ?>
+	    <div class="fb-like-buttons like-recommend">
+		    <div class="item">
+			    <div data-share="false" data-show-faces="false" data-action="like" data-layout="button_count" data-href="<?php echo $url; ?>" class="fb-like fb_iframe_widget" fb-xfbml-state="rendered" fb-iframe-plugin-query="action=like&amp;app_id=<?php echo $app_id; ?>&amp;container_width=0&amp;href=<?php echo $url; ?>&amp;layout=button_count&amp;locale=en_US&amp;sdk=joey&amp;share=false&amp;show_faces=false"></div>
+		    </div>
+		    <div class="item">
+			    <div data-share="true" data-show-faces="false" data-action="recommend" data-layout="button_count" data-href="<?php echo $url; ?>" class="fb-like fb_iframe_widget" fb-xfbml-state="rendered" fb-iframe-plugin-query="action=recommend&amp;app_id=<?php echo $app_id; ?>&amp;container_width=0&amp;href=<?php echo $url; ?>&amp;layout=button_count&amp;locale=en_US&amp;sdk=joey&amp;share=false&amp;show_faces=false"></div>
+		    </div>
+	    </div>
+	    <?php
+    }
+
+    public static function the_facebook_comments($args = array()) {
+	    if(!self::use_facebook_javascript_sdk()) {
+		    return;
+	    }
+	    $url = isset($args['url']) ? $args['url'] : '';
+	    if(empty($url)) {
+		    $url = get_permalink();
+	    }
+	    $number = isset($args['number']) ? $args['number'] : 5;
+	    $width = isset($args['width']) ? $args['width'] : '100%';
+	    ?>
+	    <div class="fb-comments" data-href="<?php echo $url; ?>" data-numposts="<?php echo $number; ?>" data-width="<?php echo $width; ?>"></div>
+	    <?php
     }
 
     public static function the_facebook_page_plugin($args = array()) {
@@ -680,6 +751,10 @@ class SB_Theme {
         echo '<span class="' . $class . '"><i class="fa fa fa-bars"></i>' . $button_text . '</span>';
     }
 
+	public static function google_translate_gadget() {
+		self::get_content('google-translate');
+	}
+
     public static function google_analytics_tracking() {
         self::get_content('google-analytics');
     }
@@ -761,8 +836,20 @@ class SB_Theme {
 
     public static function the_float_ads() {
         ?>
-        <div class="hidden-sm float-ads left sb-float-ads"><?php dynamic_sidebar('float_ads_left'); ?></div>
-        <div class="hidden-sm float-ads right sb-float-ads"><?php dynamic_sidebar('float_ads_right'); ?></div>
+        <div class="hidden-sm float-ads left sb-float-ads">
+            <?php
+            if(!dynamic_sidebar('float_ads_left')) {
+                SB_Ads::show_by_position('float_left');
+            }
+            ?>
+        </div>
+        <div class="hidden-sm float-ads right sb-float-ads">
+            <?php
+            if(!dynamic_sidebar('float_ads_right')) {
+                SB_Ads::show_by_position('float_right');
+            }
+            ?>
+        </div>
         <?php
     }
 
@@ -900,6 +987,38 @@ class SB_Theme {
         sb_get_custom_loop($name);
     }
 
+    public static function get_post_type_support_name() {
+        return SB_Core::get_post_type_support_name();
+    }
+
+    public static function get_registered_supports() {
+        global $sb_theme_registered_supports;
+        if(!is_array($sb_theme_registered_supports)) {
+            $sb_theme_registered_supports = array();
+        }
+        return $sb_theme_registered_supports;
+    }
+
+    public static function register_support($id, $name, $description) {
+        global $sb_theme_registered_supports;
+        if(!is_array($sb_theme_registered_supports)) {
+            $sb_theme_registered_supports = array();
+        }
+        if(array_key_exists($id, $sb_theme_registered_supports)) {
+            return;
+        }
+        $item = array(
+            'id' => $id,
+            'name' => $name,
+            'description' => $description
+        );
+        $sb_theme_registered_supports[$id] = $item;
+    }
+
+    public static function get_registered_ads() {
+        return self::get_ads_items();
+    }
+
     public static function get_ads_items() {
         global $sb_theme_ads_items;
         if(!is_array($sb_theme_ads_items)) {
@@ -924,8 +1043,45 @@ class SB_Theme {
         $sb_theme_ads_items[$id] = $new_ads_item;
     }
 
+    public static function register_ads_float() {
+        SB_Theme::register_ads('float_left', 'Float left', __('Quảng cáo trượt bên trái trang web.', 'sb-theme'));
+        SB_Theme::register_ads('float_right', 'Float right', __('Quảng cáo trượt bên phải trang web.', 'sb-theme'));
+    }
+
     public static function get_post_type_ads_name() {
         return SB_Core::get_post_type_ads_name();
+    }
+
+    public static function get_registered_sliders() {
+        return self::get_slider_items();
+    }
+
+    public static function get_slider_items() {
+        global $sb_theme_slider_items;
+        if(!is_array($sb_theme_slider_items)) {
+            $sb_theme_slider_items = array();
+        }
+        return $sb_theme_slider_items;
+    }
+
+    public static function register_slider($id, $name, $description) {
+        global $sb_theme_slider_items;
+        if(!is_array($sb_theme_slider_items)) {
+            $sb_theme_slider_items = array();
+        }
+        if(array_key_exists($id, $sb_theme_slider_items)) {
+            return;
+        }
+        $new_slider_item = array(
+            'id' => $id,
+            'name' => $name,
+            'description' => $description
+        );
+        $sb_theme_slider_items[$id] = $new_slider_item;
+    }
+
+    public static function get_post_type_slider_name() {
+        return SB_Core::get_post_type_slider_name();
     }
 
     public static function get_ads_by_position($ads_id) {
@@ -938,6 +1094,10 @@ class SB_Theme {
 
     public static function get_custom_content($name) {
         sb_get_custom_content($name);
+    }
+
+    public static function get_custom_content_none() {
+        self::get_custom_content('content-none');
     }
 
     public static function get_custom_module($name) {

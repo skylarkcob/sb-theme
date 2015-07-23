@@ -398,6 +398,10 @@ class SB_User {
         return wp_authenticate($login_name, $password);
     }
 
+    public static function generate_password($length = 16) {
+        return wp_generate_password($length);
+    }
+
     public static function generate_activation_code($user) {
         if(!self::is($user)) {
             return '';

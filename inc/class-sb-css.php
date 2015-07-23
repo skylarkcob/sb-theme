@@ -48,4 +48,22 @@ class SB_CSS {
         $content = preg_replace('/;}/', '}', $content);
         return trim($content);
     }
+
+    public static function minify($files) {
+        $buffer = '';
+        if(is_array($files)) {
+            foreach($files as $file) {
+                $buffer .= @file_get_contents($file);
+            }
+        } else {
+            $buffer = @file_get_contents($files);
+        }
+        $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+        $buffer = str_replace(': ', ':', $buffer);
+        $buffer = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
+        $buffer = self::shorten_hex($buffer);
+        $buffer = self::shorten_zero($buffer);
+        $buffer = self::strip_white_space($buffer);
+        return $buffer;
+    }
 }

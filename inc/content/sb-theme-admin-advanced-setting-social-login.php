@@ -22,6 +22,9 @@ function sb_theme_advanced_setting_social_login_facebook() {
 
     if((bool)$value) {
         $value = isset($facebook['app_id']) ? $facebook['app_id'] : '';
+        if(empty($value)) {
+            $value = SB_Option::get_socials_facebook_app_id();
+        }
         $args = array(
             'id' => 'sb_theme_social_login_facebook_app_id',
             'name' => SB_Option::build_sb_theme_advanced_option_name(array('social_login', 'facebook', 'app_id')),

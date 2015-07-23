@@ -16,4 +16,4 @@ if(empty($profile_id)) {
     addthis_config.pubid = <?php echo $profile_id; ?>;
     addthis_config.async = 1;
 </script>
-<script type="text/javascript" src="<?php echo SB_THEME_LIB_URL; ?>/addthis/addthis_widget.js#async=1&amp;pubid=<?php echo $profile_id; ?>" async defer></script>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=<?php echo $profile_id; ?>" async="async"></script>

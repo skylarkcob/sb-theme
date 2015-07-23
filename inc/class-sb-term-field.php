@@ -19,6 +19,18 @@ class SB_Term_Field {
         self::after();
     }
 
+    public static function checkbox($args = array()) {
+        if(!isset($args['before'])) {
+            $args['before'] = '';
+        }
+        $id = isset($args['id']) ? $args['id'] : '';
+        $label = isset($args['label']) ? $args['label'] : '';
+        self::before($id, $label);
+        $args['label'] = '';
+        SB_Field::checkbox($args);
+        self::after();
+    }
+
     public static function image_upload($args = array()) {
         $id = isset($args['id']) ? $args['id'] : '';
         $label = isset($args['label']) ? $args['label'] : '';

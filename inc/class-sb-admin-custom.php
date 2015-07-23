@@ -178,6 +178,10 @@ class SB_Admin_Custom {
 		SB_Theme::get_content('sb-admin-setting-vchat-page');
 	}
 
+	public static function socials_setting_page_callback() {
+		SB_Theme::get_content('sb-admin-setting-socials-page');
+	}
+
     public static function setting_page_before() {
         ?>
         <div class="wrap sb-theme sb-option sb-options" data-message-confirm="<?php echo SB_Message::get_confirm_text(); ?>" data-option-changed="0">
@@ -227,7 +231,7 @@ class SB_Admin_Custom {
     }
 
     public static function form_before($class = '') {
-        $class = SB_PHP::add_string_with_space_before($class, 'sb-theme-setting-form');
+        $class = SB_PHP::add_string_with_space_before($class, 'sb-theme-setting-form form-table');
         echo '<form class="' . $class . '" method="post" action="' . esc_url(admin_url('options.php')) . '">';
         settings_fields( 'sb-setting' );
     }

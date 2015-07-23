@@ -15,6 +15,14 @@ class SB_Term {
         return wp_get_nav_menu_items($menu_id);
     }
 
+    public static function get_bookmarks($args) {
+        return SB_Query::get_bookmarks($args);
+    }
+
+	public static function get_bookmark($term_id) {
+		return get_bookmark($term_id);
+	}
+
     public static function get_links($taxonomy, $args = array()) {
         $separator = ', ';
         $terms = self::get($taxonomy, $args);
@@ -187,7 +195,8 @@ class SB_Term {
     }
 
     public static function get_thumbnail_url($term_id, $taxonomy) {
-        return self::get_meta($term_id, $taxonomy, 'thumbnail');
+        $thumbnail = self::get_meta($term_id, $taxonomy, 'thumbnail');
+        return SB_Option::get_media_url_by_value($thumbnail);
     }
 
     public static function the_thumbnail_link($args = array()) {

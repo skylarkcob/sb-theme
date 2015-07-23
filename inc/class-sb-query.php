@@ -211,6 +211,14 @@ class SB_Query {
         return $query;
     }
 
+    public static function get_bookmarks($args) {
+        return get_bookmarks($args);
+    }
+
+    public static function get_links($args) {
+        return self::get_bookmarks($args);
+    }
+
     public static function get_post_by_category($term_id, $args = array()) {
         return self::get_post_by_term($term_id, 'category', $args);
     }
@@ -431,5 +439,19 @@ class SB_Query {
     public static function get_this_year_posts($args = array()) {
         $args = self::build_yearly_post_args($args);
         return self::get($args);
+    }
+
+    public static function get_supports($args = array()) {
+        $args['post_type'] = SB_Core::get_post_type_support_name();
+        return self::get($args);
+    }
+
+    public static function get_supports_by_position($position, $args = array()) {
+        $meta_item = array(
+            'key' => SB_Post::build_meta_name('support_position'),
+            'value' => $position
+        );
+        $args = self::build_meta_query($meta_item, $args);
+        return self::get_supports($args);
     }
 }

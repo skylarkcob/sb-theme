@@ -48,6 +48,10 @@ var sb_ajax_loader,
         return file_frame.state().get('selection').first().toJSON();
     }
 
+    sb_theme.receive_selected_media_items = function(file_frame) {
+        return file_frame.state().get('selection');
+    }
+
     window.sb_get_admin_post_type = function() {
         return $('input[name="post_type"]').val();
     };
@@ -749,6 +753,153 @@ var sb_ajax_loader,
                 ui_list.append(resp);
             });
         })
+    })();
+
+    // Các chức năng quản lý slider
+    (function(){
+        $('#list_slider_items').sortable({
+            cancel: ':input, .ui-state-disabled, .sb-icon-delete',
+            placeholder: 'ui-state-highlight',
+            sort: function(event, ui) {
+                var that = $(this),
+                    ui_state_highlight = that.find('.ui-state-highlight');
+                ui_state_highlight.css({'height': ui.item.outerHeight()});
+                if(that.hasClass('display-inline')) {
+                    ui_state_highlight.css({'width': ui.item.outerWidth()});
+                }
+            },
+            stop: function(event, ui) {
+                var that = $(this),
+                    list_slider_items = that,
+                    slider_item_container = list_slider_items.parent(),
+                    item_order = slider_item_container.find('.item-order'),
+                    item_order_value = '';
+                list_slider_items.find('li').each(function(index, el){
+                    var li_item = $(el);
+                    item_order_value += li_item.attr('data-item');
+                    item_order_value += ',';
+                });
+                item_order_value = item_order_value.slice(0, -1);
+                item_order.val(item_order_value);
+            }
+        });
+
+        // Thêm đối tượng vào danh sách
+        $('.slider-items .btn-add-item').live('click', function(e){
+            e.preventDefault();
+            var that = $(this);
+            if(file_frame) {
+                file_frame.uploader.uploader.param('post_id', new_post_id);
+                file_frame.open();
+                return;
+            }
+            file_frame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: true});
+            file_frame.on('select', function(){
+                var media_datas = sb_theme.receive_selected_media_items(file_frame);
+                media_datas.map(function(media_data){
+                    media_data = media_data.toJSON();
+                    var media_url = media_data.url,
+                        media_id = parseInt(media_data.id),
+                        slider_items_container = that.closest('.slider-items'),
+                        items_container = slider_items_container.find('.items-container'),
+                        list_slider_items = slider_items_container.find('.list-slider-items'),
+                        count_item = parseInt(list_slider_items.attr('data-items')),
+                        max_item_id = parseInt(list_slider_items.attr('data-max-id')),
+                        item_order = slider_items_container.find('.item-order'),
+                        item_order_value = item_order.val(),
+                        item_html = '';
+                    if(media_id > 0) {
+                        count_item++;
+                        max_item_id++;
+                        item_html += '<li data-item="' + max_item_id + '">';
+                        item_html += '<img class="item-image" src="' + media_url + '">';
+                        item_html += '<div class="item-info">';
+                        item_html += '<input type="text" placeholder="Tiêu đề" value="" class="item-title" name="sbmb_slider_items[items][' + max_item_id + '][title]">';
+                        item_html += '<input type="url" placeholder="Đường dẫn đến trang đích" value="" class="item-link" name="sbmb_slider_items[items][' + max_item_id + '][link]">';
+                        item_html += '<textarea class="item-description" name="sbmb_slider_items[items][' + max_item_id + '][description]"></textarea>';
+                        item_html += '</div>';
+                        item_html += '<input type="hidden" class="item-image-url" name="sbmb_slider_items[items][' + max_item_id + '][image_url]" value="' + media_url + '">';
+                        item_html += '<input type="hidden" class="item-image-id" name="sbmb_slider_items[items][' + max_item_id + '][image_id]" value="' + media_id + '">';
+                        item_html += '<span class="item-icon icon-delete icon-sortable-ui"></span>';
+                        item_html += '<span class="item-icon icon-drag icon-sortable-ui"></span>';
+                        item_html += '</li>';
+                        list_slider_items.append(item_html);
+                        list_slider_items.attr('data-items', count_item);
+                        list_slider_items.attr('data-max-id', max_item_id);
+                        if($.trim(item_order_value)) {
+                            item_order_value += ',';
+                        }
+                        item_order_value += max_item_id;
+                        item_order.val(item_order_value);
+                    }
+                });
+                file_frame = null;
+            });
+            file_frame.open();
+        });
+
+        // Thay đổi hình ảnh của đối tượng
+        $('.list-slider-items .item-image').live('click', function(e){
+            e.preventDefault();
+            var that = $(this);
+            if(file_frame) {
+                file_frame.uploader.uploader.param('post_id', new_post_id);
+                file_frame.open();
+                return;
+            }
+            file_frame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
+            file_frame.on('select', function(){
+                var media_data = sb_core.sb_receive_media_selected(file_frame),
+                    media_url = media_data.url,
+                    media_id = parseInt(media_data.id),
+                    slider_item = that.parent(),
+                    item_image_url = slider_item.find('.item-image-url'),
+                    item_image_id = slider_item.find('.item-image-id'),
+                    item_html = '';
+                if(media_id > 0) {
+                    that.attr('src', media_url);
+                    item_image_url.val(media_url);
+                    item_image_id.val(media_id);
+                }
+                file_frame = null;
+            });
+            file_frame.open();
+        });
+
+        // Xóa đối tượng ra khỏi danh sách slider
+        $('.list-slider-items .icon-delete').live('click', function(e){
+            e.preventDefault();
+            var that = $(this),
+                slider_item = that.parent(),
+                list_slider_items = slider_item.parent(),
+                slider_item_container = list_slider_items.parent(),
+                item_order = slider_item_container.find('.item-order'),
+                item_order_value = '';
+            if(confirm('Bạn có chắc là muốn xóa không?')) {
+                slider_item.remove();
+                list_slider_items.find('li').each(function(index, el){
+                    var li_item = $(el);
+                    item_order_value += li_item.attr('data-item');
+                    item_order_value += ',';
+                });
+                item_order_value = item_order_value.slice(0, -1);
+                item_order.val(item_order_value);
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: sb_core_admin_ajax.url,
+                    data: {
+                        action: 'sb_theme_remove_slider_item',
+                        item_id: parseInt(slider_item.attr('data-item')),
+                        post_id: parseInt(list_slider_items.attr('data-post'))
+                    },
+                    success: function(response){
+
+                    }
+                });
+            }
+        });
+
     })();
 
     // Thêm và xóa hình ảnh

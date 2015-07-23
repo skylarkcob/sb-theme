@@ -358,6 +358,40 @@ class SB_Field {
         echo $after;
     }
 
+    public static function large_image_by_thumb($args = array()) {
+        $name = isset($args['name']) ? $args['name'] : '';
+        if(empty($name)) {
+            return;
+        }
+        $id = isset($args['id']) ? $args['id'] : 'sb_theme_large_image_by_thumb';
+        $id = SB_PHP::esc_id($id);
+        $container_class = isset($args['container_class']) ? $args['container_class'] : '';
+        $container_class = SB_PHP::add_string_with_space_before($container_class, 'pair-images');
+
+        $key = 'small';
+        $thumb_name = $name . '[' . $key . ']';
+        $thumb_id = $id . $key;
+        $thumb_value = isset($args[$key . '_value']) ? $args[$key . '_value'] : '';
+        $thumb_args = array(
+            'id' => $thumb_id,
+            'name' => $thumb_name,
+            'value' => $thumb_value,
+            'container_class' => $key . ' margin-bottom'
+        );
+        self::media_upload_with_remove_and_preview($thumb_args);
+
+        $key = 'large';
+        $full_name = $name . '[' . $key . ']';
+        $full_id = $id . $key;
+        $full_value = isset($args[$key . '_value']) ? $args[$key . '_value'] : '';
+        $full_args = array(
+            'id' => $full_id,
+            'name' => $full_name,
+            'value' => $full_value
+        );
+        self::media_upload_with_remove_and_preview($full_args);
+    }
+
     public static function media_upload_with_remove_and_preview($args = array()) {
         $name = isset($args['name']) ? $args['name'] : '';
         $value = isset($args['value']) ? $args['value'] : '';
@@ -552,7 +586,7 @@ class SB_Field {
         self::sortable_ui_connect($args);
     }
 
-    public static function sortble_term($args = array()) {
+    public static function sortable_term($args = array()) {
         $option_name = isset($args['option_name']) ? $args['option_name'] : '';
         if(empty($option_name)) {
             $option_name = isset($args['name']) ? $args['name'] : '';
@@ -918,7 +952,12 @@ class SB_Field {
         $class = isset($args['field_class']) ? $args['field_class'] : '';
         $class = SB_PHP::add_string_with_space_before($class, 'sb-button');
         $description = isset($args['description']) ? $args['description'] : '';
-        echo '<button class="' . esc_attr($class) . '">' . $text . '</button>';
+        $atts = isset($args['attributes']) ? $args['attributes'] : array();
+        $button = new SB_HTML('button');
+        $button->set_class($class);
+        $button->set_text($text);
+        $button->set_attribute_array($atts);
+        echo $button->build();
         self::the_description($description);
     }
 

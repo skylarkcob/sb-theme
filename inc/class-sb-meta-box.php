@@ -46,7 +46,7 @@ class SB_Meta_Box {
         $this->priority = $priority;
         $this->callback_args = $callback_args;
         foreach($fields as $field) {
-            $field['name'] = SB_Core::build_meta_box_field_name($field['name']);
+            $field['name'] = SB_Core::build_meta_box_field_name(isset($field['name']) ? $field['name'] : '');
             array_push($this->fields, $field);
         }
     }

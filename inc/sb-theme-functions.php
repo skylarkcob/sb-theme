@@ -24,7 +24,7 @@ function sb_term_meta_nonce() {
 }
 
 function sb_core_owner() {
-    return apply_filters( 'sb_core_owner', false );
+    return SB_Core::is_founder();
 }
 
 function sb_core_get_image_url( $name ) {

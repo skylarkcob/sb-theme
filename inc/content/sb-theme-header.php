@@ -6,7 +6,7 @@ do_action('sb_theme_html_before');
 <!DOCTYPE html>
 <html lang="vi" dir="ltr" class="no-js">
 <head>
-    <meta charset="<?php bloginfo('charset'); ?>">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <?php if(SB_Core::compare_wp_version('4.1', '<')) : ?>
         <title><?php SB_Theme::the_title(); ?></title>
     <?php endif; ?>

@@ -14,6 +14,74 @@ class SB_Post {
 		self::add_support('page', 'excerpt');
 	}
 
+    public static function get_slider_items($post_id, $esc = false) {
+        $key = 'slider_items';
+        $value = self::get_sb_meta($post_id, $key);
+        if(!is_array($value)) {
+            $value = SB_PHP::to_array($value);
+        }
+        if($esc) {
+            $value = self::esc_slider_item($value);
+        }
+        return $value;
+    }
+
+    public static function get_sliders_by_position($position, $args = array()) {
+        $args['post_type'] = SB_Theme::get_post_type_slider_name();
+        $meta_item = array(
+            'key' => 'sbmb_slider_position',
+            'value' => $position
+        );
+        $args = SB_Query::build_meta_query($meta_item, $args);
+        return SB_Query::get($args);
+    }
+
+    public static function get_support_name($post_id) {
+        $name = self::get_sb_meta($post_id, 'support_name');
+        if(empty($name)) {
+            $post = get_post($post_id);
+            $name = $post->post_title;
+        }
+        return $name;
+    }
+
+    public static function is_support_active($post_id) {
+        $value = self::get_sb_meta($post_id, 'support_active');
+        return (bool)$value;
+    }
+
+    public static function esc_slider_item($items) {
+        $list_items = isset($items['items']) ? $items['items'] : array();
+        $item_order = isset($items['order']) ? $items['order'] : '';
+        $item_order = SB_PHP::string_to_array(',', $item_order);
+        $item_order = array_unique($item_order);
+        $items['items'] = $list_items;
+        $items['order'] = $item_order;
+        return $items;
+    }
+
+    public static function esc_slider_info($item) {
+        $title = isset($item['title']) ? $item['title'] : '';
+        $link = isset($item['link']) ? $item['link'] : '';
+        $description = isset($item['description']) ? $item['description'] : '';
+        $image_url = isset($item['image_url']) ? $item['image_url'] : '';
+        $image_id = isset($item['image_id']) ? $item['image_id'] : 0;
+        if($image_id > 0) {
+            $media_url = self::get_media_url($image_id);
+            if(!empty($media_url)) {
+                $image_url = $media_url;
+            }
+        }
+        $result = array(
+            'title' => $title,
+            'link' => $link,
+            'description' => $description,
+            'image_id' => $image_id,
+            'image_url' => $media_url
+        );
+        return $result;
+    }
+
     public static function get_all_media_images($post_id) {
         $transient_name = SB_Cache::build_post_media_images_transient_name($post_id);
         if(!SB_Cache::post_images_cache() || false === ($result = get_transient($transient_name))) {
@@ -595,6 +663,11 @@ class SB_Post {
             $post_date = date($format, strtotime($post_date));
         }
         return $post_date;
+    }
+
+    public static function the_title_h2($args = array()) {
+        $args['headline'] = 'h2';
+        self::the_title($args);
     }
 
     public static function the_title($args = array()) {

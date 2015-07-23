@@ -16,7 +16,30 @@ class SB_PHP {
     }
 
     public static function format_number_vietnamese($price, $decimals = 0, $decimal_separator = ',', $thousand_separator = '.') {
+        if(!is_numeric($price)) {
+            return $price;
+        }
         return number_format($price, $decimals, $decimal_separator, $thousand_separator);
+    }
+    
+    public static function get_max_number($numbers = array()) {
+        $max = array_shift($numbers);
+        foreach($numbers as $number) {
+            if($number > $max) {
+                $max = $number;
+            }
+        }
+        return $max;
+    }
+
+    public static function get_min_number($numbers = array()) {
+        $min = array_shift($numbers);
+        foreach($numbers as $number) {
+            if($number < $min) {
+                $min = $number;
+            }
+        }
+        return $min;
     }
 
     public static function encrypt($key, $string) {
@@ -296,6 +319,20 @@ class SB_PHP {
             $sub_str .= ' ' . $read_more;
         }
         return $sub_str;
+    }
+
+    public static function remove_array_item_by_value($arr, $arr_remove) {
+        $arr = array_diff($arr, $arr_remove);
+        return $arr;
+    }
+
+    public static function esc_id($id) {
+        $id = strtolower($id);
+        $id = str_replace('-', '_', $id);
+        $id = str_replace(' ', '_', $id);
+        $id = str_replace('[', '_', $id);
+        $id = str_replace(']', '_', $id);
+        return $id;
     }
 
     public static function array_shift( &$array, $number = 1 ) {
@@ -795,6 +832,12 @@ class SB_PHP {
         return $result;
     }
 
+    public static function get_domain_name_full($url) {
+        $domain = self::get_domain_name($url);
+        $domain = str_replace('www.', '', $domain);
+        return $domain;
+    }
+
     public static function get_root_domain($url) {
         $domain_name = self::get_domain_name($url);
         $data = explode('.', $domain_name);
@@ -929,6 +972,14 @@ class SB_PHP {
             return 1;
         }
         return 0;
+    }
+
+    public static function bool_to_string($bool_value) {
+        if($bool_value) {
+            return 'true';
+        } else {
+            return 'false';
+        }
     }
 
     public static function int_to_bool( $int_value ) {
@@ -1245,7 +1296,11 @@ class SB_PHP {
     }
 
     public static function to_array($needle, $filter_and_unique = true) {
-        $result = (array)$needle;
+        if(is_array($needle)) {
+            $result = $needle;
+        } else {
+            $result = (array)$needle;
+        }
         if($filter_and_unique) {
             $result = array_filter($result);
             $result = array_unique($result);
@@ -1403,6 +1458,27 @@ class SB_PHP {
 
     public static function compare_version($compare_version, $compare) {
         return version_compare(self::get_version(), $compare_version, $compare);
+    }
+
+    public static function is_session_started() {
+        $session_started = true;
+        if(SB_PHP::compare_version('5.4', '>=')) {
+            if(PHP_SESSION_NONE == session_status()) {
+                $session_started = false;
+            }
+        } else {
+            if('' == session_id()) {
+                $session_started = false;
+            }
+        }
+        return $session_started;
+    }
+
+    public static function session_start() {
+        $session_started = self::is_session_started();
+        if(!$session_started) {
+            session_start();
+        }
     }
 
     public static function get_pc_ip() {

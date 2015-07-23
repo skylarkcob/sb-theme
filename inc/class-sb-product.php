@@ -222,9 +222,9 @@ class SB_Product {
         echo self::get_formatted_price($post_id, $show_sale_price);
     }
 
-    public function the_price() {
+    public function the_price($show_sale_price = true) {
         $product = $this->product;
-        echo self::get_formatted_price($product->id);
+        echo self::get_formatted_price($product->id, $show_sale_price);
     }
 
     public static function get_price_decimals() {
@@ -258,7 +258,7 @@ class SB_Product {
             echo '<span class="price"><span class="no-price call">' . self::get_out_of_stock_text() . '</span></span>';
         } else {
             $result = '';
-            if($sale_price > 0) {
+            if($sale_price > 0 && $sale_price < $price) {
                 $ins = '<ins><span class="amount">' . number_format($sale_price) . ' đ</span></ins>';
                 $del = '<del><span class="amount">' . number_format($price) . ' đ</span></del>';
                 $result = $ins . ' ' . $del;
@@ -273,7 +273,7 @@ class SB_Product {
     public function price() {
         $post_id = get_the_ID();
         $prices = self::get_prices($post_id);
-        self::the_price_html($prices['price'], $prices['sale_price']);
+        self::the_price_html($prices['regular_price'], $prices['sale_price']);
     }
 
     public function is_sale() {

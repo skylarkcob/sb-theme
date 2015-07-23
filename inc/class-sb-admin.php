@@ -9,6 +9,7 @@ class SB_Admin {
     private $checkout_tabs = array();
     private $store_tabs = array();
 	private $vchat_tabs = array();
+    private $socials_tabs = array();
 
     public function __construct() {
         if($this->has_sb_admin()) {
@@ -38,6 +39,7 @@ class SB_Admin {
         add_filter('sb_theme_checkout_setting_tabs', array($this, 'checkout_setting_tabs'));
         add_filter('sb_theme_store_setting_tabs', array($this, 'store_setting_tabs'));
 	    add_filter('sb_theme_vchat_setting_tabs', array($this, 'vchat_setting_tabs'));
+        add_filter('sb_theme_socials_setting_tabs', array($this, 'socials_setting_tabs'));
     }
 
     private function filter() {
@@ -66,6 +68,19 @@ class SB_Admin {
 		$tabs = wp_parse_args($tabs, $defaults);
 		return $tabs;
 	}
+
+    public function socials_setting_tabs($tabs) {
+        $defaults = array(
+            'facebook' => array(
+                'name' => __('Facebook', 'sb-theme')
+            ),
+            'google' => array(
+                'name' => __('Google', 'sb-theme')
+            )
+        );
+        $tabs = wp_parse_args($tabs, $defaults);
+        return $tabs;
+    }
 
     public function advanced_setting_tabs($tabs) {
         $defaults = array(
@@ -123,6 +138,10 @@ class SB_Admin {
 	public function get_vchat_setting_tabs() {
 		return apply_filters('sb_theme_vchat_setting_tabs', $this->vchat_tabs);
 	}
+
+    public function get_socials_setting_tabs() {
+        return apply_filters('sb_theme_socials_setting_tabs', $this->socials_tabs);
+    }
 
     private function has_sb_admin() {
         global $sb_admin;

@@ -73,6 +73,10 @@ class SB_Tool {
         return apply_filters('sb_theme_use_ads_system', $result);
     }
 
+    public static function use_support_system() {
+        return apply_filters('sb_theme_use_support_system', false);
+    }
+
     public static function use_term_thumbnail() {
         $result = SB_Option::use_term_thumbnail();
         return apply_filters('sb_theme_use_term_thumbnail', $result);
@@ -144,6 +148,27 @@ class SB_Tool {
     public static function use_superfish() {
         $result = true;
         $result = apply_filters('sb_theme_use_superfish', $result);
+        return $result;
+    }
+
+    public static function use_slider() {
+        $result = false;
+        $result = apply_filters('sb_theme_use_slider', $result);
+        return $result;
+    }
+
+    public static function minify_style_and_script() {
+        $result = false;
+        $result = apply_filters('sb_theme_minify_style_and_script', $result);
+        return $result;
+    }
+
+    public static function enable_links_manager() {
+        add_filter('pre_option_link_manager_enabled', '__return_true');
+    }
+
+    public static function use_facebook_comments() {
+        $result = apply_filters('sb_theme_use_facebook_comments', false);
         return $result;
     }
 }

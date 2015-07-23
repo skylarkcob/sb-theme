@@ -64,15 +64,15 @@ class SB_Lib {
     }
 
     public static function load_bootstrap() {
-        wp_register_style('bootstrap-style', SB_THEME_LIB_URL . '/bootstrap/css/bootstrap.min.css');
+        wp_register_style('bootstrap-style', 'https://maxcdn.bootstrapcdn.com/bootstrap/' . SB_THEME_BOOTSTRAP_VERSION . '/css/bootstrap.min.css');
         wp_enqueue_style('bootstrap-style');
 
-        wp_register_script('bootstrap', SB_THEME_LIB_URL . '/bootstrap/js/bootstrap.min.js', array('jquery'), false, true);
+        wp_register_script('bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/' . SB_THEME_BOOTSTRAP_VERSION . '/js/bootstrap.min.js', array('jquery'), false, true);
         wp_enqueue_script('bootstrap');
     }
 
     public static function load_font_awesome() {
-        wp_register_style('font-awesome-style', SB_THEME_LIB_URL . '/font-awesome/css/font-awesome.min.css');
+        wp_register_style('font-awesome-style', '//maxcdn.bootstrapcdn.com/font-awesome/' . SB_THEME_FONT_AWESOME_VERSION . '/css/font-awesome.min.css');
         wp_enqueue_style('font-awesome-style');
     }
 

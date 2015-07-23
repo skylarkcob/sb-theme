@@ -377,6 +377,14 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
             'parent'    => false
         );
         $wp_admin_bar->add_node( $args );
+
+        $args = array(
+            'id'        => 'sbt-plugins',
+            'title'     => __('Plugins', 'sb-theme'),
+            'href'      => admin_url( 'plugins.php' ),
+            'parent'    => 'sb-options'
+        );
+        $wp_admin_bar->add_node( $args );
     }
 }
 add_action( 'admin_bar_menu', 'sb_theme_add_to_admin_bar', 999 );

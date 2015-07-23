@@ -24,11 +24,26 @@ function sb_theme_front_page_widget_callback() {
         'option_name' => 'front_page_widget',
         'taxonomy' => 'category'
     );
-    SB_Field::sortble_term($args);
+    SB_Field::sortable_term($args);
 }
 
 function sb_theme_setting_field_front_page_widget() {
     sb_theme_add_setting_field('sb_theme_front_page_widget', __('Front page widget', 'sb-theme'), 'sb_theme_front_page_widget_callback');
+}
+
+function sb_theme_term_widget_callback($taxonomy, $option_name = 'term_widget') {
+    $args = array(
+        'option_name' => $option_name,
+        'taxonomy' => $taxonomy
+    );
+    SB_Field::sortable_term($args);
+}
+
+function sb_theme_setting_field_term_widget($callback, $title = '', $option_name = 'term_widget') {
+    if(empty($title)) {
+        $title = __('Nhóm chuyên mục', 'sb-theme');
+    }
+    sb_theme_add_setting_field('sb_theme_' . $option_name, $title, $callback);
 }
 
 function sb_theme_category_widget_callback() {
@@ -36,7 +51,7 @@ function sb_theme_category_widget_callback() {
         'option_name' => 'category_widget',
         'taxonomy' => 'category'
     );
-    SB_Field::sortble_term($args);
+    SB_Field::sortable_term($args);
 }
 
 function sb_theme_setting_field_category_widget() {
@@ -62,7 +77,7 @@ function sb_theme_taxonomy_channel_ui_connect_callback() {
         'option_name' => 'channel_ui_connect',
         'taxonomy' => 'channel'
     );
-    SB_Field::sortble_term($args);
+    SB_Field::sortable_term($args);
 }
 
 function sb_theme_taxonomy_channel_ui_connect($title = '') {

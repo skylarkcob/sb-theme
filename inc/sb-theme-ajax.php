@@ -26,6 +26,25 @@ function sb_theme_admin_sidebar_change_ajax_callback() {
 }
 add_action('wp_ajax_sb_theme_admin_sidebar_change', 'sb_theme_admin_sidebar_change_ajax_callback');
 
+function sb_theme_remove_slider_item_ajax_callback() {
+    $item_id = isset($_POST['item_id']) ? $_POST['item_id'] : 0;
+    if($item_id > 0) {
+        $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : 0;
+        if($post_id > 0) {
+            $value = SB_Post::get_slider_items($post_id, true);
+            $list_items = $value['items'];
+            $item_order = $value['order'];
+            unset($list_items[$item_id]);
+            $value['items'] = $list_items;
+            $item_order = SB_PHP::remove_array_item_by_value($item_order, array($item_id));
+            $value['order'] = $item_order;
+            SB_Post::update_sb_meta($post_id, 'slider_items', $value);
+        }
+    }
+    die();
+}
+add_action('wp_ajax_sb_theme_remove_slider_item', 'sb_theme_remove_slider_item_ajax_callback');
+
 function sb_theme_optimize_database_ajax_callback() {
     $delete_revision = isset($_POST['delete_revision']) ? $_POST['delete_revision'] : 0;
     $delete_auto_draft = isset($_POST['delete_auto_draft']) ? $_POST['delete_auto_draft'] : 0;

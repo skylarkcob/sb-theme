@@ -183,7 +183,7 @@ class SB_Option {
     public static function get_logo_type() {
         $type = self::get_theme_option(array('keys' => array('logo_type')));
         if(empty($type)) {
-            $type = 'background';
+            $type = 'image';
         }
         return apply_filters('sb_logo_type', $type);
     }
@@ -725,6 +725,23 @@ class SB_Option {
         $visits = intval(get_option('visits'));
         $visits++;
         update_option('visits', $visits);
+    }
+
+    public static function get_socials_facebook_app_id() {
+        $base_option_name = 'sbt_socials';
+        $tab_base_option_name = 'facebook';
+        $key = 'app_id';
+        $value = SB_Option::get_option_by_base($base_option_name, $tab_base_option_name, $key);
+        return $value;
+    }
+
+    public static function get_facebook_app_id() {
+        $value = self::get_socials_facebook_app_id();
+        if(empty($value)) {
+            $facebook = SB_Option::get_social_login_app('facebook');
+            $value = isset($facebook['app_id']) ? $facebook['app_id'] : '';
+        }
+        return $value;
     }
 
     public static function get_theme_rss_feed() {
