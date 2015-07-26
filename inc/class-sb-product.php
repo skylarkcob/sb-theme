@@ -69,6 +69,17 @@ class SB_Product {
         return $product->get_sku();
     }
 
+    public static function choose_price($regular_price, $sale_price) {
+        $price = 0;
+        if(is_numeric($regular_price)) {
+            $price = $regular_price;
+        }
+        if(is_numeric($sale_price) && (0 == $price || ($price > 0 && $sale_price < $price))) {
+            $price = $sale_price;
+        }
+        return $price;
+    }
+
     public static function get_add_to_cart($args = array()) {
         $post_id = isset($args['post_id']) ? absint($args['post_id']) : get_the_ID();
         $sku = isset($args['sku']) ? $args['sku'] : self::get_sku_number($post_id);

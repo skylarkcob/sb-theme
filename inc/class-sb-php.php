@@ -32,6 +32,18 @@ class SB_PHP {
         return $max;
     }
 
+    public static function is_phone($number) {
+        $regex = "/^(\d[\s-]?)?[\(\[\s-]{0,2}?\d{3}[\)\]\s-]{0,2}?\d{3}[\s-]?\d{4}$/i";
+        $result = (preg_match($regex, $number)) ? true : false;
+        if($result) {
+            $len = strlen($number);
+            if($len < 7 || $len > 20) {
+                $result = false;
+            }
+        }
+        return true;
+    }
+
     public static function get_min_number($numbers = array()) {
         $min = array_shift($numbers);
         foreach($numbers as $number) {

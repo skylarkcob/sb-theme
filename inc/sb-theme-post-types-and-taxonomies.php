@@ -32,5 +32,14 @@ function sb_theme_create_post_types_and_taxonomies_hook() {
         );
         SB_Core::register_post_type_private($args);
     }
+
+    if(SB_Tool::use_order_system()) {
+        $args = array(
+            'name' => __('Orders', 'sb-theme'),
+            'singular_name' => __('Order', 'sb-theme'),
+            'slug' => SB_Core::get_post_type_order_name()
+        );
+        SB_Core::register_post_type_private($args);
+    }
 }
 add_action('sb_theme_post_types_and_taxonomies', 'sb_theme_create_post_types_and_taxonomies_hook');

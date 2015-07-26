@@ -14,6 +14,10 @@ class SB_Post {
 		self::add_support('page', 'excerpt');
 	}
 
+    public static function get_edit_url($post_id) {
+        return get_edit_post_link($post_id);
+    }
+
     public static function get_slider_items($post_id, $esc = false) {
         $key = 'slider_items';
         $value = self::get_sb_meta($post_id, $key);
@@ -912,6 +916,9 @@ class SB_Post {
     public static function get_views($post_id) {
         $views = self::get_meta($post_id, 'views');
         $views = absint($views);
+        if(0 == $views) {
+            $views = 1;
+        }
         return $views;
     }
 

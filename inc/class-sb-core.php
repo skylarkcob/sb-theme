@@ -330,6 +330,10 @@ class SB_Core {
         return apply_filters('sb_theme_post_type_support_name', 'sbt_support');
     }
 
+    public static function get_post_type_order_name() {
+        return apply_filters('sb_theme_post_type_order_name', 'sbt_order');
+    }
+
     public static function get_post_type_slider_name() {
         return apply_filters('sb_theme_post_type_slider_name', 'sbt_slider');
     }

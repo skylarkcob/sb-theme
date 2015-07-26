@@ -25,6 +25,11 @@ class SB_Tool {
         return $result;
     }
 
+    public static function use_order_system() {
+        $result = apply_filters('sb_theme_use_order_system', false);
+        return $result;
+    }
+
     public static function use_captcha() {
         $use_captcha = apply_filters('sb_use_captcha', false);
         $use_captcha = apply_filters('sb_theme_use_captcha', $use_captcha);

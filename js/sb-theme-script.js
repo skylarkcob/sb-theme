@@ -176,6 +176,85 @@ var sb_password_strength,
         return result;
     };
 
+    // Xử lý giỏ hàng
+    (function(){
+        // Thêm đối tượng vào giỏ hàng
+        $('.sbt-btn-atc').on('click', function(e){
+            var that = $(this),
+                id = parseInt(that.attr('data-id')),
+                price = parseFloat(that.attr('data-price')),
+                quantity = parseInt(that.attr('data-quantity'));
+            sb_theme.ajax_loader(true);
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: sb_theme.ajax_url,
+                data: {
+                    action: 'sb_theme_add_to_cart',
+                    id: id,
+                    price: price,
+                    quantity: quantity
+                },
+                success: function(response){
+                    sb_theme.ajax_loader(false);
+                }
+            });
+        });
+
+        // Xóa đối tượng ra khỏi giỏ hàng
+        $('.sb-theme-cart .sbt-remove-item').on('click', function(e){
+            e.preventDefault();
+            var that = $(this),
+                id = parseInt(that.attr('data-id'));
+            sb_theme.ajax_loader(true);
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: sb_theme.ajax_url,
+                data: {
+                    action: 'sb_theme_remove_cart_item',
+                    id: id
+                },
+                success: function(response){
+                    sb_theme.ajax_loader(false);
+                    window.location.href = window.location.href;
+                }
+            });
+        });
+
+        // Cập nhật số lượng của đối tượng trong giỏ hàng
+        $('.sb-theme-cart .sbt-btn-uc').on('click', function(e){
+            e.preventDefault();
+            var that = $(this),
+                products = {},
+                table = that.closest('table'),
+                count = 0;
+            sb_theme.ajax_loader(true);
+            table.find('.product-quantity input').each(function(i, el){
+                var field = $(el),
+                    info = {
+                        id: parseInt(field.attr('data-id')),
+                        quantity: parseInt(field.val())
+                    };
+                products[count] = info;
+                count++;
+            });
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: sb_theme.ajax_url,
+                data: {
+                    action: 'sb_theme_update_cart_item',
+                    products: JSON.stringify(products)
+                },
+                success: function(response){
+                    sb_theme.ajax_loader(false);
+                    window.location.href = window.location.href;
+                }
+            });
+        });
+    })();
+
     // Add default class to external links
     (function(){
         $('a').filter(function() {

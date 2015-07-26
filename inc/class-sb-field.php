@@ -781,6 +781,10 @@ class SB_Field {
         }
         $html->set_attribute_array($atts);
         $attributes = isset($args['attributes']) ? $args['attributes'] : array();
+        $readonly = isset($args['readonly']) ? $args['readonly'] : false;
+        if($readonly) {
+            $attributes['readonly'] = 'readonly';
+        }
         $html->set_attribute_array($attributes);
         if($only) {
             echo $html->build();

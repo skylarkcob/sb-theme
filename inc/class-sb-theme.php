@@ -1100,6 +1100,14 @@ class SB_Theme {
         self::get_custom_content('content-none');
     }
 
+    public static function the_content_updating_text() {
+        echo '<p class="content-updating">Nội dung đang được cập nhật.</p>';
+    }
+
+    public static function the_content_none_text() {
+        echo '<p class="content-none">Không có nội dung.</p>';
+    }
+
     public static function get_custom_module($name) {
         sb_get_custom_module($name);
     }

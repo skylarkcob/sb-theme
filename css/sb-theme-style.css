@@ -67,7 +67,7 @@ div blockquote::before {
 
 div blockquote::after {
     bottom: 0;
-    content: "�?";
+    content: "”";
     right: 10px;
 }
 
@@ -3482,6 +3482,127 @@ div > .syntaxhighlighter {
     font-size: 13px;
     padding-bottom: 4px;
     padding-top: 4px;
+}
+
+/* ==================================== Cart ================================== */
+
+.sb-theme-cart {
+    font-family: Tahoma;
+    font-size: 13px;
+}
+
+.sb-theme-cart table {
+    width: 100%;
+}
+
+.sb-theme-cart .cart-products td {
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.sb-theme-cart .cart-products td {
+    padding: 5px;
+}
+
+.sb-theme-cart table .column-title {
+    font-weight: 700;
+    padding: 5px 0;
+    text-align: center;
+}
+
+.sb-theme-cart .fa {
+    color: #35b0c3;
+}
+
+.sb-theme-cart .cart-title {
+    background-color: #106bbc;
+    color: #fff;
+    font-weight: 700;
+    padding: 5px 10px;
+    text-transform: uppercase;
+}
+
+.sb-theme-cart .cart-title .fa {
+    font-size: 18px;
+}
+
+.sb-theme-cart .cart-content {
+    border: 1px solid #35b0c3;
+    margin: 2px 0 0;
+    padding: 10px 8px;
+}
+
+.sb-theme-cart .no-content {
+
+}
+
+.sb-theme-cart .no-content .return-shopping {
+
+}
+
+.sb-theme-cart .no-content .return-shopping .fa {
+    vertical-align: middle;
+}
+
+.sb-theme-cart .cart-products {
+    border: 1px solid #ccc;
+}
+
+.sb-theme-cart .product-quantity input {
+    border: 1px solid #ccc;
+    display: block;
+    line-height: 17px;
+    margin: 0 auto;
+    padding: 2px;
+}
+
+.sb-theme-cart .cart-products .product-delete {
+    font-weight: 700;
+    text-align: center;
+}
+
+.sb-theme-cart .cart-products .product-delete span {
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.sb-theme-cart .cart-products .product-delete span:hover {
+    color: #ff0000;
+}
+
+.sb-theme-cart td {
+    vertical-align: middle;
+}
+
+.sb-theme-cart table td.return-shop,
+.sb-theme-cart table td.checkout {
+    padding-top: 5px;
+}
+
+.sb-theme-cart table td.return-shop a {
+    color: #106bbd;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.sb-theme-cart table td.return-shop .fa {
+    color: #bababa;
+}
+
+.sb-theme-cart table td.checkout a {
+    color: #ff0000;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.sb-theme-cart table td.return-shop a:hover,
+.sb-theme-cart table td.checkout a:hover {
+    text-decoration: underline;
+}
+
+.sbt-btn-atc.disabled {
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 /* ==================================== Statistics ================================== */

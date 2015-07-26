@@ -41,6 +41,8 @@ require SB_THEME_INC_PATH . '/class-sb-option.php';
 
 require SB_THEME_INC_PATH . '/class-sb-tool.php';
 
+require SB_THEME_INC_PATH . '/class-sb-cart.php';
+
 require SB_THEME_INC_PATH . '/class-sb-captcha.php';
 
 require SB_THEME_INC_PATH . '/class-sb-mail.php';
@@ -74,6 +76,9 @@ require SB_THEME_INC_PATH . '/class-sb-payment.php';
 require SB_THEME_INC_PATH . '/class-sb-ngan-luong.php';
 
 require SB_THEME_INC_PATH . '/class-sb-post.php';
+
+
+require SB_THEME_INC_PATH . '/class-sb-product.php';
 
 require SB_THEME_INC_PATH . '/class-sb-ads.php';
 

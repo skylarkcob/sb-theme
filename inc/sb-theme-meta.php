@@ -598,6 +598,189 @@ function sb_theme_slider_information_callback() {
     SB_Theme::get_meta_box('meta-box-slider-information');
 }
 
+/*
+ * Tạo thông tin mở rộng cho đơn hàng
+ */
+$fields = array(
+    array(
+        'name' => 'order_id',
+        'type' => 'number'
+    ),
+    array(
+        'name' => 'order_status',
+        'type' => 'text'
+    )
+);
+
+$args = array(
+    'fields' => $fields,
+    'id' => 'sb_theme_order_default_information',
+    'callback' => 'sb_theme_order_default_information_callback',
+    'post_type' => SB_Core::get_post_type_order_name(),
+    'title' => __('Thông tin đơn hàng', 'sb-theme')
+);
+$sb_theme_meta = new SB_Meta_Box($args);
+
+function sb_theme_order_default_information_callback() {
+    global $post;
+    $post_id = $post->ID;
+    SB_Theme::the_meta_box_nonce();
+
+    SB_Theme::meta_box_before();
+
+    $key = 'order_id';
+    $value = $post_id;
+    $args = array(
+        'id' => 'sb_theme_' . $key,
+        'name' => SB_Post::build_meta_name($key),
+        'value' => $value,
+        'label' => __('Mã đơn hàng:', 'sb-theme'),
+        'field_class' => 'width-small display-block',
+        'readonly' => true,
+        'container_class' => 'margin-bottom-10'
+    );
+    SB_Field::text($args);
+
+    $key = 'order_status';
+    $value = SB_Post::get_sb_meta($post_id, $key);
+    $args = array(
+        'id' => 'sb_theme_' . $key,
+        'name' => SB_Post::build_meta_name($key),
+        'value' => $value,
+        'label' => __('Trạng thái:', 'sb-theme'),
+        'field_class' => 'width-medium display-block',
+        'container_class' => 'margin-bottom-10'
+    );
+    SB_Field::text($args);
+
+    SB_Theme::meta_box_after();
+}
+
+// Thông tin khách hàng mua đơn hàng
+$fields = array(
+    array(
+        'name' => 'customer_name',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'customer_phone',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'customer_email',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'customer_address',
+        'type' => 'text'
+    ),
+    array(
+        'name' => 'customer_message',
+        'type' => 'text'
+    )
+);
+
+$args = array(
+    'fields' => $fields,
+    'id' => 'sb_theme_order_customer_information',
+    'callback' => 'sb_theme_order_customer_information_callback',
+    'post_type' => SB_Core::get_post_type_order_name(),
+    'title' => __('Thông tin khách hàng', 'sb-theme')
+);
+$sb_theme_meta = new SB_Meta_Box($args);
+
+function sb_theme_order_customer_information_callback() {
+    global $post;
+    $post_id = $post->ID;
+    SB_Theme::the_meta_box_nonce();
+
+    SB_Theme::meta_box_before();
+
+    $key = 'customer_name';
+    $value = SB_Post::get_sb_meta($post_id, $key);
+    $args = array(
+        'id' => 'sb_theme_' . $key,
+        'name' => SB_Post::build_meta_name($key),
+        'value' => $value,
+        'label' => __('Họ và tên:', 'sb-theme'),
+        'field_class' => 'width-medium display-block',
+        'container_class' => 'margin-bottom-10'
+    );
+    SB_Field::text($args);
+
+    $key = 'customer_phone';
+    $value = SB_Post::get_sb_meta($post_id, $key);
+    $args = array(
+        'id' => 'sb_theme_' . $key,
+        'name' => SB_Post::build_meta_name($key),
+        'value' => $value,
+        'label' => __('Số điện thoại:', 'sb-theme'),
+        'field_class' => 'width-medium display-block',
+        'container_class' => 'margin-bottom-10'
+    );
+    SB_Field::text($args);
+
+    $key = 'customer_email';
+    $value = SB_Post::get_sb_meta($post_id, $key);
+    $args = array(
+        'id' => 'sb_theme_' . $key,
+        'name' => SB_Post::build_meta_name($key),
+        'value' => $value,
+        'label' => __('Email:', 'sb-theme'),
+        'field_class' => 'width-medium display-block',
+        'container_class' => 'margin-bottom-10'
+    );
+    SB_Field::text($args);
+
+    $key = 'customer_address';
+    $value = SB_Post::get_sb_meta($post_id, $key);
+    $args = array(
+        'id' => 'sb_theme_' . $key,
+        'name' => SB_Post::build_meta_name($key),
+        'value' => $value,
+        'label' => __('Địa chỉ:', 'sb-theme'),
+        'field_class' => 'display-block',
+        'container_class' => 'margin-bottom-10'
+    );
+    SB_Field::text($args);
+
+    $key = 'customer_message';
+    $value = SB_Post::get_sb_meta($post_id, $key);
+    $args = array(
+        'id' => 'sb_theme_' . $key,
+        'name' => SB_Post::build_meta_name($key),
+        'value' => $value,
+        'label' => __('Lời nhắn:', 'sb-theme'),
+        'field_class' => 'display-block',
+        'container_class' => 'margin-bottom-10'
+    );
+    SB_Field::textarea($args);
+
+    SB_Theme::meta_box_after();
+}
+
+// Thông tin giỏ hàng của đơn hàng
+$args = array(
+    'fields' => array(),
+    'id' => 'sb_theme_order_cart_information',
+    'callback' => 'sb_theme_order_cart_information_callback',
+    'post_type' => SB_Core::get_post_type_order_name(),
+    'title' => __('Thông tin giỏ hàng', 'sb-theme')
+);
+$sb_theme_meta = new SB_Meta_Box($args);
+
+function sb_theme_order_cart_information_callback() {
+    global $post;
+    $post_id = $post->ID;
+    SB_Theme::the_meta_box_nonce();
+
+    SB_Theme::meta_box_before();
+
+    SB_Cart::the_cart_readonly(array('cart' => SB_Post::get_sb_meta($post_id, 'cart')));
+
+    SB_Theme::meta_box_after();
+}
+
 // Thông tin các item trong slider
 $fields = array(
     array(

@@ -554,3 +554,35 @@ function sb_comment_ajax_callback() {
 }
 add_action('wp_ajax_sb_comment', 'sb_comment_ajax_callback');
 add_action('wp_ajax_nopriv_sb_comment', 'sb_comment_ajax_callback');
+
+function sb_theme_add_to_cart_ajax_callback() {
+    $id = isset($_POST['id']) ? $_POST['id'] : '';
+    $quantity = isset($_POST['quantity']) ? $_POST['quantity'] : '';
+    $price = isset($_POST['price']) ? $_POST['price'] : 0;
+    SB_Cart::add(array('post_id' => $id, 'quantity' => $quantity, 'price' => $price));
+    $result = array(
+        'html_data' => SB_Cart::get()
+    );
+    echo json_encode($result);
+    die();
+}
+add_action('wp_ajax_sb_theme_add_to_cart', 'sb_theme_add_to_cart_ajax_callback');
+add_action('wp_ajax_nopriv_sb_theme_add_to_cart', 'sb_theme_add_to_cart_ajax_callback');
+
+function sb_theme_remove_cart_item_ajax_callback() {
+    $cart = SB_Cart::get();
+    $id = isset($_POST['id']) ? $_POST['id'] : 0;
+    SB_Cart::delete_item($id);
+    die();
+}
+add_action('wp_ajax_sb_theme_remove_cart_item', 'sb_theme_remove_cart_item_ajax_callback');
+add_action('wp_ajax_nopriv_sb_theme_remove_cart_item', 'sb_theme_remove_cart_item_ajax_callback');
+
+function sb_theme_update_cart_item_ajax_callback() {
+    $products = isset($_POST['products']) ? $_POST['products'] : '';
+    $products = SB_PHP::json_string_to_array($products);
+    SB_Cart::update_items($products);
+    die();
+}
+add_action('wp_ajax_sb_theme_update_cart_item', 'sb_theme_update_cart_item_ajax_callback');
+add_action('wp_ajax_nopriv_sb_theme_update_cart_item', 'sb_theme_update_cart_item_ajax_callback');
