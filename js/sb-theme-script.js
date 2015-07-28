@@ -720,21 +720,21 @@ var sb_password_strength,
             $('.btn-interest .btn').on('click', function(e){
                 var that = $(this),
                     container = that.parent(),
-                    post_id = that.attr('data-post'),
-                    interested = that.attr('data-interested'),
+                    post_id = parseInt(that.attr('data-post')),
+                    interested = parseInt(that.attr('data-interested')),
                     count = container.find('.count');
                 that.addClass('disabled');
-                interested++;
                 $.ajax({
                     type: 'POST',
                     dataType: 'json',
-                    url: sb_core_ajax.url,
+                    url: sb_theme.ajax_url,
                     data: {
                         action: 'sb_theme_interest_post',
                         post_id: post_id,
                         interested: interested
                     },
                     success: function(response){
+                        interested++;
                         count.html(interested);
                         that.attr('data-interested', interested);
                     }

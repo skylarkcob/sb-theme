@@ -75,9 +75,17 @@ function sb_theme_optimize_database_ajax_callback() {
 add_action('wp_ajax_sb_theme_optimize_database', 'sb_theme_optimize_database_ajax_callback');
 
 function sb_theme_interest_post_ajax_callback() {
+    $resutl = array(
+        'ajax_succesful' => false
+    );
     $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : 0;
-    $interested = isset($_POST['interested']) ? $_POST['interested'] : 0;
-    SB_Post::update_meta($post_id, 'interested', $interested);
+    if($post_id > 0) {
+        $interested = isset($_POST['interested']) ? $_POST['interested'] : 0;
+        $interested++;
+        SB_Post::update_meta($post_id, 'interested', $interested);
+        $resutl['ajax_succesful'] = true;
+    }
+    echo json_encode($resutl);
     die();
 }
 add_action('wp_ajax_sb_theme_interest_post', 'sb_theme_interest_post_ajax_callback');

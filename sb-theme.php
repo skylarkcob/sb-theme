@@ -1,10 +1,4 @@
 <?php
-/**
- * Khai báo các hằng cần thiết load SB Theme.
- *
- * @package SB Theme
- */
-
 defined('ABSPATH') or die('Please do not pip me!');
 
 function sb_theme_use_old_version_update() {
@@ -20,31 +14,23 @@ add_action('admin_init', 'sb_theme_use_old_version_update');
 if(sb_theme_use_old_version()) {
     require get_template_directory() . '/sb-theme/old/sb-theme.php';
 } else {
-    /** Khai báo phiên bản hiện tại của SB Theme */
     define( 'SB_THEME_VERSION', '2.4.7' );
 
-    /** Khai báo phiên bản jQuery mặc định */
     define('SB_THEME_JQUERY_VERSION', '1.11.1');
 
-    /** Khai báo đường dẫn đến thư mục wp-admin */
     define( 'SB_THEME_WP_ADMIN_PATH', ABSPATH . 'wp-admin' );
 
-    /** Khai báo đường dẫn đến thư mục wp-admin/includes */
     define( 'SB_THEME_ADMIN_INC_PATH', SB_THEME_WP_ADMIN_PATH . '/includes' );
 
-    /** Khai báo đường dẫn đến thư mục sb-theme */
     define( 'SB_THEME_PATH', dirname( __FILE__ ) );
 
-    /** Khai báo đường dẫn đến thư mục sb-theme */
     define( 'SB_THEME_URL', untrailingslashit( get_template_directory_uri() ) . '/sb-theme' );
 
-    /** Khai báo đường dẫn đến thư mục inc */
     define( 'SB_THEME_INC_PATH', SB_THEME_PATH . '/inc' );
 
     define( 'SB_THEME_PLUGIN_PATH', SB_THEME_PATH . '/plugins' );
 
     define( 'SB_THEME_PLUGIN_URL', SB_THEME_URL . '/plugins' );
 
-    /** Load tập tin chính để khởi tạo SB Theme */
     require SB_THEME_INC_PATH . '/sb-theme-load.php';
 }

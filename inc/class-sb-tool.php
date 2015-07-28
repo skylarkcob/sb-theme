@@ -176,4 +176,9 @@ class SB_Tool {
         $result = apply_filters('sb_theme_use_facebook_comments', false);
         return $result;
     }
+
+    public static function allow_upload_flash() {
+        $result = apply_filters('sb_theme_allow_upload_flash', false);
+        return $result;
+    }
 }

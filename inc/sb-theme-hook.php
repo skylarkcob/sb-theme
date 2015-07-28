@@ -2449,6 +2449,17 @@ function sb_theme_add_to_cart_text_filter() {
 add_filter('add_to_cart_text', 'sb_theme_add_to_cart_text_filter');
 add_filter('woocommerce_product_add_to_cart_text', 'sb_theme_add_to_cart_text_filter', 10);
 
+function sb_theme_media_upload_mimes($mimes) {
+    if(!current_user_can('unfiltered_html')) {
+        return $mimes;
+    }
+    if(SB_Tool::allow_upload_flash()) {
+        $mimes['swf'] = 'application/x-shockwave-flash';
+    }
+    return $mimes;
+}
+add_filter('upload_mimes', 'sb_theme_media_upload_mimes');
+
 do_action('sb_theme_hook');
 
 do_action('sb_theme_hook_after');

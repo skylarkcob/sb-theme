@@ -339,8 +339,10 @@ function sb_theme_logo_callback() {
     $list_options = array(
         'background' => __('Hình nền', 'sb-theme'),
         'image' => __('Hình ảnh', 'sb-theme'),
-        'text' => __('Chữ', 'sb-theme')
+        'text' => __('Chữ', 'sb-theme'),
+        'flash' => __('Flash', 'sb-theme')
     );
+    $list_options = apply_filters('sb_theme_logo_display_types', $list_options);
     $args = array(
         'id' => 'sb_theme_logo_type',
         'name' => 'sb_options[theme][logo_type]',

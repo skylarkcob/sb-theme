@@ -476,8 +476,32 @@ class SB_Theme {
         show_admin_bar(false);
     }
 
+    public static function the_flash($args = array()) {
+        $src = isset($args['src']) ? $args['src'] : '';
+        if(empty($src)) {
+            $src = isset($args['url']) ? $args['url'] : '';
+        }
+        if(empty($src)) {
+            return;
+        }
+        $object = isset($args['object']) ? $args['object'] : false;
+        if($object) {
+            self::object_embed($args);
+        } else {
+            ?>
+            <embed src="<?php echo $src; ?>"></embed>
+            <?php
+        }
+    }
+
     public static function object_embed($args = array()) {
         $url = isset($args['url']) ? $args['url'] : '';
+        if(empty($url)) {
+            $url = isset($args['src']) ? $args['src'] : '';
+        }
+        if(empty($url)) {
+            return;
+        }
         $flash_var = isset($args['flash_var']) ? $args['flash_var'] : '';
         $id = isset($args['id']) ? $args['id'] : '';
         $name = isset($args['name']) ? $args['name'] : '';

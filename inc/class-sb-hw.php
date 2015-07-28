@@ -55,7 +55,7 @@ class SB_HW {
         if(false === ($query = get_transient($transient_name))) {
             $args = array(
                 'post__not_in' => $exclude_ids,
-                'post_type' => SB_HW::get_readable_post_types(),
+                'post_type' => self::get_readable_post_types(),
                 'posts_per_page' => 5
             );
             $query = SB_Query::get_random_posts($args);
@@ -81,51 +81,37 @@ class SB_HW {
         return SB_Query::get($args);
     }
 
+    public static function count_project() {
+        $query = self::get_projects(array('posts_per_page' => -1));
+        $count = $query->post_count;
+        $count += 50;
+        return $count;
+    }
+
+    public static function build_not_services_news_args($args = array()) {
+        $meta_item = array(
+            'key' => SB_Post::build_meta_name('services_news'),
+            'value' => 1,
+            'type' => 'NUMERIC',
+            'compare' => 'NOT EXISTS'
+        );
+        $args = SB_Query::build_meta_query($meta_item, $args);
+        return $args;
+    }
+
+    public static function build_services_news_args($args = array()) {
+        $meta_item = array(
+            'key' => SB_Post::build_meta_name('services_news'),
+            'value' => 1,
+            'type' => 'NUMERIC'
+        );
+        $args = SB_Query::build_meta_query($meta_item, $args);
+        return $args;
+    }
+
     public static function get_recent_news($args = array()) {
-        $ids = array();
-        $query = SB_Query::get(array('posts_per_page' => -1, 'post_type' => 'post'));
-        foreach($query->posts as $my_post) {
-            $ids[] = $my_post->ID;
-        }
-        $tmp_args = array(
-            'post_type' => 'blog',
-            'posts_per_page' => -1
-        );
-        $term = SB_Term::get_by('slug', 'wp-news', 'bcat');
-        if(is_object($term)) {
-            $tmp_args['tax_query'] = array(
-                array(
-                    'taxonomy' => 'bcat',
-                    'field' => 'id',
-                    'terms' => $term->term_id
-                )
-            );
-        }
-        $query = SB_Query::get($tmp_args);
-        foreach($query->posts as $my_post) {
-            $ids[] = $my_post->ID;
-        }
-        $tmp_args = array(
-            'post_type' => 'home',
-            'posts_per_page' => -1
-        );
-        $term = SB_Term::get_by('slug', 'thong-bao', 'hcat');
-        if(is_object($term)) {
-            $tmp_args['tax_query'] = array(
-                array(
-                    'taxonomy' => 'hcat',
-                    'field' => 'id',
-                    'terms' => $term->term_id
-                )
-            );
-        }
-        $query = SB_Query::get($tmp_args);
-        foreach($query->posts as $my_post) {
-            $ids[] = $my_post->ID;
-        }
-        $args['post__in'] = $ids;
-        $args['post_type'] = self::get_readable_post_types();
-        return SB_Query::get($args);
+        $args = self::build_services_news_args($args);
+        return self::get_readable_posts($args);
     }
 
     public static function get_projects($args = array()) {

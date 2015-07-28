@@ -19,6 +19,13 @@ class SB_Lib {
         wp_enqueue_style('jquery-ui-style', '//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css');
     }
 
+    public static function load_fancybox() {
+        wp_register_style('fancybox-style', SB_THEME_LIB_URL . '/fancybox/jquery.fancybox.min.css');
+        wp_register_script('fancybox', SB_THEME_LIB_URL . '/fancybox/jquery.fancybox.min.js', array('jquery'), false, true);
+        wp_enqueue_style('fancybox-style');
+        wp_enqueue_script('fancybox');
+    }
+
     public static function load_owl_carousel() {
         sb_theme_load_owl_carousel();
     }
