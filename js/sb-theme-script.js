@@ -1217,4 +1217,21 @@ var sb_password_strength,
         });
     })();
 
+    // Upload tùy chỉnh
+    (function(){
+        $('.sbt-upload-files').on('change', function(e){
+            var that = $(this),
+                count_file = that.get(0).files.length,
+                max_file = parseInt(that.attr('data-max'));
+            if(!$.isNumeric(max_file)) {
+                max_file = -1;
+            }
+            if(max_file > 0 && count_file > max_file) {
+                alert('Bạn không được chọn quá ' + max_file + ' tập tin.');
+                that.val('');
+                return false;
+            }
+        });
+    })();
+
 })(jQuery);

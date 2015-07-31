@@ -18,7 +18,7 @@ if(empty($logo_url)) : ?>
     </h1>
 <?php else :
     if('flash' == $logo_type) {
-        SB_Theme::the_flash(array('src' => $logo_url));
+        SB_Theme::the_flash(array('src' => $logo_url, 'object' => true));
     } else {
         if($logo_type == 'text') : ?>
             <h1 class="sb-logo site-logo">

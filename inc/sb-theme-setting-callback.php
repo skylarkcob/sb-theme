@@ -46,12 +46,16 @@ function sb_theme_setting_field_term_widget($callback, $title = '', $option_name
     sb_theme_add_setting_field('sb_theme_' . $option_name, $title, $callback);
 }
 
-function sb_theme_category_widget_callback() {
+function sb_theme_setting_field_category_widget_display($taxonomy, $name) {
     $args = array(
-        'option_name' => 'category_widget',
-        'taxonomy' => 'category'
+        'option_name' => $name,
+        'taxonomy' => $taxonomy
     );
     SB_Field::sortable_term($args);
+}
+
+function sb_theme_category_widget_callback() {
+    sb_theme_setting_field_category_widget_display('category', 'category_widget');
 }
 
 function sb_theme_setting_field_category_widget() {

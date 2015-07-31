@@ -1292,4 +1292,9 @@ var sb_ajax_loader,
             });
         });
     })();
+
+    // Xóa product cat thumb
+    (function(){
+        $('#product_cat_thumbnail').closest('.form-field').remove();
+    })();
 })(jQuery);

@@ -44,9 +44,16 @@ class SB_Post {
         $name = self::get_sb_meta($post_id, 'support_name');
         if(empty($name)) {
             $post = get_post($post_id);
-            $name = $post->post_title;
+            if(SB_Core::is_valid_object($post)) {
+                $name = $post->post_title;
+            }
         }
         return $name;
+    }
+
+    public static function get_support_phone($post_id) {
+        $result = self::get_sb_meta($post_id, 'support_phone');
+        return $result;
     }
 
     public static function is_support_active($post_id) {
@@ -84,6 +91,14 @@ class SB_Post {
             'image_url' => $media_url
         );
         return $result;
+    }
+
+    public static function insert_attachment($attachment, $file_path, $parent_post_id = 0) {
+        SB_Core::insert_attachment($attachment, $file_path, $parent_post_id);
+    }
+
+    public static function update_attachment_meta($attach_id, $file_path) {
+        SB_Core::update_attachment_meta($attach_id, $file_path);
     }
 
     public static function get_all_media_images($post_id) {

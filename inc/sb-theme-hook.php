@@ -1712,6 +1712,9 @@ function sb_theme_change_woocommerce_text($translation, $text) {
             case 'Apply Coupon':
                 $translation = 'Áp dụng mã giảm giá';
                 break;
+            case 'Related Products':
+                $translation = 'Sản phẩm liên quan';
+                break;
             case 'Coupon code':
                 $translation = 'Mã giảm giá';
                 break;
@@ -2118,6 +2121,9 @@ function sb_theme_body_class($classes) {
 			$classes[] = 'sb-singular-post';
 		}
 	}
+    if(is_tax() || is_category() || is_tag()) {
+        $classes[] = 'sb-taxonomy';
+    }
 	if(is_404()) {
 		$classes[] = 'sb-not-found';
 	}

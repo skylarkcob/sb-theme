@@ -1068,8 +1068,12 @@ class SB_Theme {
     }
 
     public static function register_ads_float() {
-        SB_Theme::register_ads('float_left', 'Float left', __('Quảng cáo trượt bên trái trang web.', 'sb-theme'));
-        SB_Theme::register_ads('float_right', 'Float right', __('Quảng cáo trượt bên phải trang web.', 'sb-theme'));
+        self::register_ads('float_left', 'Float left', __('Quảng cáo trượt bên trái trang web.', 'sb-theme'));
+        self::register_ads('float_right', 'Float right', __('Quảng cáo trượt bên phải trang web.', 'sb-theme'));
+    }
+
+    public static function get_media_url_by_value($value) {
+        return SB_Option::get_media_url_by_value($value);
     }
 
     public static function get_post_type_ads_name() {
@@ -1153,6 +1157,10 @@ class SB_Theme {
 
     public static function the_search_query_text() {
         echo get_search_query();
+    }
+
+    public static function the_subscribe_box($args = array()) {
+        self::the_feedburner_form($args);
     }
 
     public static function the_feedburner_form($args = array()) {

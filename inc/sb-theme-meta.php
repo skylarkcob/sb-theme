@@ -5,30 +5,63 @@ defined('ABSPATH') or die('Please do not pip me!');
  * Tạo thumbnail cho chuyên mục
  */
 function sb_theme_term_meta_thumbnail($taxonomies = array()) {
+    sb_theme_meta_term_add_thumbnail_field($taxonomies, 'thumbnail', 'sb_theme_meta_term_thumbnail_callback');
+}
+
+function sb_theme_meta_term_thumbnail_callback( $term ) {
+    SB_Theme::the_term_meta_nonce();
+    $args = array(
+        'name' => 'thumbnail',
+        'term' => $term
+    );
+    sb_theme_meta_term_thumbnail_field_callback($args);
+}
+
+function sb_theme_meta_term_add_thumbnail_field($taxonomies, $name, $callback) {
+    $args = array(
+        'taxonomies' => $taxonomies,
+        'name' => $name,
+        'callback' => $callback
+    );
+    sb_theme_meta_term_thumbnail_field_init($args);
+}
+
+function sb_theme_meta_term_thumbnail_field_init($args = array()) {
+    $taxonomies = isset($args['taxonomies']) ? $args['taxonomies'] : array('category');
+    $name = isset($args['name']) ? $args['name'] : '';
+    $callback = isset($args['callback']) ? $args['callback'] : '';
+    if(!SB_PHP::is_array_has_value($taxonomies) || empty($name) || !SB_PHP::callback_exists($callback)) {
+        return;
+    }
     $fields = array(
         array(
-            'name' => 'thumbnail',
+            'name' => $name,
             'type' => 'array'
         )
     );
     $args = array(
         'taxonomies' => $taxonomies,
-        'callback' => 'sb_theme_meta_term_thumbnail_callback',
+        'callback' => $callback,
         'fields' => $fields
     );
     $term_meta = new SB_Term_Meta($args);
 }
 
-function sb_theme_meta_term_thumbnail_callback( $term ) {
-    SB_Theme::the_term_meta_nonce();
-    $value = SB_Term::get_meta($term->term_id, $term->taxonomy, 'thumbnail');
-
+function sb_theme_meta_term_thumbnail_field_callback($args = array()) {
+    $term = isset($args['term']) ? $args['term'] : null;
+    $name = isset($args['name']) ? $args['name'] : '';
+    if(!SB_Core::is_valid_object($term) || empty($name)) {
+        return;
+    }
+    $label = isset($args['label']) ? $args['label'] : __('Ảnh thumbnail', 'sb-theme');
+    $description = isset($args['description']) ? $args['description'] : __('Bạn có thể nhập địa chỉ hoặc tải lên hình ảnh mới.', 'sb-theme');
+    $value = SB_Term::get_meta($term->term_id, $term->taxonomy, $name);
     $args = array(
-        'id' => 'sb_theme_term_thumbnail',
-        'label' => __('Ảnh thumbnail', 'sb-theme'),
-        'name' => 'thumbnail',
+        'id' => 'sb_theme_term_thumbnail_custom_' . $name,
+        'label' => $label,
+        'name' => $name,
         'value' => $value,
-        'description' => __('Bạn có thể nhập địa chỉ hoặc tải lên hình ảnh mới.', 'sb-theme'),
+        'description' => $description,
         'autocomplete' => false
     );
     SB_Term_Field::image_upload($args);

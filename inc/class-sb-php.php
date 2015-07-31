@@ -32,6 +32,59 @@ class SB_PHP {
         return $max;
     }
 
+    public static function upload($args = array()) {
+        $name = isset($args['name']) ? $args['name'] : '';
+        $path = isset($args['path']) ? $args['path'] : '';
+        $size = isset($args['size']) ? $args['size'] : 0;
+        $max_size = isset($args['max_size']) ? $args['max_size'] : -1;
+        $is_image = isset($args['is_image']) ? $args['is_image'] : false;
+        $extensions = isset($args['extensions']) ? $args['extensions'] : array();
+        $tmp_name = isset($args['tmp_name']) ? $args['tmp_name'] : '';
+        $duplicate_exists = isset($args['duplicate_exists']) ? $args['duplicate_exists'] : true;
+        $result = array(
+            'success' => false
+        );
+        $result['image_base64'] = self::image_base64($tmp_name);
+        $name = strtolower($name);
+        $file_path = $path . '/' . basename($name);
+        $file_type = pathinfo($file_path, PATHINFO_EXTENSION);
+        if($is_image) {
+            $check = getimagesize($tmp_name);
+            if($check === false) {
+                $result['message'][] = 'Tập tin ' . $name . ' không phải là hình ảnh.';
+                return $result;
+            }
+        }
+        if(file_exists($file_path)) {
+            if($duplicate_exists) {
+                $path_info = pathinfo($file_path);
+                $name = $path_info['filename'] . '-' . self::random_string() . '.' . $file_type;
+                $name = strtolower($name);
+                $file_path = $path . '/' . basename($name);
+            } else {
+                $result['message'][] = 'Tập tin ' . $name . ' đã tồn tại.';
+                return $result;
+            }
+        }
+        if($max_size > 0 && $size > $max_size) {
+            $result['message'][] = 'Dung lượng tập tin không được quá ' . $max_size . 'KB.';
+            return $result;
+        }
+        if(count($extensions) > 0 && !in_array($file_type, $extensions)) {
+            $result['message'][] = 'Bạn không được phép upload tập tin với định dạng ' . $file_type . '.';
+            return $result;
+        }
+        $file_path = strtolower($file_path);
+        if(move_uploaded_file($tmp_name, $file_path)) {
+            $result['success'] = true;
+        } else {
+            $result['message'][] = 'Đã có lỗi xảy ra, tập tin của bạn chưa được upload.';
+        }
+        $result['name'] = $name;
+        $result['path'] = $file_path;
+        return $result;
+    }
+
     public static function is_phone($number) {
         $regex = "/^(\d[\s-]?)?[\(\[\s-]{0,2}?\d{3}[\)\]\s-]{0,2}?\d{3}[\s-]?\d{4}$/i";
         $result = (preg_match($regex, $number)) ? true : false;
@@ -135,6 +188,15 @@ class SB_PHP {
         $datas = explode($delimiter, $text);
         $datas = array_filter($datas);
         return $datas;
+    }
+
+    public static function to_data_image($file) {
+        $image_data = @file_get_contents($file);
+        return 'data:image/png;base64,' . base64_encode($image_data);
+    }
+
+    public static function image_base64($file) {
+        return self::to_data_image($file);
     }
 
     public static function get_user_agent() {
@@ -275,9 +337,9 @@ class SB_PHP {
         return round( date_create( '@0' )->add( $diff )->getTimestamp() / MINUTE_IN_SECONDS, 0 );
     }
 
-    public static function create_folder( $file_path ) {
+    public static function create_folder($file_path, $chmod = 0777) {
         if ( ! file_exists( $file_path ) ) {
-            mkdir( $file_path );
+            mkdir($file_path, $chmod);
         }
     }
 
@@ -1474,7 +1536,7 @@ class SB_PHP {
 
     public static function is_session_started() {
         $session_started = true;
-        if(SB_PHP::compare_version('5.4', '>=')) {
+        if(self::compare_version('5.4', '>=')) {
             if(PHP_SESSION_NONE == session_status()) {
                 $session_started = false;
             }

@@ -312,6 +312,14 @@ class SB_Product {
         return SB_PHP::percentage($sale_price, $prices['regular_price'], 2);
     }
 
+    public static function is_sale_off($post_id) {
+        $percent = self::get_sale_percentage($post_id);
+        if($percent > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public static function get_sale_percentage_html($post_id) {
         $percent = self::get_sale_percentage($post_id);
         $result = '';
@@ -458,6 +466,10 @@ class SB_Product {
     public static function get_category_thumbnail_uri($cat) {
         $thumbnail_id = get_woocommerce_term_meta( $cat->term_id, 'thumbnail_id', true );
         return wp_get_attachment_url( $thumbnail_id );
+    }
+
+    public static function the_thumbnail() {
+        SB_Post::the_thumbnail(array('bfi_thumb' => false));
     }
 
     public function is_in_stock() {

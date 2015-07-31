@@ -236,6 +236,9 @@ class SB_Post_Widget extends WP_Widget {
                 if('favorite' == $type && !is_user_logged_in()) return;
                 $args = $arr_tmp;
                 $widget_html = $args['before_widget'];
+                if('category' == $type) {
+                    $title = apply_filters('sb_theme_widget_post_category_title_html', $title, $category, $taxonomy);
+                }
                 if(!empty($title)) {
                     $widget_html .= $args['before_title'] . $title . $args['after_title'];
                 }

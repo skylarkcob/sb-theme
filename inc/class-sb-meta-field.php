@@ -70,7 +70,7 @@ class SB_Meta_Field {
         ?>
         <p>
             <label for="<?php echo esc_attr($name); ?>"><?php echo $label; ?>:</label>
-            <select class="<?php echo $field_class; ?>" id="<?php echo esc_attr($name); ?>" name="<?php echo esc_attr($name); ?>" autocomplete="off">
+            <select class="<?php echo $field_class; ?>" id="<?php echo esc_attr($name); ?>" name="<?php echo esc_attr($name); ?>">
                 <option value="0" <?php selected(0, get_the_ID()); ?>>--<?php _e('Choose', 'sb-theme'); ?>&nbsp;<?php echo SB_PHP::uppercase_first_char($post_type); ?>--</option>
                 <?php while($query->have_posts()) : $query->the_post(); ?>
                     <option value="<?php the_ID(); ?>" <?php selected($value, get_the_ID()); ?>><?php the_title(); ?></option>
@@ -162,5 +162,52 @@ class SB_Meta_Field {
         $input->set_attribute('id', $id);
         $input->output();
         echo '</p>';
+    }
+
+    public static function menu_item_icon($item) {
+        $item_id = $item->ID;
+
+        $base_name = 'icon';
+        $field_data = SB_Field::build_menu_item_field_data($base_name, $item_id);
+        $description = __('Icon hiển thị cho menu.', 'sb-theme');
+        $args = array(
+            'id' => $field_data['id'],
+            'name' => $field_data['name'],
+            'field_class' => $field_data['class'],
+            'value' => $item->icon
+        );
+        SB_Field::menu_item_before($base_name, $item_id, __('Icon', 'sb-theme'));
+        SB_Field::media_upload_with_remove_and_preview($args);
+        SB_Field::menu_item_after($description);
+
+        $base_name = 'icon_hover';
+        $field_data = SB_Field::build_menu_item_field_data($base_name, $item_id);
+        $description = __('Icon hiển thị cho menu khi di chuyển chuột ngang qua.', 'sb-theme');
+        $args = array(
+            'id' => $field_data['id'],
+            'name' => $field_data['name'],
+            'field_class' => $field_data['class'],
+            'value' => $item->icon_hover
+        );
+        SB_Field::menu_item_before($base_name, $item_id, __('Icon hover', 'sb-theme'));
+        SB_Field::media_upload_with_remove_and_preview($args);
+        SB_Field::menu_item_after($description);
+    }
+
+    public static function menu_item_color($item) {
+        $item_id = $item->ID;
+
+        $base_name = 'color';
+        $field_data = SB_Field::build_menu_item_field_data($base_name, $item_id);
+        $description = __('Màu viền trên của menu.', 'sb-theme');
+        $args = array(
+            'id' => $field_data['id'],
+            'name' => $field_data['name'],
+            'field_class' => $field_data['class'],
+            'value' => $item->color
+        );
+        SB_Field::menu_item_before($base_name, $item_id, __('Màu sắc', 'sb-theme'));
+        SB_Field::color_picker($args);
+        SB_Field::menu_item_after($description);
     }
 }

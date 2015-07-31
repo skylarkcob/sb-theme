@@ -3065,6 +3065,12 @@ div > .syntaxhighlighter {
 
 }
 
+.woocommerce-cart table.cart td.actions .coupon .input-text {
+    line-height: 24px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+
 .woocommerce-cart table.cart td.actions > p > .button,
 .woocommerce-cart table.cart td.actions .coupon .button {
     font-size: 13px;
@@ -3125,6 +3131,25 @@ div > .syntaxhighlighter {
     text-decoration: none;
 }
 
+.single-product.woocommerce form.cart > .button {
+    line-height: 18px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.single.woocommerce .summary .price ins {
+    float: left;
+    margin-right: 15px;
+}
+
+.single.woocommerce .summary div[itemprop="description"] {
+    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+    line-height: 23px;
+    margin-bottom: 15px;
+    padding-top: 10px;
+}
+
 .woocommerce-checkout .select2-search input {
     margin-bottom: 5px;
 }
@@ -3140,6 +3165,14 @@ div > .syntaxhighlighter {
     background: #f2f2f2 none repeat scroll 0 0;
     border: 1px solid #ebebeb;
     padding: 10px 5px;
+}
+
+.woocommerce-checkout .woocommerce form .form-row .select2-container .select2-choice,
+.woocommerce-checkout .woocommerce form .form-row .input-text {
+    border-radius: 0;
+    line-height: 17px;
+    padding-bottom: 5px;
+    padding-top: 5px;
 }
 
 .woocommerce textarea:focus,

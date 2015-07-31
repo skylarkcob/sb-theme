@@ -21,19 +21,19 @@ class SB_Core {
     }
 
     public static function minify_styles_and_scripts() {
-        SB_Core::minify_all_css();
+        self::minify_all_css();
         wp_dequeue_style('sb-theme-custom-mobile-style');
         wp_dequeue_style('sb-theme-custom-style');
         wp_dequeue_style('sb-theme-style');
         wp_register_style('sb-theme-minified-style', SB_THEME_CUSTOM_URL . '/css/sb-theme-style.min.css');
         wp_enqueue_style('sb-theme-minified-style');
-        SB_Core::compress_all_javascript();
+        self::compress_all_javascript();
         wp_dequeue_script('sb-theme-custom');
         wp_dequeue_script('sb-theme');
         wp_register_script('sb-theme-minified', SB_THEME_CUSTOM_URL . '/js/sb-theme-script.min.js', array('jquery'), false, true);
         wp_localize_script('sb-theme-minified', 'sb_theme', array(
-            'ajax_url' => SB_Core::get_admin_ajax_url(),
-            'ajaxurl' => SB_Core::get_admin_ajax_url(),
+            'ajax_url' => self::get_admin_ajax_url(),
+            'ajaxurl' => self::get_admin_ajax_url(),
             'site_url' => get_bloginfo('url')
         ));
         wp_enqueue_script('sb-theme-minified');
@@ -421,6 +421,10 @@ class SB_Core {
             return WOOCOMMERCE_VERSION;
         }
         return '';
+    }
+
+    public static function is_woocommerce_installed() {
+        return defined('WOOCOMMERCE_VERSION');
     }
 
     public static function is_yarpp_installed() {
@@ -992,6 +996,64 @@ class SB_Core {
         }
         $attach_data = wp_generate_attachment_metadata($attach_id, $file_path);
         wp_update_attachment_metadata($attach_id, $attach_data);
+    }
+
+    public static function upload($args = array()) {
+        $files = isset($args['files']) ? $args['files'] : array();
+        unset($args['files']);
+        $upload_path = isset($args['upload_path']) ? $args['upload_path'] : '';
+        unset($args['upload_path']);
+        $upload_url = isset($args['upload_url']) ? $args['upload_url'] : '';
+        unset($args['upload_url']);
+        if(empty($upload_path)) {
+            $upload_dir = self::get_upload_folder_detail();
+            $target_dir = untrailingslashit($upload_dir['path']) . '/sb-theme';
+            $upload_url = untrailingslashit($upload_dir['url']) . '/sb-theme';
+            if(!file_exists($target_dir)) {
+                mkdir($target_dir, 0777);
+            }
+            $upload_path = $target_dir;
+        }
+        $is_multiple = false;
+        $file_names = isset($files['name']) ? $files['name'] : array();
+        $file_count = count($file_names);
+        if($file_count > 1) {
+            $is_multiple = true;
+        }
+        $list_files = array();
+        for($i = 0; $i < $file_count; $i++) {
+            $name = isset($files['name'][$i]) ? $files['name'][$i] : '';
+            $type = isset($files['type'][$i]) ? $files['type'][$i] : '';
+            $tmp_name = isset($files['tmp_name'][$i]) ? $files['tmp_name'][$i] : '';
+            $error = isset($files['error'][$i]) ? $files['error'][$i] : '';
+            $size = isset($files['size'][$i]) ? $files['size'][$i] : '';
+            $file_item = array(
+                'name' => $name,
+                'type' => $type,
+                'tmp_name' => $tmp_name,
+                'error' => $error,
+                'size' => $size
+            );
+            $list_files[] = $file_item;
+        }
+        $list_results = array();
+        foreach($list_files as $key => $file) {
+            $file['path'] = $upload_path;
+            $file = wp_parse_args($args, $file);
+            $result = SB_PHP::upload($file);
+            if($result['success']) {
+                $file_name = $file['name'];
+                $file_path = untrailingslashit($upload_path) . '/' . $file_name;
+                $file_url = untrailingslashit($upload_url) . '/' . basename($result['name']);
+                $attachment = array(
+                    'guid' => $file_url
+                );
+                self::insert_attachment($attachment, $file_path);
+                $result['url'] = $file_url;
+            }
+            $list_results[] = $result;
+        }
+        return $list_results;
     }
 
     public static function fetch_media($image_url) {

@@ -55,6 +55,7 @@ a.toplevel_page_sb_options.current .wp-menu-image {
     opacity: 1;
 }
 
+.taxonomy-product_cat .column-thumb,
 #sbPostCats {
     display: none;
 }
@@ -1592,4 +1593,9 @@ div.sb-post-meta-row .image-preview {
 .list-slider-items .ui-state-highlight {
     padding-bottom: 0;
     padding-top: 0;
+}
+
+.menu .menu-item .image-preview {
+    height: 64px;
+    width: 64px;
 }

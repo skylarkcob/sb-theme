@@ -38,7 +38,8 @@ class SB_Term_Field {
         $args['container_class'] = isset($args['container_class']) ? $args['container_class'] . ' small' : 'small';
         $args['label'] = '';
         SB_Field::media_upload_with_remove_and_preview($args);
-        self::after();
+        $description = isset($args['description']) ? $args['description'] : '';
+        self::after($description);
     }
 
     public static function color_picker($args = array()) {
