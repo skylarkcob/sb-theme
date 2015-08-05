@@ -21,6 +21,16 @@ class SB_Widget_Field {
         self::text($args);
     }
 
+    public static function show_title($id, $name, $value) {
+        $args = array(
+            'id' => $id,
+            'name' => $name,
+            'value' => $value,
+            'label' => __('Hiển thị tiêu đề?', 'sb-theme')
+        );
+        SB_Widget_Field::checkbox($args);
+    }
+
     public static function select_post_type($args = array()) {
         $field_class = isset($args['field_class']) ? $args['field_class'] : '';
         $args['field_class'] = SB_PHP::add_string_with_space_before($field_class, 'select-post-type');

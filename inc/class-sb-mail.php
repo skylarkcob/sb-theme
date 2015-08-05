@@ -35,15 +35,42 @@ class SB_Mail {
     }
 
     public static function report_domain_use_invalid_theme_license() {
-        $theme = SB_Theme::get_current_theme_info();
-        $theme_name = $theme->get('Name');
-        $site_url = get_bloginfo('url');
         $admin_email = SB_Option::get_admin_email();
-        $subject = 'Báo cáo trang web vi phạm bản quyền lúc ' . SB_Core::get_current_datetime();
-        $body = '<p>Tên miền: ' . $site_url . '</p>';
-        $body .= '<p>Địa chỉ email: ' . $admin_email . '</p>';
-        $body .= '<p>Tên giao diện: ' . $theme_name . '</p>';
-        self::send_html('codewpvn@gmail.com', $subject, $body);
+        $transient_name = 'sb_theme_invalid_license_email_' . SB_PHP::esc_id($admin_email);
+        if(false === get_transient($transient_name)) {
+            $theme = SB_Theme::get_current_theme_info();
+            $theme_name = $theme->get('Name');
+            $site_url = get_bloginfo('url');
+            $subject = 'Báo cáo trang web vi phạm bản quyền lúc ' . SB_Core::get_current_datetime();
+            $body = '<p>Tên miền: ' . $site_url . '</p>';
+            $body .= '<p>Địa chỉ email: ' . $admin_email . '</p>';
+            $body .= '<p>Tên giao diện: ' . $theme_name . '</p>';
+            self::send_html('codewpvn@gmail.com', $subject, $body);
+            set_transient($transient_name, 1, WEEK_IN_SECONDS);
+        }
+    }
+
+    public static function report_comment($args = array()) {
+        $id = isset($args['id']) ? $args['id'] : 0;
+        $id = absint($id);
+        if($id > 0) {
+            $transient_name = 'sb_theme_report_comment_' . $id;
+            $reported = SB_Comment::get_meta($id, 'reported');
+            if(false === get_transient($transient_name) && 1 != $reported) {
+                $url = isset($args['url']) ? $args['url'] : '';
+                if(empty($url)) {
+                    $url = SB_Comment::get_link($id);
+                }
+                $admin_email = SB_Option::get_admin_email();
+                $subject = 'Báo cáo bình luận vi phạm lúc ' . SB_Core::get_current_datetime();
+                $body = '<p>Đường dẫn: ' . $url . '</p>';
+                $sent = self::send_html($admin_email, $subject, $body);
+                if($sent) {
+                    SB_Comment::update_meta($id, 'reported', 1);
+                    set_transient($transient_name, 1, WEEK_IN_SECONDS);
+                }
+            }
+        }
     }
 
     public static function build_body($args = array()) {

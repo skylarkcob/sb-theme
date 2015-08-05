@@ -67,6 +67,10 @@ class SB_Ads {
         }
     }
 
+    public static function show_leaderboard() {
+        self::show_by_position('leaderboard');
+    }
+
     public static function get_position($post_id) {
         return SB_Post::get_sb_meta($post_id, 'ads_position');
     }

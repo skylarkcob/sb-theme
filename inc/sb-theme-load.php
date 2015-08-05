@@ -41,6 +41,8 @@ require SB_THEME_INC_PATH . '/class-sb-option.php';
 
 require SB_THEME_INC_PATH . '/class-sb-tool.php';
 
+require SB_THEME_INC_PATH . '/sb-theme-global-variable.php';
+
 require SB_THEME_INC_PATH . '/class-sb-cart.php';
 
 require SB_THEME_INC_PATH . '/class-sb-captcha.php';
@@ -66,8 +68,6 @@ if(SB_Tool::use_custom_menu()) {
 
     require SB_THEME_INC_PATH . '/widgets/class-sb-menu-widget.php';
 }
-
-require SB_THEME_INC_PATH . '/sb-theme-global-variable.php';
 
 do_action('sb_theme_load_middle');
 
@@ -127,6 +127,10 @@ require SB_THEME_INC_PATH . '/widgets/class-sb-post-widget.php';
 require SB_THEME_INC_PATH . '/widgets/class-sb-tab-widget.php';
 
 require SB_THEME_INC_PATH . '/widgets/class-sb-video-widget.php';
+
+require SB_THEME_INC_PATH . '/widgets/class-sb-icon-widget.php';
+
+require SB_THEME_INC_PATH . '/widgets/class-sb-subscribe-widget.php';
 
 if(SB_Option::social_login_enabled()) {
     $facebook = SB_Option::get_social_login_app('facebook');

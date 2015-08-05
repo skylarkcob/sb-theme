@@ -27,6 +27,6 @@ if(!(bool)$transform) {
     $site_class = SB_PHP::add_string_with_space_before($site_class, 'transform');
 }
 ?>
-<div id="sb-site" class="<?php echo $site_class; ?>">
-    <div class="sb-blog-container sb-site-container">
+<div id="wrapper" class="<?php echo $site_class; ?>">
+    <div id="sb_site" class="sb-blog-container sb-site-container">
         <?php do_action('sb_theme_site_container_before'); ?>

@@ -88,7 +88,7 @@ class SB_Post {
             'link' => $link,
             'description' => $description,
             'image_id' => $image_id,
-            'image_url' => $media_url
+            'image_url' => $image_url
         );
         return $result;
     }
@@ -177,7 +177,13 @@ class SB_Post {
         return false;
     }
 
+    public static function get_media_path($media_id) {
+        $result = get_attached_file($media_id);
+        return $result;
+    }
+
     public static function get_media_url($media_id) {
+        $path = self::get_media_path($media_id);
         return wp_get_attachment_url($media_id);
     }
 
@@ -552,6 +558,12 @@ class SB_Post {
                     $thumbnail_image_class = apply_filters('sb_theme_post_thumbnail_image_class', '', $post_id);
                     $thumbnail_image_class .= SB_PHP::add_string_with_space_before($thumbnail_image_class, 'wp-post-image sb-post-image img-responsive thumbnail-image');
                     $result = '<img class="' . $thumbnail_image_class . '" alt="' . get_the_title($post_id) . '" width="' . $width . '" height="' . $height . '" src="' . $thumbnail_url . '" style="' . $style . '" itemprop="image">';
+                    if(SB_Tool::use_lazyload_post_thumbnail()) {
+                        $thumbnail_image_class = SB_PHP::add_string_with_space_before($thumbnail_image_class, 'lazy');
+                        $normal_url = $result;
+                        $result = '<img class="' . $thumbnail_image_class . '" alt="' . get_the_title($post_id) . '" width="' . $width . '" height="' . $height . '" data-original="' . $thumbnail_url . '" src="' . SB_Theme::get_lazyload_post_thumbnail_url() . '" style="' . $style . '" itemprop="image">';
+                        $result .= '<noscript>' . $normal_url . '</noscript>';
+                    }
                 }
                 if(SB_Cache::enabled() && $cache && !empty($result)) {
                     set_transient($trasient_name, $result, WEEK_IN_SECONDS);
@@ -1299,7 +1311,10 @@ class SB_Post {
         return $term_list;
     }
 
-    public static function the_tags($post_id, $before = '', $sep = ', ', $after = '') {
+    public static function the_tags($post_id = null, $before = '', $sep = ', ', $after = '') {
+        if(null == $post_id || !is_numeric($post_id)) {
+            $post_id = get_the_ID();
+        }
         echo self::get_tag_list_html($post_id, $before, $sep, $after);
     }
 

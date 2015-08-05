@@ -36,7 +36,7 @@ function sb_utilities_setting_field_facebook_fanpage() {
 }
 
 function sb_utilities_facebook_fanpage_callback() {
-    $value = SB_Option::get_utility('facebook_fanpage');
+    $value = SB_Tool::use_utility_facebook_fanpage();
     $args = array(
         'id' => 'sb_utilities_facebook_fanpage',
         'name' => 'sb_options[utilities][facebook_fanpage]',
@@ -51,7 +51,7 @@ function sb_utilities_setting_field_footer_text() {
 }
 
 function sb_utilities_footer_text_callback() {
-    $value = SB_Option::get_utility('footer_text');
+    $value = SB_Tool::use_utility_footer_text();
     $args = array(
         'id' => 'sb_utilities_footer_text',
         'name' => 'sb_options[utilities][footer_text]',
@@ -66,7 +66,7 @@ function sb_utilities_setting_field_social() {
 }
 
 function sb_utilities_social_callback() {
-    $value = SB_Option::get_utility('social');
+    $value = SB_Tool::use_utility_social_list();
     $args = array(
         'id' => 'sb_utilities_social',
         'name' => 'sb_options[utilities][social]',
@@ -81,7 +81,7 @@ function sb_utilities_setting_field_category_widget() {
 }
 
 function sb_utilities_category_widget_callback() {
-    $value = SB_Option::get_utility('category_widget');
+    $value = SB_Tool::use_utility_category_widget();
     $args = array(
         'id' => 'sb_utilities_category_widget',
         'name' => 'sb_options[utilities][category_widget]',
@@ -96,7 +96,7 @@ function sb_utilities_setting_field_default_thumbnail() {
 }
 
 function sb_utilities_default_thumbnail_callback() {
-    $value = SB_Option::get_utility('default_thumbnail');
+    $value = SB_Tool::use_utility_default_thumbnail();
     $args = array(
         'id' => 'sb_utilities_default_thumbnail',
         'name' => 'sb_options[utilities][default_thumbnail]',
@@ -126,7 +126,7 @@ function sb_utilities_setting_field_addthis() {
 }
 
 function sb_utilities_addthis_callback() {
-    $value = SB_Option::get_utility('addthis');
+    $value = SB_Tool::use_utility_addthis();
     $args = array(
         'id' => 'sb_utilities_addthis',
         'name' => 'sb_options[utilities][addthis]',
@@ -141,7 +141,7 @@ function sb_utilities_setting_field_sharethis() {
 }
 
 function sb_utilities_sharethis_callback() {
-    $value = SB_Option::get_utility('sharethis');
+    $value = SB_Tool::use_utility_sharethis();
     $args = array(
         'id' => 'sb_utilities_sharethis',
         'name' => 'sb_options[utilities][sharethis]',
@@ -231,7 +231,7 @@ function sb_utilities_setting_field_scroll_top() {
 }
 
 function sb_utilities_scroll_top_callback() {
-    $value = SB_Option::get_utility('scroll_top');
+    $value = SB_Tool::use_utility_scroll_to_top();
     $args = array(
         'id' => 'sb_utilities_scroll_top',
         'name' => SB_Option::build_sb_utility_option_name(array('scroll_top')),
@@ -246,7 +246,7 @@ function sb_utilities_setting_field_facebook_php_sdk() {
 }
 
 function sb_utilities_facebook_php_sdk_callback() {
-    $value = SB_Option::get_utility('facebook_php_sdk');
+    $value = SB_Tool::use_utility_facebook_php_sdk();
     $args = array(
         'id' => 'sb_utilities_facebook_php_sdk',
         'name' => SB_Option::build_sb_utility_option_name(array('facebook_php_sdk')),
@@ -261,7 +261,7 @@ function sb_utilities_setting_field_google_analytics() {
 }
 
 function sb_utilities_google_analytics_callback() {
-    $value = SB_Option::get_utility('google_analytics');
+    $value = SB_Tool::use_utility_google_analytics();
     $args = array(
         'id' => 'sb_utilities_google_analytics',
         'name' => SB_Option::build_sb_utility_option_name(array('google_analytics')),
@@ -276,7 +276,7 @@ function sb_utilities_setting_field_add_to_head() {
 }
 
 function sb_utilities_add_to_head_callback() {
-    $value = SB_Option::get_utility('add_to_head');
+    $value = SB_Tool::use_utility_add_to_head();
     $args = array(
         'id' => 'sb_utilities_add_to_head',
         'name' => SB_Option::build_sb_utility_option_name(array('add_to_head')),

@@ -8,6 +8,11 @@ class SB_Lib {
         wp_enqueue_script('iframe-resizer');
     }
 
+    public static function load_lazyload() {
+        wp_register_script('lazyload', SB_THEME_LIB_URL . '/jquery-lazyload/jquery.lazyload.min.js', array('jquery'), false, true);
+        wp_enqueue_script('lazyload');
+    }
+
     public static function load_jquery_datetime_picker() {
         sb_theme_load_jquery_datetimepicker();
     }

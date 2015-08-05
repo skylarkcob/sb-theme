@@ -80,6 +80,9 @@ function sb_theme_wp_enqueue_scripts_hook() {
     if(is_singular()) {
         wp_enqueue_script('comment-reply');
     }
+    if(SB_Tool::use_lazyload()) {
+        SB_Lib::load_lazyload();
+    }
     if(SB_Tool::use_bootstrap_and_fontawesome()) {
         SB_Lib::load_bootstrap_and_font_awesome();
     }
@@ -500,6 +503,7 @@ function sb_theme_widgets_init_hook() {
     register_widget('SB_Banner_Widget');
     register_widget('SB_Post_Widget');
     register_widget('SB_Tab_Widget');
+    register_widget('SB_Subscribe_Widget');
     if(class_exists('SB_Menu_Widget')) {
         register_widget('SB_Menu_Widget');
     }
@@ -558,9 +562,10 @@ function sb_theme_wp_footer() { ?>
 
     $sb_theme_page_use_addthis = apply_filters('sb_theme_page_use_addthis', false);
     $sb_theme_home_use_addthis = apply_filters('sb_theme_home_use_addthis', false);
+    $sb_theme_global_use_addthis = apply_filters('sb_theme_global_use_addthis', false);
 
-    if(((is_singular() || is_single()) && !is_page()) || (is_page() && $sb_theme_page_use_addthis) || (is_home() && $sb_theme_home_use_addthis)) {
-        if(sb_theme_support_addthis() || SB_Option::utility_enabled('addthis')) {
+    if(((is_singular() || is_single()) && !is_page()) || (is_page() && $sb_theme_page_use_addthis) || (is_home() && $sb_theme_home_use_addthis) || $sb_theme_global_use_addthis) {
+        if(sb_theme_support_addthis() || SB_Tool::use_utility_addthis()) {
             include SB_THEME_LIB_PATH . '/addthis/config.php';
         }
         if(SB_Option::utility_enabled('sharethis')) {
@@ -1070,15 +1075,25 @@ add_action('delete_user', 'sb_theme_delete_user_hook');
  * Kiểm tra giao diện có dùng được cho tên miền
  */
 function sb_theme_check_theme_for_domain() {
-    if(!SB_Core::is_theme_developing() && !SB_Core::is_theme_for_domain()) {
+    if(SB_Core::is_theme_license_invalid()) {
         if(is_admin() && SB_User::is_admin() && !DOING_AJAX && !DOING_CRON) {
             SB_Mail::report_domain_use_invalid_theme_license();
         }
-        $theme = SB_Theme::get_current_theme_info();
-        wp_die(__('<span style="font-family: Tahoma; line-height: 25px;"><strong>Lỗi</strong>: Giao diện <strong>' . $theme->get('Name') . '</strong> mà bạn đang sử dụng chưa được mua bản quyền, xin vui lòng liên hệ với <strong>SB Team</strong> thông qua địa chỉ email <strong>codewpvn@gmail.com</strong> để biết thêm thông tin chi tiết.</span>', 'sb-theme'), 'Giao diện chưa mua bản quyền');
+        SB_Core::count_theme_license_invalid();
+        SB_Core::theme_license_invalid_die();
     }
 }
 add_action('sb_theme_admin_init', 'sb_theme_check_theme_for_domain');
+
+function sb_theme_alert_theme_license_invalid_global() {
+    $count = SB_Core::get_theme_license_invalid_count();
+    if($count > 7) {
+        SB_Mail::report_domain_use_invalid_theme_license();
+        SB_Core::count_theme_license_invalid();
+        SB_Core::theme_license_invalid_die();
+    }
+}
+if(SB_Core::is_theme_license_invalid()) add_action('init', 'sb_theme_alert_theme_license_invalid_global');
 
 /*
  * Cài đặt gửi mail thông qua SMTP
@@ -2136,6 +2151,9 @@ function sb_theme_body_class($classes) {
 	} else {
 		$classes[] = 'sb-guest';
 	}
+    if(SB_Tool::use_lazyload_post_thumbnail()) {
+        $classes[] = 'sbt-thumbnail-lazy';
+    }
 	return $classes;
 }
 add_filter('sb_theme_body_class', 'sb_theme_body_class');

@@ -216,11 +216,11 @@ class SB_Product {
                 if(is_numeric($sale_price) && $sale_price < $product_price) {
                     $paragraph = new SB_HTML('p');
                     $paragraph->set_attribute('class', 'price sb-product-price');
-                    $ins = '<ins>' . $result . '</ins>';
                     $formatted_price = SB_PHP::format_number_vietnamese($sale_price, $price_decimal, $price_decimal_separator, $price_thousand_separator);
                     $formatted_price = sprintf($price_format, $currency_symbol, $formatted_price);
                     $formatted_price = '<span class="amount">' . $formatted_price . '</span>';
-                    $del = '<del>' . $formatted_price . '</del>';
+                    $del = '<del>' . $result . '</del>';
+                    $ins = '<ins>' . $formatted_price . '</ins>';
                     $paragraph->set_text($ins . $del);
                     $result = $paragraph->build();
                 }
@@ -362,6 +362,21 @@ class SB_Product {
 
     public static function get($args = array()) {
         return self::get_product($args);
+    }
+
+    public static function get_most_views($args = array()) {
+        $args['type'] = 'most_view';
+        return self::get_product($args);
+    }
+
+    public static function get_best_sell($args = array()) {
+        $args['type'] = 'best_seller';
+        return self::get($args);
+    }
+
+    public static function get_sale_off($args = array()) {
+        $args['type'] = 'sale';
+        return self::get($args);
     }
 
     public static function get_product($args = array()) {

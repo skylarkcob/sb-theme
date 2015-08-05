@@ -85,4 +85,3 @@ class SB_Tab_Widget extends WP_Widget {
     }
 
 }
-?>

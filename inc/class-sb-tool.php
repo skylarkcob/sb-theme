@@ -11,6 +11,80 @@ class SB_Tool {
         return $result;
     }
 
+    public static function use_lazyload() {
+        $result = apply_filters('sb_theme_use_lazyload', false);
+        return $result;
+    }
+
+    public static function use_lazyload_post_thumbnail() {
+        $result = false;
+        if(self::use_lazyload()) {
+            $result = true;
+        }
+        $result = apply_filters('sb_theme_use_lazyload_post_thumbnail', $result);
+        return $result;
+    }
+
+    public static function use_utility_add_to_head() {
+        $result = apply_filters('sb_theme_use_utility_add_to_head', SB_Option::utility_enabled('add_to_head'));
+        return $result;
+    }
+
+    public static function use_utility_default_thumbnail() {
+        $result = apply_filters('sb_theme_use_utility_default_thumbnail', SB_Option::utility_enabled('default_thumbnail'));
+        return $result;
+    }
+
+    public static function use_utility_google_analytics() {
+        $result = apply_filters('sb_theme_use_utility_google_analytics', SB_Option::utility_enabled('google_analytics'));
+        return $result;
+    }
+
+    public static function use_utility_category_widget() {
+        $result = apply_filters('sb_theme_use_utility_category_widget', SB_Option::utility_enabled('category_widget'));
+        return $result;
+    }
+
+    public static function use_utility_facebook_javascript_sdk() {
+        $result = apply_filters('sb_theme_use_utility_facebook_javascript_sdk', SB_Option::utility_enabled('facebook_javascript_sdk'));
+        return $result;
+    }
+
+    public static function use_utility_facebook_php_sdk() {
+        $result = apply_filters('sb_theme_use_utility_facebook_php_sdk', SB_Option::utility_enabled('facebook_php_sdk'));
+        return $result;
+    }
+
+    public static function use_utility_sharethis() {
+        $result = apply_filters('sb_theme_use_utility_sharethis', SB_Option::utility_enabled('sharethis'));
+        return $result;
+    }
+
+    public static function use_utility_addthis() {
+        $result = apply_filters('sb_theme_use_utility_addthis', SB_Option::utility_enabled('addthis'));
+        return $result;
+    }
+
+    public static function use_utility_facebook_fanpage() {
+        $result = apply_filters('sb_theme_use_utility_facebook_fanpage', SB_Option::utility_enabled('facebook_fanpage'));
+        return $result;
+    }
+
+    public static function use_utility_social_list() {
+        $result = apply_filters('sb_theme_use_utility_social_list', SB_Option::utility_enabled('social'));
+        return $result;
+    }
+
+    public static function use_utility_footer_text() {
+        $result = apply_filters('sb_theme_use_utility_footer_text', SB_Option::utility_enabled('footer_text'));
+        return $result;
+    }
+
+    public static function use_utility_scroll_to_top() {
+        $result = apply_filters('sb_theme_use_utility_scroll_to_top', SB_Option::get_utility('scroll_top'));
+        return $result;
+    }
+
     public static function custom_login_use_captcha() {
         $options = SB_Option::get();
         $value = isset($options['login_page']['use_captcha']) ? intval($options['login_page']['use_captcha']) : 1;

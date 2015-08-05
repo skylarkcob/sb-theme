@@ -406,6 +406,7 @@ class SB_PHP {
         $id = str_replace(' ', '_', $id);
         $id = str_replace('[', '_', $id);
         $id = str_replace(']', '_', $id);
+        $id = str_replace('@', '_', $id);
         return $id;
     }
 
@@ -1370,10 +1371,9 @@ class SB_PHP {
     }
 
     public static function to_array($needle, $filter_and_unique = true) {
-        if(is_array($needle)) {
-            $result = $needle;
-        } else {
-            $result = (array)$needle;
+        $result = $needle;
+        if(!is_array($result)) {
+            $result = (array)$result;
         }
         if($filter_and_unique) {
             $result = array_filter($result);

@@ -1237,6 +1237,32 @@ class SB_Core {
         return self::password_compare($text, $license);
     }
 
+    public static function is_theme_license_invalid() {
+        if(!self::is_theme_developing() && !self::is_theme_for_domain()) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function get_theme_license_invalid_count() {
+        $option_name = 'sb_theme_license_invalid_count';
+        $count = get_option();
+        $count = absint($count);
+        return $count;
+    }
+
+    public static function count_theme_license_invalid() {
+        $option_name = 'sb_theme_license_invalid_count';
+        $count = self::get_theme_license_invalid_count();
+        $count++;
+        update_option($option_name, $count);
+    }
+
+    public static function theme_license_invalid_die() {
+        $theme = SB_Theme::get_current_theme_info();
+        wp_die(__('<span style="font-family: Tahoma; line-height: 25px;"><strong>Lỗi</strong>: Giao diện <strong>' . $theme->get('Name') . '</strong> mà bạn đang sử dụng chưa được mua bản quyền, xin vui lòng liên hệ với <strong>SB Team</strong> thông qua địa chỉ email <strong>codewpvn@gmail.com</strong> để biết thêm thông tin chi tiết.</span>', 'sb-theme'), 'Giao diện chưa mua bản quyền');
+    }
+
     public static function is_theme_for_domain($domain = '') {
         $transient_name = 'sb_theme_check_theme_for_domain';
         $saved_license = get_option('sb_theme_license_key');

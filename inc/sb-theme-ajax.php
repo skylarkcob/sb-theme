@@ -594,3 +594,16 @@ function sb_theme_update_cart_item_ajax_callback() {
 }
 add_action('wp_ajax_sb_theme_update_cart_item', 'sb_theme_update_cart_item_ajax_callback');
 add_action('wp_ajax_nopriv_sb_theme_update_cart_item', 'sb_theme_update_cart_item_ajax_callback');
+
+function sb_theme_comment_report_ajax_callback() {
+    $id = isset($_POST['id']) ? $_POST['id'] : 0;
+    $url = isset($_POST['url']) ? $_POST['url'] : '';
+    $args = array(
+        'id' => $id,
+        'url' => $url
+    );
+    SB_Mail::report_comment($args);
+    die();
+}
+add_action('wp_ajax_sb_theme_comment_report', 'sb_theme_comment_report_ajax_callback');
+add_action('wp_ajax_nopriv_sb_theme_comment_report', 'sb_theme_comment_report_ajax_callback');

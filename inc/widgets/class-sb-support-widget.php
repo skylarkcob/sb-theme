@@ -111,4 +111,3 @@ class SB_Support_Widget extends WP_Widget {
         return $instance;
     }
 }
-?>

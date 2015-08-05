@@ -93,4 +93,3 @@ class SB_Video_Widget extends WP_Widget {
         return $instance;
     }
 }
-?>

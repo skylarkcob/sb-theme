@@ -249,6 +249,10 @@ class SB_Comment {
         return $likes;
     }
 
+    public static function get_link($comment) {
+        return get_comment_link($comment);
+    }
+
     public static function update_likes($comment_id) {
         $likes = self::get_likes($comment_id);
         $likes++;

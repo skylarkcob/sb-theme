@@ -138,6 +138,11 @@ class SB_Theme {
         echo $class;
     }
 
+    public static function content_class($class = '') {
+        $class = SB_PHP::add_string_with_space_before($class, 'sb-content page-box');
+        echo $class;
+    }
+
     public static function get_supported_socials() {
         $result = apply_filters('sb_theme_social', array('facebook' => 'Facebook', 'gplus' => 'Google Plus', 'twitter' => 'Twitter', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn', 'pinterest' => 'Pinterest', 'zingme' => 'Zing Me', 'rss' => 'RSS'));
         $result = apply_filters('sb_theme_use_socials', $result);
@@ -430,7 +435,9 @@ class SB_Theme {
         $class = 'sb-ads';
         $class = SB_PHP::add_string_with_space_before($class, $name);
         echo '<div class="' . $class . '">';
-        dynamic_sidebar($name);
+        if(!dynamic_sidebar($name)) {
+            SB_Ads::show_leaderboard();
+        }
         echo '</div>';
     }
 
@@ -440,6 +447,10 @@ class SB_Theme {
 
     public static function the_text($en, $vi) {
         echo self::get_text($en, $vi);
+    }
+
+    public static function the_test_element() {
+        SB_Theme::get_content('test-element');
     }
 
     public static function the_header() {
@@ -849,6 +860,12 @@ class SB_Theme {
         SB_Core::register_sidebar($sidebar_id, $sidebar_name, $sidebar_description);
     }
 
+    public static function register_widget($class_name) {
+        if(class_exists($class_name)) {
+            register_widget($class_name);
+        }
+    }
+
     public static function register_sidebar_leaderboard_ads() {
         sb_theme_register_sidebar('leaderboard_ads', 'Quảng cáo đầu trang', __('Quảng cáo xuất hiện phía đầu của trang web.', 'sb-theme'));
     }
@@ -900,6 +917,11 @@ class SB_Theme {
 
     public static function get_image_url($name) {
         return SB_THEME_URL . '/images/' . $name;
+    }
+
+    public static function get_lazyload_post_thumbnail_url() {
+        $url = self::get_image_url('transparent.gif');
+        return apply_filters('sb_theme_lazyload_post_thumbnail_url', $url);
     }
 
     public static function get_custom_image_url($name) {
@@ -1072,6 +1094,10 @@ class SB_Theme {
         self::register_ads('float_right', 'Float right', __('Quảng cáo trượt bên phải trang web.', 'sb-theme'));
     }
 
+    public static function register_ads_leaderboard() {
+        self::register_ads('leaderboard', 'Leaderboard', __('Quảng cáo full trang trên header.', 'sb-theme'));
+    }
+
     public static function get_media_url_by_value($value) {
         return SB_Option::get_media_url_by_value($value);
     }
@@ -1165,6 +1191,9 @@ class SB_Theme {
 
     public static function the_feedburner_form($args = array()) {
         $name = isset($args['name']) ? $args['name'] : '';
+        if(empty($name)) {
+            $name = isset($args['account']) ? $args['account'] : '';
+        }
         $locale = isset($args['locale']) ? $args['locale'] : 'en_US';
         $submit_button_text = isset($args['submit_button_text']) ? $args['submit_button_text'] : __('Đăng ký', 'sb-theme');
         $placeholder = isset($args['placeholder']) ? $args['placeholder'] : __('Nhập địa chỉ email của bạn', 'sb-theme') . esc_html(SB_THEME_THREE_DOT);

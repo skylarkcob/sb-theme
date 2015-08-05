@@ -93,4 +93,3 @@ class SB_Banner_Widget extends WP_Widget {
 		return $instance;
 	}
 }
-?>

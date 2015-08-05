@@ -10,9 +10,34 @@ class SB_Paginate {
         return SB_Core::get_pagenum_link($args);
     }
 
-    public static function build($args = array()) {
+    private static function get_query($args = array()) {
         global $wp_query;
-        $query = isset($args['query']) ? $args['query'] : $wp_query;
+        $query = isset($args['query']) ? $args['query'] : null;
+        if(!SB_Core::is_valid_object($query)) {
+            $query = $wp_query;
+        }
+        return $query;
+    }
+
+    private static function get_total_page($args = array()) {
+        $query = self::get_query($args);
+        $posts_per_page = isset($query->query_vars['posts_per_page']) ? $query->query_vars['posts_per_page'] : get_option('posts_per_page');
+        if(1 > $posts_per_page) {
+            return 0;
+        }
+        $total_page = intval(ceil($query->found_posts / $posts_per_page));
+        return $total_page;
+    }
+
+    public static function has_paged($args = array()) {
+        $total = self::get_total_page($args);
+        if($total > 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function build($args = array()) {
         $options = get_option('sb_options');
         $default_label = isset($options['paginate']['label']) ? $options['paginate']['label'] : __('Trang', 'sb-theme');
         $default_previous = isset($options['paginate']['previous_text']) ? $options['paginate']['previous_text'] : '&laquo;';
@@ -25,14 +50,8 @@ class SB_Paginate {
         if(empty($request)) {
             $request = self::get_request();
         }
-        if(!isset($query) || empty($query) || !is_object($query)) {
-            $query = $wp_query;
-        }
-        $posts_per_page = isset($query->query_vars['posts_per_page']) ? $query->query_vars['posts_per_page'] : get_option('posts_per_page');
-        if(1 > $posts_per_page) {
-            return;
-        }
-        $total_page = intval(ceil($query->found_posts / $posts_per_page));
+        $query = self::get_query($args);
+        $total_page = self::get_total_page($args);
         $current_page = isset($query->query_vars['paged']) ? $query->query_vars['paged'] : '0';
         if(1 > $current_page || $current_page > $total_page) {
             $current_page = self::get_paged();
@@ -80,7 +99,12 @@ class SB_Paginate {
                 break;
         }
         $class = trim($class);
-        echo '<nav class="'.$class.'">';
+        if(self::has_paged($args)) {
+            $class = SB_PHP::add_string_with_space_before($class, 'has-paged');
+        } else {
+            $class = SB_PHP::add_string_with_space_before($class, 'no-paged');
+        }
+        echo '<nav class="' . $class . '">';
         echo self::build($args);
         echo '</nav>';
     }

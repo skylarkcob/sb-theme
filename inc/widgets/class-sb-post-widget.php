@@ -628,4 +628,3 @@ class SB_Post_Widget extends WP_Widget {
 		return $instance;
 	}
 }
-?>

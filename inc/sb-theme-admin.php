@@ -261,36 +261,36 @@ function sb_theme_setting_field() {
     SB_Admin_Custom::add_setting_field('sb_theme_default_language', __('Ngôn ngữ', 'sb-theme'), 'sb_theme_setting_section', 'sb_theme_default_language_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_logo', 'Logo', 'sb_theme_setting_section', 'sb_theme_logo_callback', 'sb_theme');
     SB_Admin_Custom::add_setting_field('sb_theme_favicon', 'Favicon', 'sb_theme_setting_section', 'sb_theme_favicon_callback', 'sb_theme');
-    if(SB_Option::utility_enabled('add_to_head')) {
+    if(SB_Tool::use_utility_add_to_head()) {
         sb_theme_setting_field_add_to_head();
     }
-    if(SB_Option::utility_enabled('default_thumbnail')) {
+    if(SB_Tool::use_utility_default_thumbnail()) {
         sb_theme_setting_field_no_thumbnail();
     }
-    if(SB_Option::utility_enabled('google_analytics')) {
+    if(SB_Tool::use_utility_google_analytics()) {
         sb_theme_setting_field_google_analtyics();
     }
-    if(SB_Option::utility_enabled('category_widget')) {
+    if(SB_Tool::use_utility_category_widget()) {
         sb_theme_setting_field_category_widget();
     }
-    if(SB_Option::utility_enabled('facebook_php_sdk')) {
+    if(SB_Tool::use_utility_facebook_php_sdk()) {
         sb_theme_setting_field_facebook_api();
     }
-    if(SB_Option::utility_enabled('sharethis')) {
+    if(SB_Tool::use_utility_sharethis()) {
         sb_theme_setting_field_sharethis();
     }
-    if(SB_Option::utility_enabled('addthis') || sb_theme_support_addthis()) {
+    if(SB_Tool::use_utility_addthis() || sb_theme_support_addthis()) {
         sb_theme_setting_field_addthis();
     }
-    if(SB_Option::utility_enabled('facebook_fanpage')) {
+    if(SB_Tool::use_utility_facebook_fanpage()) {
         sb_theme_setting_field_facebook_fanpage();
     }
     do_action('sb_theme_setting_field');
     do_action('sb_theme_setting_page');
-    if(SB_Option::utility_enabled('social')) {
+    if(SB_Tool::use_utility_social_list()) {
         sb_theme_setting_field_social();
     }
-    if(SB_Option::utility_enabled('footer_text')) {
+    if(SB_Tool::use_utility_footer_text()) {
         sb_theme_setting_field_footer_text();
     }
 }

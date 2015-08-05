@@ -79,6 +79,11 @@ div blockquote::before {
     position: absolute;
 }
 
+.fb-page blockquote:after,
+.fb-page blockquote:before {
+    display: none;
+}
+
 div blockquote {
     background: #eee none repeat scroll 0 0;
     border-left: 5px solid #ccc;
@@ -580,15 +585,30 @@ iframe {
 .sb-comment-area .comment-body .comment-tools {
     bottom: 5px;
     font-size: 11px;
+    line-height: 1px;
     position: absolute;
     right: 5px;
 }
+
+.sb-comment-area .comment-body .comment-tools .comment-report.disabled {
+    color: #999;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
 .sb-comment-area .comment-body .comment-tools > a {
     border-right: 1px solid #999;
+    display: inline-block;
+    line-height: 9px;
     margin-right: 5px;
-    padding-right: 5px;
+    padding-right: 8px;
     text-decoration: none;
 }
+
+.sb-comment-area .comment-body .comment-tools > a * {
+    line-height: 0;
+}
+
 .sb-comment-area .comment-body .comment-tools > a.disable {
     color: #999;
     cursor: default;
@@ -621,8 +641,12 @@ iframe {
     color: #999;
     font-weight: 600;
     margin-left: 5px;
-    vertical-align: middle;
 }
+
+.sb-comment-area .comment-body .comment-tools .comment-like .fa {
+    vertical-align: 1px;
+}
+
 .sb-comment-area .comment-body .reply {
     bottom: 0;
     position: absolute;
@@ -632,12 +656,12 @@ iframe {
     position: relative;
 }
 .sb-comment-area .comment-body .comment-tools .list-share {
+    bottom: -20px;
     display: none;
     position: absolute;
-    right: 6px;
+    right: 0;
     text-align: right;
-    top: 100%;
-    width: 90px;
+    width: 75px;
     z-index: 499;
 }
 .sb-comment-area .comment-body .comment-tools .list-share.active {
@@ -649,6 +673,7 @@ iframe {
     font-size: 9px;
     font-weight: 400;
     height: 18px;
+    line-height: 1px;
     margin-left: 2px;
     min-width: 20px;
     padding: 8px 6px;
@@ -1586,6 +1611,10 @@ body.sb-user {
 }
 
 /* ==================== Paginate ==================== */
+
+.sb-paginate.no-paged {
+    display: none;
+}
 
 .sb-paginate .paginate-item {
     border-radius: 3px;
@@ -2667,6 +2696,10 @@ div > .syntaxhighlighter {
     width: 728px;
 }
 
+.sb-ads.leaderboard-ads > * {
+    float: right;
+}
+
 .ads-300-250 {
     height: 250px;
     width: 300px;
@@ -3158,6 +3191,9 @@ div > .syntaxhighlighter {
     border-color: #ebebeb;
 }
 
+.entry-content select,
+.entry-content textarea,
+.entry-content input,
 .woocommerce .select2-container .select2-choice,
 .woocommerce input,
 .woocommerce textarea,
@@ -3167,12 +3203,29 @@ div > .syntaxhighlighter {
     padding: 10px 5px;
 }
 
+.entry-content select,
+.entry-content textarea,
+.entry-content input,
 .woocommerce-checkout .woocommerce form .form-row .select2-container .select2-choice,
 .woocommerce-checkout .woocommerce form .form-row .input-text {
     border-radius: 0;
     line-height: 17px;
     padding-bottom: 5px;
     padding-top: 5px;
+}
+
+.entry-content input[type="submit"],
+.entry-content input.button,
+.entry-content input[type="reset"] {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.entry-content input[type="checkbox"],
+.entry-content input[type="radio"] {
+    display: inline-block;
+    margin: 0 2px 0 0;
+    vertical-align: -1px;
 }
 
 .woocommerce textarea:focus,
@@ -3342,10 +3395,62 @@ div > .syntaxhighlighter {
     padding: 2px;
 }
 
+.entry-terms .term-label {
+    margin-right: 5px;
+}
+
 .single-product .entry-summary > .entry-title {
     font-size: 25px;
     font-weight: 700;
     margin-top: 0;
+}
+
+.entry-content fieldset {
+    border: 1px solid #e7e7e7;
+    margin: 0 0 24px;
+    padding: 24px;
+}
+
+.entry-content fieldset legend {
+    background: #fff none repeat scroll 0 0;
+    border: medium none;
+    color: #000;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 24px;
+    margin: 0;
+    padding: 0 24px;
+    width: auto;
+}
+
+.entry-content table {
+    border: 1px solid #e7e7e7;
+    margin: 0 -1px 24px 0;
+    text-align: left;
+    width: 100%;
+}
+
+.entry-content table th {
+    color: #777;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 18px;
+    padding: 9px 24px;
+}
+
+.entry-content table td {
+    border-top: 1px solid #e7e7e7;
+    padding: 6px 24px;
+}
+
+.entry-content h1,
+.entry-content h2,
+.entry-content h3,
+.entry-content h4,
+.entry-content h5,
+.entry-content h6 {
+    line-height: 1.1;
 }
 
 .single-product .price .amount {
@@ -3394,6 +3499,25 @@ div > .syntaxhighlighter {
 .single-product .comment-form .stars a {
     border-color: #eee !important;
     letter-spacing: 4px;
+}
+
+.comment-form .form-submit .submit {
+    background-color: #9ed461;
+    border: 0 none;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 25px;
+    padding: 7px 22px;
+    text-decoration: none;
+    transition: all 0.25s linear 0s;
+}
+
+.comment-form .form-submit .submit:hover {
+    background-color: #222;
 }
 
 .single-product .woocommerce-tabs ol.commentlist {
@@ -3664,6 +3788,82 @@ div > .syntaxhighlighter {
     font-size: 13px;
     font-weight: 400;
     width: 120px;
+}
+
+/* calendar widget */
+#wp-calendar {width: 100%; }
+#wp-calendar caption { text-align: right; color: #333; font-size: 12px; margin-top: 10px; margin-bottom: 15px; }
+#wp-calendar thead { font-size: 10px; }
+#wp-calendar thead th {
+    padding-bottom: 10px;
+    text-align: center;
+}
+#wp-calendar tbody { color: #aaa; }
+#wp-calendar tbody td { background: #f5f5f5; border: 1px solid #fff; text-align: center; padding:8px;}
+#wp-calendar tbody td:hover { background: #fff; }
+#wp-calendar tbody .pad { background: none; }
+#wp-calendar tfoot #next { font-size: 10px; text-transform: uppercase; text-align: right; }
+#wp-calendar tfoot #prev { font-size: 10px; text-transform: uppercase; padding-top: 10px; }
+
+.widget-sb-subscribe .feedburner-form,
+.widget_search .search-form {
+    overflow: hidden;
+}
+
+.widget-sb-subscribe .email-field,
+.widget_search .search-field {
+    border: 1px solid #d7d7d9;
+    border-radius: 0;
+    box-sizing: border-box;
+    color: #888;
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    height: 34px;
+    padding: 6px 8px;
+    transition: all 0.25s linear 0s;
+    width: 100%;
+}
+
+.widget-sb-subscribe .email-field,
+.widget_search label {
+    float: left;
+    width: 70%;
+}
+
+.widget-sb-subscribe .btn-submit,
+.widget_search .search-submit {
+    background: #9ed461 none repeat scroll 0 0;
+    border: 1px solid #9ed461;
+    border-radius: 0;
+    color: #fff;
+    cursor: pointer;
+    float: left;
+    font-size: 13px;
+    height: 34px;
+    padding: 6px;
+    text-align: center;
+    transition: all 0.25s linear 0s;
+    width: 30%;
+}
+
+.widget_tag_cloud {
+    border: 1px solid #d5d5d5;
+    border-radius: 2px;
+}
+
+.widget_tag_cloud .widget-title {
+    background-color: #f1f1ec;
+    border-bottom: 1px solid #d5d5d5;
+    border-right-color: #d5d5d5;
+    border-top-color: #d5d5d5;
+    color: #777;
+    margin: 0;
+    padding: 10px 14px;
+}
+
+.widget_tag_cloud .widget-title + * {
+    padding: 10px;
 }
 
 /* ==================== Keyframes ==================== */
