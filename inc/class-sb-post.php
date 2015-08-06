@@ -759,9 +759,34 @@ class SB_Post {
     }
 
     public static function the_entry_meta($args = array()) {
-        self::the_author($args);
-        self::the_date();
-        self::the_comment_link();
+        $show_author = isset($args['show_author']) ? $args['show_author'] : true;
+        $show_date = isset($args['show_date']) ? $args['show_date'] : true;
+        $show_comment = isset($args['show_comment']) ? $args['show_comment'] : true;
+        $show_category = isset($args['show_category']) ? $args['show_category'] : false;
+        $show_views = isset($args['show_views']) ? $args['show_views'] : false;
+        if($show_author) {
+            self::the_author($args);
+        }
+        if($show_date) {
+            self::the_date();
+        }
+        if($show_views) {
+            self::the_views();
+        }
+        if($show_comment) {
+            self::the_comment_link();
+        }
+        if($show_category) {
+            self::the_term_html(get_the_ID(), 'category');
+        }
+    }
+
+    public static function the_views($post_id = null) {
+        if(!is_numeric($post_id)) {
+            $post_id = get_the_ID();
+        }
+        $views = self::get_views($post_id);
+        echo '<span class="views"><i class="fa fa-eye icon-left"></i><span class="count">' . $views . '</span> lượt xem</span>';
     }
 
     public static function get_interested($post_id) {

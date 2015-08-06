@@ -1747,40 +1747,22 @@ body.sb-user {
 }
 
 .sb-tab-widget .sb-tabs li > a {
-    background: #f5f5f5;
-    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmNWY1ZjUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-    background: -moz-linear-gradient(top,  #ffffff 0%, #f5f5f5 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f5f5f5));
-    background: -webkit-linear-gradient(top,  #ffffff 0%,#f5f5f5 100%);
-    background: -o-linear-gradient(top,  #ffffff 0%,#f5f5f5 100%);
-    background: -ms-linear-gradient(top,  #ffffff 0%,#f5f5f5 100%);
-    background: linear-gradient(to bottom,  #ffffff 0%,#f5f5f5 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f5f5f5',GradientType=0 );
+    background-color: #222;
+    color: #fff !important;
 }
 
 .sb-tab-widget .sb-tabs li > a {
-    border-left: 1px solid #e1e1e1;
-    border-radius: 4px 4px 0 0;
-    border-right: 1px solid #e1e1e1;
-    border-top: 1px solid #e1e1e1;
-    box-shadow: 0 1px 0 #fff inset;
+    border-radius: 0 !important;
     display: block;
     font-size: 12px;
-    margin: 0 0 -2px;
     padding: 6px 12px;
     text-decoration: none;
-    text-shadow: 0 1px 0 #ffffff;
-}
-
-.sb-tab-widget .sb-tabs li.active {
-
 }
 
 .sb-tab-widget .sb-tabs li.active > a:focus,
 .sb-tab-widget .sb-tabs li.active > a {
-    background: none repeat scroll 0 0 #fff;
-    border-bottom: 2px solid #ffffff;
-    color: #252525;
+    background-color: #9ed461;
+    cursor: default;
 }
 
 .sb-tab-widget,
@@ -1799,6 +1781,30 @@ body.sb-user {
 
 .sb-tab-widget .sb-tab-container ul {
     padding-left: 20px;
+}
+
+.sb-tab-widget .nav-pills li {
+    border-bottom: medium none !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+}
+
+.sb-tab-widget .nav-pills {
+    margin-top: 0;
+    padding: 0;
+}
+
+.sb-tab-widget .tab-content {
+    border-color: #e1e1e1;
+    border-style: solid;
+    border-width: 0 1px 1px;
+    padding: 10px;
+}
+
+.sb-tab-widget .tab-content ul,
+.sb-tab-widget .tab-content ol {
+    padding: 0;
 }
 
 /* ==================== Contact form ==================== */

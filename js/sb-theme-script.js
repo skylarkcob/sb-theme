@@ -1271,6 +1271,21 @@ sb_theme.force_update_lazy_image = function(image) {
         });
     })();
 
+    // Tab widget
+    (function(){
+        $('.sb-tab-widget').each(function() {
+            var list_tabs = $(this).find('ul.nav-pills');
+            $(this).find('.tab-item').each(function() {
+                var widget = $(this).attr('id');
+                $(this).find('a.tab-title').attr('href', '#' + widget).wrap('<li></li>').parent().detach().appendTo(list_tabs);
+            });
+            list_tabs.find('li:first').addClass('active');
+            list_tabs.fadeIn();
+            $(this).find('.tab-pane:first').addClass('active');
+        });
+    })();
+
+    // Lazyload
     (function(){
         if(body.hasClass('sbt-thumbnail-lazy')) {
             var tab_content = $('.tab-content'),

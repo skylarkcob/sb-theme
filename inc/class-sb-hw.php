@@ -93,6 +93,13 @@ class SB_HW {
             'key' => SB_Post::build_meta_name('services_news'),
             'value' => 1,
             'type' => 'NUMERIC',
+            'compare' => '!='
+        );
+        $args = SB_Query::build_meta_query($meta_item, $args);
+        $meta_item = array(
+            'key' => SB_Post::build_meta_name('services_news'),
+            'value' => 1,
+            'type' => 'NUMERIC',
             'compare' => 'NOT EXISTS'
         );
         $args = SB_Query::build_meta_query($meta_item, $args);
@@ -213,7 +220,7 @@ class SB_HW {
         <section class="long-description">
             <?php echo $value; ?>
         </section>
-    <?php
+        <?php
     }
 
     public static function get_reference_return($post_id) {
@@ -230,7 +237,7 @@ class SB_HW {
         <section class="return">
             <p><strong><?php _e('Giá trị trả về', 'sb-theme'); ?>:</strong> <?php echo $value; ?></p>
         </section>
-    <?php
+        <?php
     }
 
     public static function get_reference_parameters($post_id) {
@@ -268,7 +275,7 @@ class SB_HW {
         <section class="explanation">
             <?php echo $value; ?>
         </section>
-    <?php
+        <?php
     }
 
     public static function get_reference_source($post_id) {
@@ -288,7 +295,7 @@ class SB_HW {
             <h2><?php _e('Nguồn', 'sb-theme'); ?></h2>
             <?php echo $value; ?>
         </section>
-    <?php
+        <?php
     }
 
     public static function get_reference_example($post_id) {
@@ -308,7 +315,7 @@ class SB_HW {
             <h2><?php _e('Ví dụ', 'sb-theme'); ?></h2>
             <?php echo $value; ?>
         </section>
-    <?php
+        <?php
     }
 
     public static function get_reference_loop_description($post_id) {
