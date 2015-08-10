@@ -20,6 +20,10 @@ class SB_Core {
         return get_search_query();
     }
 
+    public static function get_language() {
+        return sb_theme_get_language();
+    }
+
     public static function minify_styles_and_scripts() {
         self::minify_all_css();
         wp_dequeue_style('sb-theme-custom-mobile-style');
@@ -1577,6 +1581,10 @@ class SB_Core {
 
     public static function is_wpseo_yoast_installed() {
         return defined('WPSEO_FILE');
+    }
+
+    public static function is_wp_postratings_installed() {
+        return defined('WP_POSTRATINGS_VERSION');
     }
 
     public static function is_super_cache_installed() {

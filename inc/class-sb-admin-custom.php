@@ -147,10 +147,19 @@ class SB_Admin_Custom {
     }
 
     public static function section_description_callback($args) {
-        if ( 'sb_options_section' == $args['id']) {
-            _e( 'Mô tả ngắn gọn về mã nguồn SB.', 'sb-theme' );
+        $lang = SB_Core::get_language();
+        if('sb_options_section' == $args['id']) {
+            if('vi' == $lang) {
+                echo 'Mô tả ngắn gọn về mã nguồn SB.';
+            } else {
+                _e('Short description about SB.', 'sb-theme');
+            }
         } else {
-            _e( 'Cập nhật thông tin cài đặt của bạn ở bên dưới:', 'sb-theme' );
+            if('vi' == $lang) {
+                echo 'Cập nhật thông tin cài đặt của bạn ở bên dưới:';
+            } else {
+                _e('Change your settings below:', 'sb-theme');
+            }
         }
     }
 

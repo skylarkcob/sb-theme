@@ -4,7 +4,7 @@ defined('ABSPATH') or die('Please do not pip me!');
 do_action('sb_theme_html_before');
 ?>
 <!DOCTYPE html>
-<html lang="vi" dir="ltr" class="no-js">
+<html lang="<?php echo sb_theme_get_language(); ?>" dir="ltr" class="no-js">
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <?php if(SB_Core::compare_wp_version('4.1', '<')) : ?>

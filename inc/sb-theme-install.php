@@ -303,7 +303,8 @@ if($sb_theme_use_jquery_cdn) add_action('sb_theme_footer_before', 'sb_theme_jque
  * Thêm menu vào admin bar.
  */
 function sb_theme_add_to_admin_bar($wp_admin_bar) {
-    if ( current_user_can( 'manage_options' ) ) {
+    if(current_user_can('manage_options')) {
+        $lang = sb_theme_get_language();
         $args = array(
             'id'        => 'sb-options',
             'title'     => 'SB Options',
@@ -314,9 +315,13 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
         );
         $wp_admin_bar->add_node( $args );
 
+        $title = __('Theme settings', 'sb-theme');
+        if('vi' == $lang) {
+            $title = 'Cài đặt giao diện';
+        }
         $args = array(
             'id'        => 'sbt-settings',
-            'title'     => __('Cài đặt giao diện', 'sb-theme'),
+            'title'     => $title,
             'href'      => admin_url( 'admin.php?page=sb_theme' ),
             'parent'    => 'sb-options'
         );
@@ -330,25 +335,37 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
         );
         $wp_admin_bar->add_node( $args );
 
+        $title = __('Advance settings', 'sb-theme');
+        if('vi' == $lang) {
+            $title = 'Cài đặt nâng cao';
+        }
         $args = array(
             'id'        => 'sbt-advanced-settings',
-            'title'     => __('Cài đặt nâng cao', 'sb-theme'),
+            'title'     => $title,
             'href'      => admin_url( 'admin.php?page=sbt_advanced' ),
             'parent'    => 'sb-options'
         );
         $wp_admin_bar->add_node( $args );
 
+        $title = __('Pagination', 'sb-theme');
+        if('vi' == $lang) {
+            $title = 'Phân trang';
+        }
         $args = array(
             'id'        => 'sbt-pagination',
-            'title'     => __('Phân trang', 'sb-theme'),
+            'title'     => $title,
             'href'      => admin_url( 'admin.php?page=sb_paginate' ),
             'parent'    => 'sb-options'
         );
         $wp_admin_bar->add_node( $args );
 
+        $title = __('Permalinks', 'sb-theme');
+        if('vi' == $lang) {
+            $title = 'Đường dẫn tĩnh';
+        }
 	    $args = array(
 		    'id'        => 'sbt-options-permalink',
-		    'title'     => __('Đường dẫn tĩnh', 'sb-theme'),
+		    'title'     => $title,
 		    'href'      => admin_url( 'options-permalink.php' ),
 		    'parent'    => 'sb-options'
 	    );
@@ -370,9 +387,13 @@ function sb_theme_add_to_admin_bar($wp_admin_bar) {
         );
         $wp_admin_bar->add_node( $args );
 
+        $title = __('About SB', 'sb-theme');
+        if('vi' == $lang) {
+            $title = 'Giới thiệu SB';
+        }
         $args = array(
             'id'        => 'sbt-about',
-            'title'     => __('Giới thiệu SB', 'sb-theme'),
+            'title'     => $title,
             'href'      => admin_url( 'admin.php?page=sb_options' ),
             'parent'    => false
         );

@@ -66,6 +66,13 @@ class SB_Lib {
         wp_enqueue_script('nivo-slider');
     }
 
+    public static function load_flex_slider() {
+        wp_register_style('flexslider-style', SB_THEME_LIB_URL . '/flexslider/flexslider.min.css');
+        wp_register_script('flexslider', SB_THEME_LIB_URL . '/flexslider/jquery.flexslider-min.js', array('jquery'), false, true);
+        wp_enqueue_style('flexslider-style');
+        wp_enqueue_script('flexslider');
+    }
+
     public static function restore_link_title() {
         wp_register_script('wplinkTitle', SB_THEME_PLUGIN_URL . '/restore-link-title-field/restore-link-title-field.js', array('jquery', 'wplink'), false, true);
         wp_localize_script('wplinkTitle', 'wpLinkTitleL10n', array(

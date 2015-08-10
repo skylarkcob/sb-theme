@@ -377,6 +377,16 @@ class SB_Query {
         return $args;
     }
 
+    public static function build_rate_args($args = array()) {
+        $default = array(
+            'meta_key' => 'ratings_average',
+            'orderby' => 'meta_value_num',
+            'order' => 'DESC'
+        );
+        $args = wp_parse_args($args, $default);
+        return $args;
+    }
+
     public static function get_today_posts($args = array()) {
         $args = self::build_daily_post_args($args);
         return self::get($args);

@@ -20,6 +20,10 @@ class SB_Theme {
         }
     }
 
+    public static function get_language() {
+        return SB_Core::get_language();
+    }
+
     public static function use_custom_menu() {
         return SB_Tool::use_custom_menu();
     }

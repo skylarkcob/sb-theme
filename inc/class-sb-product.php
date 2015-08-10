@@ -165,21 +165,10 @@ class SB_Product {
     }
 
     public static function get_price($post_id = 0) {
+        $key = 'price';
         if(!is_numeric($post_id)) {
-            $type = $post_id;
-            $prices = self::get_prices($post_id);
-            $price = 0;
-            switch($type) {
-                case 'sale':
-                    $price = $prices['sale_price'];
-                    break;
-                case 'regular':
-                    $price = $prices['regular_price'];
-                    break;
-                default:
-                    $price = $prices['price'];
-            }
-            return floatval($price);
+            $key = $post_id;
+            $post_id = get_the_ID();
         }
         return self::get_price_by_key($post_id, 'price');
     }

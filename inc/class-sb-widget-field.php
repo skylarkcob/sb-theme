@@ -16,7 +16,7 @@ class SB_Widget_Field {
             'id' => $id,
             'name' => $name,
             'value' => $value,
-            'label' => __('Tiêu đề:', 'sb-theme'),
+            'label' => ('vi' == SB_Core::get_language()) ? 'Tiêu đề:' : __('Title:', 'sb-theme'),
         );
         self::text($args);
     }

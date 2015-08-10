@@ -186,7 +186,11 @@ class SB_Admin {
 
     private function add_sb_options_section() {
         if(SB_Admin_Custom::is_about_page()) {
-            add_settings_section('sb_options_section', __('Giới thiệu SB', 'sb-theme'), array($this, 'print_section_info'), 'sb_options');
+            $title = __('About SB', 'sb-theme');
+            if('vi' == sb_theme_get_language()) {
+                $title = 'Giới thiệu SB';
+            }
+            add_settings_section('sb_options_section', $title, array($this, 'print_section_info'), 'sb_options');
         }
     }
 
@@ -206,16 +210,29 @@ class SB_Admin {
     }
 
     public function print_section_info($args) {
+        $lang = sb_theme_get_language();
         if($args['id'] == 'sb_options_section') {
-            _e('Giới thiệu sơ lượt về mã nguồn SB Theme và SB Options.', 'sb-theme');
+            if('vi' == $lang) {
+                echo 'Giới thiệu sơ lượt về mã nguồn SB Theme và SB Options.';
+            } else {
+                _e('Short description about SB Theme and SB Options.', 'sb-theme');
+            }
         } else {
-            _e('Thay đổi thông tin cài đặt tùy chọn của bạn ở bên dưới:', 'sb-theme');
+            if('vi' == $lang) {
+                echo 'Thay đổi thông tin cài đặt tùy chọn của bạn ở bên dưới:';
+            } else {
+                _e('Change your settings below:', 'sb-theme');
+            }
         }
     }
 
     private function sb_tab_init() {
         $this->tab_filter();
-        $this->add_tab('sb_options', __('Giới thiệu SB', 'sb-theme'), 'sb_options_section');
+        $title = __('About SB', 'sb-theme');
+        if('vi' == sb_theme_get_language()) {
+            $title = 'Giới thiệu SB';
+        }
+        $this->add_tab('sb_options', $title, 'sb_options_section');
     }
 
     private function add_tab($key, $title, $section_id) {
@@ -246,7 +263,11 @@ class SB_Admin {
 
     public function add_submenu_page() {
         if(!$this->submenu_exists('sb_options')) {
-            add_submenu_page('sb_options', __('Giới thiệu SB', 'sb-theme'), __('Giới thiệu SB', 'sb-theme'), 'manage_options', 'sb_options', array($this, 'settings_page'));
+            $title = __('About SB', 'sb-theme');
+            if('vi' == sb_theme_get_language()) {
+                $title = 'Giới thiệu SB';
+            }
+            add_submenu_page('sb_options', $title, $title, 'manage_options', 'sb_options', array($this, 'settings_page'));
         }
         do_action('sb_theme_add_submenu_page');
     }

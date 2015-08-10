@@ -1,6 +1,6 @@
 <?php
 defined('ABSPATH') or die('Please do not pip me!');
-
+$lang = SB_Core::get_language();
 SB_Admin_Custom::setting_page_before();
 ?>
     <h2 style="display: none">&nbsp;</h2>
@@ -22,8 +22,12 @@ SB_Admin_Custom::setting_page_before();
             <?php
             $version = $theme->get('Version');
             $version = str_replace('-wpcom', '', $version);
+            $version_text = __('Version:', 'sb-theme');
+            if('vi' == $version_text) {
+                $version_text = 'Phiên bản:';
+            }
             if(!empty($version)) : ?>
-                <span><?php _e('Phiên bản:', 'sb-theme'); ?> <?php echo $version; ?></span>
+                <span><?php echo $version_text. ' ' . $version; ?></span>
             <?php endif; ?>
         </div>
         <div class="sbtheme-content">

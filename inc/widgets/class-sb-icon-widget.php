@@ -28,11 +28,13 @@ class SB_Icon_Widget extends WP_Widget {
         $sb_media_upload = true;
         $title = '';
         $icon = '';
+        $icon_hover = '';
         $link = '';
         $text = '';
         if($instance) {
             $title = isset($instance['title']) ? $instance['title'] : '';
             $icon = isset($instance['icon']) ? $instance['icon'] : '';
+            $icon_hover = isset($instance['icon_hover']) ? $instance['icon_hover'] : '';
             $link = isset($instance['link']) ? $instance['link'] : '';
             $text = isset($instance['text']) ? $instance['text'] : '';
         }
@@ -48,10 +50,18 @@ class SB_Icon_Widget extends WP_Widget {
         SB_Widget_Field::media_upload($args);
 
         $args = array(
+            'id' => $this->get_field_id('icon_hover'),
+            'name' => $this->get_field_name('icon_hover'),
+            'value' => $icon_hover,
+            'label' => __('Icon hover:', 'sb-theme')
+        );
+        SB_Widget_Field::media_upload($args);
+
+        $args = array(
             'id' => $this->get_field_id('link'),
             'name' => $this->get_field_name('link'),
             'value' => $link,
-            'label' => __('Đường link cho hình ảnh:', 'sb-theme')
+            'label' => ('vi' == SB_Core::get_language()) ? 'Đường link cho hình ảnh:' : __('Image link:', 'sb-theme')
         );
         SB_Widget_Field::text($args);
 
@@ -59,7 +69,7 @@ class SB_Icon_Widget extends WP_Widget {
             'id' => $this->get_field_id('text'),
             'name' => $this->get_field_name('text'),
             'value' => $text,
-            'label' => __('Nội dung:', 'sb-theme')
+            'label' => ('vi' == SB_Core::get_language()) ? 'Nội dung:' : __('Text:', 'sb-theme')
         );
         SB_Widget_Field::textarea($args);
         SB_Widget_Field::after();
@@ -73,6 +83,7 @@ class SB_Icon_Widget extends WP_Widget {
         $text = isset($new_instance['text']) ? $new_instance['text'] : '';
         $instance['title'] = $title;
         $instance['icon'] = $icon;
+        $instance['icon_hover'] = isset($new_instance['icon_hover']) ? $new_instance['icon_hover'] : '';
         $instance['link'] = $link;
         $instance['text'] = $text;
         return $instance;

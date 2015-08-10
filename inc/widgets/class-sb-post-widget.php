@@ -76,6 +76,9 @@ class SB_Post_Widget extends WP_Widget {
         if(SB_Core::is_support_post_favorites()) {
             $this->types['favorite'] = __('Bài viết được yêu thích', 'sb-theme');
         }
+        if(SB_Core::is_wp_postratings_installed()) {
+            $this->types['rate'] = __('Bài viết được đánh giá cao', 'sb-theme');
+        }
 	}
 	
 	private function order_type_init() {
@@ -195,6 +198,9 @@ class SB_Post_Widget extends WP_Widget {
                         );
                     }
                     break;
+                case 'rate':
+                    //$args = SB_Query::build_rate_args();
+                    break;
                 default:
                     $args = array(
                         'posts_per_page'	=> $number,
@@ -228,6 +234,10 @@ class SB_Post_Widget extends WP_Widget {
 
             if(!isset($args['posts_per_page'])) {
                 $args['posts_per_page'] = $number;
+            }
+
+            if('rate' == $type) {
+                $args = SB_Query::build_rate_args($args);
             }
 
             $sb_post = SB_Query::get($args);

@@ -5,12 +5,20 @@ defined('ABSPATH') or die('Please do not pip me!');
  * Plugin SB Clean
  */
 function sb_clean_menu() {
-    SB_Admin_Custom::add_submenu_page('Dọn dẹp', 'sb_clean', array('SB_Admin_Custom', 'setting_page_callback'));
+    $title = __('Clean', 'sb-theme');
+    if('vi' == SB_Core::get_language()) {
+        $title = 'Dọn dẹp';
+    }
+    SB_Admin_Custom::add_submenu_page($title, 'sb_clean', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_clean_menu');
 
 function sb_clean_tab($tabs) {
-    $tabs['sb_clean'] = array('title' => 'Dọn dẹp', 'section_id' => 'sb_clean_section', 'type' => 'plugin');
+    $title = __('Clean', 'sb-theme');
+    if('vi' == SB_Core::get_language()) {
+        $title = 'Dọn dẹp';
+    }
+    $tabs['sb_clean'] = array('title' => $title, 'section_id' => 'sb_clean_section', 'type' => 'plugin');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_clean_tab');
@@ -116,12 +124,20 @@ function sb_clean_sanitize($input) {
  * Plugin SB Comment
  */
 function sb_comment_menu() {
-    SB_Admin_Custom::add_submenu_page(__('Thảo luận', 'sb-theme'), 'sb_comment', array('SB_Admin_Custom', 'setting_page_callback'));
+    $title = __('Discussion', 'sb-theme');
+    if('vi' == SB_Core::get_language()) {
+        $title = 'Thảo luận';
+    }
+    SB_Admin_Custom::add_submenu_page($title, 'sb_comment', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_comment_menu');
 
 function sb_comment_tab($tabs) {
-    $tabs['sb_comment'] = array('title' => __('Thảo luận', 'sb-theme'), 'section_id' => 'sb_comment_section', 'type' => 'plugin');
+    $title = __('Discussion', 'sb-theme');
+    if('vi' == SB_Core::get_language()) {
+        $title = 'Thảo luận';
+    }
+    $tabs['sb_comment'] = array('title' => $title, 'section_id' => 'sb_comment_section', 'type' => 'plugin');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_comment_tab');
@@ -256,12 +272,20 @@ function sb_comment_sanitize($input) {
  * Plugin SB Login Page
  */
 function sb_login_page_menu() {
-    SB_Admin_Custom::add_submenu_page(__('Đăng nhập', 'sb-theme'), 'sb_login_page', array('SB_Admin_Custom', 'setting_page_callback'));
+    $title = __('Login', 'sb-theme');
+    if('vi' == SB_Core::get_language()) {
+        $title = 'Đăng nhập';
+    }
+    SB_Admin_Custom::add_submenu_page($title, 'sb_login_page', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_login_page_menu');
 
 function sb_login_page_tab($tabs) {
-    $tabs['sb_login_page'] = array('title' => __('Đăng nhập', 'sb-theme'), 'section_id' => 'sb_login_page_section', 'type' => 'plugin');
+    $title = __('Login', 'sb-theme');
+    if('vi' == SB_Core::get_language()) {
+        $title = 'Đăng nhập';
+    }
+    $tabs['sb_login_page'] = array('title' => $title, 'section_id' => 'sb_login_page_section', 'type' => 'plugin');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_login_page_tab');
@@ -451,12 +475,20 @@ add_filter('sb_options_sanitize', 'sb_login_page_sanitize');
  * Plugin SB Paginate
  */
 function sb_paginate_menu() {
-    SB_Admin_Custom::add_submenu_page(__('Phân trang', 'sb-theme'), 'sb_paginate', array('SB_Admin_Custom', 'setting_page_callback'));
+    $title = __('Pagination', 'sb-theme');
+    if('vi' == SB_Core::get_language()) {
+        $title = 'Phân trang';
+    }
+    SB_Admin_Custom::add_submenu_page($title, 'sb_paginate', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_paginate_menu');
 
 function sb_paginate_tab($tabs) {
-    $tabs['sb_paginate'] = array('title' => __('Phân trang', 'sb-theme'), 'section_id' => 'sb_paginate_section', 'type' => 'plugin');
+    $title = __('Pagination', 'sb-theme');
+    if('vi' == SB_Core::get_language()) {
+        $title = 'Phân trang';
+    }
+    $tabs['sb_paginate'] = array('title' => $title, 'section_id' => 'sb_paginate_section', 'type' => 'plugin');
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_paginate_tab');

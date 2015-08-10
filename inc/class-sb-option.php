@@ -38,7 +38,7 @@ class SB_Option {
     public static function get_page_add_post_front_end() {
         $tab_base_option_name = 'writing';
         $key = 'page_add_post_front_end';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = self::get_advanced_setting($tab_base_option_name, $key);
         if(is_numeric($value) && $value > 0) {
             return get_post($value);
         }
@@ -235,8 +235,8 @@ class SB_Option {
     public static function support_link_title() {
         $tab_base_option_name = 'writing';
         $key = 'restore_link_title';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
-        $value = SB_Option::check_switch_value($value, 1);
+        $value = self::get_advanced_setting($tab_base_option_name, $key);
+        $value = self::check_switch_value($value, 1);
         return (bool)$value;
     }
 
@@ -259,21 +259,21 @@ class SB_Option {
 
     public static function get_media_link_to_type() {
         $key = 'media_link_to';
-        $value = SB_Option::get_advanced_setting('writing', $key);
+        $value = self::get_advanced_setting('writing', $key);
         return $value;
     }
 
     public static function get_file_size_limit() {
         $tab_base_option_name = 'writing';
         $key = 'limit_file_size';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = self::get_advanced_setting($tab_base_option_name, $key);
         return absint($value);
     }
 
     public static function get_image_type_allow() {
         $tab_base_option_name = 'writing';
         $key = 'allow_image_type';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = self::get_advanced_setting($tab_base_option_name, $key);
         $value = SB_PHP::string_to_array(',', $value);
         return SB_PHP::trim_all_array_item($value);
     }
@@ -281,14 +281,14 @@ class SB_Option {
     public static function get_taxonomy_use_thumbnail() {
         $tab_base_option_name = 'general';
         $key = 'taxonomy_use_thumbnail';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = self::get_advanced_setting($tab_base_option_name, $key);
         return SB_PHP::string_to_array(',', $value);
     }
 
     public static function get_post_type_use_administrative_boundaries() {
         $tab_base_option_name = 'general';
         $key = 'post_type_use_administrative_boundaries';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
+        $value = self::get_advanced_setting($tab_base_option_name, $key);
         $value = SB_PHP::string_to_array(',', $value);
         $value = SB_PHP::to_array($value);
         return $value;
@@ -297,24 +297,24 @@ class SB_Option {
     public static function use_administrative_boundaries() {
         $tab_base_option_name = 'general';
         $key = 'use_administrative_boundaries';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
-        $value = SB_Option::check_switch_value($value, 0);
+        $value = self::get_advanced_setting($tab_base_option_name, $key);
+        $value = self::check_switch_value($value, 0);
         return (bool)$value;
     }
 
     public static function use_term_thumbnail() {
         $tab_base_option_name = 'general';
         $key = 'use_term_thumbnail';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
-        $value = SB_Option::check_switch_value($value, 0);
+        $value = self::get_advanced_setting($tab_base_option_name, $key);
+        $value = self::check_switch_value($value, 0);
         return (bool)$value;
     }
 
     public static function confirm_publish_post() {
         $tab_base_option_name = 'writing';
         $key = 'confirm_publish';
-        $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
-        $value = SB_Option::check_switch_value($value, 1);
+        $value = self::get_advanced_setting($tab_base_option_name, $key);
+        $value = self::check_switch_value($value, 1);
         return $value;
     }
 
@@ -345,7 +345,7 @@ class SB_Option {
 
     public static function use_smtp_mail() {
         $key = 'enabled';
-        $value = SB_Option::get_option_by_key(array('smtp_email', $key));
+        $value = self::get_option_by_key(array('smtp_email', $key));
         return (bool)$value;
     }
 
@@ -355,6 +355,31 @@ class SB_Option {
             'default' => $default
         );
         return self::get_by_key($args);
+    }
+
+    public static function get_smtp_info() {
+        $sb_smtp = self::get_option_by_key(array('smtp_email'));
+        $enabled = isset($sb_smtp['enabled']) ? $sb_smtp['enabled'] : 0;
+        $enabled = (bool)$enabled;
+        $from = isset($sb_smtp['from_email']) ? $sb_smtp['from_email'] : '';
+        $from_name = isset($sb_smtp['from_name']) ? $sb_smtp['from_name'] : '';
+        $host = isset($sb_smtp['smtp_host']) ? $sb_smtp['smtp_host'] : '';
+        $port = isset($sb_smtp['smtp_port']) ? $sb_smtp['smtp_port'] : '';
+        $username = isset($sb_smtp['username']) ? $sb_smtp['username'] : '';
+        $password = isset($sb_smtp['password']) ? $sb_smtp['password'] : '';
+        $secure = isset($sb_smtp['encryption']) ? $sb_smtp['encryption'] : 'none';
+        $result = array(
+            'enabled' => $enabled,
+            'from' => $from,
+            'from_name' => $from_name,
+            'host' => $host,
+            'port' => $port,
+            'encryption' => $secure,
+            'username' => $username,
+            'password' => $password
+        );
+        $result = apply_filters('sb_theme_smtp_email_info', $result);
+        return $result;
     }
 
     public static function use_login_captcha() {
@@ -485,7 +510,7 @@ class SB_Option {
     }
 
     public static function get_ngan_luong_info() {
-        return SB_Option::get_checkout_by_base('ngan_luong');
+        return self::get_checkout_by_base('ngan_luong');
     }
 
     public static function get_checkout_by_base($base, $option_name = '') {
@@ -549,7 +574,7 @@ class SB_Option {
 		$base_id = 'vchat';
 
 		$key = 'code';
-		$value = SB_Option::get_option_by_base($base_option_name, $tab_base_option_name, $key);
+		$value = self::get_option_by_base($base_option_name, $tab_base_option_name, $key);
 		return $value;
 	}
 
@@ -731,14 +756,14 @@ class SB_Option {
         $base_option_name = 'sbt_socials';
         $tab_base_option_name = 'facebook';
         $key = 'app_id';
-        $value = SB_Option::get_option_by_base($base_option_name, $tab_base_option_name, $key);
+        $value = self::get_option_by_base($base_option_name, $tab_base_option_name, $key);
         return $value;
     }
 
     public static function get_facebook_app_id() {
         $value = self::get_socials_facebook_app_id();
         if(empty($value)) {
-            $facebook = SB_Option::get_social_login_app('facebook');
+            $facebook = self::get_social_login_app('facebook');
             $value = isset($facebook['app_id']) ? $facebook['app_id'] : '';
         }
         return $value;

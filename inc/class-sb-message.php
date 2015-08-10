@@ -55,22 +55,34 @@ class SB_Message {
 	}
 
 	public static function get_created_by() {
-		$text = __('Được tạo bởi %s.', 'sb-theme');
+		$text = __('Created by %s.', 'sb-theme');
+        if('vi' == SB_Core::get_language()) {
+            $text = 'Được tạo bởi %s.';
+        }
 		return apply_filters('sb_theme_created_by_text', $text);
 	}
 
 	public static function get_ask_question_via_email() {
-		$text = __('Nếu bạn có bất kỳ câu hỏi nào, xin vui lòng gửi thư về địa chỉ: %s', 'sb-theme');
+		$text = __('If you have any questions, please send mail to: %s', 'sb-theme');
+        if('vi' == SB_Core::get_language()) {
+            $text = 'Nếu bạn có bất kỳ câu hỏi nào, xin vui lòng gửi thư về địa chỉ: %s';
+        }
 		return apply_filters('sb_theme_ask_question_via_email_text', $text);
 	}
 
 	public static function get_save_changes() {
-		$text = __('Lưu thiết lập', 'sb-theme');
+		$text = __('Save changes', 'sb-theme');
+        if('vi' == SB_Core::get_language()) {
+            $text = 'Lưu thiết lập';
+        }
 		return apply_filters('sb_theme_save_changes_text', $text);
 	}
 
 	public static function get_reset() {
-		$text = __('Khôi phục mặc định', 'sb-theme');
+		$text = __('Reset', 'sb-theme');
+        if('vi' == SB_Core::get_language()) {
+            $text = 'Khôi phục mặc định';
+        }
 		return apply_filters('sb_theme_reset_text', $text);
 	}
 

@@ -1313,6 +1313,12 @@ class SB_Post {
         return $count;
     }
 
+    public static function the_rating() {
+        if(function_exists('the_ratings')) {
+            the_ratings();
+        }
+    }
+
     public static function build_transient_name_prefix($post_id) {
         return SB_Cache::build_post_transient_name($post_id);
     }

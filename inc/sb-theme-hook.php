@@ -1100,18 +1100,24 @@ if(SB_Core::is_theme_license_invalid()) add_action('init', 'sb_theme_alert_theme
  */
 function sb_theme_phpmailer_init_hook($phpmailer) {
     if(SB_Tool::use_smtp_email()) {
-        $sb_smtp = SB_Option::get_option_by_key(array('smtp_email'));
-        $host = isset($sb_smtp['smtp_host']) ? $sb_smtp['smtp_host'] : '';
-        $port = isset($sb_smtp['smtp_port']) ? $sb_smtp['smtp_port'] : '';
-        $username = isset($sb_smtp['username']) ? $sb_smtp['username'] : '';
-        $password = isset($sb_smtp['password']) ? $sb_smtp['password'] : '';
+        $sb_smtp = SB_Option::get_smtp_info();
+        $host = $sb_smtp['host'];
+        $port = $sb_smtp['port'];
+        $username = $sb_smtp['username'];
+        $password = $sb_smtp['password'];
         if(empty($host) || empty($port) || empty($username) || empty($password)) {
             return;
         }
-        $sb_smtp = SB_Option::get_option_by_key(array('smtp_email'));
         $secure_type = '';
         if(isset($sb_smtp['encryption']) && 'none' != $sb_smtp['encryption']) {
             $secure_type = $sb_smtp['encryption'];
+        }
+        $from = $sb_smtp['from'];
+        $from_name = $sb_smtp['from_name'];
+        if(!empty($from_name) && !empty($from)) {
+            $phpmailer->setFrom($from, $from_name);
+        } elseif(!empty($from)) {
+            $phpmailer->setFrom($from);
         }
         $phpmailer->isSMTP();
         $phpmailer->Host = $host;
@@ -1476,8 +1482,11 @@ function sb_theme_mail_from_name( $name ) {
 	if('wordpress' == strtolower($name)) {
 		$name = get_bloginfo( 'name' );
 	}
-    if(empty($name) && SB_Tool::use_smtp_email()) {
-        $name = SB_Option::get_option_by_key(array('smtp_mail', 'from_name'));
+    if(SB_Tool::use_smtp_email()) {
+        $from_name = SB_Option::get_option_by_key(array('smtp_email', 'from_name'));
+        if(!empty($from_name)) {
+            $name = $from_name;
+        }
     }
 	$name = apply_filters('sb_theme_mail_from_name', $name);
 	return $name;
@@ -1488,8 +1497,11 @@ add_filter( 'wp_mail_from_name', 'sb_theme_mail_from_name' );
  * Lọc địa chỉ email người gửi mail
  */
 function sb_theme_mail_from_filter($email) {
-    if(empty($email) && SB_Tool::use_smtp_email()) {
-        $email = SB_Option::get_option_by_key(array('smtp_mail', 'from_email'));
+    if(SB_Tool::use_smtp_email()) {
+        $from_email = SB_Option::get_option_by_key(array('smtp_email', 'from_email'));
+        if(!empty($from_email)) {
+            $email = $from_email;
+        }
     }
     $email = apply_filters('sb_theme_mail_from', $email);
     return $email;
