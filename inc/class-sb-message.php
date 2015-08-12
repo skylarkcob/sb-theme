@@ -8,7 +8,7 @@ class SB_Message {
     }
 
     public static function get_confirm_delete_text() {
-        $text = __('Are you sure you want to delete?', 'sb-theme');
+        $text = ('vi' == SB_Core::get_language()) ? 'Bạn có chắc là muốn xóa không?' : __('Are you sure you want to delete?', 'sb-theme');
         return apply_filters('sb_theme_confirm_delete_text', $text);
     }
 
@@ -127,19 +127,19 @@ class SB_Message {
 	}
 
     public static function get_category() {
-        $text = __('Chuyên mục', 'sb-theme');
+        $text = ('vi' == SB_Core::get_language()) ? 'Chuyên mục' : __('Category', 'sb-theme');
         $text = apply_filters('sb_theme_category_text', $text);
         return $text;
     }
 
     public static function get_comment() {
-        $text = __('Bình luận', 'sb-theme');
+        $text = ('vi' == SB_Core::get_language()) ? 'Bình luận' : __('Comments', 'sb-theme');
         $text = apply_filters('sb_theme_comment_text', $text);
         return $text;
     }
 
     public static function get_posts_by() {
-        $text = __('Bài viết bởi %s', 'sb-theme');
+        $text = ('vi' == SB_Core::get_language()) ? 'Bài viết bởi %s' : __('All posts by %s', 'sb-theme');
         $text = apply_filters('sb_theme_post_by_person_text', $text);
         return $text;
     }

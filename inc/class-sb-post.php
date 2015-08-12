@@ -130,6 +130,11 @@ class SB_Post {
         return $child_pages;
     }
 
+    public static function is_page_has_children($page_id) {
+        $pages = self::get_page_children($page_id);
+        return $pages;
+    }
+
     public static function go_to_child_page_if_empty_content() {
         if(is_page()) {
             $post_id = get_the_ID();
@@ -452,6 +457,18 @@ class SB_Post {
             }
         }
         return $result;
+    }
+
+    public static function has_tag($post = null, $tag = '') {
+        return has_tag($tag, $post);
+    }
+
+    public static function has_term($taxonomy, $post = null, $term = '') {
+        return has_term($term, $taxonomy, $post);
+    }
+
+    public static function has_category($post = null, $category = '') {
+        return has_category($category, $post);
     }
 
     public static function get_thumbnail_url($args = array()) {
@@ -1132,6 +1149,21 @@ class SB_Post {
         return get_page_by_path($slug, OBJECT, $post_type);
     }
 
+    public static function get_parents($post_id) {
+        $parents = get_post_ancestors($post_id);
+        $parents = array_reverse($parents);
+        return $parents;
+    }
+
+    public static function get_first_parent($post_id) {
+        $parents = self::get_parents($post_id);
+        $result = null;
+        if(SB_PHP::is_array_has_value($parents)) {
+            $result = get_post(array_shift($parents));
+        }
+        return $result;
+    }
+
     public static function get_page_by_slug($page_slug) {
         return self::get_by_slug($page_slug, 'page');
     }
@@ -1351,9 +1383,17 @@ class SB_Post {
 
     public static function get_term_list_html($post_id, $taxonomy, $before = '', $sep = ', ', $after = '') {
         $transient_name = SB_Cache::build_post_term_list_transient_name($post_id, $taxonomy);
+        $term_label = ('vi' == SB_Core::get_language()) ? SB_Message::get_category() : __('Filed under', 'sb-theme');
+        $term_label = apply_filters('sb_theme_term_list_label', $term_label);
         if(!SB_Cache::enabled() || false === ($term_list = get_transient($transient_name))) {
-            $before = '<span class="cat-links entry-terms ' . $taxonomy . '" itemprop="articleSection"><span class="entry-utility-prep">' . SB_Message::get_category() . ': </span>';
-            $after = '</span>';
+            if(empty($before)) {
+                $before = '<span class="cat-links entry-terms ' . $taxonomy . '" itemprop="articleSection"><span class="entry-utility-prep">' . $term_label . ': </span>';
+            }
+            if(empty($after)) {
+                $after = '</span>';
+            } else {
+                $after = '</span>' . $after;
+            }
             $term_list = get_the_term_list($post_id, $taxonomy, $before, ', ', $after);
             if(SB_Cache::enabled() && !is_wp_error($term_list)) {
                 set_transient($transient_name, $term_list, 4 * WEEK_IN_SECONDS);

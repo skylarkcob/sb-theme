@@ -38,8 +38,10 @@ class SB_Paginate {
     }
 
     public static function build($args = array()) {
+        $lang = SB_Core::get_language();
         $options = get_option('sb_options');
-        $default_label = isset($options['paginate']['label']) ? $options['paginate']['label'] : __('Trang', 'sb-theme');
+        $label_text = ('vi' == $lang) ? 'Trang' : __('Pages', 'sb-theme');
+        $default_label = isset($options['paginate']['label']) ? $options['paginate']['label'] : $label_text;
         $default_previous = isset($options['paginate']['previous_text']) ? $options['paginate']['previous_text'] : '&laquo;';
         $default_next = isset($options['paginate']['next_text']) ? $options['paginate']['next_text'] : '&raquo;';
         $label = isset($args['label']) ? $args['label'] : $default_label;

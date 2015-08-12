@@ -2,10 +2,12 @@
 defined('ABSPATH') or die('Please do not pip me!');
 
 class SB_Statistics_Widget extends WP_Widget {
+    private $lang;
     public function __construct() {
+        $this->lang = SB_Core::get_language();
         parent::__construct('sb_statistics_widget', 'SB Statistics', array(
-            'classname'   => 'widget_sb_statistics widget-sb-statistics',
-            'description' => __('Visitor counter.', 'sb-theme'),
+            'classname'   => 'widget_sb_statistics widget-sb-statistics sb-statistics-widget',
+            'description' => ('vi' == $this->lang) ? 'Thống kê truy cập.' : __('Visitor counter.', 'sb-theme'),
         ));
     }
 

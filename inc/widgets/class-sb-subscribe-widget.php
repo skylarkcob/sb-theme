@@ -2,11 +2,13 @@
 defined('ABSPATH') or die('Please do not pip me!');
 
 class SB_Subscribe_Widget extends WP_Widget {
+	private $lang;
 	public function __construct() {
+		$this->lang = SB_Core::get_language();
 		parent::__construct('sb_subscribe_widget', 'SB Subscribe',
 			array(
-				'classname' => 'widget_sb_subscribe widget-sb-subscribe',
-				'description' => __('Widget đăng ký nhận tin.', 'sb-theme' ),
+				'classname' => 'widget_sb_subscribe widget-sb-subscribe sb-subscribe-widget',
+				'description' => ('vi' == $this->lang) ? 'Widget đăng ký nhận tin.' : __('Feedburner subscribe box.', 'sb-theme' ),
 			),
 			array(
 				'width' => 400
@@ -43,7 +45,7 @@ class SB_Subscribe_Widget extends WP_Widget {
 			'id' => $this->get_field_id('account'),
 			'name' => $this->get_field_name('account'),
 			'value' => $account,
-			'label' => __('Tài khoản Feedburner:', 'sb-theme')
+			'label' => ('vi' == $this->lang) ? 'Tài khoản Feedburner:' : __('Feedburner account:', 'sb-theme')
 		);
 		SB_Widget_Field::text($args);
 

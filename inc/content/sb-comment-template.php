@@ -4,6 +4,7 @@ defined('ABSPATH') or die('Please do not pip me!');
 if(post_password_required()) {
     return;
 }
+$lang = SB_Core::get_language();
 $post_id = $GLOBALS['post']->ID;
 if(!function_exists('sb_comment_callback')) {
     function sb_comment_callback($comment, $args, $depth) {
@@ -79,11 +80,14 @@ if(!function_exists('sb_comment_callback')) {
                 <?php
                 $int_count = SB_Post::get_comment_number($post_id);
                 $comment_title = sprintf(_n('1 bình luận', '%1$s bình luận', $int_count, 'sb-theme' ), number_format_i18n($int_count));
+                if('vi' != $lang) {
+                    $comment_title = sprintf(_nx('1 comment', '%1$s comments', $int_count, 'sb-theme' ), number_format_i18n($int_count));
+                }
                 $comment_title = apply_filters('sb_theme_comment_title', $comment_title, $int_count);
                 echo $comment_title;
                 ?>
             </span>
-            <span class="yours"><a href="<?php the_permalink(); ?>#leaveyourcomment"><?php _e('Thêm bình luận', 'sb-theme'); ?></a></span>
+            <span class="yours"><a href="<?php the_permalink(); ?>#leaveyourcomment"><?php echo ('vi' == $lang) ? 'Thêm bình luận' : __('Add your comment', 'sb-theme'); ?></a></span>
         </div>
         <?php sb_comment_navigation('above'); ?>
         <ol class="comment-list">
@@ -103,7 +107,7 @@ if(!function_exists('sb_comment_callback')) {
         <?php sb_comment_navigation('below'); ?>
     <?php endif; ?>
     <?php if(!sb_comment_allowed()) : ?>
-        <p class="no-comments"><?php _e('Bình luận đã được đóng.', 'sb-theme'); ?></p>
+        <p class="no-comments"><?php echo ('vi' == $lang) ? 'Bình luận đã được đóng.' : _e('Comments are closed.', 'sb-theme'); ?></p>
     <?php else : ?>
         <?php
         $user_can_post_comment = sb_user_can_post_comment();

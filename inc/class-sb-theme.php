@@ -542,6 +542,10 @@ class SB_Theme {
             echo '<div class="sb-breadcrumb breadcrumb bcn">';
             bcn_display();
             echo '</div>';
+        } else {
+            echo '<div class="sb-breadcrumb breadcrumb">';
+            SB_Core::the_breadcrumb();
+            echo '</div>';
         }
     }
 
@@ -1194,13 +1198,19 @@ class SB_Theme {
     }
 
     public static function the_feedburner_form($args = array()) {
+        $lang = SB_Core::get_language();
+        $placeholder_text = ('vi' == $lang) ? 'Nhập địa chỉ email của bạn' : __('Enter your email address', 'sb-theme');
+        $placeholder_text .= esc_html(SB_THEME_THREE_DOT);
+        $placeholder_text = apply_filters('sb_theme_enter_email_address_placeholder_text', $placeholder_text);
+        $subscribe_text = ('vi' == $lang) ? 'Đăng ký' : __('Subscribe', 'sb-theme');
+        $subscribe_text = apply_filters('sb_theme_subscribe_text', $subscribe_text);
         $name = isset($args['name']) ? $args['name'] : '';
         if(empty($name)) {
             $name = isset($args['account']) ? $args['account'] : '';
         }
         $locale = isset($args['locale']) ? $args['locale'] : 'en_US';
-        $submit_button_text = isset($args['submit_button_text']) ? $args['submit_button_text'] : __('Đăng ký', 'sb-theme');
-        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : __('Nhập địa chỉ email của bạn', 'sb-theme') . esc_html(SB_THEME_THREE_DOT);
+        $submit_button_text = isset($args['submit_button_text']) ? $args['submit_button_text'] : $subscribe_text;
+        $placeholder = isset($args['placeholder']) ? $args['placeholder'] :  $placeholder_text;
         ?>
         <form class="feedburner-form" action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open('https://feedburner.google.com/fb/a/mailverify?uri=<?php echo $name; ?>', 'popupwindow', 'scrollbars=yes,width=550,height=520');return true">
             <?php do_action('sb_theme_feedburner_before'); ?>

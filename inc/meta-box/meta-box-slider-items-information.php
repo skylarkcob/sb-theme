@@ -3,6 +3,7 @@ defined('ABSPATH') or die('Please do not pip me!');
 
 global $post;
 $post_id = $post->ID;
+$lang = SB_Core::get_language();
 SB_Theme::the_meta_box_nonce();
 
 SB_Theme::meta_box_before('slider-items');
@@ -34,23 +35,25 @@ $max_item_id = absint(SB_PHP::get_max_number($item_order));
             if(empty($image_url)) {
                 continue;
             }
+            $title_text = ('vi' == SB_Core::get_language()) ? 'Tiêu đề' : __('Title', 'sb-theme');
+            $link_text = ('vi' == SB_Core::get_language()) ? 'Đường dẫn đến trang đích' : __('The link for item', 'sb-theme');
             ?>
             <li data-item="<?php echo $item_id; ?>">
                 <img class="item-image" src="<?php echo $image_url; ?>">
                 <div class="item-info">
-                    <input type="text" name="sbmb_slider_items[items][<?php echo $item_id; ?>][title]" class="item-title" value="<?php echo $title; ?>" placeholder="Tiêu đề">
-                    <input type="url" name="sbmb_slider_items[items][<?php echo $item_id; ?>][link]" class="item-link" value="<?php echo $link; ?>" placeholder="Đường dẫn đến trang đích">
+                    <input type="text" name="sbmb_slider_items[items][<?php echo $item_id; ?>][title]" class="item-title" value="<?php echo $title; ?>" placeholder="<?php echo $title_text; ?>">
+                    <input type="url" name="sbmb_slider_items[items][<?php echo $item_id; ?>][link]" class="item-link" value="<?php echo $link; ?>" placeholder="<?php echo $link_text; ?>">
                     <textarea name="sbmb_slider_items[items][<?php echo $item_id; ?>][description]" class="item-description"><?php echo $description; ?></textarea>
                 </div>
                 <input type="hidden" class="item-image-url" value="<?php echo $image_url; ?>" name="sbmb_slider_items[items][<?php echo $item_id; ?>][image_url]">
                 <input type="hidden" class="item-image-id" value="<?php echo $image_id; ?>" name="sbmb_slider_items[items][<?php echo $item_id; ?>][image_id]">
-                <span class="item-icon icon-delete icon-sortable-ui"></span>
+                <span class="item-icon icon-delete icon-sortable-ui" data-confirm-message="<?php echo SB_Message::get_confirm_delete_text(); ?>"></span>
                 <span class="item-icon icon-drag icon-sortable-ui"></span>
             </li>
         <?php endforeach; ?>
     </ul>
     <input type="hidden" name="sbmb_slider_items[order]" value="<?php echo implode(',', $item_order); ?>" class="item-order" autocomplete="off">
 </div>
-<?php SB_Field::button(array('text' => __('Thêm', 'sb-theme'), 'field_class' => 'btn-add-item')); ?>
 <?php
+SB_Field::button(array('text' => ('vi' == $lang) ? 'Thêm mới' : __('Add new', 'sb-theme'), 'field_class' => 'btn-add-item'));
 SB_Theme::meta_box_after();

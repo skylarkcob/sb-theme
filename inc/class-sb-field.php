@@ -334,6 +334,7 @@ class SB_Field {
         $name_height = isset($args['name_height']) ? $args['name_height'] : '';
         $value = isset($args['value']) ? $args['value'] : array();
         $field_class = SB_PHP::add_string_with_space_before($field_class, 'sb-number image-size');
+        $container_class = SB_PHP::add_string_with_space_before($container_class, 'sb-size-field');
         $before = isset($args['before']) ? $args['before'] : '<p class="' . esc_attr($container_class) . '">';
         $after = isset($args['after']) ? $args['after'] : '';
         $sep = isset($args['sep']) ? $args['sep'] : '<span>x</span>';
@@ -695,7 +696,8 @@ class SB_Field {
 
     public static function captcha($args = array()) {
         SB_Core::the_captcha($args);
-        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : __('Nhập mã bảo mật', 'sb-theme');
+        $placeholder_text = ('vi' == SB_Core::get_language()) ? 'Nhập mã bảo mật' : __('Enter captcha code', 'sb-theme');
+        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : $placeholder_text;
         $args['placeholder'] = $placeholder;
         $args['before'] = '';
         $field_class = isset($args['field_class']) ? $args['field_class'] : '';

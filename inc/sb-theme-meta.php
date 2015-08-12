@@ -1,6 +1,8 @@
 <?php
 defined('ABSPATH') or die('Please do not pip me!');
 
+$lang = SB_Core::get_language();
+
 /*
  * Tạo thumbnail cho chuyên mục
  */
@@ -623,12 +625,33 @@ $args = array(
     'id' => 'sb_theme_slider_information',
     'callback' => 'sb_theme_slider_information_callback',
     'post_type' => SB_Core::get_post_type_slider_name(),
-    'title' => __('Thông tin slider', 'sb-theme')
+    'title' => ('vi' == $lang) ? 'Thông tin slider' : __('Slider information', 'sb-theme')
 );
 $sb_theme_meta = new SB_Meta_Box($args);
 
 function sb_theme_slider_information_callback() {
     SB_Theme::get_meta_box('meta-box-slider-information');
+}
+
+// Thông tin các item trong slider
+$fields = array(
+    array(
+        'name' => 'slider_items',
+        'type' => 'array'
+    )
+);
+
+$args = array(
+    'fields' => $fields,
+    'id' => 'sb_theme_slider_items_information',
+    'callback' => 'sb_theme_slider_items_information_callback',
+    'post_type' => SB_Core::get_post_type_slider_name(),
+    'title' => ('vi' == $lang) ? 'Các đối tượng hiển thị trên slider' : __('Slider items', 'sb-theme')
+);
+$sb_theme_meta = new SB_Meta_Box($args);
+
+function sb_theme_slider_items_information_callback() {
+    SB_Theme::get_meta_box('meta-box-slider-items-information');
 }
 
 /*
@@ -812,25 +835,4 @@ function sb_theme_order_cart_information_callback() {
     SB_Cart::the_cart_readonly(array('cart' => SB_Post::get_sb_meta($post_id, 'cart')));
 
     SB_Theme::meta_box_after();
-}
-
-// Thông tin các item trong slider
-$fields = array(
-    array(
-        'name' => 'slider_items',
-        'type' => 'array'
-    )
-);
-
-$args = array(
-    'fields' => $fields,
-    'id' => 'sb_theme_slider_items_information',
-    'callback' => 'sb_theme_slider_items_information_callback',
-    'post_type' => SB_Core::get_post_type_slider_name(),
-    'title' => __('Các đối tượng hiển thị trên slider', 'sb-theme')
-);
-$sb_theme_meta = new SB_Meta_Box($args);
-
-function sb_theme_slider_items_information_callback() {
-    SB_Theme::get_meta_box('meta-box-slider-items-information');
 }

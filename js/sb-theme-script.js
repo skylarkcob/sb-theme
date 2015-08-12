@@ -465,6 +465,19 @@ sb_theme.force_update_lazy_image = function(image) {
         });
     })();
 
+    // Video player
+    (function(){
+        $('.video-container.show-thumbnail').on('click', function(e){
+            e.preventDefault();
+            var that = $(this);
+            if(!that.hasClass('playing')) {
+                that.find('.video-thumbnail').remove();
+                that.addClass('playing');
+                that.prepend(that.attr('data-player'));
+            }
+        });
+    })();
+
     // Float ads
     (function(){
         var content_container = $('.sb-site'),

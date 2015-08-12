@@ -2,11 +2,13 @@
 defined('ABSPATH') or die('Please do not pip me!');
 
 class SB_Banner_Widget extends WP_Widget {
+	private $lang;
 	public function __construct() {
+		$this->lang = SB_Core::get_language();
 		parent::__construct('sb_banner_widget', 'SB Banner',
             array(
-                'classname' => 'widget_sb_banner',
-                'description' => __('Hiển thị hình ảnh trên sidebar.', 'sb-theme' ),
+                'classname' => 'widget_sb_banner sb-banner-widget',
+                'description' => ('vi' == $this->lang) ? 'Hiển thị hình ảnh trên sidebar.' : __('Display banner on sidebar.', 'sb-theme' ),
             ),
             array(
                 'width' => 400

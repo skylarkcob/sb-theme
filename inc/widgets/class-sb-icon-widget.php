@@ -2,11 +2,13 @@
 defined('ABSPATH') or die('Please do not pip me!');
 
 class SB_Icon_Widget extends WP_Widget {
+    private $lang;
     public function __construct() {
+        $this->lang = SB_Core::get_language();
         parent::__construct('sb_icon_widget', 'SB Icon',
             array(
-                'classname' => 'widget_sb_icon widget-sb-icon',
-                'description' => __('Widget hỗ trợ hiển thị icon.', 'sb-theme' ),
+                'classname' => 'widget_sb_icon widget-sb-icon sb-icon-widget',
+                'description' => ('vi' == $this->lang) ? 'Widget hỗ trợ hiển thị icon.' : __('Widget with icon.', 'sb-theme' ),
             ),
             array(
                 'width' => 400

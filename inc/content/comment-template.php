@@ -4,8 +4,9 @@ defined('ABSPATH') or die('Please do not pip me!');
 if(post_password_required()) {
     return;
 }
-
+$lang = SB_Core::get_language();
 function sb_theme_custom_comment_nav() {
+    $lang = SB_Core::get_language();
     if(get_comment_pages_count() > 1 && get_option('page_comments')) : ?>
         <nav class="navigation comment-navigation" role="navigation">
             <h2 class="screen-reader-text"><?php _e('Phân trang', 'sb-theme'); ?></h2>

@@ -22,6 +22,76 @@ class SB_Video {
         return $data;
     }
 
+    public static function get_vimeo_data($id) {
+        $transient_name = 'sb_theme_vimeo_' . $id . '_data';
+        if(false === ($data = get_transient($transient_name))) {
+            $url = 'http://vimeo.com/api/v2/video/' . $id . '.php';
+            $data = unserialize(file_get_contents($url));
+            $data = isset($data[0]) ? $data[0] : array();
+            set_transient($transient_name, $data, DAY_IN_SECONDS);
+        }
+        return $data;
+    }
+
+    public static function get_vimeo_thumbnails($id) {
+        $data = self::get_vimeo_data($id);
+        $result = array(
+            'thumbnail_small' => isset($data['thumbnail_small']) ? $data['thumbnail_small'] : '',
+            'thumbnail_medium' => isset($data['thumbnail_medium']) ? $data['thumbnail_medium'] : '',
+            'thumbnail_large' => isset($data['thumbnail_large']) ? $data['thumbnail_large'] : ''
+        );
+        return $result;
+    }
+
+    public static function get_thumbnail_vimeo($id, $type = 'thumbnail_large') {
+        $thumbnails = self::get_vimeo_thumbnails($id);
+        return $thumbnails[$type];
+    }
+
+    public static function vimeo_player($args = array()) {
+        $id = isset($args['id']) ? $args['id'] : '';
+        if(empty($id)) {
+            return;
+        }
+        $autoplay = isset($args['autoplay']) ? $args['autoplay'] : false;
+        $autoplay = (bool)$autoplay;
+
+        $color = isset($args['color']) ? $args['color'] : '90d5ec';
+        $thumbnail = isset($args['thumbnail']) ? $args['thumbnail'] : true;
+        $thumbnail = (bool)$thumbnail;
+        $width = isset($args['width']) ? $args['width'] : '';
+        $width = absint($width);
+        $height = isset($args['height']) ? $args['height'] : '';
+        $height = absint($height);
+        if($thumbnail) {
+            $autoplay = 1;
+        }
+        $autoplay = absint($autoplay);
+        $style = '';
+        if($width > 0) {
+            $style .= 'width: ' . $width . 'px;';
+        } else {
+            $style .= 'width: 100%;';
+        }
+        if($height > 0) {
+            $style .= 'height: ' . $height . 'px;';
+        }
+        $container_style = $style;
+        $container_style .= 'background-color: #000;';
+        $iframe = '<iframe class="player" src="//player.vimeo.com/video/' . $id . '?autoplay=' . $autoplay . '&amp;color=' . $color . '" style="' . $style . '"></iframe>';
+        if($thumbnail) {
+            $thumbnail_url = self::get_thumbnail_vimeo($id);
+            ?>
+            <div class="vimeo-video video-container show-thumbnail" data-player="<?php echo esc_html($iframe); ?>" style="<?php echo $container_style; ?>">
+                <img class="video-thumbnail" src="<?php echo $thumbnail_url; ?>" alt="">
+                <img class="loading" src="<?php echo SB_Theme::get_image_url('loading-youtube-dark.gif'); ?>" alt="">
+            </div>
+            <?php
+        } else {
+            echo $iframe;
+        }
+    }
+
     public static function the_thumbnail_youtube($args = array()) {
         $post_id = isset($args['post_id']) ? $args['post_id'] : get_the_ID();
         $post = get_post($post_id);

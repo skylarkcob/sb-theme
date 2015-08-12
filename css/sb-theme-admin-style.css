@@ -1529,6 +1529,15 @@ div.sb-post-meta-row .image-preview {
     margin-bottom: 2px;
 }
 
+.widget .sb-size-field label {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.widget .sb-size-field > span {
+    margin: 0 5px;
+}
+
 .options-discussion-php .avatar-settings img.avatar {
     background-color: #f5f5f5;
     border: 1px solid #ebebeb;

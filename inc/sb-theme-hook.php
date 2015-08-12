@@ -7,6 +7,8 @@ defined('ABSPATH') or die('Please do not pip me!');
  * @package SB Theme
  */
 
+$lang = SB_Core::get_language();
+
 do_action('sb_theme_hook_before');
 
 /*
@@ -499,6 +501,7 @@ add_action('after_setup_theme', 'sb_theme_after_setup_theme_hook');
  * Khởi tạo các sidebar và widget
  */
 function sb_theme_widgets_init_hook() {
+    $lang = SB_Core::get_language();
     do_action('sb_theme_widgets_init_before');
     register_widget('SB_Banner_Widget');
     register_widget('SB_Post_Widget');
@@ -513,9 +516,15 @@ function sb_theme_widgets_init_hook() {
     if(SB_Option::statistics_enabled() && (bool)SB_Option::get_statistics_switch('visitor_statistics')) {
         register_widget('SB_Statistics_Widget');
     }
-    sb_theme_register_sidebar('primary', __('Sidebar chính', 'sb-theme'), __('Sidebar chính trên website của bạn.', 'sb-theme'));
-    sb_theme_register_sidebar('secondary', __('Sidebar phụ', 'sb-theme'), __('Sidebar phụ trên website của bạn.', 'sb-theme'));
-    sb_theme_register_sidebar('footer', __('Sidebar dưới chân trang', 'sb-theme'), __('Sidebar chứa các widget dưới chân trang web.', 'sb-theme'));
+    $title = ('vi' == $lang) ? 'Sidebar chính' : __('Primary sidebar', 'sb-theme');
+    $description = ('vi' == $lang) ? 'Sidebar chính trên website của bạn.' : __('Primary sidebar on your blog.', 'sb-theme');
+    sb_theme_register_sidebar('primary', $title, $description);
+    $title = ('vi' == $lang) ? 'Sidebar phụ' : __('Secondary sidebar', 'sb-theme');
+    $description = ('vi' == $lang) ? 'Sidebar phụ trên website của bạn.' : __('Secondary sidebar on your blog.', 'sb-theme');
+    sb_theme_register_sidebar('secondary', $title, $description);
+    $title = ('vi' == $lang) ? 'Sidebar dưới chân trang' : __('Footer widget area', 'sb-theme');
+    $description = ('vi' == $lang) ? 'Sidebar chứa các widget dưới chân trang web.' : __('The widget area contains footer widgets.', 'sb-theme');
+    sb_theme_register_sidebar('footer', $title, $description);
     do_action('sb_theme_widgets_init');
     do_action('sb_theme_widgets_init_after');
 }
@@ -937,7 +946,10 @@ add_action('edit_user_profile_update', 'sb_login_page_save_profile');
  * Tạo tabber sidebar
  */
 function sb_tab_widget_load_sidebar() {
-	SB_Core::register_sidebar('sb-tabber', 'Tabber Widgets', __( 'Hiển thị các widget dưới dạng tab.', 'sb-theme' ));
+    $lang = SB_Core::get_language();
+    $title = ('vi' == $lang) ? 'Tabber sidebar' : __('Tabber sidebar', 'sb-theme');
+    $description = ('vi' == $lang) ? 'Hiển thị các widget dưới dạng tab.' : __('Sidebar contains widgets to display as tabber.', 'sb-theme');
+	SB_Core::register_sidebar('sb-tabber', $title, $description);
     $list_sidebars = sb_tab_widget_get_sidebars();
     foreach($list_sidebars as $sidebar) {
         $sidebar_id = $sidebar['id'];
@@ -1370,6 +1382,7 @@ add_filter( 'shake_error_codes', 'sb_theme_login_shake_error' );
  * Lọc khi người dùng đăng nhập
  */
 function sb_theme_authenticate_user($user, $username, $password) {
+    $lang = SB_Core::get_language();
     if(!isset($_POST['wp-submit'])) {
         remove_filter('authenticate', 'sb_theme_authenticate_user', 10, 3);
         add_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
@@ -1388,7 +1401,7 @@ function sb_theme_authenticate_user($user, $username, $password) {
     if(!SB_User::is($user)) {
         $userdata = get_user_by('login', $username);
         if(!$userdata) {
-            return new WP_Error('authentication_failed', __('Tài khoản hoặc mật khẩu không đúng.', 'sb-theme'));
+            return new WP_Error('authentication_failed', ('vi' == $lang) ? 'Tài khoản hoặc mật khẩu không đúng.' : __('Account or password is not correct.', 'sb-theme'));
         } else {
             $userdata = apply_filters('wp_authenticate_user', $userdata, $password);
             if(is_wp_error($userdata)) {
@@ -1650,7 +1663,7 @@ function sb_theme_login_message_hook($message) {
 add_filter('login_message', 'sb_theme_login_message_hook');
 
 function sb_theme_login_message_vietnamese($message) {
-    if(SB_Option::get_default_language() == 'vi') {
+    if(SB_Option::get_default_language() == 'vi' && 'vi' == SB_Core::get_language()) {
         $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
         switch($action) {
             case 'register':
@@ -1669,7 +1682,7 @@ function sb_theme_custom_login_error($error) {
     if(!isset($_POST['wp-submit'])) {
         return $error;
     }
-    if('vi' == SB_Option::get_default_language()) {
+    if('vi' == SB_Option::get_default_language() && 'vi' == SB_Core::get_language()) {
         if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'lostpassword') {
             $error = '<strong>' . __('Lỗi:', 'sb-theme') . '</strong> ' . __('Xin vui lòng nhập chính xác địa chỉ email.', 'sb-theme');
         } elseif(isset($_REQUEST['registration']) && $_REQUEST['registration'] == 'disabled') {
@@ -1728,7 +1741,7 @@ function sb_theme_change_login_form_text( $translation, $text ) {
     }
     return $translation;
 }
-add_filter( 'gettext', 'sb_theme_change_login_form_text', 10, 2 );
+if('vi' == $lang) add_filter('gettext', 'sb_theme_change_login_form_text', 10, 2);
 
 function sb_theme_change_woocommerce_text($translation, $text) {
     if(SB_Theme::support('woocommerce') && (!is_admin() || (is_admin() && defined('DOING_AJAX')))) {
@@ -2040,7 +2053,7 @@ function sb_theme_change_woocommerce_text($translation, $text) {
     }
     return $translation;
 }
-add_filter('gettext', 'sb_theme_change_woocommerce_text', 10, 2);
+if('vi' == $lang) add_filter('gettext', 'sb_theme_change_woocommerce_text', 10, 2);
 
 function sb_theme_change_woocommerce_text_with_context($translations, $text, $context, $domain = 'default') {
     if(SB_Theme::support('woocommerce') && (!is_admin() || (is_admin() && defined('DOING_AJAX')))) {
@@ -2067,7 +2080,7 @@ function sb_theme_change_woocommerce_text_with_context($translations, $text, $co
     }
     return $translations;
 }
-add_filter('gettext_with_context', 'sb_theme_change_woocommerce_text_with_context', 10, 3, 2);
+if('vi' == $lang) add_filter('gettext_with_context', 'sb_theme_change_woocommerce_text_with_context', 10, 3, 2);
 
 function sb_theme_change_woocommerce_ngettext($translation, $single, $plural, $number, $domain = 'default') {
     if(SB_Theme::support('woocommerce') && (!is_admin() || (is_admin() && defined('DOING_AJAX')))) {
@@ -2090,7 +2103,7 @@ function sb_theme_change_woocommerce_ngettext($translation, $single, $plural, $n
     }
     return $translation;
 }
-add_filter('ngettext', 'sb_theme_change_woocommerce_ngettext', 10, 4);
+if('vi' == $lang) add_filter('ngettext', 'sb_theme_change_woocommerce_ngettext', 10, 4);
 
 function sb_theme_change_woocommerce_template_path($template, $template_name, $template_path) {
     $woocommerce_template_path  = trailingslashit(SB_THEME_CONTENT_WOOCOMMERCE_PATH);

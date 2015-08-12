@@ -5,7 +5,7 @@ class SB_Post_Widget extends WP_Widget {
 	public $types = array();
 	private $order_by = array();
 	private $order_type = array();
-	
+	private $lang;
 	private $default_number = 5;
 	private $excerpt_length = 75;
 	private $thumbnail_size = array(64, 64);
@@ -19,12 +19,13 @@ class SB_Post_Widget extends WP_Widget {
     private $post_ranges = array();
 
 	public function __construct() {
+        $this->lang = SB_Core::get_language();
 		$this->init();
 	
 		parent::__construct( 'sb_post_widget', 'SB Post',
             array(
-                'classname'   => 'widget_sb_post',
-                'description' => __( 'Show custom post on sidebar.', 'sb-theme' )
+                'classname'   => 'widget_sb_post sb-post-widget',
+                'description' => ('vi' == $this->lang) ? 'Danh sách bài viết trên sidebar.' : __('Show list posts on sidebar.', 'sb-theme')
             ),
             array(
                 'width' => 400

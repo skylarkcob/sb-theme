@@ -505,9 +505,13 @@ function sb_comment_template() {
 
 function sb_comment_form_args() {
     global $user_identity;
+    $lang = SB_Core::get_language();
     $commenter = wp_get_current_commenter();
     $req = get_option( 'require_name_email' );
     $aria_req = ($req ? ' aria-required="true"' : '' );
+    $reply_title = ('vi' == $lang) ? 'Gửi bình luận' : __('Leave a reply', 'sb-theme');
+    $logged_in_as_text = ('vi' == $lang) ? sprintf('Bạn đang đăng nhập với tên tài khoản %s', sprintf(' <a href="%1$s">%2$s</a>. <a href="%3$s" title="%4$s">%5$s?</a>', admin_url( 'profile.php' ), esc_attr( $user_identity ), wp_logout_url(apply_filters('the_permalink', get_permalink( ) ) ), __('Thoát khỏi tài khoản này', 'sb-theme'), __('Thoát', 'sb-theme'))) : sprintf(__('Logged in as %s', 'sb-theme'), sprintf(' <a href="%1$s">%2$s</a>. <a href="%3$s" title="%4$s">%5$s?</a>', admin_url( 'profile.php' ), esc_attr( $user_identity ), wp_logout_url(apply_filters('the_permalink', get_permalink( ) ) ), __('Log out of this account', 'sb-theme'), __('Log out', 'sb-theme')));
+    $comment_notes_after_text = ('vi' == $lang) ? sprintf('Bạn có thể sử dụng những thẻ %1$s được liệt kê như sau: %2$s', '<abbr title="Ngôn ngữ đánh dấu siêu văn bản bằng thẻ">HTML</abbr>', ' <code>' . allowed_tags() . '</code>' ) : sprintf( __( 'You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes: %s' ), ' <code>' . allowed_tags() . '</code>' );
     $args = array(
         'fields' => apply_filters( 'comment_form_default_fields', array(
                 'author' => '<p class="comment-form-author name">' . '<label for="author">' . __( 'Tên', 'sb-theme' ) . '</label> ' . ( $req ? '<span class="required">*</span>' : '' ) . '<input id="author" placeholder="'.__('Họ và tên', 'sb-theme').' *" name="author" type="text" value="' . esc_attr( $commenter['comment_author'] ) . '" ' . $aria_req . ' class="sb-author-info"></p>',
@@ -517,11 +521,11 @@ function sb_comment_form_args() {
         ),
         'comment_field'			=> '<p class="comment-form-comment">' . '<label for="comment">' . __( 'Nội dung', 'sb-theme' ) . '</label>' . '<textarea id="comment" name="comment" placeholder="" aria-required="true" class="sb-comment-msg"></textarea></p>',
         'comment_notes_before'	=> '<p class="comment-notes before">' . __( 'Địa chỉ email của bạn sẽ được giữ bí mật.', 'sb-theme' ) . __( $req ? ' '.sprintf(__('Những mục được đánh dấu %s là bắt buộc.', 'sb-theme'), '(*)') : '' ) . '</p>',
-        'comment_notes_after'	=> '<p class="form-allowed-tags comment-notes after">' . sprintf( __( sprintf(__('Bạn có thể sử dụng những thẻ %1$s được liệt kê như sau: %2$s', 'sb-theme'), '<abbr title="'.__('Ngôn ngữ đánh dấu siêu văn bản bằng thẻ', 'sb-theme').'">HTML</abbr>', ' <code>' . allowed_tags() . '</code>' ), 'sb-theme')) . '</p>',
+        'comment_notes_after'	=> '<p class="form-allowed-tags comment-notes after">' . $comment_notes_after_text . '</p>',
         'must_log_in'			=> '<p class="must-log-in">' . sprintf(__( 'Bạn phải %s trước khi tiến hành gửi bình luận.', 'sb-theme' ), sprintf('<a href="%1$s">%2$s</a>', wp_login_url( apply_filters( 'the_permalink', get_permalink() ) ), __('đăng nhập', 'sb-theme')) ) . '</p>',
-        'logged_in_as'			=> '<p class="logged-in-as">' . sprintf(__('Bạn đang đăng nhập với tên tài khoản %s', 'sb-theme'), sprintf(' <a href="%1$s">%2$s</a>. <a href="%3$s" title="%4$s">%5$s?</a>', admin_url( 'profile.php' ), esc_attr( $user_identity ), wp_logout_url(apply_filters('the_permalink', get_permalink( ) ) ), __('Thoát', 'sb-theme'), __('Thoát', 'sb-theme'))). '</p>',
-        'title_reply'			=> '<a id="leaveyourcomment"></a><span class="comment-title">'.__('Gửi bình luận', 'sb-theme').'</span>',
-        'label_submit'			=> __('Gửi bình luận', 'sb-theme'),
+        'logged_in_as'			=> '<p class="logged-in-as">' . $logged_in_as_text . '</p>',
+        'title_reply'			=> '<a id="leaveyourcomment"></a><span class="comment-title">' . $reply_title . '</span>',
+        'label_submit'			=> ('vi' == $lang) ? 'Gửi bình luận' : __('Post comment', 'sb-theme'),
         'title_reply_to'		=>  __( 'Trả lời %s', 'sb-theme' ),
         'cancel_reply_link'		=> __('Hủy trả lời', 'sb-theme')
     );
@@ -1010,11 +1014,15 @@ function sb_theme_remove_special_char_on_url_script() {
 }
 
 function sb_theme_admin_confirm_publish_post() {
+    $text = 'Bạn có thật sự muốn đăng bài viết hay không?';
+    if('vi' != SB_Core::get_language()) {
+        $text = __('Are you sure you want to publish this post?', 'sb-theme');
+    }
     ?>
     <script type="text/javascript">
         (function($){
             $('input[name="publish"]').on('click', function(e){
-                if(!confirm('Bạn có thật sự muốn đăng bài viết hay không?')) {
+                if(!confirm('<?php echo $text; ?>')) {
                     if(!$.trim($('#title').val())) {
                         $('#title').focus();
                     }

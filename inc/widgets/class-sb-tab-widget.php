@@ -2,10 +2,12 @@
 defined('ABSPATH') or die('Please do not pip me!');
 
 class SB_Tab_Widget extends WP_Widget {
+	private $lang;
 	public function __construct() {
+		$this->lang = SB_Core::get_language();
 		parent::__construct( 'sb_tab_widget', 'SB Tab', array(
 			'classname'   => 'widget_sb_tab sb-tab-widget',
-			'description' => __('Hiển thị widget dưới dạng tab.', 'sb-theme'),
+			'description' => ('vi' == $this->lang) ? 'Hiển thị widget dưới dạng tab.' : __('Display widget as tabber.', 'sb-theme')
 		));
 	}
 		

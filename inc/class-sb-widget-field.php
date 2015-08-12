@@ -26,7 +26,7 @@ class SB_Widget_Field {
             'id' => $id,
             'name' => $name,
             'value' => $value,
-            'label' => __('Hiển thị tiêu đề?', 'sb-theme')
+            'label' => ('vi' == SB_Core::get_language()) ? 'Hiển thị tiêu đề?' : __('Show widget title?', 'sb-theme')
         );
         SB_Widget_Field::checkbox($args);
     }

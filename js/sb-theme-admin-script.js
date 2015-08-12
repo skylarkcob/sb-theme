@@ -875,7 +875,7 @@ var sb_ajax_loader,
                 slider_item_container = list_slider_items.parent(),
                 item_order = slider_item_container.find('.item-order'),
                 item_order_value = '';
-            if(confirm('Bạn có chắc là muốn xóa không?')) {
+            if(confirm(that.attr('data-confirm-message'))) {
                 slider_item.remove();
                 list_slider_items.find('li').each(function(index, el){
                     var li_item = $(el);

@@ -2,12 +2,13 @@
 defined('ABSPATH') or die('Please do not pip me!');
 
 class SB_Menu_Widget extends WP_Widget {
-
+    private $lang;
     public function __construct() {
+        $this->lang = SB_Core::get_language();
         parent::__construct('sb_menu_widget', 'SB Menu',
             array(
                 'classname' => 'widget_sb_menu sb-menu-widget',
-                'description' => __('Hiển thị menu trên sidebar.', 'sb-theme' ),
+                'description' => ('vi' == $this->lang) ? 'Hiển thị menu trên sidebar.' : __('Display menu on sidebar.', 'sb-theme' ),
             ),
             array(
                 'width' => 400

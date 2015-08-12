@@ -2,11 +2,13 @@
 defined('ABSPATH') or die('Please do not pip me!');
 
 class SB_Support_Widget extends WP_Widget {
+    private $lang;
     public function __construct() {
+        $this->lang = SB_Core::get_language();
         parent::__construct('sb_support_widget', 'SB Support',
             array(
                 'classname' => 'widget_sb_support sb-support-widget',
-                'description' => __('Thông tin hỗ trợ khách hàng.', 'sb-theme' ),
+                'description' => ('vi' == SB_Core::get_language()) ? 'Thông tin hỗ trợ khách hàng.' : __('Display support information on sidebar.', 'sb-theme' ),
             ),
             array(
                 'width' => 400
