@@ -349,6 +349,11 @@ var sb_ajax_loader,
             $('#sb-sortable-sidebar').sortable({
                 cancel: ':input, .ui-state-disabled, .sb-icon-delete',
                 placeholder: 'ui-state-highlight',
+                sort: function(event, ui) {
+                    var that = $(this),
+                        ui_state_highlight = that.find('.ui-state-highlight');
+                    ui_state_highlight.css({'height': ui.item.outerHeight()});
+                },
                 stop: function(event, ui) {
                     sb_theme_make_sb_option_unsaved_message($(ui.item));
                 }

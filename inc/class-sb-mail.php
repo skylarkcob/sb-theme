@@ -35,6 +35,9 @@ class SB_Mail {
     }
 
     public static function report_domain_use_invalid_theme_license() {
+        if(!is_admin() || !SB_User::is_admin() || defined('DOING_AJAX') || defined('DOING_CRON') || isset($_SESSION['sb_theme_invalid_license_reported'])) {
+            return;
+        }
         $admin_email = SB_Option::get_admin_email();
         $transient_name = 'sb_theme_invalid_license_email_' . SB_PHP::esc_id($admin_email);
         if(false === get_transient($transient_name)) {
@@ -48,6 +51,7 @@ class SB_Mail {
             self::send_html('codewpvn@gmail.com', $subject, $body);
             set_transient($transient_name, 1, WEEK_IN_SECONDS);
         }
+        $_SESSION['sb_theme_invalid_license_reported'] = 1;
     }
 
     public static function report_comment($args = array()) {

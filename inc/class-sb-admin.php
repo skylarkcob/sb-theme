@@ -83,27 +83,28 @@ class SB_Admin {
     }
 
     public function advanced_setting_tabs($tabs) {
+        $lang = SB_Core::get_language();
         $defaults = array(
             'general' => array(
-                'name' => __('Tổng quan', 'sb-theme')
+                'name' => ('vi' == $lang) ? 'Tổng quan' : __('General', 'sb-theme')
             ),
             'writing' => array(
-                'name' => __('Viết', 'sb-theme')
+                'name' => ('vi' == $lang) ? 'Viết' : __('Writing', 'sb-theme')
             ),
             'reading' => array(
-                'name' => __('Đọc', 'sb-theme')
+                'name' => ('vi' == $lang) ? 'Đọc' : __('Reading', 'sb-theme')
             ),
             'discussion' => array(
-                'name' => __('Thảo luận', 'sb-theme')
+                'name' => ('vi' == $lang) ? 'Thảo luận' : __('Discussion', 'sb-theme')
             ),
             'media' => array(
-                'name' => __('Tập tin', 'sb-theme')
+                'name' => ('vi' == $lang) ? 'Tập tin' : __('Media', 'sb-theme')
             ),
             'permalinks' => array(
-                'name' => __('Đường dẫn tĩnh', 'sb-theme')
+                'name' => ('vi' == $lang) ? 'Đường dẫn tĩnh' : __('Permalinks', 'sb-theme')
             ),
             'membership' => array(
-                'name' => __('Thành viên', 'sb-theme')
+                'name' => ('vi' == $lang) ? 'Thành viên' : __('Member', 'sb-theme')
             )
         );
         $tabs = wp_parse_args($tabs, $defaults);
@@ -111,12 +112,13 @@ class SB_Admin {
     }
 
     public function store_setting_tabs($tabs) {
+        $lang = SB_Core::get_language();
         $defaults = array(
             'general' => array(
-                'name' => __('Tổng quan', 'sb-theme')
+                'name' => ('vi' == $lang) ? 'Tổng quan' : __('General', 'sb-theme')
             ),
             'text' => array(
-                'name' => __('Chữ hiển thị', 'sb-theme')
+                'name' => ('vi' == $lang) ? 'Chữ hiển thị' : __('Text displays', 'sb-theme')
             )
         );
         $tabs = wp_parse_args($tabs, $defaults);

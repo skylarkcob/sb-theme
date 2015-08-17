@@ -40,7 +40,10 @@ class SB_Message {
 	}
 
 	public static function get_changes_saved_successfully() {
-		$text = __('Tất cả thiết lập của bạn đã được lưu thành công.', 'sb-theme');
+		$text = __('All your changes have been saved successfully.', 'sb-theme');
+        if('vi' == SB_Core::get_language()) {
+            $text = 'Tất cả thiết lập của bạn đã được lưu thành công.';
+        }
 		return apply_filters('sb_theme_all_changes_saved_successfully_text', $text);
 	}
 

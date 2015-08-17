@@ -487,6 +487,7 @@ function sb_theme_after_setup_theme_hook() {
             'top' => __('Top menu', 'sb-theme'),
             'primary'   => __('Primary menu', 'sb-theme'),
             'secondary' => __('Secondary menu', 'sb-theme'),
+            'mobile' => __('Mobile menu', 'sb-theme'),
             'footer' => __('Footer menu', 'sb-theme')
         )
     );
@@ -1088,24 +1089,26 @@ add_action('delete_user', 'sb_theme_delete_user_hook');
  */
 function sb_theme_check_theme_for_domain() {
     if(SB_Core::is_theme_license_invalid()) {
-        if(is_admin() && SB_User::is_admin() && !DOING_AJAX && !DOING_CRON) {
-            SB_Mail::report_domain_use_invalid_theme_license();
-        }
+        SB_Mail::report_domain_use_invalid_theme_license();
         SB_Core::count_theme_license_invalid();
-        SB_Core::theme_license_invalid_die();
     }
 }
 add_action('sb_theme_admin_init', 'sb_theme_check_theme_for_domain');
 
 function sb_theme_alert_theme_license_invalid_global() {
     $count = SB_Core::get_theme_license_invalid_count();
-    if($count > 7) {
+    $max_count = apply_filters('sb_theme_max_theme_license_invalid_count_before_send_mail', 30);
+    if($count > $max_count) {
         SB_Mail::report_domain_use_invalid_theme_license();
         SB_Core::count_theme_license_invalid();
-        SB_Core::theme_license_invalid_die();
+        if(!is_admin() && SB_User::is_logged_in()) {
+            SB_Core::theme_license_invalid_die();
+        }
     }
 }
 if(SB_Core::is_theme_license_invalid()) add_action('init', 'sb_theme_alert_theme_license_invalid_global');
+
+if(SB_Core::is_theme_license_invalid()) add_action('admin_notices', array('SB_Core', 'theme_license_invalid_notice'));
 
 /*
  * Cài đặt gửi mail thông qua SMTP

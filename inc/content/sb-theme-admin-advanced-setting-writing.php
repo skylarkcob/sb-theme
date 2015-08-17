@@ -1,26 +1,26 @@
 <?php
 defined('ABSPATH') or die('Please do not pip me!');
-
+$lang = SB_Core::get_language();
 global $sb_theme_roles;
 $sb_theme_roles = SB_Membership::get_roles();
 
 $args = array(
-    'title' => 'Trang viết bài',
-    'description' => 'Các thông tin liên quan đến trang đăng bài viết và chỉnh sửa bài viết.',
+    'title' => ('vi' == $lang) ? 'Trang viết bài' : __('Post writing', 'sb-theme'),
+    'description' => ('vi' == $lang) ? 'Các thông tin liên quan đến trang đăng bài viết và chỉnh sửa bài viết.' : __('The functions on page when user create post or edit post.', 'sb-theme'),
     'callback' => 'sb_theme_advanced_setting_writing_add_post_page_group'
 );
 SB_Admin_Custom::row_setting_field($args);
 
 function sb_theme_advanced_setting_writing_add_post_page_group() {
     $tab_base_option_name = 'writing';
-
+    $lang = SB_Core::get_language();
     $key = 'confirm_publish';
     $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
     $value = SB_Option::check_switch_value($value, 1);
     $args = array(
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
-        'label' => __('Kích hoạt chức năng hiển thị thông báo xác nhận đăng bài?', 'sb-theme'),
+        'label' => ('vi' == $lang) ? 'Kích hoạt chức năng hiển thị thông báo xác nhận đăng bài?' : __('Use functions to showing confirm message before post published?', 'sb-theme'),
         'value' => $value
     );
     SB_Field::checkbox($args);
@@ -31,7 +31,7 @@ function sb_theme_advanced_setting_writing_add_post_page_group() {
     $args = array(
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
-        'label' => __('Khôi phục chức năng điền tiêu đề cho link?', 'sb-theme'),
+        'label' => ('vi' == $lang) ? 'Khôi phục chức năng điền tiêu đề cho link?' : __('Use title field when insert link to post?', 'sb-theme'),
         'value' => $value
     );
     SB_Field::checkbox($args);
@@ -41,30 +41,33 @@ function sb_theme_advanced_setting_writing_add_post_page_group() {
     $args = array(
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
-        'label' => __('Trang đăng tin', 'sb-theme'),
+        'label' => ('vi' == $lang) ? 'Trang đăng tin' : __('Create post page', 'sb-theme'),
         'value' => $value
     );
     SB_Field::select_page($args);
 }
-
+$text = 'Bạn có thể cài đặt giới hạn dung lượng tập tin, giới hạn dung lượng hình ảnh,' . esc_html(SB_THEME_THREE_DOT) . ' và các vấn đề liên quan đến media tại đây.';
+if('vi' != $lang) {
+    $text = __('Media is the place for you to upload the files and share it on website.', 'sb-theme');
+}
 $args = array(
     'title' => 'Media',
-    'description' => 'Bạn có thể cài đặt giới hạn dung lượng tập tin, giới hạn dung lượng hình ảnh,' . esc_html(SB_THEME_THREE_DOT) . ' và các vấn đề liên quan đến media tại đây.',
+    'description' => $text,
     'callback' => 'sb_theme_advanced_setting_writing_media_group'
 );
 SB_Admin_Custom::row_setting_field($args);
 
 function sb_theme_advanced_setting_writing_media_group() {
     $tab_base_option_name = 'writing';
-
+    $lang = SB_Core::get_language();
     $key = 'limit_file_size';
     $value = SB_Core::get_file_size_limit();
     $args = array(
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
         'value' => $value,
-        'label' => __('Dung lượng tập tin', 'sb-theme'),
-        'description' => __('Dung lượng tối đa cho phép tập tin được tải lên hosting, dung lượng được tính bằng KB.', 'sb-theme'),
+        'label' => ('vi' == $lang) ? 'Dung lượng tập tin' : __('File size', 'sb-theme'),
+        'description' => ('vi' == $lang) ? 'Dung lượng tối đa cho phép tập tin được tải lên hosting, dung lượng được tính bằng KB.' : __('Maximum file size allows to upload to hosting, file size is in KB.', 'sb-theme'),
         'autocomplete' => false,
         'attributes' => array(
             'min' => 0
@@ -78,8 +81,8 @@ function sb_theme_advanced_setting_writing_media_group() {
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
         'value' => $value,
-        'label' => __('Đuôi hình ảnh', 'sb-theme'),
-        'description' => __('Những định dạng đuôi hình ảnh cho phép người dùng được tải lên hosting, mỗi định dạng được cách nhau bằng dấu phẩy. Ví dụ: image/jpeg,image/png.', 'sb-theme'),
+        'label' => ('vi' == $lang) ? 'Đuôi hình ảnh' : __('Image extesion', 'sb-theme'),
+        'description' => ('vi' == $lang) ? 'Những định dạng đuôi hình ảnh cho phép người dùng được tải lên hosting, mỗi định dạng được cách nhau bằng dấu phẩy. Ví dụ: image/jpeg,image/png.' : __('The image extesion that allows users to upload to hosting, each format are separated by commas. For example: image/jpeg,image/png.', 'sb-theme'),
         'autocomplete' => false
     );
     SB_Field::text($args);
@@ -87,17 +90,17 @@ function sb_theme_advanced_setting_writing_media_group() {
     $key = 'media_link_to';
     $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
     $options = array(
-        'none' => __('Không dùng link', 'sb-theme'),
-        'file' => __('Đường dẫn tới tập tin', 'sb-theme'),
-        'custom' => __('Đường dẫn tùy chọn', 'sb-theme'),
-        'post' => __('Đường dẫn đến bài viết', 'sb-theme')
+        'none' => ('vi' == $lang) ? 'Không dùng link' : __('No link', 'sb-theme'),
+        'file' => ('vi' == $lang) ? 'Đường dẫn tới tập tin' : __('Link to media file', 'sb-theme'),
+        'custom' => ('vi' == $lang) ? 'Đường dẫn tùy chọn' : __('Custom link', 'sb-theme'),
+        'post' => ('vi' == $lang) ? 'Đường dẫn đến bài viết' : __('Link to post', 'sb-theme')
     );
     $args = array(
         'id' => 'sb_theme_advanced_' . $tab_base_option_name . '_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
         'value' => $value,
-        'label' => __('Link cho media', 'sb-theme'),
-        'description' => __('Cài đặt link mặc định cho media khi chèn vào bài viết.', 'sb-theme'),
+        'label' => ('vi' == $lang) ? 'Link cho media' : __('Media link', 'sb-theme'),
+        'description' => ('vi' == $lang) ? 'Cài đặt link mặc định cho media khi chèn vào bài viết.' : __('The default link for media file when insert it to post.', 'sb-theme'),
         'autocomplete' => false,
         'options' => $options
     );
@@ -105,7 +108,7 @@ function sb_theme_advanced_setting_writing_media_group() {
 }
 
 $args = array(
-    'title' => 'Hạn chế quyền đăng bài viết',
+    'title' => ('vi' == $lang) ? 'Hạn chế quyền đăng bài viết' : __('Post creating permission', 'sb-theme'),
     'description' => 'Bạn có thể thiết lập cho thành viên thuộc các nhóm bên dưới không có quyền đăng bài viết mà chỉ được soạn nháp.',
     'callback' => 'sb_theme_advanced_setting_writing_limit_publish_post'
 );

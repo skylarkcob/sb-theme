@@ -6,17 +6,19 @@ function sb_theme_footer_text_callback() {
     $value = isset($options['theme']['footer_text']) ? $options['theme']['footer_text'] : '';
     $id = 'sb_theme_footer_text';
     $name = 'sb_options[theme][footer_text]';
+    $desc = ('vi' == SB_Core::get_language()) ? 'Thông tin chữ hiển thị dưới chân trang web, bạn có thể nhập địa chỉ, email, số điện thoại,' : __('The information displays on footer area, e.g: email, phone, address,...', 'sb-theme');
     $args = array(
         'id' => $id,
         'name' => $name,
         'value' => $value,
-        'description' => __('Thông tin chữ hiển thị dưới chân trang web, bạn có thể nhập địa chỉ, email, số điện thoại,', 'sb-theme') . esc_html(SB_THEME_THREE_DOT)
+        'description' => $desc
     );
     SB_Field::rich_editor_field($args);
 }
 
 function sb_theme_setting_field_footer_text() {
-    sb_theme_add_setting_field('sb_theme_footer_text', __('Chữ dưới chân trang', 'sb-theme'), 'sb_theme_footer_text_callback');
+    $text = ('vi' == SB_Core::get_language()) ? 'Chữ dưới chân trang' : __('Footer text', 'sb-theme');
+    sb_theme_add_setting_field('sb_theme_footer_text', $text, 'sb_theme_footer_text_callback');
 }
 
 function sb_theme_front_page_widget_callback() {
@@ -263,7 +265,7 @@ function sb_theme_social_callback() {
             'id' => 'sb_theme_social_' . $social,
             'name' => 'sb_options[theme][social][' . $social . ']',
             'value' => isset($options['theme']['social'][$social]) ? $options['theme']['social'][$social] : '',
-            'description' => __('Đường dẫn tới trang ' . $name . ' của bạn.', 'sb-theme')
+            'description' => ('vi' == SB_Core::get_language()) ? 'Đường dẫn tới trang ' . $name . ' của bạn.' : sprintf(__('Your %s page url.', 'sb-theme'), $name)
         );
         array_push($args, $field);
     }
@@ -272,7 +274,8 @@ function sb_theme_social_callback() {
 }
 
 function sb_theme_setting_field_social() {
-    sb_theme_add_setting_field('sb_theme_social', __('Mạng xã hội', 'sb-theme'), 'sb_theme_social_callback');
+    $text = ('vi' == SB_Core::get_language()) ? 'Mạng xã hội' : __('Socials', 'sb-theme');
+    sb_theme_add_setting_field('sb_theme_social', $text, 'sb_theme_social_callback');
 }
 
 function sb_theme_no_thumbnail_callback() {

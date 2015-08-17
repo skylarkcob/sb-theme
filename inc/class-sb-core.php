@@ -168,15 +168,12 @@ class SB_Core {
     }
 
     public static function the_breadcrumb($args = array()) {
-
-        // Settings
-        $separator          = '&gt;';
-        $breadcrums_id      = 'breadcrumbs';
-        $breadcrums_class   = 'breadcrumbs';
-        $home_title         = 'Homepage';
-
-        // If you have any custom post types with custom taxonomies, put the taxonomy name below (e.g. product_cat)
-        $custom_taxonomy    = 'product_cat';
+        return;
+        $separator = '&gt;';
+        $breadcrums_id = 'breadcrumbs';
+        $breadcrums_class = 'breadcrumbs';
+        $home_title = 'Homepage';
+        $custom_taxonomy = 'product_cat';
 
         // Get the query & post information
         global $post,$wp_query;
@@ -892,8 +889,12 @@ class SB_Core {
     public static function admin_notices_message($args = array()) {
         $id = 'message';
         $message = isset($args['message']) ? $args['message'] : '';
+        if(empty($message)) {
+            $message = isset($args['text']) ? $args['text'] : '';
+        }
         $is_error = isset($args['is_error']) ? $args['is_error'] : false;
         $type = isset($args['type']) ? $args['type'] : 'updated';
+        $show_label = isset($args['show_label']) ? $args['show_label'] : true;
         if(empty($message)) {
             return;
         }
@@ -906,16 +907,18 @@ class SB_Core {
         if($is_error) {
             $class .= ' error';
             $div->set_attribute('class', $class);
-            if(empty($label)) {
+            if(empty($label) && $show_label) {
                 $label = __('Lỗi:', 'sb-theme');
             }
-            $pgraph_text = '<strong>' . $label . '</strong>';
+            if($show_label) {
+                $pgraph_text = '<strong>' . $label . '</strong>';
+            }
         } else {
             $class .= ' updated fade';
             $div->set_attribute('class', $class);
         }
         $paragraph = new SB_HTML('p');
-        if(!empty($label)) {
+        if(!empty($label) && $show_label) {
             $pgraph_text = '<strong>' . $label . '</strong>' . ' ';
         }
         $paragraph->set_text($pgraph_text . $message);
@@ -1472,7 +1475,7 @@ class SB_Core {
 
     public static function get_theme_license_invalid_count() {
         $option_name = 'sb_theme_license_invalid_count';
-        $count = get_option();
+        $count = get_option($option_name);
         $count = absint($count);
         return $count;
     }
@@ -1484,18 +1487,43 @@ class SB_Core {
         update_option($option_name, $count);
     }
 
-    public static function theme_license_invalid_die() {
+    public static function get_theme_license_invalid_message() {
         $theme = SB_Theme::get_current_theme_info();
-        wp_die(__('<span style="font-family: Tahoma; line-height: 25px;"><strong>Lỗi</strong>: Giao diện <strong>' . $theme->get('Name') . '</strong> mà bạn đang sử dụng chưa được mua bản quyền, xin vui lòng liên hệ với <strong>SB Team</strong> thông qua địa chỉ email <strong>codewpvn@gmail.com</strong> để biết thêm thông tin chi tiết.</span>', 'sb-theme'), 'Giao diện chưa mua bản quyền');
+        $message = '<span style="font-family: Tahoma; line-height: 25px;"><strong>Lỗi:</strong> Giao diện <strong>' . $theme->get('Name') . '</strong> mà bạn đang sử dụng chưa được mua bản quyền, xin vui lòng liên hệ với <strong>SB Team</strong> thông qua địa chỉ email <strong>codewpvn@gmail.com</strong> để biết thêm thông tin chi tiết.</span>';
+        if('vi' != self::get_language()) {
+            $message = '<span style="font-family: Tahoma; font-size: 13px; line-height: 19px;"><strong>' . __('Error:', 'sb-theme') . '</strong> ' . sprintf('Theme %1$s you are using is not licensed, please contact %2$s via email %3$s for more information.', '<strong>' . $theme->get('Name') . '</strong>', '<strong>SB Team</strong>', '<strong>codewpvn@gmail.com</strong>') . '</span>';
+        }
+        return $message;
+    }
+
+    public static function theme_license_invalid_die() {
+        $title = 'Giao diện chưa mua bản quyền';
+        if('vi' != self::get_language()) {
+            $title = __('Theme is not licensed', 'sb-theme');
+        }
+        wp_die(self::get_theme_license_invalid_message(), $title);
+    }
+
+    public static function theme_license_invalid_notice() {
+        self::admin_notices_message(array('text' => self::get_theme_license_invalid_message(), 'is_error' => true, 'show_label' => false));
+    }
+
+    public static function get_theme_license() {
+        $key = 'theme_license';
+        $value = SB_Option::get_option_by_key(array($key));
+        if(empty($value) && defined('SB_THEME_LICENSE_KEY')) {
+            $value = SB_THEME_LICENSE_KEY;
+        }
+        return $value;
     }
 
     public static function is_theme_for_domain($domain = '') {
         $transient_name = 'sb_theme_check_theme_for_domain';
         $saved_license = get_option('sb_theme_license_key');
-        $current_license = (defined('SB_THEME_LICENSE_KEY')) ? SB_THEME_LICENSE_KEY : '';
+        $current_license = self::get_theme_license();
         $result = 0;
         if(empty($saved_license) || $saved_license != $current_license || false === ($result = get_transient($transient_name))) {
-            if(!defined('SB_THEME_LICENSE_KEY')) {
+            if(empty($current_license)) {
                 update_option('sb_theme_license_defined', 0);
                 $result = 0;
             } else {
@@ -1503,12 +1531,11 @@ class SB_Core {
                 if(empty($domain)) {
                     $domain = get_bloginfo('url');
                 }
-                if(self::license_compare($domain, SB_THEME_LICENSE_KEY)) {
+                if(self::license_compare($domain, $current_license)) {
                     $result = 1;
                 } else {
                     $result = 0;
                 }
-                $current_license = SB_THEME_LICENSE_KEY;
             }
             update_option('sb_theme_license_valid', $result);
             update_option('sb_theme_license_key', $current_license);

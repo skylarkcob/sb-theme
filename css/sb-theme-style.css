@@ -2239,6 +2239,12 @@ ol.guides li a:hover{
     z-index: 499;
 }
 
+.sb-header-mobile,
+.mobile-menu-button,
+.sb-mobile-menu-button {
+    display: none;
+}
+
 .sb-mobile-menu > div {
     background: none repeat scroll 0 0 #333333;
     bottom: 0;

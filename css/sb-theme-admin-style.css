@@ -749,6 +749,10 @@ a:focus {
     background-image: url("../images/icon-cart-32.png");
 }
 
+.sb-tabs .tab-item.license .tab-icon {
+    background-image: url("../images/icon-theme-license.png");
+}
+
 /* ==================================== Cart ================================== */
 
 .sb-theme-cart {

@@ -394,6 +394,7 @@ class SB_Field {
     }
 
     public static function media_upload_with_remove_and_preview($args = array()) {
+        $lang = SB_Core::get_language();
         $name = isset($args['name']) ? $args['name'] : '';
         $value = isset($args['value']) ? $args['value'] : '';
         $container_class = isset($args['container_class']) ? $args['container_class'] : '';
@@ -402,6 +403,7 @@ class SB_Field {
         $label = isset($args['label']) ? $args['label'] : '';
         $upload_button_class = isset($args['upload_button_class']) ? $args['upload_button_class'] : '';
         $remove_button_class = isset($args['remove_button_class']) ? $args['remove_button_class'] : '';
+        $description = isset($args['description']) ? $args['description'] : '';
         if(empty($id) || empty($name)) {
             return;
         }
@@ -443,23 +445,27 @@ class SB_Field {
         $atts = array(
             'href' => 'javascript:;',
             'class' => $upload_button_class,
-            'title' => __('Thêm hình ảnh', 'sb-theme'),
-            'text' => __('Tải lên', 'sb-theme')
+            'title' => ('vi' == $lang) ? 'Thêm hình ảnh' : __('Add new image', 'sb-theme'),
+            'text' => ('vi' == $lang) ? 'Tải lên' : __('Upload', 'sb-theme')
         );
         $html->set_attribute_array($atts);
         echo $html->build();
         $atts = array(
             'href' => 'javascript:;',
             'class' => $remove_button_class,
-            'title' => __('Xóa hình ảnh', 'sb-theme'),
-            'text' => __('Xóa', 'sb-theme')
+            'title' => ('vi' == $lang) ? 'Xóa hình ảnh' : __('Remove image', 'sb-theme'),
+            'text' => ('vi' == $lang) ? 'Xóa' : __('Remove', 'sb-theme')
         );
         $html->set_attribute_array($atts);
         echo $html->build();
+        if(!empty($description)) {
+            echo '<p class="description">' . $description . '</p>';
+        }
         self::the_after($before, $after);
     }
 
     public static function widget_area($args = array()) {
+        $lang = SB_Core::get_language();
         $id = isset($args['id']) ? $args['id'] : '';
         $name = isset($args['name']) ? $args['name'] : '';
         $list_sidebars = isset($args['list_sidebars']) ? $args['list_sidebars'] : array();
@@ -471,8 +477,8 @@ class SB_Field {
                 <ul id="sb-sortable-sidebar" class="sb-sortable-list" data-icon-drag="<?php echo SB_CORE_URL . '/images/icon-drag-16.png'; ?>" data-icon-delete="<?php echo SB_CORE_URL . '/images/icon-delete-16.png'; ?>" data-sidebar="<?php echo count($list_sidebars); ?>" data-message-confirm="<?php _e('Bạn có muốn xóa hay không?', 'sb-theme'); ?>" data-name="<?php echo $name; ?>">
                     <li class="ui-state-disabled sb-default-sidebar">
                         <div class="sb-sidebar-line">
-                            <input type="text" name="sidebar_default_0_name" value="<?php _e('Tên sidebar', 'sb-theme'); ?>" autocomplete="off" disabled>
-                            <input type="text" name="sidebar_default_0_description" value="<?php _e('Mô tả cho sidebar', 'sb-theme'); ?>" autocomplete="off" disabled>
+                            <input type="text" name="sidebar_default_0_name" value="<?php echo ('vi' == $lang) ? 'Tên sidebar' : __('Sidebar name', 'sb-theme'); ?>" autocomplete="off" disabled>
+                            <input type="text" name="sidebar_default_0_description" value="<?php echo ('vi' == $lang) ? 'Mô tả cho sidebar' : __('Sidebar description', 'sb-theme'); ?>" autocomplete="off" disabled>
                             <input type="text" name="sidebar_default_0_id" value="<?php _e('Sidebar id', 'sb-theme'); ?>" autocomplete="off" disabled>
                         </div>
                         <img alt="" class="sb-icon-drag" src="<?php echo SB_CORE_URL . '/images/icon-drag-16.png'; ?>">
@@ -503,7 +509,7 @@ class SB_Field {
                 </ul>
                 <input type="hidden" name="<?php echo $name; ?>[count]" value="<?php echo count($list_sidebars); ?>" class="sb-sidebar-count">
             </div>
-            <button class="button sb-add-sidebar"><?php _e('Thêm sidebar mới', 'sb-theme'); ?></button>
+            <button class="button sb-add-sidebar"><?php echo ('vi' == $lang) ? 'Thêm sidebar mới' : __('Add new sidebar', 'sb-theme'); ?></button>
         </div>
         <?php
     }
@@ -911,6 +917,7 @@ class SB_Field {
     }
 
     public static function switch_button($args = array()) {
+        $lang = SB_Core::get_language();
         $id = isset($args['id']) ? $args['id'] : '';
         $name = isset($args['name']) ? $args['name'] : '';
         $value = isset($args['value']) ? $args['value'] : 0;
@@ -934,12 +941,14 @@ class SB_Field {
             'data-switch' => 'on',
             'class' => $class_on . ' left'
         );
-        self::label(array('text' => '<span>' . __('Bật', 'sb-theme') . '</span>', 'attributes' => $attributes));
+        $button_text = ('vi' == $lang) ? 'Bật' : __('On', 'sb-theme');
+        self::label(array('text' => '<span>' . $button_text . '</span>', 'attributes' => $attributes));
         $attributes = array(
             'data-switch' => 'off',
             'class' => $class_off . ' right'
         );
-        self::label(array('text' => '<span>' . __('Tắt', 'sb-theme') . '</span>', 'attributes' => $attributes));
+        $button_text = ('vi' == $lang) ? 'Tắt' : __('Off', 'sb-theme');
+        self::label(array('text' => '<span>' . $button_text . '</span>', 'attributes' => $attributes));
         $args['type'] = 'hidden';
         $args['only'] = true;
         $args['field_class'] = 'checkbox checkbox-input';
@@ -1032,7 +1041,11 @@ class SB_Field {
 
     public static function select_page($args = array()) {
         $pages = SB_Post::get_all('page');
-        $all_option = '<option value="0">' . __('-- Chọn trang --', 'sb-theme') . '</option>';
+        $choose_text = 'Chọn trang';
+        if('vi' != SB_Core::get_language()) {
+            $choose_text = __('Choose page', 'sb-theme');
+        }
+        $all_option = '<option value="0">-- ' . $choose_text . ' --</option>';
         $value = isset($args['value']) ? $args['value'] : '';
         while($pages->have_posts()) {
             $pages->the_post();
@@ -1040,6 +1053,24 @@ class SB_Field {
             $all_option .= '<option value="' . esc_attr($post_id) . '" ' . selected($value, $post_id, false) . '>' . get_the_title() . '</option>';
         }
         wp_reset_postdata();
+        $args['all_option'] = $all_option;
+        self::select($args);
+    }
+
+    public static function select_country($args = array()) {
+        $class = isset($args['class']) ? $args['class'] : '';
+        if(empty($class)) {
+            $class = isset($args['field_class']) ? $args['field_class'] : '';
+        }
+        $class = SB_PHP::add_string_with_space_before($class, 'sb-select-country');
+        $args['field_class'] = $class;
+        $select_none = isset($args['select_none']) ? $args['select_none'] : '<option value=""></option>';
+        $countries = SB_PHP::get_countries();
+        $all_option = $select_none;
+        foreach($countries as $code => $country) {
+            $option = self::get_option(array('value' => $code, 'text' => $country['name']));
+            $all_option .= $option;
+        }
         $args['all_option'] = $all_option;
         self::select($args);
     }

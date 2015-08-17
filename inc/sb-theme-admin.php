@@ -57,6 +57,8 @@ function sb_theme_menu() {
         $title = 'Mạng xã hội';
     }
     SB_Admin_Custom::add_submenu_page($title, 'sbt_socials', array('SB_Admin_Custom', 'socials_setting_page_callback'));
+    $title = ('vi' == $lang) ? 'Bản quyền giao diện' : __('Theme license', 'sb-theme');
+    SB_Admin_Custom::add_submenu_page($title, 'sbt_theme_license', array('SB_Admin_Custom', 'setting_page_callback'));
 }
 add_action('sb_admin_menu', 'sb_theme_menu');
 
@@ -99,6 +101,11 @@ function sb_theme_setting_tab($tabs) {
         }
         $tabs['sbt_store'] = array('title' => $title, 'section_id' => 'sb_theme_store_setting_section', 'type' => 'theme');
     }
+    $tabs['sbt_theme_license'] = array(
+        'title' => ('vi' == $lang) ? 'Bản quyền giao diện' : __('Theme license', 'sb-theme'),
+        'section_id' => 'sb_theme_license_setting_section',
+        'type' => 'license'
+    );
     return $tabs;
 }
 add_filter('sb_admin_tabs', 'sb_theme_setting_tab');
@@ -132,6 +139,37 @@ function sb_theme_checkout_setting_field() {
     SB_Admin_Custom::add_setting_field('sb_theme_checkout_setting_page_content', '', 'sb_theme_checkout_setting_section', array('SB_Admin_Custom', 'checkout_setting_page_callback'), 'sbt_checkout');
 }
 add_action('sb_theme_option_page_init', 'sb_theme_checkout_setting_field');
+
+function sb_theme_license_setting_field() {
+    $title = __('Theme license settings page', 'sb-theme');
+    if('vi' == SB_Core::get_language()) {
+        $title = 'Cài đặt bản quyền cho giao diện';
+    }
+    SB_Admin_Custom::add_section('sb_theme_license_setting_section', $title, 'sbt_theme_license');
+    $title = __('License text', 'sb-theme');
+    if('vi' == SB_Core::get_language()) {
+        $title = 'Mã kích hoạt';
+    }
+    SB_Admin_Custom::add_setting_field('sb_theme_license_text', $title, 'sb_theme_license_setting_section', 'sb_theme_license_text_callback', 'sbt_theme_license');
+}
+add_action('sb_theme_option_page_init', 'sb_theme_license_setting_field');
+
+function sb_theme_license_text_callback() {
+    $key = 'theme_license';
+    $value = SB_Option::get_option_by_key(array($key));
+    if(empty($value) && defined('SB_THEME_LICENSE_KEY')) {
+        $value = SB_THEME_LICENSE_KEY;
+    }
+    $args = array(
+        'id' => 'sb_theme_license_key',
+        'name' => SB_Option::build_sb_option_name(array($key)),
+        'value' => $value,
+        'description' => ('vi' == SB_Core::get_language()) ? 'Mã kích hoạt được cung cấp bởi SB Team, mã này thông thường sẽ có 34 ký tự.' : __('Activation code provided by SB Team, this code will typically have 34 characters.', 'sb-theme'),
+        'field_class' => 'width-medium',
+        'autocomplete' => false
+    );
+    SB_Field::text($args);
+}
 
 function sb_theme_smtp_email_setting_field() {
     $title = __('SMTP Email settings page', 'sb-theme');
