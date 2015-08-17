@@ -1,0 +1,83 @@
+/* 
+  -----------------------------------
+  Vertical Scroller Magic
+  by Project Seven Development
+  www.projectseven.com
+  Style Theme: 07 - Minimalist
+  -----------------------------------
+*/
+.p7VSC07 {
+	position: relative;
+	padding: 0;
+}
+.p7VSC_showall {
+	color: #757575;
+	letter-spacing: 0.1em;
+	display: none;
+}
+.p7VSC_showall:hover, .p7VSC_showall:active, .p7VSC_showall:focus {
+	color: #0033CC;
+}
+.p7VSC07 .p7VSC_scrollbox_wrapper {
+	border: 1px solid #ccc;
+}
+.p7VSC07 .p7VSC_scrollbox {
+	position: relative;
+	border: 0;
+	width: 100%;
+}
+.p7VSC07 .p7VSC_scrolling {
+	top: 0;
+	left: 0;
+}
+.p7VSC07 .p7VSC_content {
+	padding: 6px 24px;
+}
+.p7VSC07 .p7VSCtoolbar {
+	display: block;
+	text-align: right;
+	padding: 4px 0;
+}
+.p7VSC07 .p7VSCtoolbar a {
+	color: #000000;
+	display: inline;
+}
+.p7VSC07 .p7VSCtoolbar a:hover {
+	color: #0033CC;
+}
+.p7VSC07 .p7VSCtoolbar i, .p7VSC07 .p7VSCtoolbar b {
+	font-style: normal;
+	font-weight: normal;
+}
+.p7VSC07 .pause i {display: inline;}
+.p7VSC07 .pause b {display: none;}
+.p7VSC07 .play i {display: none;}
+.p7VSC07 .play b {display: inline;}
+
+.p7VSC07 .p7VSCdragchannel {
+	position: absolute;
+	width: 3px;
+	top: 0px;
+	left: -1px;
+	cursor: default;
+}
+.p7VSC07 .p7VSCdragchannel em {
+	display: none;
+}
+.p7VSC07 .p7VSCdragchannel a {
+	display: block;
+}
+.p7VSC07 .p7VSCdragbar {
+	position: relative;
+}
+.p7VSC07 .p7VSCdragCtrl {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+.p7VSC07 .p7VSCdragCtrl a {
+	height: 10px;
+	width: 3px;
+	background-image: url(img/p7VSC07_meter.gif);
+	background-repeat: no-repeat;
+}

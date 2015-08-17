@@ -108,25 +108,24 @@ function sb_theme_advanced_setting_writing_media_group() {
 }
 
 $args = array(
-    'title' => ('vi' == $lang) ? 'Hạn chế quyền đăng bài viết' : __('Post creating permission', 'sb-theme'),
-    'description' => 'Bạn có thể thiết lập cho thành viên thuộc các nhóm bên dưới không có quyền đăng bài viết mà chỉ được soạn nháp.',
+    'title' => ('vi' == $lang) ? 'Hạn chế quyền đăng bài viết' : __('Create post permission', 'sb-theme'),
+    'description' => ('vi' == $lang) ? 'Bạn có thể thiết lập cho thành viên thuộc các nhóm bên dưới không có quyền đăng bài viết mà chỉ được soạn nháp.' : __('You can set up for members in groups have no permission to publish post but they still save draft post.', 'sb-theme'),
     'callback' => 'sb_theme_advanced_setting_writing_limit_publish_post'
 );
 SB_Admin_Custom::row_setting_field($args);
 
 function sb_theme_advanced_setting_writing_limit_publish_post() {
     $tab_base_option_name = 'writing';
-
+    $lang = SB_Core::get_language();
     $key = 'limit_publish_post_role';
     $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
     $args = array(
         'id' => 'sb_theme_advanced_membership_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
-        'label' => __('Các nhóm người dùng hiện có trên website:', 'sb-theme'),
         'sortable_callback' => 'sb_theme_advanced_setting_writing_limit_publish_post_sortable_callback',
         'sortable_active_callback' => 'sb_theme_advanced_setting_writing_limit_publish_post_sortable_active_callback',
-        'sortable_description' => __('Tất cả các nhóm người dùng hiện có trên website.', 'sb-theme'),
-        'sortable_active_description' => __('Nhóm người dùng được áp dụng hạn chế đăng bài viết.', 'sb-theme'),
+        'sortable_description' => ('vi' == $lang) ? 'Tất cả các nhóm người dùng hiện có trên website.' : __('All user groups on your website.', 'sb-theme'),
+        'sortable_active_description' => ('vi' == $lang) ? 'Nhóm người dùng được áp dụng hạn chế đăng bài viết.' : __('User groups have no permission to publish post.', 'sb-theme'),
         'before' => '',
         'field_class' => 'display-inline',
         'click_to_connect' => true,
@@ -162,25 +161,24 @@ function sb_theme_advanced_setting_writing_limit_publish_post_sortable_active_ca
 }
 
 $args = array(
-    'title' => 'Hạn chế quyền xóa bài viết',
-    'description' => 'Bạn có thể thiết lập cho thành viên thuộc các nhóm bên dưới không có quyền xóa bài viết.',
+    'title' => ('vi' == $lang) ? 'Hạn chế quyền xóa bài viết' : __('Delete post permission', 'sb-theme'),
+    'description' => ('vi' == $lang) ? 'Bạn có thể thiết lập cho thành viên thuộc các nhóm bên dưới không có quyền xóa bài viết.' : __('You can set up for members in groups have no permission to delete post.', 'sb-theme'),
     'callback' => 'sb_theme_advanced_setting_writing_limit_delete_post'
 );
 SB_Admin_Custom::row_setting_field($args);
 
 function sb_theme_advanced_setting_writing_limit_delete_post() {
     $tab_base_option_name = 'writing';
-
+    $lang = SB_Core::get_language();
     $key = 'limit_delete_post_role';
     $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
     $args = array(
         'id' => 'sb_theme_advanced_membership_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
-        'label' => __('Các nhóm người dùng hiện có trên website:', 'sb-theme'),
         'sortable_callback' => 'sb_theme_advanced_setting_writing_limit_delete_post_sortable_callback',
         'sortable_active_callback' => 'sb_theme_advanced_setting_writing_limit_delete_post_sortable_active_callback',
-        'sortable_description' => __('Tất cả các nhóm người dùng hiện có trên website.', 'sb-theme'),
-        'sortable_active_description' => __('Nhóm người dùng được áp dụng hạn chế xóa bài viết.', 'sb-theme'),
+        'sortable_description' => ('vi' == $lang) ? 'Tất cả các nhóm người dùng hiện có trên website.' : __('All user groups on your website.', 'sb-theme'),
+        'sortable_active_description' => ('vi' == $lang) ? 'Nhóm người dùng được áp dụng hạn chế đăng bài viết.' : __('User groups have no permission to delete post.', 'sb-theme'),
         'before' => '',
         'field_class' => 'display-inline',
         'click_to_connect' => true,
@@ -218,25 +216,24 @@ function sb_theme_advanced_setting_writing_limit_delete_post_sortable_active_cal
 }
 
 $args = array(
-    'title' => 'Hạn chế quyền xóa bài viết đã được đăng',
-    'description' => 'Bạn có thể thiết lập cho thành viên thuộc các nhóm bên dưới không có quyền xóa bài viết đã được đăng.',
+    'title' => ('vi' == $lang) ? 'Hạn chế quyền xóa bài viết đã được đăng' : __('Delete published post permission', 'sb-theme'),
+    'description' => ('vi' == $lang) ? 'Bạn có thể thiết lập cho thành viên thuộc các nhóm bên dưới không có quyền xóa bài viết đã được đăng.' : __('You can set up for members in groups have no permission to delete published post.', 'sb-theme'),
     'callback' => 'sb_theme_advanced_setting_writing_limit_delete_published_post'
 );
 SB_Admin_Custom::row_setting_field($args);
 
 function sb_theme_advanced_setting_writing_limit_delete_published_post() {
     $tab_base_option_name = 'writing';
-
+    $lang = SB_Core::get_language();
     $key = 'limit_delete_published_post_role';
     $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
     $args = array(
         'id' => 'sb_theme_advanced_membership_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
-        'label' => __('Các nhóm người dùng hiện có trên website:', 'sb-theme'),
         'sortable_callback' => 'sb_theme_advanced_setting_writing_limit_delete_published_post_sortable_callback',
         'sortable_active_callback' => 'sb_theme_advanced_setting_writing_limit_delete_published_post_sortable_active_callback',
-        'sortable_description' => __('Tất cả các nhóm người dùng hiện có trên website.', 'sb-theme'),
-        'sortable_active_description' => __('Nhóm người dùng được áp dụng hạn chế xóa bài viết đã được đăng.', 'sb-theme'),
+        'sortable_description' => ('vi' == $lang) ? 'Tất cả các nhóm người dùng hiện có trên website.' : __('All user groups on your website.', 'sb-theme'),
+        'sortable_active_description' => ('vi' == $lang) ? 'Nhóm người dùng được áp dụng hạn chế xóa bài viết đã được đăng.' : __('User groups have no permission to delete published post.', 'sb-theme'),
         'before' => '',
         'field_class' => 'display-inline',
         'click_to_connect' => true,
@@ -274,25 +271,24 @@ function sb_theme_advanced_setting_writing_limit_delete_published_post_sortable_
 }
 
 $args = array(
-    'title' => 'Hạn chế quyền sửa bài viết đã được đăng',
-    'description' => 'Bạn có thể thiết lập cho thành viên thuộc các nhóm bên dưới không có quyền chỉnh sửa bài viết đã được đăng.',
+    'title' => ('vi' == $lang) ? 'Hạn chế quyền sửa bài viết đã được đăng' : __('Edit published post permission', 'sb-theme'),
+    'description' => ('vi' == $lang) ? 'Bạn có thể thiết lập cho thành viên thuộc các nhóm bên dưới không có quyền chỉnh sửa bài viết đã được đăng.' : __('You can set up for members in groups have no permission to edit published post.', 'sb-theme'),
     'callback' => 'sb_theme_advanced_setting_writing_limit_edit_published_post'
 );
 SB_Admin_Custom::row_setting_field($args);
 
 function sb_theme_advanced_setting_writing_limit_edit_published_post() {
     $tab_base_option_name = 'writing';
-
+    $lang = SB_Core::get_language();
     $key = 'limit_edit_published_post_role';
     $value = SB_Option::get_advanced_setting($tab_base_option_name, $key);
     $args = array(
         'id' => 'sb_theme_advanced_membership_' . $key,
         'name' => SB_Option::build_sb_theme_advanced_option_name(array($tab_base_option_name, $key)),
-        'label' => __('Các nhóm người dùng hiện có trên website:', 'sb-theme'),
         'sortable_callback' => 'sb_theme_advanced_setting_writing_limit_edit_published_post_sortable_callback',
         'sortable_active_callback' => 'sb_theme_advanced_setting_writing_limit_edit_published_post_sortable_active_callback',
-        'sortable_description' => __('Tất cả các nhóm người dùng hiện có trên website.', 'sb-theme'),
-        'sortable_active_description' => __('Nhóm người dùng được áp dụng hạn chế sửa bài viết đã được đăng.', 'sb-theme'),
+        'sortable_description' => ('vi' == $lang) ? 'Tất cả các nhóm người dùng hiện có trên website.' : __('All user groups on your website.', 'sb-theme'),
+        'sortable_active_description' => ('vi' == $lang) ? 'Nhóm người dùng được áp dụng hạn chế sửa bài viết đã được đăng.' : __('User groups have no permission to edit published post.', 'sb-theme'),
         'before' => '',
         'field_class' => 'display-inline',
         'click_to_connect' => true,

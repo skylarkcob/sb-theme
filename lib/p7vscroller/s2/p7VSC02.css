@@ -1,0 +1,107 @@
+/* 
+  -----------------------------------
+  Vertical Scroller Magic
+  by Project Seven Development
+  www.projectseven.com
+  Style Theme: 02 - Goldleaf
+  -----------------------------------
+*/
+
+.p7VSC02 {
+	position: relative;
+}
+.p7VSC_showall {
+	color: #000000;
+	letter-spacing: 0.1em;
+}
+.p7VSC_showall:hover, .p7VSC_showall:active, .p7VSC_showall:focus {
+	color: #D99509;
+}
+.p7VSC02 .p7VSC_scrollbox_wrapper {
+	margin: 0 40px 0 0;
+}
+.p7VSC02 .p7VSC_scrollbox {
+	height: auto;
+	position: relative;
+	width: 100%;
+}
+.p7VSC02 .p7VSC_scrolling {
+	top: 0;
+	left: 0;
+}
+.p7VSC02 .p7VSC_content {
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 20px;
+	padding-left: 0px;
+}
+.p7VSC02 .p7VSC_up a {
+	height: 24px;
+	width: 24px;
+	background-image: url(img/p7sc2_dbup.gif);
+	background-repeat: no-repeat;
+}
+.p7VSC02 .p7VSC_up a:hover {
+	background-position: -24px 0px;
+}
+.p7VSC02 .p7VSC_dn a {
+	height: 13px;
+	width: 24px;
+	background-image: url(img/p7sc2_dbdn.gif);
+	background-repeat: no-repeat;
+}
+.p7VSC02 .p7VSC_dn a:hover {
+	background-position: -24px 0px;
+}
+.p7VSC02 .p7VSC_pauseplay .pause {
+	height: 35px;
+	width: 24px;
+	background-image: url(img/p7sc2_psplay.gif);
+	background-repeat: no-repeat;
+}
+.p7VSC02 .p7VSC_pauseplay .pause:hover  {
+	background-position: -24px 0px;
+}
+.p7VSC02 .p7VSC_pauseplay .play {
+	height: 35px;
+	width: 24px;
+	background-position: -48px 0px;
+	background-image: url(img/p7sc2_psplay.gif);
+	background-repeat: no-repeat;
+}
+.p7VSC02 .p7VSC_pauseplay .play:hover  {
+	background-position: -72px 0px;
+}
+.p7VSC02 .p7VSCdragchannel {
+	position: absolute;
+	width: 29px;
+	top: 0px;
+	background-image: url(img/p7sc2_dbbg.gif);
+	background-repeat: repeat-y;
+	right: 0px;
+	display: none;
+	cursor: default;
+}
+.p7VSC02 .p7VSCdragchannel em {
+	display: none;
+}
+.p7VSC02 .p7VSCdragchannel a {
+	display: block;
+}
+.p7VSC02 .p7VSCdragbar {
+	position: relative;
+}
+.p7VSC02 .p7VSCdragCtrl {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+.p7VSC02 .p7VSCdragCtrl a {
+	height: 58px;
+	width: 24px;
+	background-image: url(img/p7sc2_dbdrag.gif);
+	background-repeat: no-repeat;
+}
+.p7VSC02 .p7VSCdragCtrl a:hover  {
+	background-position: -24px 0px;
+}

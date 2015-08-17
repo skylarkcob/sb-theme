@@ -1,0 +1,102 @@
+/* 
+  -----------------------------------
+  Vertical Scroller Magic
+  by Project Seven Development
+  www.projectseven.com
+  Style Theme: 03 - Carbon
+  -----------------------------------
+*/
+
+.p7VSC03 {
+	position: relative;
+}
+.p7VSC_showall {
+	color: #000000;
+	letter-spacing: 0.1em;
+}
+.p7VSC_showall:hover, .p7VSC_showall:active, .p7VSC_showall:focus {
+	color: #009900;
+}
+.p7VSC03 .p7VSC_scrollbox_wrapper {
+	border: 1px solid #666666;
+	margin: 0 39px 0 0;
+	background-color: #FFFFFF;
+}
+.p7VSC03 .p7VSC_scrollbox {
+	height: auto;
+	position: relative;
+	width: 100%;
+}
+.p7VSC03 .p7VSC_scrolling {
+	top: 0;
+	left: 0;
+}
+.p7VSC03 .p7VSC_content {
+	padding: 20px;
+}
+.p7VSC03 .p7VSC_up a {
+	height: 28px;
+	width: 24px;
+	background-image: url(img/p7sc3_dbup.jpg);
+	background-repeat: no-repeat;
+}
+.p7VSC03 .p7VSC_up a:hover {background-position: -33px 0px;}
+.p7VSC03 .p7VSC_dn a {
+	height: 28px;
+	width: 24px;
+	background-image: url(img/p7sc3_dbdn.jpg);
+	background-repeat: no-repeat;
+}
+.p7VSC03 .p7VSC_dn a:hover {background-position: -33px 0px;}
+.p7VSC03 .p7VSC_pauseplay .pause {
+	height: 19px;
+	width: 24px;
+	background-image: url(img/p7sc3_psplay.jpg);
+	background-repeat: no-repeat;
+}
+.p7VSC03 .p7VSC_pauseplay .pause:hover  {
+	background-position: -33px 0px;
+}
+.p7VSC03 .p7VSC_pauseplay .play {
+	height: 19px;
+	width: 24px;
+	background-position: 0px -19px;
+	background-image: url(img/p7sc3_psplay.jpg);
+	background-repeat: no-repeat;
+}
+.p7VSC03 .p7VSC_pauseplay .play:hover  {
+	background-position: -33px -19px;
+}
+.p7VSC03 .p7VSCdragchannel {
+	position: absolute;
+	width: 29px;
+	top: 0px;
+	background-image: url(img/p7sc3_dbbg.gif);
+	background-repeat: repeat-y;
+	right: 0px;
+	display: none;
+	cursor: default;
+}
+.p7VSC03 .p7VSCdragchannel em {
+	display: none;
+}
+.p7VSC03 .p7VSCdragchannel a {
+	display: block;
+}
+.p7VSC03 .p7VSCdragbar {
+	position: relative;
+}
+.p7VSC03 .p7VSCdragCtrl {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+.p7VSC03 .p7VSCdragCtrl a {
+	height: 70px;
+	width: 25px;
+	background-image: url(img/p7sc3_dbdrag.jpg);
+	background-repeat: no-repeat;
+}
+.p7VSC03 .p7VSCdragCtrl a:hover  {
+	background-position: -33px 0px;
+}

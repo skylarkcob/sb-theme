@@ -1,0 +1,127 @@
+/* 
+  -----------------------------------
+  Vertical Scroller Magic
+  by Project Seven Development
+  www.projectseven.com
+  Style Theme: 05 - Silverstone
+  -----------------------------------
+*/
+.p7VSC05 {
+	position: relative;
+	padding: 0;
+}
+.p7VSC_showall {
+	color: #757575;
+	letter-spacing: 0.1em;
+	display: none;
+}
+.p7VSC_showall:hover, .p7VSC_showall:active, .p7VSC_showall:focus {
+	color: #0066CC;
+}
+.p7VSC05 .p7VSC_scrollbox_wrapper {
+	border: 1px solid #C0C2C1;
+}
+.p7VSC05 .p7VSC_scrollbox {
+	position: relative;
+	border: 0;
+	width: 100%;
+}
+.p7VSC05 .p7VSC_scrolling {
+	top: 0;
+	left: 0;
+}
+.p7VSC05 .p7VSC_content {
+	padding: 0px 24px;
+	color: #111;
+}
+.p7VSC05 .p7VSCtoolbar {
+	position: relative;
+	background-color: #272727;
+	height: 25px;
+	background-image: url(img/p7VSC05_toolbg.jpg);
+	background-repeat: repeat-x;
+	display: none;
+}
+.p7VSCtoolbar em {display: none;}
+.p7VSCtoolbar a {display: block; text-decoration: none;}
+.p7VSC05 .p7VSCscrollup {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+.p7VSC05 .p7VSC_up {
+	background-image: url(img/p7VSC05_up.jpg);
+	background-repeat: no-repeat;
+	height: 25px;
+	width: 25px;
+}
+.p7VSC05 .p7VSC_up:hover {
+	background-position: 0px -25px;
+}
+.p7VSC05 .p7VSCscrolldown {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+.p7VSC05 .p7VSC_dn {
+	background-image: url(img/p7VSC05_dn.jpg);
+	background-repeat: no-repeat;
+	height: 25px;
+	width: 25px;
+}
+.p7VSC05 .p7VSC_dn:hover {
+	background-position: 0px -25px;
+}
+.p7VSC05 .p7VSC_pauseplay {
+	position: absolute;
+	top: 0px;
+	left: 50%;
+	margin-left: -11px;
+}
+.p7VSC05 .p7VSC_pauseplay .pause {
+	height: 25px;
+	width: 32px;
+	background-image: url(img/p7VSC05_psplay.jpg);
+	background-repeat: no-repeat;
+}
+.p7VSC05 .p7VSC_pauseplay .pause:hover  {
+	background-position: 0px -25px;
+}
+.p7VSC05 .p7VSC_pauseplay .play {
+	height: 25px;
+	width: 32px;
+	background-position: 0px -50px;
+	background-image: url(img/p7VSC05_psplay.jpg);
+	background-repeat: no-repeat;
+}
+.p7VSC05 .p7VSC_pauseplay .play:hover  {
+	background-position: 0px -75px;
+}
+.p7VSC05 .p7VSCdragchannel {
+	position: absolute;
+	width: 2px;
+	top: 0px;
+	left: -2px;
+	/*display: none;*/
+	cursor: default;
+}
+.p7VSC05 .p7VSCdragchannel em {
+	display: none;
+}
+.p7VSC05 .p7VSCdragchannel a {
+	display: block;
+}
+.p7VSC05 .p7VSCdragbar {
+	position: relative;
+}
+.p7VSC05 .p7VSCdragCtrl {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+.p7VSC05 .p7VSCdragCtrl a {
+	height: 9px;
+	width: 6px;
+	background-image: url(img/p7VSC05_meter.gif);
+	background-repeat: no-repeat;
+}

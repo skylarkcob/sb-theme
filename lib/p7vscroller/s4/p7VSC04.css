@@ -1,0 +1,113 @@
+/* 
+  -----------------------------------
+  Vertical Scroller Magic
+  by Project Seven Development
+  www.projectseven.com
+  Style Theme: 04 - Vista Aero
+  -----------------------------------
+*/
+
+.p7VSC04 {
+	position: relative;
+}
+.p7VSC_showall {
+	color: #757575;
+	letter-spacing: 0.1em;
+}
+.p7VSC_showall:hover, .p7VSC_showall:active, .p7VSC_showall:focus {
+	color: #FF9900;
+}
+.p7VSC04 .p7VSC_scrollbox_wrapper {
+	margin: 0 9px 0 0;
+}
+.p7VSC04 .p7VSC_scrollbox {
+	height: auto;
+	position: relative;
+	width: 100%;
+}
+.p7VSC04 .p7VSC_scrolling {
+	top: 0;
+	left: 0;
+}
+.p7VSC04 .p7VSC_content {
+	padding-top: 5px;
+	padding-right: 26px;
+	padding-bottom: 20px;
+	padding-left: 26px;
+}
+.p7VSC04 .p7VSC_up a {
+	height: 23px;
+	width: 20px;
+	background-image: url(img/p7VSC04_dbup.gif);
+	background-repeat: no-repeat;
+}
+.p7VSC04 .p7VSC_up a:hover {
+	background-position: -20px 0px;
+}
+.p7VSC04 .p7VSC_dn a {
+	height: 22px;
+	width: 20px;
+	background-image: url(img/p7VSC04_dbdn.gif);
+	background-repeat: no-repeat;
+}
+.p7VSC04 .p7VSC_dn a:hover {
+	background-position: -20px 0px;
+}
+.p7VSC04 .p7VSC_pauseplay .pause {
+	height: 22px;
+	width: 20px;
+	background-image: url(img/p7VSC04_psplay.gif);
+	background-repeat: no-repeat;
+}
+.p7VSC04 .p7VSC_pauseplay .pause:hover  {
+	background-position: -20px 0px;
+}
+.p7VSC04 .p7VSC_pauseplay .play {
+	height: 22px;
+	width: 20px;
+	background-position: -40px 0px;
+	background-image: url(img/p7VSC04_psplay.gif);
+	background-repeat: no-repeat;
+}
+.p7VSC04 .p7VSC_pauseplay .play:hover  {
+	background-position: -60px 0px;
+}
+.p7VSC04 .p7VSCdragchannel {
+	position: absolute;
+	width: 20px;
+	top: 0px;
+	background-image: url(img/p7VSC04_dbbg.gif);
+	background-repeat: repeat-y;
+	right: 0px;
+	display: none;
+	cursor: default;
+}
+.p7VSC04 .p7VSCdragchannel em {
+	display: none;
+}
+.p7VSC04 .p7VSCdragchannel a {
+	display: block;
+}
+.p7VSC04 .p7VSCdragbar {
+	position: relative;
+}
+.p7VSC04 .p7VSCdragCtrl {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+.p7VSC04 .p7VSCdragCtrl a {
+	height: 62px;
+	width: 20px;
+	background-image: url(img/p7VSC04_dbdrag.gif);
+	background-repeat: no-repeat;
+}
+.p7VSC04 .p7VSCdragCtrl a:hover  {
+	background-position: -20px 0px;
+}
+.copee {
+	font-family: Calibri, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #FFFFFF;
+	background-color: #3F402E;
+}

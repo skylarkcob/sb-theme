@@ -1,0 +1,126 @@
+/* 
+  -----------------------------------
+  Vertical Scroller Magic
+  by Project Seven Development
+  www.projectseven.com
+  Style Theme: 06 - L'Orange
+  -----------------------------------
+*/
+.p7VSC06 {
+	position: relative;
+	padding: 0;
+}
+.p7VSC_showall {
+	color: #757575;
+	letter-spacing: 0.1em;
+}
+.p7VSC_showall:hover, .p7VSC_showall:active, .p7VSC_showall:focus {
+	color: #0066CC;
+}
+.p7VSC06 .p7VSC_scrollbox_wrapper {
+	border: 1px solid #FF9900;
+}
+.p7VSC06 .p7VSC_scrollbox {
+	position: relative;
+	border: 0;
+	width: 100%;
+}
+.p7VSC06 .p7VSC_scrolling {
+	top: 0;
+	left: 0;
+}
+.p7VSC06 .p7VSC_content {
+	padding: 20px;
+}
+.p7VSC06 .p7VSCtoolbar {
+	position: relative;
+	background-color: #272727;
+	height: 25px;
+	background-image: url(img/p7VSC06_toolbg.jpg);
+	background-repeat: repeat-x;
+	display: none;
+}
+.p7VSCtoolbar em {display: none;}
+.p7VSCtoolbar a {display: block; text-decoration: none;}
+.p7VSC06 .p7VSCscrollup {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+.p7VSC06 .p7VSC_up {
+	background-image: url(img/p7VSC06_up.jpg);
+	background-repeat: no-repeat;
+	height: 25px;
+	width: 38px;
+}
+.p7VSC06 .p7VSC_up:hover {
+	background-position: 0px -25px;
+}
+.p7VSC06 .p7VSCscrolldown {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+.p7VSC06 .p7VSC_dn {
+	background-image: url(img/p7VSC06_dn.jpg);
+	background-repeat: no-repeat;
+	height: 25px;
+	width: 38px;
+}
+.p7VSC06 .p7VSC_dn:hover {
+	background-position: 0px -25px;
+}
+.p7VSC06 .p7VSC_pauseplay {
+	position: absolute;
+	top: 0px;
+	left: 50%;
+	margin-left: -11px;
+}
+.p7VSC06 .p7VSC_pauseplay .pause {
+	height: 25px;
+	width: 22px;
+	background-image: url(img/p7VSC06_psplay.jpg);
+	background-repeat: no-repeat;
+}
+.p7VSC06 .p7VSC_pauseplay .pause:hover  {
+	background-position: 0px -25px;
+}
+.p7VSC06 .p7VSC_pauseplay .play {
+	height: 25px;
+	width: 22px;
+	background-position: 0px -50px;
+	background-image: url(img/p7VSC06_psplay.jpg);
+	background-repeat: no-repeat;
+	cursor: default;
+}
+.p7VSC06 .p7VSC_pauseplay .play:hover  {
+	background-position: 0px -75px;
+}
+
+.p7VSC06 .p7VSCdragchannel {
+	position: absolute;
+	width: 5px;
+	top: 0px;
+	left: -2px;
+	cursor: default;
+}
+.p7VSC06 .p7VSCdragchannel em {
+	display: none;
+}
+.p7VSC06 .p7VSCdragchannel a {
+	display: block;
+}
+.p7VSC06 .p7VSCdragbar {
+	position: relative;
+}
+.p7VSC06 .p7VSCdragCtrl {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+.p7VSC06 .p7VSCdragCtrl a {
+	height: 16px;
+	width: 5px;
+	background-image: url(img/p7VSC06_meter.gif);
+	background-repeat: no-repeat;
+}
