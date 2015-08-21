@@ -99,6 +99,15 @@ a:focus {
     margin-top: 5px;
 }
 
+.sb-side-image .image-remove {
+    display: none;
+}
+
+.sb-side-image img {
+    height: auto;
+    max-width: 100%;
+}
+
 .sb-widget .sb-insert-media {
     margin-top: 10px;
 }
@@ -312,6 +321,10 @@ a:focus {
 .sb-option .sb-theme-sidebar .sb-sortable-list li > img {
     margin-left: 5px;
     top: 18px;
+}
+
+.icon-delete {
+    cursor: pointer;
 }
 
 .icon-sortable-ui.icon-drag,

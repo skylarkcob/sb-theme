@@ -60,8 +60,11 @@ function sb_theme_category_widget_callback() {
     sb_theme_setting_field_category_widget_display('category', 'category_widget');
 }
 
-function sb_theme_setting_field_category_widget() {
-    sb_theme_add_setting_field('sb_theme_category_widget', __('Nhóm chuyên mục', 'sb-theme'), 'sb_theme_category_widget_callback');
+function sb_theme_setting_field_category_widget($title = '') {
+    if(empty($title)) {
+        $title = ('vi' == SB_Core::get_language()) ? 'Nhóm chuyên mục' : __('Sortable Categories', 'sb-theme');
+    }
+    sb_theme_add_setting_field('sb_theme_category_widget', $title, 'sb_theme_category_widget_callback');
 }
 
 function sb_theme_hotline_callback() {

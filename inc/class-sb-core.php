@@ -23,6 +23,13 @@ class SB_Core {
     public static function get_language() {
         return sb_theme_get_language();
     }
+
+    public static function is_vietnamese() {
+        if('vi' == self::get_language()) {
+            return true;
+        }
+        return false;
+    }
     
     public static function minify_styles_and_scripts() {
         self::minify_all_css();
@@ -1761,12 +1768,120 @@ class SB_Core {
         return array();
     }
 
+    public static function esc_media_url($value) {
+        $value_id = absint((is_array($value)) ? (isset($value['id']) ? $value['id'] : '') : '');
+        if(1 > $value_id && is_array($value)) {
+            $value_id = absint(isset($value['media_id']) ? $value['media_id'] : '');
+        }
+        $value_url = (is_array($value)) ? (isset($value['url']) ? $value['url'] : '') : $value;
+        if(empty($value_url) && is_array($value)) {
+            $value_url = isset($value['media_url']) ? $value['media_url'] : '';
+        }
+        if($value_id > 0) {
+            $media_url = SB_Post::get_media_url($value_id);
+            if(!empty($media_url)) {
+                $value_url = $media_url;
+            }
+        }
+        $result = array(
+            'id' => $value_id,
+            'url' => $value_url,
+            'media_id' => $value_id,
+            'media_url' => $value_url
+        );
+        return $result;
+    }
+
     public static function build_meta_box_field_name($name) {
         if(empty($name)) {
             return $name;
         }
         $name = str_replace('sbmb_', '', $name);
         return 'sbmb_' . $name;
+    }
+
+    public static function post_thumbnail_side_meta_box($args = array()) {
+        $name = isset($args['name']) ? $args['name'] : '';
+        $callback = isset($args['callback']) ? $args['callback'] : '';
+        if(empty($name) || !SB_PHP::callback_exists($callback)) {
+            return;
+        }
+        $id = isset($args['id']) ? $args['id'] : '';
+        $post_type = isset($args['post_type']) ? $args['post_type'] : 'post';
+        if(empty($id)) {
+            $id = 'sb_theme_custom_side_thumbnail_' . SB_PHP::esc_id($name);
+        }
+        $default_title = (self::is_vietnamese()) ? 'Hình ảnh phụ' : __('Secondary Featured Image', 'sb-theme');
+        $title = isset($args['title']) ? $args['title'] : $default_title;
+        $fields = array(
+            array(
+                'name' => $name,
+                'type' => 'media'
+            )
+        );
+        $args = array(
+            'fields' => $fields,
+            'id' => $id,
+            'callback' => $callback,
+            'post_type' => $post_type,
+            'title' => $title,
+            'context' => 'side',
+            'priority' => 'low'
+        );
+        new SB_Meta_Box($args);
+    }
+
+    public static function post_thumbnail_side_callback($args = array()) {
+        global $post;
+        SB_Theme::the_meta_box_nonce();
+        $post_id = $post->ID;
+        $name = isset($args['name']) ? $args['name'] : '';
+        if(empty($name)) {
+            return;
+        }
+        $value = SB_Post::get_meta($post_id, $name);
+        $value = SB_Post::esc_side_image($value);
+        $lang = self::get_language();
+        $id = isset($args['id']) ? $args['id'] : 'set_post_thumbnail';
+        $id = 'post_' . $post->ID . '_' . $id;
+        $id = SB_PHP::esc_id($id);
+        $title = isset($args['title']) ? $args['title'] : (('vi' == $lang) ? 'Thiết lập hình ảnh' : __('Set featured image', 'sb-theme'));
+        $text = isset($args['text']) ? $args['text'] : (('vi' == $lang) ? 'Thêm hình ảnh' : __('Add image', 'sb-theme'));
+        $remove_text = isset($args['remove_text']) ? $args['remove_text'] : ((self::is_vietnamese()) ? 'Xóa hình ảnh' : __('Remove image', 'sb-theme'));
+        $media_url = $value['media_url'];
+        $media_id = $value['media_id'];
+        $anchor_text = $text;
+        $remove_style = '';
+        if(!empty($media_url)) {
+            $anchor_text = '<img src="' . $media_url . '" alt="">';
+            $remove_style = 'display: block;';
+        }
+        ?>
+        <div class="sb-side-image" data-name="<?php echo $name; ?>" data-id="<?php echo $post_id; ?>">
+            <p class="hide-if-no-js image-preview">
+                <a class="btn-add-image" id="<?php echo $id; ?>" href="javascript:;" title="<?php echo $title; ?>" data-text="<?php echo $text; ?>"><?php echo $anchor_text; ?></a>
+            </p>
+            <p class="hide-if-no-js image-remove" style="<?php echo $remove_style; ?>">
+                <a class="btn-remove-image" href="javascript:;"><?php echo $remove_text; ?></a>
+            </p>
+            <?php
+            $input_args = array(
+                'id' => $id . '_url',
+                'name' => $name . '[media_url]',
+                'field_class' => 'input-url',
+                'value' => $media_url
+            );
+            SB_Field::input_hidden($input_args);
+            $input_args = array(
+                'id' => $id . '_id',
+                'name' => $name . '[media_id]',
+                'field_class' => 'input-id',
+                'value' => $media_id
+            );
+            SB_Field::input_hidden($input_args);
+            ?>
+        </div>
+        <?php
     }
 
     public static function register_sidebar($sidebar_id, $sidebar_name, $sidebar_description) {

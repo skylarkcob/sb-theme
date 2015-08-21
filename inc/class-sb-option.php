@@ -143,15 +143,7 @@ class SB_Option {
     }
 
     public static function get_media_detail($value) {
-        $value_id = (is_array($value)) ? (isset($value['id']) ? absint($value['id']) : '') : '';
-        $value_url = (is_array($value)) ? (isset($value['url']) ? $value['url'] : '') : $value;
-        if($value_id > 0) {
-            $media_url = SB_Post::get_media_url($value_id);
-            if(!empty($media_url)) {
-                $value_url = $media_url;
-            }
-        }
-        return array('id' => $value_id, 'url' => $value_url);
+        return SB_Core::esc_media_url($value);
     }
 
     public static function get_media_url_by_value($value) {

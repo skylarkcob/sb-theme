@@ -631,7 +631,8 @@ class SB_Field {
         </div>
         <div style="clear: both"></div>
         <?php
-        self::the_description(__('Kéo và thả đối tượng sang ô bên phải để kích hoạt.', 'sb-theme'));
+        $desc = ('vi' == SB_Core::get_language()) ? 'Kéo và thả đối tượng sang ô bên phải để kích hoạt.' : __('Drag and drop item into right box to make it active.', 'sb-theme');
+        self::the_description($desc);
     }
 
     public static function rss_feed($args = array()) {
@@ -729,6 +730,16 @@ class SB_Field {
 		echo $iframe->build();
 	}
 
+    public static function input($args = array()) {
+        self::text($args);
+    }
+
+    public static function input_hidden($args = array()) {
+        $args['type'] = 'hidden';
+        $args['container'] = false;
+        self::input($args);
+    }
+
     public static function text($args = array()) {
         $with_button = isset($args['button']) ? $args['button'] : false;
         $type = isset($args['type']) ? $args['type'] : 'text';
@@ -759,6 +770,10 @@ class SB_Field {
         $before = isset($args['before']) ? $args['before'] : '<div class="' . esc_attr($container_class) . '">';
         $after = isset($args['after']) ? $args['after'] : '</div>';
         $only = isset($args['only']) ? $args['only'] : false;
+        $container = isset($args['container']) ? (bool)$args['container'] : true;
+        if(!$only && !$container) {
+            $only = true;
+        }
         $html = new SB_HTML('input');
 
         $atts = array(
@@ -895,6 +910,23 @@ class SB_Field {
     public static function number($args = array()) {
         $args['type'] = 'number';
         self::text($args);
+    }
+
+    public static function number_double($args = array()) {
+        $atts = isset($args['attributes']) ? $args['attributes'] : array();
+        $step = isset($args['step']) ? $args['step'] : '0.01';
+        $atts['step'] = $step;
+        $args['attributes'] = $atts;
+        self::number($args);
+    }
+
+    public static function icon_delete($args = array()) {
+        $confirm_message = isset($args['confirm_message']) ? $args['confirm_message'] : SB_Message::get_confirm_delete_text();
+        $img = new SB_HTML('img');
+        $img->set_class('icon-delete');
+        $img->set_attribute('src', SB_Theme::get_image_url('icon-delete-16.png'));
+        $img->set_attribute('data-message', $confirm_message);
+        echo $img->build();
     }
 
     public static function checkbox($args = array()) {

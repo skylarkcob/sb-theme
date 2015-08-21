@@ -47,9 +47,13 @@ class SB_Admin {
     }
 
     public function checkout_setting_tabs($tabs) {
+        $lang = SB_Core::get_language();
         $defaults = array(
             'ngan_luong' => array(
-                'name' => __('Ngân Lượng', 'sb-theme')
+                'name' => ('vi' == $lang) ? 'Ngân Lượng' : __('Ngan Luong', 'sb-theme')
+            ),
+            'mals_e' => array(
+                'name' => __('Mal\'s E-commerce', 'sb-theme')
             )
         );
         $tabs = wp_parse_args($tabs, $defaults);

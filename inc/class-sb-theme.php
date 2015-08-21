@@ -121,8 +121,8 @@ class SB_Theme {
         }
     }
 
-    public static function add_theme_setting_field_category_widget() {
-        sb_theme_setting_field_category_widget();
+    public static function add_theme_setting_field_category_widget($title = '') {
+        sb_theme_setting_field_category_widget($title);
     }
 
     public static function add_theme_setting_field_term_widget($callback, $title = '', $option_name = 'term_widget') {
@@ -857,6 +857,14 @@ class SB_Theme {
         <?php
     }
 
+    public static function add_feature($feature) {
+        self::add_support($feature);
+    }
+
+    public static function add_support($feature) {
+        add_theme_support($feature);
+    }
+
     public static function support($feature) {
         return (bool)current_theme_supports($feature);
     }
@@ -1172,6 +1180,10 @@ class SB_Theme {
 
     public static function get_custom_module($name) {
         sb_get_custom_module($name);
+    }
+
+    public static function get_custom_ajax($name) {
+        sb_get_custom_ajax($name);
     }
 
     public static function set_search_form_args($args = array()) {

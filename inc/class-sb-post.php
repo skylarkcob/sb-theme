@@ -187,9 +187,17 @@ class SB_Post {
         return $result;
     }
 
+    public static function esc_media_url($value) {
+        return SB_Core::esc_media_url($value);
+    }
+
     public static function get_media_url($media_id) {
         $path = self::get_media_path($media_id);
-        return wp_get_attachment_url($media_id);
+        $result = '';
+        if(file_exists($path)) {
+            $result = wp_get_attachment_url($media_id);
+        }
+        return $result;
     }
 
     public static function get_comment_count_last_month($post_id) {
@@ -933,6 +941,25 @@ class SB_Post {
         return get_post_meta($post_id, $meta_key, true);
     }
 
+    public static function esc_side_image($value) {
+        $result = array(
+            'media_url' => '',
+            'media_id' => ''
+        );
+        if(is_array($value)) {
+            $result['media_url'] = isset($value['media_url']) ? $value['media_url'] : '';
+            $result['media_id'] = isset($value['media_id']) ? $value['media_id'] : '';
+            $result = self::esc_media_url($result);
+        }
+        return $result;
+    }
+
+    public static function get_side_image($post_id, $meta_key) {
+        $value = self::get_meta($post_id, $meta_key);
+        $value = self::esc_side_image($value);
+        return $value;
+    }
+
     public static function get_sb_meta($post_id, $meta_key) {
         $meta_key = sb_build_meta_name($meta_key);
         return self::get_meta($post_id, $meta_key);
@@ -1147,6 +1174,13 @@ class SB_Post {
 
     public static function get_by_slug($slug, $post_type = 'post') {
         return get_page_by_path($slug, OBJECT, $post_type);
+    }
+
+    public static function get_slug($post) {
+        if(!SB_Core::is_valid_object($post)) {
+            $post = get_post($post);
+        }
+        return $post->post_name;
     }
 
     public static function get_parents($post_id) {

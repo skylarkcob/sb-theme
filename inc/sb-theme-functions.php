@@ -202,36 +202,21 @@ function sb_theme_the_logo() {
 }
 
 function sb_theme_support($args = null) {
-    global $sb_theme_supports;
-    if($args) {
-        if(!is_array($sb_theme_supports)) {
-            if(!is_array($args)) {
-                $args = array($args);
-            }
-            $sb_theme_supports = $args;
-        } else {
-            if(!is_array($args)) {
-                array_push($sb_theme_supports, $args);
-            } else {
-                $sb_theme_supports = array_merge($sb_theme_supports, $args);
-            }
+    if(null === $args) {
+        return;
+    }
+    if(is_array($args)) {
+        foreach($args as $feature) {
+            add_theme_support($feature);
         }
+    } else {
+        add_theme_support($args);
     }
-    if(!is_array($sb_theme_supports)) {
-        $sb_theme_supports = array();
-    }
-    $sb_theme_supports = array_unique($sb_theme_supports);
-    $sb_theme_supports = apply_filters('sb_theme_supports', $sb_theme_supports);
-    return $sb_theme_supports;
 }
 
 function sb_get_theme_support() {
-    global $sb_theme_supports;
-    if(!is_array($sb_theme_supports)) {
-        $sb_theme_supports = array();
-    }
-    $sb_theme_supports = apply_filters('sb_theme_supports', $sb_theme_supports);
-    return $sb_theme_supports;
+    global $_wp_theme_features;
+    return $_wp_theme_features;
 }
 
 function sb_theme_support_shop() {
@@ -247,11 +232,7 @@ function sb_theme_support_term_meta() {
 }
 
 function sb_theme_check_support($name) {
-    $supports = sb_get_theme_support();
-    if(in_array($name, $supports)) {
-        return true;
-    }
-    return false;
+    return current_theme_supports($name);
 }
 
 function sb_theme_the_post_thumbnail_crop($width, $height) {

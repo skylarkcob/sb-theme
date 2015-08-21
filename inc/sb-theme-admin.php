@@ -140,6 +140,16 @@ function sb_theme_checkout_setting_field() {
 }
 add_action('sb_theme_option_page_init', 'sb_theme_checkout_setting_field');
 
+function sb_theme_checkout_setting_ngan_luong_hook() {
+    sb_theme_get_content('sb-theme-admin-checkout-setting-ngan-luong');
+}
+add_action('sb_theme_checkout_setting_ngan_luong_field', 'sb_theme_checkout_setting_ngan_luong_hook');
+
+function sb_theme_checkout_setting_mals_e_hook() {
+    SB_Theme::get_content('sb-theme-admin-checkout-setting-mals-e');
+}
+add_action('sb_theme_checkout_setting_mals_e_field', 'sb_theme_checkout_setting_mals_e_hook');
+
 function sb_theme_license_setting_field() {
     $title = __('Theme license settings page', 'sb-theme');
     if('vi' == SB_Core::get_language()) {
@@ -604,11 +614,6 @@ function sb_theme_advanced_setting_social_login_hook() {
     sb_theme_get_content('sb-theme-admin-advanced-setting-social-login');
 }
 add_action('sb_theme_advanced_setting_social_login_field', 'sb_theme_advanced_setting_social_login_hook');
-
-function sb_theme_checkout_setting_ngan_luong_hook() {
-    sb_theme_get_content('sb-theme-admin-checkout-setting-ngan-luong');
-}
-add_action('sb_theme_checkout_setting_ngan_luong_field', 'sb_theme_checkout_setting_ngan_luong_hook');
 
 /*
  * Thêm tab chức năng vào bảng cài đặt nâng cao

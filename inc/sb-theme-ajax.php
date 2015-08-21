@@ -156,6 +156,36 @@ function sb_switch_to_default_theme() {
 
 }
 
+function sb_theme_remove_custom_thumbnail_ajax_callback() {
+    $result = array();
+    $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : 0;
+    if($post_id > 0) {
+        $meta_key = isset($_POST['meta_key']) ? $_POST['meta_key'] : '';
+        SB_Post::update_meta($post_id, $meta_key, '');
+    }
+    echo json_encode($result);
+    die();
+}
+add_action('wp_ajax_sb_theme_remove_custom_thumbnail', 'sb_theme_remove_custom_thumbnail_ajax_callback');
+
+function sb_theme_set_custom_thumbnail_ajax_callback() {
+    $result = array();
+    $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : 0;
+    if($post_id > 0) {
+        $meta_key = isset($_POST['meta_key']) ? $_POST['meta_key'] : '';
+        $media_url = isset($_POST['media_url']) ? $_POST['media_url'] : '';
+        $media_id = isset($_POST['media_id']) ? $_POST['media_id'] : '';
+        $meta_value = array(
+            'media_url' => $media_url,
+            'media_id' => $media_id
+        );
+        SB_Post::update_meta($post_id, $meta_key, $meta_value);
+    }
+    echo json_encode($result);
+    die();
+}
+add_action('wp_ajax_sb_theme_set_custom_thumbnail', 'sb_theme_set_custom_thumbnail_ajax_callback');
+
 function sb_theme_change_captcha_ajax_callback() {
     $len = isset( $_POST['len'] ) ? $_POST['len'] : 4;
     $args = array( 'len' => $len, 'force' => true );

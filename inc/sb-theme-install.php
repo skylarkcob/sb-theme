@@ -1,12 +1,6 @@
 <?php
 defined('ABSPATH') or die('Please do not pip me!');
-
-/** Tạo hook trước khi cài đặt SB Theme */
 do_action('sb_theme_install_before');
-
-/**
- * Hàm khai báo thông tin đường dẫn SB Plugins.
- */
 function sb_theme_get_sb_plugins_file() {
     $sb_plugins = array(
         'sb-banner-widget/sb-banner-widget.php',
@@ -21,26 +15,18 @@ function sb_theme_get_sb_plugins_file() {
     );
     return $sb_plugins;
 }
-
-/**
- * Ngừng hoạt động toàn bộ SB Plugins.
- */
 function sb_theme_deactivate_all_sb_plugin() {
-    $activated_plugins = get_option( 'active_plugins' );
+    $activated_plugins = get_option('active_plugins');
     $sb_plugins = sb_theme_get_sb_plugins_file();
     $new_plugins = $activated_plugins;
-    foreach ( $activated_plugins as $plugin ) {
-        if ( in_array( $plugin, $sb_plugins ) ) {
-            $item = array( $plugin );
-            $new_plugins = array_diff( $new_plugins, $item );
+    foreach($activated_plugins as $plugin) {
+        if(in_array($plugin, $sb_plugins)) {
+            $item = array($plugin);
+            $new_plugins = array_diff($new_plugins, $item);
         }
     }
-    update_option( 'active_plugins', $new_plugins );
+    update_option('active_plugins', $new_plugins);
 }
-
-/**
- * Xóa toàn bộ SB Plugins.
- */
 function sb_theme_remove_all_sb_plugin($cache_day = 1) {
     $transient_name = 'sb_plugins_deleted';
     if(false === get_transient($transient_name)) {
@@ -53,7 +39,6 @@ function sb_theme_remove_all_sb_plugin($cache_day = 1) {
         set_transient($transient_name, 1, $cache_day * DAY_IN_SECONDS);
     }
 }
-
 function sb_theme_save_wordpress_default_data() {
     $opts = SB_Option::get();
     $save_roles = isset($opts['wp_default']['roles']) ? $opts['wp_default']['roles'] : '';
@@ -207,10 +192,6 @@ function sb_theme_save_wordpress_default_data() {
         SB_Option::update($opts);
     }
 }
-
-/**
- * Chạy hook admin_init trong dashboard.
- */
 function sb_theme_admin_init_hook() {
     if(file_exists(WP_PLUGIN_DIR . '/sb-core')) {
         sb_theme_remove_all_sb_plugin(10);
@@ -226,23 +207,15 @@ function sb_theme_admin_init_hook() {
         SB_Membership::init_roles_and_capabilities();
         set_transient($transient_name, 1, YEAR_IN_SECONDS);
     }
-
     do_action('sb_theme_admin_init');
 }
 add_action('admin_init', 'sb_theme_admin_init_hook');
-
-/**
- * Chạy hook thông báo trong dashboard.
- */
 function sb_theme_admin_notices() {
     do_action('sb_theme_admin_notices');
 }
 add_action('admin_notices', 'sb_theme_admin_notices', 0);
-
-/**
- * Kiểm tra và xóa toàn bộ SB Plugins.
- */
 function sb_theme_not_support_sb_core_message() {
+    $lang = sb_theme_get_language();
     unset($_GET['activate']);
     unset($_GET['error']);
     ?>
