@@ -12,7 +12,7 @@ add_action('admin_init', 'sb_theme_use_old_version_update');
 if(sb_theme_use_old_version()) {
     require get_template_directory() . '/sb-theme/old/sb-theme.php';
 } else {
-    define('SB_THEME_VERSION', '2.5.8');
+    define('SB_THEME_VERSION', '2.5.9');
     define('SB_THEME_JQUERY_VERSION', '1.11.1');
     define('SB_THEME_WP_ADMIN_PATH', ABSPATH . 'wp-admin');
     define('SB_THEME_ADMIN_INC_PATH', SB_THEME_WP_ADMIN_PATH . '/includes');
