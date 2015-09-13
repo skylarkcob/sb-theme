@@ -459,7 +459,7 @@ class SB_Field {
         $html->set_attribute_array($atts);
         echo $html->build();
         if(!empty($description)) {
-            echo '<p class="description">' . $description . '</p>';
+            //echo '<p class="description">' . $description . '</p>';
         }
         self::the_after($before, $after);
     }
@@ -699,6 +699,20 @@ class SB_Field {
             $html->set_attribute($key, $att);
         }
         return $html;
+    }
+
+    public static function br($args = array()) {
+        $class = isset($args['class']) ? $args['class'] : '';
+        $html = new SB_HTML('br');
+        $html->set_class($class);
+        echo $html->build();
+    }
+
+    public static function hr($args = array()) {
+        $class = isset($args['class']) ? $args['class'] : '';
+        $html = new SB_HTML('hr');
+        $html->set_class($class);
+        echo $html->build();
     }
 
     public static function captcha($args = array()) {

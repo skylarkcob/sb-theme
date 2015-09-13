@@ -35,8 +35,8 @@ $max_item_id = absint(SB_PHP::get_max_number($item_order));
             if(empty($image_url)) {
                 continue;
             }
-            $title_text = ('vi' == SB_Core::get_language()) ? 'Tiêu đề' : __('Title', 'sb-theme');
-            $link_text = ('vi' == SB_Core::get_language()) ? 'Đường dẫn đến trang đích' : __('The link for item', 'sb-theme');
+            $title_text = ('vi' == $lang) ? 'Tiêu đề' : __('Title', 'sb-theme');
+            $link_text = ('vi' == $lang) ? 'Đường dẫn đến trang đích' : __('The link for item', 'sb-theme');
             ?>
             <li data-item="<?php echo $item_id; ?>">
                 <img class="item-image" src="<?php echo $image_url; ?>">

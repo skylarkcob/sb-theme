@@ -6,7 +6,16 @@ if(class_exists('SB_Product')) {
 }
 class SB_Product {
     public static function get_out_of_stock_text() {
-        return apply_filters('sb_theme_out_of_stock_text', __('Tạm hết hàng', 'sb-theme'));
+        return apply_filters('sb_theme_out_of_stock_text', ('vi' == SB_Core::get_language()) ? 'Tạm hết hàng' : __('Out of stock', 'sb-theme'));
+    }
+
+    public static function get_no_price_text() {
+        $text = 'Vui lòng gọi';
+        if('vi' != SB_Core::get_language()) {
+            $text = __('Please call', 'sb-theme');
+        }
+        $text = apply_filters('sb_theme_no_price_text', $text);
+        return $text;
     }
 
     public static function get_category_thumbnail_url($cat) {
@@ -112,8 +121,36 @@ class SB_Product {
         return $woocommerce->cart->get_checkout_url();
     }
 
+    public static function get_checkout_url() {
+        return self::get_checkout_uri();
+    }
+
     public static function the_checkout_uri() {
         echo SB_Product::get_checkout_uri();
+    }
+
+    public static function the_checkout_url() {
+        self::the_checkout_uri();
+    }
+
+    public static function get_wishlist_url() {
+        $url = '';
+        if(function_exists('YITH_WCWL')) {
+            $url = YITH_WCWL()->get_wishlist_url('');
+        }
+        return $url;
+    }
+
+    public static function the_wishlist_url() {
+        echo self::get_wishlist_url();
+    }
+
+    public static function count_wishlist_product() {
+        $result = 0;
+        if(function_exists('YITH_WCWL')) {
+            $result = YITH_WCWL()->count_products();
+        }
+        return $result;
     }
 
     public static function get_cart_uri() {
@@ -121,14 +158,62 @@ class SB_Product {
         return $woocommerce->cart->get_cart_url();
     }
 
-    public static function get_cart() {
-        return '<a class="cart-content" href="'.self::get_cart_uri().'" title="Thông tin giỏ hàng"><span class="product-number">'.sprintf(_n('%d sản phẩm', '%d sản phẩm', self::count_cart(), 'sbwp'), self::count_cart()).'</span><span class="sep"> - </span>'.self::cart_total().'</a>';
+    public static function get_cart_url() {
+        return self::get_cart_uri();
+    }
+
+    public static function please_call_html() {
+        return '<span class="price"><span class="no-price call amount">' . self::get_no_price_text() . '</span></span>';
+    }
+
+    public static function get_price_html($product = null) {
+        if(null == $product) {
+            $product = $GLOBALS['product'];
+        }
+        $html = $product->get_price_html();
+        if(empty($html)) {
+            $html = self::please_call_html();
+        }
+        return $html;
+    }
+
+    public static function get_cart($args = array()) {
+        $lang = SB_Core::get_language();
+        $title = isset($args['title']) ? $args['title'] : (('vi' == $lang) ? 'Thông tin giỏ hàng' : __('View your shopping cart', 'sb-theme'));
+        $show_item = isset($args['show_item']) ? (bool)$args['show_item'] : true;
+        $show_price = isset($args['show_price']) ? (bool)$args['show_price'] : true;
+        $show_icon = isset($args['show_icon']) ? (bool)$args['show_icon'] : true;
+        $show_preview = isset($args['show_preview']) ? (bool)$args['show_preview'] : true;
+        $cart = '<a class="cart-content" href="' . self::get_cart_uri() . '" title="' . $title . '">';
+        if($show_icon) {
+            $cart .= '<i class="fa fa-shopping-cart icon-left"></i>';
+        }
+        if($show_item) {
+            $item_text = self::count_cart() . 'sản phẩm';
+            if('vi' != $lang) {
+                $item_text = sprintf(_n('%d item', '%d items', self::count_cart(), 'sb-theme'), self::count_cart());
+            }
+            $cart .= '<span class="product-number">' . $item_text . '</span>';
+            if($show_price) {
+                $cart .= '<span class="sep"> - </span>';
+            }
+        }
+        if($show_price) {
+            $cart .= self::cart_total();
+        }
+        if($show_preview) {
+            $cart .= '<i class="fa fa-angle-down icon-right"></i>';
+        }
+        $cart .= '</a>';
+        return $cart;
     }
 
     public static function the_cart() {
         echo '<div class="cart-group">';
         do_action('sbwp_cart_before');
+        do_action('sb_theme_cart_before');
         echo self::get_cart();
+        do_action('sb_theme_cart_after');
         do_action('sbwp_cart_after');
         echo '</div>';
     }
@@ -181,12 +266,8 @@ class SB_Product {
         return self::get_price_by_key($post_id, 'sale_price');
     }
 
-    public static function get_no_price_text() {
-        return apply_filters('sb_theme_no_price_text', __('Xin vui lòng liên hệ', 'sb-theme'));
-    }
-
     public static function get_formatted_price($post_id, $show_sale_price = true) {
-        $result = '<span class="amount no-price">' . self::get_no_price_text() . '</span>';
+        $result = self::please_call_html();
         $prices = self::get_prices($post_id);
         $product_price = $prices['regular_price'];
         $negative = (bool)($product_price < 0);
@@ -253,9 +334,18 @@ class SB_Product {
         return $woocommerce->cart->get_cart_total();
     }
 
+    public static function add_cart_item_to_menu($args = array()) {
+        $li = new SB_HTML('li');
+        $li->set_class('cart-item menu-item');
+        $li->set_attribute('id', 'sbt_cart_item');
+        $li->set_text(self::get_cart());
+        $args['item'] = $li->build();
+        return SB_Core::add_item_to_menu($args);
+    }
+
     public static function the_price_html($price, $sale_price = 0) {
         if(0 == $price) {
-            echo '<span class="price"><span class="no-price call">' . self::get_out_of_stock_text() . '</span></span>';
+            echo self::please_call_html();
         } else {
             $result = '';
             if($sale_price > 0 && $sale_price < $price) {
@@ -446,11 +536,20 @@ class SB_Product {
     }
 
     public static function get_account_uri() {
-        $myaccount_page_id = get_option( 'woocommerce_myaccount_page_id' );
-        if ( $myaccount_page_id ) {
-            $myaccount_page_url = get_permalink( $myaccount_page_id );
+        $myaccount_page_id = get_option('woocommerce_myaccount_page_id');
+        $myaccount_page_url = '';
+        if($myaccount_page_id && is_numeric($myaccount_page_id) && $myaccount_page_id > 0) {
+            $myaccount_page_url = get_permalink($myaccount_page_id);
         }
         return $myaccount_page_url;
+    }
+
+    public static function get_account_url() {
+        return self::get_account_uri();
+    }
+
+    public static function the_account_url() {
+        echo self::get_account_uri();
     }
 
     public static function get_store_uri() {

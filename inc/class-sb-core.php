@@ -20,6 +20,18 @@ class SB_Core {
         return get_search_query();
     }
 
+    public static function add_item_to_menu($args = array()) {
+        $items = isset($args['items']) ? $args['items'] : '';
+        $add_last = isset($args['add_last']) ? (bool)$args['add_last'] : true;
+        $item = isset($args['item']) ? $args['item'] : '';
+        if($add_last) {
+            $items .= $item;
+        } else {
+            $items = $item . $items;
+        }
+        return $items;
+    }
+
     public static function get_language() {
         return sb_theme_get_language();
     }
@@ -175,222 +187,124 @@ class SB_Core {
     }
 
     public static function the_breadcrumb($args = array()) {
-        return;
-        $separator = '&gt;';
-        $breadcrums_id = 'breadcrumbs';
-        $breadcrums_class = 'breadcrumbs';
-        $home_title = 'Homepage';
+        global $post, $wp_query;
+        $lang = self::get_language();
+        $separator = isset($args['separator']) ? $args['separator'] : '/';
+        $breadcrums_id = isset($args['id']) ? $args['id'] : 'sb_breadcrumbs';
+        $breadcrums_class = isset($args['class']) ? $args['class'] : 'breadcrumbs';
+        $home_title = ('vi' == $lang) ? 'Trang chủ' : __('Home', 'sb-theme');
         $custom_taxonomy = 'product_cat';
-
-        // Get the query & post information
-        global $post,$wp_query;
-
-        // Do not display on the homepage
-        if ( !is_front_page() ) {
-
-            // Build the breadcrums
+        $class = isset($args['class']) ? $args['class'] : '';
+        $class = SB_PHP::add_string_with_space_before($class, 'list-inline list-unstyled');
+        if(!is_front_page()) {
             echo '<ul id="' . $breadcrums_id . '" class="' . $class . '">';
-
-            // Home page
             echo '<li class="item-home"><a class="bread-link bread-home" href="' . get_home_url() . '" title="' . $home_title . '">' . $home_title . '</a></li>';
             echo '<li class="separator separator-home"> ' . $separator . ' </li>';
+            if(is_archive() && !is_tax() && !is_category()) {
+                echo '<li class="item-current item-archive"><strong class="bread-current bread-archive">' . post_type_archive_title('', false) . '</strong></li>';
 
-            if ( is_archive() && !is_tax() && !is_category() ) {
-
-                echo '<li class="item-current item-archive"><strong class="bread-current bread-archive">' . post_type_archive_title($prefix, false) . '</strong></li>';
-
-            } else if ( is_archive() && is_tax() && !is_category() ) {
-
-                // If post is a custom post type
+            } elseif(is_archive() && is_tax() && !is_category()) {
                 $post_type = get_post_type();
-
-                // If it is a custom post type display name and link
                 if($post_type != 'post') {
-
                     $post_type_object = get_post_type_object($post_type);
                     $post_type_archive = get_post_type_archive_link($post_type);
-
                     echo '<li class="item-cat item-custom-post-type-' . $post_type . '"><a class="bread-cat bread-custom-post-type-' . $post_type . '" href="' . $post_type_archive . '" title="' . $post_type_object->labels->name . '">' . $post_type_object->labels->name . '</a></li>';
                     echo '<li class="separator"> ' . $separator . ' </li>';
-
                 }
-
                 $custom_tax_name = get_queried_object()->name;
                 echo '<li class="item-current item-archive"><strong class="bread-current bread-archive">' . $custom_tax_name . '</strong></li>';
 
-            } else if ( is_single() ) {
-
-                // If post is a custom post type
+            } elseif(is_single()) {
                 $post_type = get_post_type();
-
-                // If it is a custom post type display name and link
                 if($post_type != 'post') {
-
                     $post_type_object = get_post_type_object($post_type);
                     $post_type_archive = get_post_type_archive_link($post_type);
-
                     echo '<li class="item-cat item-custom-post-type-' . $post_type . '"><a class="bread-cat bread-custom-post-type-' . $post_type . '" href="' . $post_type_archive . '" title="' . $post_type_object->labels->name . '">' . $post_type_object->labels->name . '</a></li>';
                     echo '<li class="separator"> ' . $separator . ' </li>';
-
                 }
-
-                // Get post category info
                 $category = get_the_category();
-
-                // Get last category post is in
-                $last_category = end(array_values($category));
-
-                // Get parent any categories and create array
-                $get_cat_parents = rtrim(get_category_parents($last_category->term_id, true, ','),',');
-                $cat_parents = explode(',',$get_cat_parents);
-
-                // Loop through parent categories and store in variable $cat_display
+                $array_values = array_values($category);
+                $last_category = end($array_values);
+                $get_cat_parents = '';
+                if(is_object($last_category)) {
+                    $get_cat_parents = rtrim(get_category_parents($last_category->term_id, true, ','), ',');
+                }
+                $cat_parents = explode(',', $get_cat_parents);
                 $cat_display = '';
                 foreach($cat_parents as $parents) {
-                    $cat_display .= '<li class="item-cat">'.$parents.'</li>';
+                    $cat_display .= '<li class="item-cat">' . $parents . '</li>';
                     $cat_display .= '<li class="separator"> ' . $separator . ' </li>';
                 }
-
-                // If it's a custom post type within a custom taxonomy
                 $taxonomy_exists = taxonomy_exists($custom_taxonomy);
                 if(empty($last_category) && !empty($custom_taxonomy) && $taxonomy_exists) {
-
-                    $taxonomy_terms = get_the_terms( $post->ID, $custom_taxonomy );
-                    $cat_id         = $taxonomy_terms[0]->term_id;
-                    $cat_nicename   = $taxonomy_terms[0]->slug;
-                    $cat_link       = get_term_link($taxonomy_terms[0]->term_id, $custom_taxonomy);
-                    $cat_name       = $taxonomy_terms[0]->name;
+                    $taxonomy_terms = get_the_terms($post->ID, $custom_taxonomy);
+                    $cat_id = $taxonomy_terms[0]->term_id;
+                    $cat_nicename = $taxonomy_terms[0]->slug;
+                    $cat_link = get_term_link($taxonomy_terms[0]->term_id, $custom_taxonomy);
+                    $cat_name = $taxonomy_terms[0]->name;
 
                 }
-
-                // Check if the post is in a category
                 if(!empty($last_category)) {
                     echo $cat_display;
                     echo '<li class="item-current item-' . $post->ID . '"><strong class="bread-current bread-' . $post->ID . '" title="' . get_the_title() . '">' . get_the_title() . '</strong></li>';
-
-                    // Else if post is in a custom taxonomy
-                } else if(!empty($cat_id)) {
-
+                } elseif(!empty($cat_id)) {
                     echo '<li class="item-cat item-cat-' . $cat_id . ' item-cat-' . $cat_nicename . '"><a class="bread-cat bread-cat-' . $cat_id . ' bread-cat-' . $cat_nicename . '" href="' . $cat_link . '" title="' . $cat_name . '">' . $cat_name . '</a></li>';
                     echo '<li class="separator"> ' . $separator . ' </li>';
                     echo '<li class="item-current item-' . $post->ID . '"><strong class="bread-current bread-' . $post->ID . '" title="' . get_the_title() . '">' . get_the_title() . '</strong></li>';
 
                 } else {
-
                     echo '<li class="item-current item-' . $post->ID . '"><strong class="bread-current bread-' . $post->ID . '" title="' . get_the_title() . '">' . get_the_title() . '</strong></li>';
-
                 }
 
-            } else if ( is_category() ) {
-
-                // Category page
+            } elseif(is_category()) {
                 echo '<li class="item-current item-cat"><strong class="bread-current bread-cat">' . single_cat_title('', false) . '</strong></li>';
 
-            } else if ( is_page() ) {
-
-                // Standard page
-                if( $post->post_parent ){
-
-                    // If child page, get parents 
-                    $anc = get_post_ancestors( $post->ID );
+            } elseif(is_page()) {
+                if($post->post_parent) {
+                    $anc = get_post_ancestors($post->ID);
                     $anc = array_reverse($anc);
-                    // Get parents in the right order
                     $anc = array_reverse($anc);
-
-                    // Parent page loop
-                    foreach ( $anc as $ancestor ) {
+                    foreach($anc as $ancestor) {
                         $parents .= '<li class="item-parent item-parent-' . $ancestor . '"><a class="bread-parent bread-parent-' . $ancestor . '" href="' . get_permalink($ancestor) . '" title="' . get_the_title($ancestor) . '">' . get_the_title($ancestor) . '</a></li>';
                         $parents .= '<li class="separator separator-' . $ancestor . '"> ' . $separator . ' </li>';
                     }
-
-                    // Display parent pages
                     echo $parents;
-
-                    // Current page
                     echo '<li class="item-current item-' . $post->ID . '"><strong title="' . get_the_title() . '"> ' . get_the_title() . '</strong></li>';
-
                 } else {
-
-                    // Just display current page if not parents
                     echo '<li class="item-current item-' . $post->ID . '"><strong class="bread-current bread-' . $post->ID . '"> ' . get_the_title() . '</strong></li>';
-
                 }
 
-            } else if ( is_tag() ) {
-
-                // Tag page
-
-                // Get tag information
+            } elseif(is_tag()) {
                 $term_id = get_query_var('tag_id');
                 $taxonomy = 'post_tag';
                 $args ='include=' . $term_id;
-                $terms = get_terms( $taxonomy, $args );
-
-                // Display the tag name
+                $terms = get_terms($taxonomy, $args);
                 echo '<li class="item-current item-tag-' . $terms[0]->term_id . ' item-tag-' . $terms[0]->slug . '"><strong class="bread-current bread-tag-' . $terms[0]->term_id . ' bread-tag-' . $terms[0]->slug . '">' . $terms[0]->name . '</strong></li>';
-          
-        } elseif ( is_day() ) {
-
-                // Day archive
-
-                // Year link
+            } elseif(is_day()) {
                 echo '<li class="item-year item-year-' . get_the_time('Y') . '"><a class="bread-year bread-year-' . get_the_time('Y') . '" href="' . get_year_link( get_the_time('Y') ) . '" title="' . get_the_time('Y') . '">' . get_the_time('Y') . ' Archives</a></li>';
                 echo '<li class="separator separator-' . get_the_time('Y') . '"> ' . $separator . ' </li>';
-
-                // Month link
                 echo '<li class="item-month item-month-' . get_the_time('m') . '"><a class="bread-month bread-month-' . get_the_time('m') . '" href="' . get_month_link( get_the_time('Y'), get_the_time('m') ) . '" title="' . get_the_time('M') . '">' . get_the_time('M') . ' Archives</a></li>';
                 echo '<li class="separator separator-' . get_the_time('m') . '"> ' . $separator . ' </li>';
-
-                // Day display
                 echo '<li class="item-current item-' . get_the_time('j') . '"><strong class="bread-current bread-' . get_the_time('j') . '"> ' . get_the_time('jS') . ' ' . get_the_time('M') . ' Archives</strong></li>';
-
-            } else if ( is_month() ) {
-
-                // Month Archive
-
-                // Year link
+            } elseif(is_month()) {
                 echo '<li class="item-year item-year-' . get_the_time('Y') . '"><a class="bread-year bread-year-' . get_the_time('Y') . '" href="' . get_year_link( get_the_time('Y') ) . '" title="' . get_the_time('Y') . '">' . get_the_time('Y') . ' Archives</a></li>';
                 echo '<li class="separator separator-' . get_the_time('Y') . '"> ' . $separator . ' </li>';
-
-                // Month display
                 echo '<li class="item-month item-month-' . get_the_time('m') . '"><strong class="bread-month bread-month-' . get_the_time('m') . '" title="' . get_the_time('M') . '">' . get_the_time('M') . ' Archives</strong></li>';
-
-            } else if ( is_year() ) {
-
-                // Display year archive
+            } elseif(is_year()) {
                 echo '<li class="item-current item-current-' . get_the_time('Y') . '"><strong class="bread-current bread-current-' . get_the_time('Y') . '" title="' . get_the_time('Y') . '">' . get_the_time('Y') . ' Archives</strong></li>';
-
-            } else if ( is_author() ) {
-
-                // Auhor archive
-
-                // Get the author information
+            } elseif(is_author()) {
                 global $author;
-                $userdata = get_userdata( $author );
-
-                // Display author name
+                $userdata = get_userdata($author);
                 echo '<li class="item-current item-current-' . $userdata->user_nicename . '"><strong class="bread-current bread-current-' . $userdata->user_nicename . '" title="' . $userdata->display_name . '">' . 'Author: ' . $userdata->display_name . '</strong></li>';
-
-            } else if ( get_query_var('paged') ) {
-
-                // Paginated archives
+            } elseif(get_query_var('paged')) {
                 echo '<li class="item-current item-current-' . get_query_var('paged') . '"><strong class="bread-current bread-current-' . get_query_var('paged') . '" title="Page ' . get_query_var('paged') . '">'.__('Page') . ' ' . get_query_var('paged') . '</strong></li>';
-
-            } else if ( is_search() ) {
-
-                // Search results page
+            } elseif(is_search()) {
                 echo '<li class="item-current item-current-' . get_search_query() . '"><strong class="bread-current bread-current-' . get_search_query() . '" title="Search results for: ' . get_search_query() . '">Search results for: ' . get_search_query() . '</strong></li>';
-
-            } elseif ( is_404() ) {
-
-                // 404 page
-                echo '<li>' . 'Error 404' . '</li>';
+            } elseif(is_404()) {
+                echo '<li>' . __('Error 404', 'sb-theme') . '</li>';
             }
-
             echo '</ul>';
-
         }
-
     }
 
 	public static function is_localhost() {

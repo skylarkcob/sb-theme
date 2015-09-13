@@ -60,7 +60,7 @@ class SB_Banner_Widget extends WP_Widget {
             'id' => $this->get_field_id('banner_image'),
             'name' => $this->get_field_name('banner_image'),
             'value' => $banner_image,
-            'label' => __('Đường dẫn hình ảnh:', 'sb-theme')
+            'label' => ('vi' == $this->lang) ? 'Đường dẫn hình ảnh:' : __('Image url:', 'sb-theme')
         );
         SB_Widget_Field::media_upload($args);
 
@@ -68,7 +68,7 @@ class SB_Banner_Widget extends WP_Widget {
             'id' => $this->get_field_id('banner_url'),
             'name' => $this->get_field_name('banner_url'),
             'value' => $banner_url,
-            'label' => __('Đường link cho hình ảnh:', 'sb-theme')
+            'label' => ('vi' == $this->lang) ? 'Đường link cho hình ảnh:' : __('Image link:', 'sb-theme')
         );
         SB_Widget_Field::text($args);
 
@@ -76,7 +76,7 @@ class SB_Banner_Widget extends WP_Widget {
             'id' => $this->get_field_id('use_title'),
             'name' => $this->get_field_name('use_title'),
             'value' => $show_title,
-            'label' => __('Hiển thị tiêu đề?', 'sb-theme')
+            'label' => ('vi' == $this->lang) ? 'Hiển thị tiêu đề?' : __('Show title?', 'sb-theme')
         );
         SB_Widget_Field::checkbox($args);
         SB_Widget_Field::after();

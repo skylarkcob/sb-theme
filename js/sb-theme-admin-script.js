@@ -798,7 +798,7 @@ var sb_ajax_loader,
                 file_frame.open();
                 return;
             }
-            file_frame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: true});
+            file_frame = wp.media({title: sb_theme.l10n.insert_image, button:{text: sb_theme.l10n.insert_image_s}, multiple: true});
             file_frame.on('select', function(){
                 var media_datas = sb_theme.receive_selected_media_items(file_frame);
                 media_datas.map(function(media_data){
@@ -819,8 +819,8 @@ var sb_ajax_loader,
                         item_html += '<li data-item="' + max_item_id + '">';
                         item_html += '<img class="item-image" src="' + media_url + '">';
                         item_html += '<div class="item-info">';
-                        item_html += '<input type="text" placeholder="Tiêu đề" value="" class="item-title" name="sbmb_slider_items[items][' + max_item_id + '][title]">';
-                        item_html += '<input type="url" placeholder="Đường dẫn đến trang đích" value="" class="item-link" name="sbmb_slider_items[items][' + max_item_id + '][link]">';
+                        item_html += '<input type="text" placeholder="' + sb_theme.l10n.title + '" value="" class="item-title" name="sbmb_slider_items[items][' + max_item_id + '][title]">';
+                        item_html += '<input type="url" placeholder="' + sb_theme.l10n.url_to_destination_page + '" value="" class="item-link" name="sbmb_slider_items[items][' + max_item_id + '][link]">';
                         item_html += '<textarea class="item-description" name="sbmb_slider_items[items][' + max_item_id + '][description]"></textarea>';
                         item_html += '</div>';
                         item_html += '<input type="hidden" class="item-image-url" name="sbmb_slider_items[items][' + max_item_id + '][image_url]" value="' + media_url + '">';
@@ -852,7 +852,7 @@ var sb_ajax_loader,
                 file_frame.open();
                 return;
             }
-            file_frame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
+            file_frame = wp.media({title: sb_theme.l10n.insert_image, button:{text: sb_theme.l10n.use_this_image}, multiple: false});
             file_frame.on('select', function(){
                 var media_data = sb_core.sb_receive_media_selected(file_frame),
                     media_url = media_data.url,
@@ -923,7 +923,7 @@ var sb_ajax_loader,
                 file_frame.open();
                 return;
             }
-            file_frame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
+            file_frame = wp.media({title: sb_theme.l10n.insert_image, button:{text: sb_theme.l10n.use_this_image}, multiple: false});
             file_frame.on('select', function(){
                 var media_data = sb_core.sb_receive_media_selected(file_frame),
                     media_container = that.closest('.sb-media-upload'),
@@ -992,7 +992,7 @@ var sb_ajax_loader,
                 file_frame.open();
                 return;
             }
-            file_frame = wp.media({title: 'Insert Media', button:{text: 'Use this image'}, multiple: false});
+            file_frame = wp.media({title: sb_theme.l10n.insert_image, button:{text: sb_theme.l10n.use_this_image}, multiple: false});
             file_frame.on('select', function(){
                 var media_data = sb_core.sb_receive_media_selected(file_frame),
                     media_container = that.closest('.sb-media-upload'),

@@ -9,7 +9,7 @@ class SB_Text {
         $key = 'add_to_cart';
         $value = SB_Option::get_by_base_option_name($menu_base, array('keys' => array($tab_base_option_name, $key)));
         if(empty($value)) {
-            $value = __('Đặt mua', 'sb-theme');
+            $value = ('vi' == SB_Core::get_language()) ? 'Thêm vào giỏ' : __('Add to cart', 'sb-theme');
         }
         return apply_filters('sb_theme_add_to_cart_text', $value);
     }

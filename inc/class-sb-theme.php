@@ -561,6 +561,10 @@ class SB_Theme {
         $app_id = self::get_facebook_app_id();
         $version = apply_filters('sb_theme_facebook_javascript_sdk_version', 2.4);
 	    $language = apply_filters('sb_theme_facebook_language', 'vi_VN');
+        $theme_lang = SB_Core::get_language();
+        if('vi' != $theme_lang) {
+            $language = $theme_lang;
+        }
         ?>
         <div id="fb-root"></div>
         <script type="text/javascript">(function(d, s, id) {
@@ -645,20 +649,6 @@ class SB_Theme {
 	    ?>
 	    <div class="fb-comments" data-href="<?php echo $url; ?>" data-numposts="<?php echo $number; ?>" data-width="<?php echo $width; ?>"></div>
 	    <?php
-    }
-
-    public static function the_facebook_page_plugin($args = array()) {
-        $page_id = isset($args['page_id']) ? $args['page_id'] : 'hocwpnet';
-        $page_name = isset($args['page_name']) ? $args['page_name'] : 'Học WordPress';
-        ?>
-        <div class="fb-page" data-href="https://www.facebook.com/<?php echo $page_id; ?>" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" data-show-posts="false">
-            <div class="fb-xfbml-parse-ignore">
-                <blockquote cite="https://www.facebook.com/<?php echo $page_id; ?>">
-                    <a href="https://www.facebook.com/<?php echo $page_id; ?>"><?php echo $page_name; ?></a>
-                </blockquote>
-            </div>
-        </div>
-        <?php
     }
 
     public static function the_menu($args = array()) {
@@ -1207,6 +1197,47 @@ class SB_Theme {
 
     public static function the_subscribe_box($args = array()) {
         self::the_feedburner_form($args);
+    }
+
+    public static function the_facebook_page_plugin($args = array()) {
+        $href = isset($args['href']) ? $args['href'] : '';
+        if(empty($href)) {
+            $page_id = isset($args['page_id']) ? $args['page_id'] : 'hocwpnet';
+            $href = 'https://www.facebook.com/' . $page_id;
+        }
+        if(empty($href)) {
+            return;
+        }
+        $page_name = isset($args['page_name']) ? $args['page_name'] : '';
+        $width = isset($args['width']) ? $args['width'] : 340;
+        $height = isset($args['height']) ? $args['height'] : 500;
+        $hide_cover = (bool)(isset($args['hide_cover']) ? $args['hide_cover'] : false);
+        $hide_cover = SB_PHP::bool_to_string($hide_cover);
+        $show_facepile = (bool)(isset($args['show_facepile']) ? $args['show_facepile'] : true);
+        $show_facepile = SB_PHP::bool_to_string($show_facepile);
+        $show_posts = (bool)(isset($args['show_posts']) ? $args['show_posts'] : false);
+        $show_posts = SB_PHP::bool_to_string($show_posts);
+        $hide_cta = (bool)(isset($args['hide_cta']) ? $args['hide_cta'] : false);
+        $hide_cta = SB_PHP::bool_to_string($hide_cta);
+        $small_header = (bool)(isset($args['small_header']) ? $args['small_header'] : false);
+        $small_header = SB_PHP::bool_to_string($small_header);
+        $adapt_container_width = (bool)(isset($args['adapt_container_width']) ? $args['adapt_container_width'] : true);
+        $adapt_container_width = SB_PHP::bool_to_string($adapt_container_width);
+        ?>
+        <div class="fb-page" data-href="<?php echo $href; ?>" data-width="<?php echo $width; ?>" data-height="<?php echo $height; ?>" data-hide-cta="<?php echo $hide_cta; ?>" data-small-header="<?php echo $small_header; ?>" data-adapt-container-width="<?php echo $adapt_container_width; ?>" data-hide-cover="<?php echo $hide_cover; ?>" data-show-facepile="<?php echo $show_facepile; ?>" data-show-posts="<?php echo $show_posts; ?>">
+            <div class="fb-xfbml-parse-ignore">
+                <?php if(!empty($page_name)) : ?>
+                    <blockquote cite="<?php echo $href; ?>">
+                        <a href="<?php echo $href; ?>"><?php echo $page_name; ?></a>
+                    </blockquote>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php
+    }
+
+    public static function the_facebook_fanpage_box($args = array()) {
+        self::the_facebook_page_plugin($args);
     }
 
     public static function the_feedburner_form($args = array()) {

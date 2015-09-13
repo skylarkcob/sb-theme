@@ -34,6 +34,10 @@ a:focus {
     outline: 0 none !important;
 }
 
+abbr[data-original-title], abbr[title] {
+    text-decoration: none;
+}
+
 h6.poetry {
     background: url("../images/code-is-poetry.png") no-repeat scroll center center / 190px 15px rgba(0, 0, 0, 0);
     height: 15px;
@@ -216,6 +220,10 @@ input.form-error[type="url"] {
 
 .sb-breadcrumb {
     font-size: 13px;
+}
+
+.sb-breadcrumb ul {
+    margin: 0;
 }
 
 .sb-media-upload .image-preview > img {
@@ -3140,6 +3148,8 @@ div > .syntaxhighlighter {
     font-size: 13px;
 }
 
+.woocommerce #respond input#submit:hover, .woocommerce a.button:hover, .woocommerce button.button:hover, .woocommerce input.button:hover,
+.woocommerce #respond input#submit, .woocommerce a.button, .woocommerce button.button, .woocommerce input.button,
 .single-product .woocommerce-message > .button,
 .single-product .woocommerce-message > .button:hover,
 .single-product form.cart > .button,
@@ -3149,6 +3159,7 @@ div > .syntaxhighlighter {
 .woocommerce-cart table.cart td.actions > p > .button,
 .woocommerce-cart table.cart td.actions .coupon .button {
     background-color: #ff910f;
+    color: #fff;
 }
 
 .woocommerce-cart table.cart td.actions > p {
@@ -3176,6 +3187,7 @@ div > .syntaxhighlighter {
     background-color: #74c767;
 }
 
+.woocommerce #respond input#submit, .woocommerce a.button, .woocommerce button.button, .woocommerce input.button,
 .single-product .woocommerce-message > .button,
 .single-product form.cart > .button,
 .woocommerce-checkout .place-order input.button,
@@ -3229,20 +3241,36 @@ div > .syntaxhighlighter {
 .woocommerce input,
 .woocommerce textarea,
 .woocommerce select {
-    background: #f2f2f2 none repeat scroll 0 0;
+    background: #f8f8f8 none repeat scroll 0 0;
     border: 1px solid #ebebeb;
     padding: 10px 5px;
 }
 
+.woocommerce .select2-container .select2-choice,
+.entry-content .select2-choice,
 .entry-content select,
 .entry-content textarea,
 .entry-content input,
 .woocommerce-checkout .woocommerce form .form-row .select2-container .select2-choice,
 .woocommerce-checkout .woocommerce form .form-row .input-text {
     border-radius: 0;
-    line-height: 17px;
+    line-height: 19px;
     padding-bottom: 5px;
     padding-top: 5px;
+}
+
+.select2-drop.select2-drop-above.select2-drop-active,
+.select2-drop-active {
+    border-color: #ededed;
+}
+
+.woocommerce form .form-row input.input-text, .woocommerce form .form-row textarea {
+    line-height: 19px;
+}
+
+.woocommerce form .form-row .required {
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .entry-content input[type="submit"],
@@ -3296,6 +3324,7 @@ div > .syntaxhighlighter {
     background-color: #ff910f;
 }
 
+.woocommerce #respond input#submit:hover, .woocommerce a.button:hover, .woocommerce button.button:hover, .woocommerce input.button:hover,
 .single-product .woocommerce-message > .button:hover,
 .single-product form.cart > .button:hover,
 .woocommerce-checkout .place-order input.button:hover,
@@ -3400,7 +3429,6 @@ div > .syntaxhighlighter {
 
 .woocommerce-checkout form.checkout label {
     font-weight: 400;
-    margin-bottom: 0;
 }
 
 .woocommerce form .form-row.woocommerce-validated .select2-container, .woocommerce form .form-row.woocommerce-validated input.input-text, .woocommerce form .form-row.woocommerce-validated select {
@@ -3414,6 +3442,11 @@ div > .syntaxhighlighter {
 
 .woocommerce-checkout .order_details .product-name a {
     text-decoration: none;
+}
+
+.woocommerce form .form-row label {
+    font-weight: 400;
+    line-height: 17px;
 }
 
 .single-product .woocommerce-tabs .panel > h2:first-child {
@@ -3496,6 +3529,10 @@ div > .syntaxhighlighter {
     font-size: 13px;
     height: 18px;
     letter-spacing: 4px;
+}
+
+.woocommerce .products .product .star-rating::before {
+    letter-spacing: 5px;
 }
 
 .single-product .comment-form .stars a.active,

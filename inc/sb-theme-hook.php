@@ -100,7 +100,10 @@ function sb_theme_wp_enqueue_scripts_hook() {
     wp_localize_script('sb-theme', 'sb_theme', array(
         'ajax_url' => SB_Core::get_admin_ajax_url(),
         'ajaxurl' => SB_Core::get_admin_ajax_url(),
-        'site_url' => get_bloginfo('url')
+        'site_url' => get_bloginfo('url'),
+        'l10n' => array(
+
+        )
     ));
     wp_enqueue_style('sb-theme-style');
     wp_enqueue_script('sb-theme');
@@ -121,7 +124,12 @@ function sb_theme_login_enqueue_scripts() {
     }
     wp_enqueue_style('sb-theme-login-style', $sb_theme_login_style_url);
     wp_register_script('sb-theme-login', $sb_theme_login_script_url, array('jquery'), false, true);
-    wp_localize_script('sb-theme-login', 'sb_theme_login', array('ajax_url' => admin_url('admin-ajax.php')));
+    wp_localize_script('sb-theme-login', 'sb_theme_login', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'l10n' => array(
+
+        )
+    ));
     wp_enqueue_script('sb-theme-login');
     $logo_url = SB_Option::get_login_logo_url();
     $logo_url = SB_Option::get_media_detail($logo_url);
@@ -140,24 +148,28 @@ add_action('login_enqueue_scripts', 'sb_theme_login_enqueue_scripts');
  * Hàm thêm style và javascript vào trang admin
  */
 function sb_theme_admin_enqueue_scripts_hook() {
+    $lang = SB_Core::get_language();
     do_action('sb_theme_admin_enqueue_scripts_before');
-
     wp_enqueue_media();
     SB_Lib::load_jquery_ui();
     wp_register_style('sb-theme-admin-style', SB_THEME_URL . '/css/sb-theme-admin-style.css');
-    wp_register_script( 'sb-theme-admin', SB_THEME_URL . '/js/sb-theme-admin-script.js', array( 'jquery' ), false, true );
-
-    wp_localize_script( 'sb-theme-admin', 'sb_theme', array(
+    wp_register_script('sb-theme-admin', SB_THEME_URL . '/js/sb-theme-admin-script.js', array('jquery'), false, true);
+    wp_localize_script('sb-theme-admin', 'sb_theme', array(
         'ajax_url' => SB_Core::get_admin_ajax_url(),
         'ajaxurl' => SB_Core::get_admin_ajax_url(),
-        'site_url' => get_bloginfo('url')
+        'site_url' => get_bloginfo('url'),
+        'l10n' => array(
+            'title' => __('Title', 'sb-theme'),
+            'insert_image_s' => __('Insert image(s)', 'sb-theme'),
+            'insert_image' => __('Insert image', 'sb-theme'),
+            'insert_images' => __('Insert images', 'sb-theme'),
+            'url_to_destination_page' => __('The url to destination page', 'sb-theme'),
+            'use_this_image' => __('Use this image', 'sb-theme')
+        )
     ));
-
     wp_enqueue_style('sb-theme-admin-style');
     wp_enqueue_script( 'sb-theme-admin' );
-
     do_action('sb_theme_admin_enqueue_scripts');
-
     do_action('sb_theme_admin_enqueue_scripts_after');
 }
 add_action( 'admin_enqueue_scripts', 'sb_theme_admin_enqueue_scripts_hook' );
@@ -508,6 +520,7 @@ function sb_theme_widgets_init_hook() {
     register_widget('SB_Post_Widget');
     register_widget('SB_Tab_Widget');
     register_widget('SB_Subscribe_Widget');
+    register_widget('SB_Facebook_Box_Widget');
     if(class_exists('SB_Menu_Widget')) {
         register_widget('SB_Menu_Widget');
     }
@@ -627,7 +640,7 @@ register_activation_hook( WP_PLUGIN_DIR . '/wordpress-seo/wp-seo.php', 'sb_theme
 // Chạy hàm khi plugin WooCommerce được kích hoạt
 function sb_theme_on_woocommerce_activation() {
     $base_location = get_option('woocommerce_default_country');
-    if('VN' != $base_location) {
+    if('VN' != $base_location && 'vi' == SB_Core::get_language()) {
         update_option('woocommerce_default_country', 'VN');
         update_option('woocommerce_currency', 'VND');
         update_option('woocommerce_currency_pos', 'right');
@@ -2132,6 +2145,15 @@ function sb_theme_woocommerce_template_part_filter($template, $slug, $name) {
     return $template;
 }
 //add_filter('wc_get_template_part', 'sb_theme_woocommerce_template_part_filter', 10, 3);
+
+function sb_theme_remove_woocommerce_help_tabs($screen_ids) {
+    $remove_woocommerce_help_tabs = apply_filters('sb_theme_remove_woocommerce_help_tabs', true);
+    if($remove_woocommerce_help_tabs) {
+        $screen_ids = array();
+    }
+    return $screen_ids;
+}
+add_filter('woocommerce_screen_ids', 'sb_theme_remove_woocommerce_help_tabs');
 
 function sb_theme_cart_shipping_method_filter($label, $method) {
     if(is_object($method) && $method->id == 'free_shipping') {

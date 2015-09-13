@@ -63,6 +63,7 @@ require SB_THEME_INC_PATH . '/widgets/class-sb-tab-widget.php';
 require SB_THEME_INC_PATH . '/widgets/class-sb-video-widget.php';
 require SB_THEME_INC_PATH . '/widgets/class-sb-icon-widget.php';
 require SB_THEME_INC_PATH . '/widgets/class-sb-subscribe-widget.php';
+require SB_THEME_INC_PATH . '/widgets/class-sb-facebook-box.php';
 if(SB_Option::social_login_enabled()) {
     $facebook = SB_Option::get_social_login_app('facebook');
     $facebook_enabled = isset($facebook['enabled']) ? (bool)$facebook['enabled'] : false;
